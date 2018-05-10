@@ -6,18 +6,25 @@ import {
     Icon,
     InputNumber,
     Popconfirm,
-    Form
+    Form,
+    Pagination
 } from 'antd';
 
 const data = [];
-for (let i = 30000; i < 30100; i++) {
+for (let i = 316096; i < 316196; i++) {
     data.push({
         key: i.toString(),
-        name: `Edrward ${i}`,
         number: i,
+        'lhc-fill': i % 100000,
+        name: `Edrward ${i}`,
         address: `London Park no.`,
         'b-field': 3.8005,
-        events: (Math.random() * 500000).toFixed(0)
+        events: (Math.random() * 500000).toFixed(0),
+        started: 'Thu 10-05-18 17:59:43',
+        duration: '00:00:21:23',
+        class: ['Collisions', 'Cosmics', 'Commissioning'][
+            (Math.random() * 3).toFixed(0)
+        ]
     });
 }
 const FormItem = Form.Item;
@@ -128,8 +135,11 @@ class EditableTable extends React.Component {
             {
                 title: 'Number',
                 dataIndex: 'number',
-                editable: true
+                editable: true,
+                width: 80,
+                fixed: 'left'
             },
+            { title: 'LHC-Fill', dataIndex: 'lhc-fill', editable: true },
             {
                 title: 'Name',
                 dataIndex: 'name',
@@ -160,9 +170,7 @@ class EditableTable extends React.Component {
                 filterDropdownVisible: this.state.filterDropdownVisible,
                 onFilterDropdownVisibleChange: visible => {
                     this.setState(
-                        {
-                            filterDropdownVisible: visible
-                        },
+                        { filterDropdownVisible: visible },
                         () => this.searchInput && this.searchInput.focus()
                     );
                 }
@@ -173,25 +181,20 @@ class EditableTable extends React.Component {
                 key: 'b-field',
                 editable: true,
                 filters: [
-                    {
-                        text: 'London',
-                        value: 'London'
-                    },
-                    {
-                        text: 'New York',
-                        value: 'New York'
-                    }
+                    { text: 'London', value: 'London' },
+                    { text: 'New York', value: 'New York' }
                 ],
                 onFilter: (value, record) => record.address.indexOf(value) === 0
             },
+            { title: 'Events', dataIndex: 'events', editable: false },
+            { title: 'Started', dataIndex: 'started', editable: false },
+            { title: 'Duration', dataIndex: 'duration', editable: false },
+            { title: 'Class', dataIndex: 'class', editable: false },
             {
-                title: 'Events',
-                dataIndex: 'events',
-                editable: true
-            },
-            {
-                title: 'operation',
+                title: 'Operation',
+                width: 90,
                 dataIndex: 'operation',
+                fixed: 'right',
                 render: (text, record) => {
                     const editable = this.isEditing(record);
                     return (
@@ -301,14 +304,30 @@ class EditableTable extends React.Component {
         };
 
         return (
-            <Table
-                rowSelection={rowSelection}
-                size="small"
-                components={components}
-                bordered
-                dataSource={this.state.data}
-                columns={columns}
-            />
+            <div>
+                <Table
+                    rowSelection={rowSelection}
+                    size="small"
+                    components={components}
+                    bordered
+                    dataSource={this.state.data}
+                    columns={columns}
+                    pagination={{
+                        size: 'small',
+                        total: 100,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        defaultPageSize: 13
+                    }}
+                    scroll={{ x: 1300 }}
+                />
+                <style jsx global>{`
+                    .ant-table-bordered .ant-table-thead > tr > th,
+                    .ant-table-bordered .ant-table-tbody > tr > td {
+                        border-right: 1px solid #e8e8e8 !important;
+                    }
+                `}</style>
+            </div>
         );
     }
 }
