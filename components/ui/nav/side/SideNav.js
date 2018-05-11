@@ -6,7 +6,7 @@ const SubMenu = Menu.SubMenu;
 class SideNav extends Component {
     render() {
         return (
-            <Layout>
+            <Layout hasSider={true}>
                 <Sider collapsible width={200} style={{ background: '#fff' }}>
                     <Menu
                         mode="inline"

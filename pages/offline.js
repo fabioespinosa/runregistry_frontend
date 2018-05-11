@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 import { Layout } from 'antd';
-
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import Breadcrumb from '../components/ui/breadcrumb/Breadcrumb';
 import RunTable from '../components/home/run_table/RunTable';
 const { Content } = Layout;
 
-class Home extends Component {
+class Offline extends Component {
     static getInitialProps({ store, isServer }) {
         // Init auth
 
@@ -35,4 +34,4 @@ class Home extends Component {
     }
 }
 
-export default connect(null, null)(Home);
+export default connect(null, null)(Offline);
