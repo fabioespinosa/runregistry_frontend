@@ -1,36 +1,65 @@
 import React, { Component } from 'react';
+import Router from 'next/router';
 import { Layout, Menu, Icon } from 'antd';
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
 class SideNav extends Component {
+    onRouteChangeHandler({ key, keyPath }) {
+        const {
+            router: {
+                query: { type, section, run_filter }
+            }
+        } = this.props;
+        if (key === 'lumisections') {
+            Router.push(
+                `/${type}?type=${type}&section=lumisections`,
+                `/${type}/lumisections`
+            );
+        } else {
+            Router.push(
+                `/${type}?type=${type}&section=${keyPath[1]}&run_filter=${key}`,
+                `/${type}/${keyPath[1]}/${key}`
+            );
+        }
+    }
+
     render() {
+        const {
+            router: {
+                query: { type, section, run_filter }
+            }
+        } = this.props;
+
+        const defaultSelectedKey =
+            section === 'lumisections' ? 'lumisections' : run_filter;
         return (
             <Layout hasSider={true}>
                 <Sider collapsible width={200} style={{ background: '#fff' }}>
                     <Menu
                         mode="inline"
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
+                        onClick={this.onRouteChangeHandler.bind(this)}
+                        defaultOpenKeys={[section]}
+                        defaultSelectedKeys={[defaultSelectedKey]}
                         style={{ height: '100%', borderRight: 0 }}
                     >
                         <SubMenu
-                            key="sub1"
+                            key="runs"
                             title={
                                 <span>
                                     <Icon type="rocket" />
-                                    <span>RUNS</span>
+                                    RUNS
                                 </span>
                             }
                         >
-                            <Menu.Item key="1">ALL</Menu.Item>
-                            <Menu.Item key="2">CURRENT</Menu.Item>
-                            <Menu.Item key="3">SELECTED</Menu.Item>
+                            <Menu.Item key="all">ALL</Menu.Item>
+                            <Menu.Item key="current">CURRENT</Menu.Item>
+                            <Menu.Item key="selected">SELECTED</Menu.Item>
                         </SubMenu>
-                        <Menu.Item>
+                        <Menu.Item key="lumisections">
                             <span>
                                 <Icon type="bulb" />
-                                <span>LUMISECTIONS</span>
+                                LUMISECTIONS
                             </span>
                         </Menu.Item>
                         <SubMenu

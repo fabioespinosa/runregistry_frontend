@@ -34,7 +34,12 @@ const Page = props => (
             />
             <link rel="stylesheet" href="/_next/static/style.css" />
         </Head>
-        <Nav>{props.children}</Nav>
+        <Nav router={props.router}>{props.children}</Nav>
+        <style jsx global>{`
+            .properly_capitalized {
+                text-transform: capitalize;
+            }
+        `}</style>
     </div>
 );
 

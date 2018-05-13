@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'next/router';
 import Link from 'next/link';
 import { Layout } from 'antd';
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import Breadcrumb from '../components/ui/breadcrumb/Breadcrumb';
-import RunTable from '../components/home/run_table/RunTable';
+import RunTable from '../components/online/run_table/RunTable';
 const { Content } = Layout;
 
 class Offline extends Component {
@@ -16,9 +17,10 @@ class Offline extends Component {
     }
 
     render() {
+        const { router } = this.props;
         return (
-            <Page>
-                <Breadcrumb />
+            <Page router={router}>
+                <Breadcrumb router={router} />
                 <Content
                     style={{
                         background: '#fff',
@@ -34,4 +36,4 @@ class Offline extends Component {
     }
 }
 
-export default connect(null, null)(Offline);
+export default withRouter(connect(null, null)(Offline));

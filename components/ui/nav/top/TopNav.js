@@ -1,21 +1,27 @@
 import React, { Component } from 'react';
+import Link from 'next/link';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
 class TopNav extends Component {
     render() {
+        const {
+            router: {
+                query: { type, section, run_filter }
+            }
+        } = this.props;
         return (
             <Header className="header">
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    defaultSelectedKeys={['2']}
+                    defaultSelectedKeys={[type]}
                     style={{ lineHeight: '64px' }}
                 >
                     <Menu.Item key="0">
                         <img
                             className="logo"
-                            src="./static/images/cms_logo.png"
+                            src="/static/images/cms_logo.png"
                         />
                         <h4
                             style={{
@@ -28,9 +34,27 @@ class TopNav extends Component {
                             Run Registry
                         </h4>
                     </Menu.Item>
-                    <Menu.Item key="1">ONLINE</Menu.Item>
-                    <Menu.Item key="2">OFFLINE</Menu.Item>
-                    <Menu.Item key="3">USER</Menu.Item>
+                    <Menu.Item key="online">
+                        <Link
+                            as="/online/runs/all"
+                            href="/online?type=online&section=runs&run_filter=all"
+                        >
+                            <a>ONLINE</a>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="offline">
+                        <Link
+                            as="/offline/runs/all"
+                            href="/online?type=offline&section=runs&run_filter=all"
+                        >
+                            <a>OFFLINE</a>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="user">
+                        <Link href="/user/runs/all">
+                            <a>USER</a>
+                        </Link>
+                    </Menu.Item>
                 </Menu>
                 <style jsx>{`
                     .logo {

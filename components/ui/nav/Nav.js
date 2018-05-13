@@ -7,19 +7,12 @@ const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
 class Nav extends Component {
-    state = {
-        collapsed: false
-    };
-
-    onCollapse = collapsed => {
-        console.log(collapsed);
-        this.setState({ collapsed });
-    };
     render() {
+        const { router, children } = this.props;
         return (
             <Layout style={{ minHeight: '100vh' }}>
-                <TopNav />
-                <SideNav>{this.props.children}</SideNav>
+                <TopNav router={router} />
+                <SideNav router={router}>{children}</SideNav>
             </Layout>
         );
     }
