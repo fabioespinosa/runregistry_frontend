@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ROOT_URL } from './rootReducer';
+import runs from './runs.json';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS-ONLINE';
 const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
 const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL';
@@ -7,25 +8,30 @@ const HIDE_CONFIGURATION_MODAL = 'HIDE_CONFIGURATION_MODAL';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS';
 
 export function fetchInitialOnlineRuns(store) {
-    return axios
-        .get(`${ROOT_URL}/online/runs`)
-        .then(res => {
-            store.dispatch({
-                type: FETCH_INITIAL_RUNS,
-                payload: res.data
-            });
-        })
-        .catch(err => {
-            store.dispatch({
-                type: SHOW_NOTIFICATION,
-                payload: {
-                    notification_title:
-                        'An error occurred fetching initial runs',
-                    notification_message: err.response,
-                    notification_type: 'danger'
-                }
-            });
-        });
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(JSON.parse(runs));
+        }, 100);
+    });
+    // return axios
+    //     .get(`${ROOT_URL}/online/runs`)
+    //     .then(res => {
+    //         store.dispatch({
+    //             type: FETCH_INITIAL_RUNS,
+    //             payload: res.data
+    //         });
+    //     })
+    //     .catch(err => {
+    //         store.dispatch({
+    //             type: SHOW_NOTIFICATION,
+    //             payload: {
+    //                 notification_title:
+    //                     'An error occurred fetching initial runs',
+    //                 notification_message: err.response,
+    //                 notification_type: 'danger'
+    //             }
+    //         });
+    //     });
 }
 
 export const showConfigurationModal = configuration_modal_type => {

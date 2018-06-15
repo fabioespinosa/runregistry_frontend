@@ -6,6 +6,9 @@ import ClassTriggerConfiguration from './classTriggerConfiguration/ClassTriggerC
 import PreSelectionTriggerConfiguration from './preSelectionTriggerConfiguration/PreSelectionTriggerConfiguration';
 
 class ConfigurationModal extends Component {
+    state = {
+        loading: false
+    };
     render() {
         const {
             configuration_modal_visible,
@@ -19,6 +22,7 @@ class ConfigurationModal extends Component {
                 : configuration_modal_type === 'pre_selection_configuration'
                     ? 'Set automatic triggers for pre selection of runs'
                     : '';
+        const { loading } = this.state;
         return (
             <div>
                 <Modal
@@ -26,6 +30,27 @@ class ConfigurationModal extends Component {
                     visible={configuration_modal_visible}
                     onOk={hideConfigurationModal} // confirmLoading={confirmLoading}
                     onCancel={hideConfigurationModal}
+                    footer={[
+                        <Button key="back" onClick={hideConfigurationModal}>
+                            Cancel
+                        </Button>,
+                        <Button
+                            key="submit"
+                            type="primary"
+                            loading={loading}
+                            onClick={() => {
+                                this.setState({
+                                    loading: true
+                                });
+                                setTimeout(() => {
+                                    this.setState({ loading: false });
+                                    hideConfigurationModal();
+                                }, 700);
+                            }}
+                        >
+                            Ok
+                        </Button>
+                    ]}
                     width={900}
                 >
                     <ClassTriggerConfiguration />

@@ -9,7 +9,8 @@ const { TextArea } = Input;
 
 class ClassTriggerConfiguration extends Component {
     state = {
-        editor: false
+        editor: false,
+        loading: false
     };
     onEditorChange = (value, otherValue) => {
         console.log(value, otherValue);
@@ -81,8 +82,17 @@ class ClassTriggerConfiguration extends Component {
                 <div className="trigger_button">
                     {this.state.editor && (
                         <Button
+                            loading={this.state.loading}
                             type="primary"
-                            onClick={() => this.setState({ editor: false })}
+                            onClick={() => {
+                                this.setState({ loading: true });
+                                setTimeout(() => {
+                                    this.setState({ loading: false });
+                                    this.setState({
+                                        editor: false
+                                    });
+                                }, 800);
+                            }}
                         >
                             Save
                         </Button>

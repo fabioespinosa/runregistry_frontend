@@ -17,10 +17,6 @@ class Online extends Component {
     static async getInitialProps({ store, isServer }) {
         // Init auth
         console.log(fetchInitialOnlineRuns);
-        console.log(store.getState());
-        store.dispatch({
-            type: 'hola'
-        });
         // const promise = await fetchInitialOnlineRuns(store);
         // return fetchInitialOnlineRuns(store);
     }

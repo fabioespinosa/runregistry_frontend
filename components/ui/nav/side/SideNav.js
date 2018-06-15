@@ -37,7 +37,7 @@ class SideNav extends Component {
             <Layout hasSider={true}>
                 {show_sidebar && (
                     <Sider
-                        collapsible
+                        // collapsible
                         width={200}
                         style={{ background: '#fff' }}
                     >
@@ -48,7 +48,7 @@ class SideNav extends Component {
                             defaultSelectedKeys={[defaultSelectedKey]}
                             style={{ height: '100%', borderRight: 0 }}
                         >
-                            <SubMenu
+                            {/* <SubMenu
                                 key="runs"
                                 title={
                                     <span>
@@ -66,34 +66,34 @@ class SideNav extends Component {
                                     <Icon type="bulb" />
                                     LUMISECTIONS
                                 </span>
-                            </Menu.Item>
+                            </Menu.Item> */}
                             <SubMenu
-                                key="sub3"
+                                key="workspaces"
                                 title={
                                     <span>
                                         <Icon type="laptop" />
-                                        <span>WORKSPACE</span>
+                                        <span>WORKSPACES</span>
                                     </span>
                                 }
                             >
-                                <Menu.Item key="4">GLOBAL</Menu.Item>
-                                <Menu.Item key="5">BTAG</Menu.Item>
-                                <Menu.Item key="6">CASTOR</Menu.Item>
-                                <Menu.Item key="7">CSC</Menu.Item>
-                                <Menu.Item key="8">CTPPS</Menu.Item>
-                                <Menu.Item key="9">DT</Menu.Item>
-                                <Menu.Item key="10">ECAL</Menu.Item>
-                                <Menu.Item key="11">EGAMMA</Menu.Item>
-                                <Menu.Item key="12">HCAL</Menu.Item>
-                                <Menu.Item key="13">HLT</Menu.Item>
-                                <Menu.Item key="14">JETMET</Menu.Item>
-                                <Menu.Item key="15">L1T</Menu.Item>
-                                <Menu.Item key="16">LUMI</Menu.Item>
-                                <Menu.Item key="17">LUMI</Menu.Item>
-                                <Menu.Item key="18">MUON</Menu.Item>
-                                <Menu.Item key="19">RPC</Menu.Item>
-                                <Menu.Item key="20">TAU</Menu.Item>
-                                <Menu.Item key="21">TRACKER</Menu.Item>
+                                <Menu.Item key="global">GLOBAL</Menu.Item>
+                                <Menu.Item key="BTAG">BTAG</Menu.Item>
+                                <Menu.Item key="CASTOR">CASTOR</Menu.Item>
+                                <Menu.Item key="CSC">CSC</Menu.Item>
+                                <Menu.Item key="CTPPS">CTPPS</Menu.Item>
+                                <Menu.Item key="DT">DT</Menu.Item>
+                                <Menu.Item key="ECAL">ECAL</Menu.Item>
+                                <Menu.Item key="EGAMMA">EGAMMA</Menu.Item>
+                                <Menu.Item key="HCAL">HCAL</Menu.Item>
+                                <Menu.Item key="HLT">HLT</Menu.Item>
+                                <Menu.Item key="JETMET">JETMET</Menu.Item>
+                                <Menu.Item key="L1T">L1T</Menu.Item>
+                                <Menu.Item key="LUMI">LUMI</Menu.Item>
+                                <Menu.Item key="LUMI">LUMI</Menu.Item>
+                                <Menu.Item key="MUON">MUON</Menu.Item>
+                                <Menu.Item key="RPC">RPC</Menu.Item>
+                                <Menu.Item key="TAU">TAU</Menu.Item>
+                                <Menu.Item key="TRACKER">TRACKER</Menu.Item>
                             </SubMenu>
                         </Menu>
                     </Sider>

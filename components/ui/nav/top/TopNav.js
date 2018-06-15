@@ -47,8 +47,8 @@ class TopNav extends Component {
                     </Menu.Item>
                     <Menu.Item key="offline">
                         <Link
-                            as="/offline/runs/all"
-                            href="/offline?type=offline&section=runs&run_filter=all"
+                            as="/offline/workspaces/global"
+                            href="/offline?type=offline&section=workspaces&run_filter=global"
                         >
                             <a>OFFLINE</a>
                         </Link>
