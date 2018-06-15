@@ -47,14 +47,14 @@ const requestData = (pageSize, page, sorted, filtered) => {
     );
 
     if (rawData.length === 0) {
-      axios.get(`${ROOT_URL}/online/runs`).then(res => {
-        // rawData = res.data;
-        console.log(runs);
-        rawData = runs;
-        resolve({
-          rows: rawData.slice(pageSize * page, pageSize * page + pageSize),
-          pages: Math.ceil(filteredData.length / pageSize)
-        });
+      // axios.get(`${ROOT_URL}/online/runs`).then(res => {
+      // rawData = res.data;
+      console.log(runs);
+      rawData = runs;
+      resolve({
+        rows: rawData.slice(pageSize * page, pageSize * page + pageSize),
+        pages: Math.ceil(filteredData.length / pageSize)
+        // });
       });
     } else {
       // You must return an object containing the rows of the current page, and optionally the total pages number.
