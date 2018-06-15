@@ -16,12 +16,12 @@ app.prepare().then(() => {
 
     server.get('/:type/:section/:run_filter', (req, res) => {
         const actual_page = '/online';
-        app.render(req, res, actual_page, req.params);
+        app.render(req, res, `/${req.params.type}`, req.params);
     });
 
     server.get('/:type/:section', (req, res) => {
         const actual_page = '/online';
-        app.render(req, res, actual_page, req.params);
+        app.render(req, res, `/${req.params.type}`, req.params);
     });
 
     server.get('*', (req, res) => {

@@ -5,6 +5,8 @@ import Router from 'next/router';
 import Link from 'next/link';
 import { Layout, Breadcrumb } from 'antd';
 
+import { fetchInitialOnlineRuns } from '../ducks/online';
+
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
@@ -12,10 +14,15 @@ import RunTable from '../components/online/run_table/RunTableReactTable';
 const { Content } = Layout;
 
 class Online extends Component {
-    static getInitialProps({ store, isServer }) {
+    static async getInitialProps({ store, isServer }) {
         // Init auth
-
-        return {};
+        console.log(fetchInitialOnlineRuns);
+        console.log(store.getState());
+        store.dispatch({
+            type: 'hola'
+        });
+        // const promise = await fetchInitialOnlineRuns(store);
+        // return fetchInitialOnlineRuns(store);
     }
 
     render() {
@@ -26,7 +33,7 @@ class Online extends Component {
             }
         } = this.props;
         return (
-            <Page router={router}>
+            <Page router={router} show_sidebar={false}>
                 <BreadcrumbCmp router={router}>
                     <Breadcrumb.Item>{type}</Breadcrumb.Item>
                     <Breadcrumb.Item>{section}</Breadcrumb.Item>
@@ -47,4 +54,9 @@ class Online extends Component {
     }
 }
 
-export default withRouter(connect(null, null)(Online));
+export default withRouter(
+    connect(
+        null,
+        null
+    )(Online)
+);

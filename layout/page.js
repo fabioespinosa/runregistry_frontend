@@ -34,7 +34,9 @@ const Page = props => (
             />
             <link rel="stylesheet" href="/_next/static/style.css" />
         </Head>
-        <Nav router={props.router}>{props.children}</Nav>
+        <Nav router={props.router} show_sidebar={props.show_sidebar}>
+            {props.children}
+        </Nav>
         <style jsx global>{`
             * {
                 margin: 0;

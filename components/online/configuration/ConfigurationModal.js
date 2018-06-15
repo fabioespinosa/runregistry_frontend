@@ -2,23 +2,41 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/online';
+import ClassTriggerConfiguration from './classTriggerConfiguration/ClassTriggerConfiguration';
+import PreSelectionTriggerConfiguration from './preSelectionTriggerConfiguration/PreSelectionTriggerConfiguration';
 
 class ConfigurationModal extends Component {
     render() {
         const {
             configuration_modal_visible,
-            hideConfigurationModal
+            hideConfigurationModal,
+            children,
+            configuration_modal_type
         } = this.props;
+        const title =
+            configuration_modal_type === 'class_configuration'
+                ? 'Set Automatic triggers for class of run selection'
+                : configuration_modal_type === 'pre_selection_configuration'
+                    ? 'Set automatic triggers for pre selection of runs'
+                    : '';
         return (
             <div>
                 <Modal
-                    title="Configuration of Online RR"
+                    title={title}
                     visible={configuration_modal_visible}
                     onOk={hideConfigurationModal} // confirmLoading={confirmLoading}
                     onCancel={hideConfigurationModal}
                     width={900}
                 >
-                    <p>CONFIGURATION...</p>
+                    <ClassTriggerConfiguration />
+
+                    {/* // {configuration_modal_type === 'class_configuration' && (
+                    //     <ClassTriggerConfiguration />
+                    // )}
+                    // {configuration_modal_type ===
+                    //     'pre_selection_configuration' && (
+                    //     <PreSelectionTriggerConfiguration />
+                    // )} */}
                 </Modal>
             </div>
         );
@@ -26,11 +44,13 @@ class ConfigurationModal extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state);
     return {
-        configuration_modal_visible: state.online.ui.configuration_modal_visible
+        configuration_modal_visible:
+            state.online.ui.configuration_modal_visible,
+        configuration_modal_type: state.online.ui.configuration_modal_type
     };
 };
-export default connect(mapStateToProps, { hideConfigurationModal })(
-    ConfigurationModal
-);
+export default connect(
+    mapStateToProps,
+    { hideConfigurationModal }
+)(ConfigurationModal);
