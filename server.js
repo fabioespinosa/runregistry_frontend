@@ -24,13 +24,14 @@ app.prepare().then(() => {
     // const router = express.Router();
 
     server.get('*', (req, res, next) => {
-        console.log(req.headers);
+        // console.log(req.headers);
         next();
     });
 
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
-        res.redirect('/online/runs/all');
+        console.log('pasa');
+        res.redirect('/runtest/online/runs/all');
     });
 
     server.get('/:type/:section/:run_filter', (req, res) => {

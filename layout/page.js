@@ -21,19 +21,6 @@ Router.onRouteChangeError = () => Progress.done();
  */
 const Page = props => (
     <div>
-        <Head>
-            <link
-                rel="stylesheet"
-                type="text/css"
-                href="/static/nprogress.css"
-            />
-            <meta charSet="utf-8" />
-            <meta
-                name="viewport"
-                content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
-            />
-            <link rel="stylesheet" href="/_next/static/style.css" />
-        </Head>
         <Nav router={props.router} show_sidebar={props.show_sidebar}>
             {props.children}
         </Nav>
