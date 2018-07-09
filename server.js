@@ -21,33 +21,33 @@ const server_options = {
 
 app.prepare().then(() => {
     const server = express();
-    const router = express.Router();
+    // const router = express.Router();
 
-    router.get('*', (req, res, next) => {
+    server.get('*', (req, res, next) => {
         console.log(req.headers);
         next();
     });
 
     // Redirects primary url to runs/all
-    router.get('/', (req, res) => {
-        res.redirect('runtest/online/runs/all');
+    server.get('/', (req, res) => {
+        res.redirect('/online/runs/all');
     });
 
-    router.get('/:type/:section/:run_filter', (req, res) => {
+    server.get('/:type/:section/:run_filter', (req, res) => {
         const actual_page = '/online';
         app.render(req, res, `/${req.params.type}`, req.params);
     });
 
-    router.get('/:type/:section', (req, res) => {
+    server.get('/:type/:section', (req, res) => {
         const actual_page = '/online';
         app.render(req, res, `/${req.params.type}`, req.params);
     });
 
-    router.get('*', (req, res) => {
+    server.get('*', (req, res) => {
         return handle(req, res);
     });
 
-    server.use('/runtest', router);
+    // server.use('/runtest', router);
 
     const https_server = https.createServer(server_options, server);
     https_server.listen(https_port, '0.0.0.0', err => {

@@ -6,4 +6,10 @@ if (typeof require !== 'undefined') {
     require.extensions['.css'] = file => {};
 }
 
-module.exports = withCss();
+module.exports = withCss({
+    assetPrefix: '/runtest', // affects page bundles and app/commons/vendor scripts
+    webpack: config => {
+        config.output.publicPath = `/foo${config.output.publicPath}`; // affects 'chunks'
+        return config;
+    }
+});
