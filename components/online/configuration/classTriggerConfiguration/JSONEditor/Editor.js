@@ -5,45 +5,15 @@ import 'brace/theme/github';
 import 'brace/theme/xcode';
 import AceEditor from 'react-ace';
 
-const JSONEditor = props => (
+const JSONEditor = ({ children, lan, theme, onChange, value }) => (
     <div>
+        {children}
         <AceEditor
-            mode={props.lan}
-            theme={props.theme}
-            onChange={props.onChange}
+            mode={lan}
+            theme={theme}
+            onChange={onChange}
             name="UNIQUE_ID_OF_DIV"
-            value={`{
-   "ECAL": {
-      "good": [
-         {
-            "type": "and",
-            "condition": [
-               {
-                  "type": ">",
-                  "identifier": "events",
-                  "value": 100
-               },
-               {
-                  "type": "<",
-                  "identifier": "runLiveLumi",
-                  "value": 80
-               }
-            ]
-         },
-         {
-            "type": "or",
-            "condition": [
-               {
-                  "type": "=",
-                  "identifier": "beam1Stable",
-                  "value": "false"
-               }
-            ]
-         }
-      ],
-      "bad": []
-   }
-}`}
+            value={value}
             editorProps={{
                 $blockScrolling: true
             }}

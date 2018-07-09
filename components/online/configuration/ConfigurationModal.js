@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
-import { hideConfigurationModal } from '../../../ducks/online';
+import { hideConfigurationModal } from '../../../ducks/online/ui';
 import ClassTriggerConfiguration from './classTriggerConfiguration/ClassTriggerConfiguration';
 import PreSelectionTriggerConfiguration from './preSelectionTriggerConfiguration/PreSelectionTriggerConfiguration';
 
@@ -31,24 +31,13 @@ class ConfigurationModal extends Component {
                     onOk={hideConfigurationModal} // confirmLoading={confirmLoading}
                     onCancel={hideConfigurationModal}
                     footer={[
-                        <Button key="back" onClick={hideConfigurationModal}>
-                            Cancel
-                        </Button>,
                         <Button
                             key="submit"
                             type="primary"
                             loading={loading}
-                            onClick={() => {
-                                this.setState({
-                                    loading: true
-                                });
-                                setTimeout(() => {
-                                    this.setState({ loading: false });
-                                    hideConfigurationModal();
-                                }, 700);
-                            }}
+                            onClick={hideConfigurationModal}
                         >
-                            Ok
+                            Close
                         </Button>
                     ]}
                     width={900}

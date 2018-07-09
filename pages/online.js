@@ -5,7 +5,7 @@ import Router from 'next/router';
 import Link from 'next/link';
 import { Layout, Breadcrumb } from 'antd';
 
-import { fetchInitialOnlineRuns } from '../ducks/online';
+import { fetchInitialOnlineRuns } from '../ducks/online/runs';
 
 import store from '../store/configure-store';
 import Page from '../layout/page';
@@ -16,7 +16,7 @@ const { Content } = Layout;
 class Online extends Component {
     static async getInitialProps({ store, isServer }) {
         // Init auth
-        console.log(fetchInitialOnlineRuns);
+        // console.log(fetchInitialOnlineRuns);
         // const promise = await fetchInitialOnlineRuns(store);
         // return fetchInitialOnlineRuns(store);
     }

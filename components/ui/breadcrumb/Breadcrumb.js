@@ -11,7 +11,7 @@ import {
     Progress
 } from 'antd';
 
-import { showConfigurationModal } from '../../../ducks/online';
+import { showConfigurationModal } from '../../../ducks/online/ui';
 
 class BreadcrumbCmp extends Component {
     state = {
@@ -98,4 +98,7 @@ class BreadcrumbCmp extends Component {
     }
 }
 
-export default connect(null, { showConfigurationModal })(BreadcrumbCmp);
+export default connect(
+    null,
+    { showConfigurationModal }
+)(BreadcrumbCmp);

@@ -1,7 +1,19 @@
 import React, { Component } from 'react';
-import { Button, Input } from 'antd';
+import { connect } from 'react-redux';
+import { Button, Input, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
+import {
+    fetchClassClassifiers,
+    newClassClassifier,
+    editClassClassifier,
+    deleteClassClassifier
+} from '../../../../ducks/online/classifiers/class/classifiers';
+import {
+    editClassClassifierIntent,
+    newClassClassifierIntent,
+    hideJsonEditor
+} from '../../../../ducks/online/classifiers/class/ui';
 const TextEditor = dynamic(import('./JSONEditor/Editor'), {
     ssr: false
 });
@@ -9,41 +21,92 @@ const { TextArea } = Input;
 
 class ClassTriggerConfiguration extends Component {
     state = {
-        editor: false,
-        loading: false
+        loading: false,
+        json_editor_value: null
     };
+    componentDidMount() {
+        this.props.fetchClassClassifiers();
+    }
+
     onEditorChange = (value, otherValue) => {
-        console.log(value, otherValue);
+        this.setState({ json_editor_value: value });
+    };
+
+    saveClassClassifier = () => {
+        const valid_js_object = JSON.parse(this.state.json_editor_value);
+        // Check if user was editing or creating a new Trigger:
+        if (this.props.current_editing_classifier !== null) {
+            this.props.editClassClassifier(valid_js_object);
+        } else {
+            this.props.newClassClassifier(valid_js_object);
+        }
     };
     render() {
-        const data = [
-            { priority: 1, name: 'collission', json_value: long_string },
-            { priority: 2, name: 'commissioning', json_value: long_string },
-            { priority: 3, name: 'cosmics', json_value: long_string }
-        ];
         const columns = [
+            {
+                Header: 'id',
+                width: 50,
+                accessor: 'id',
+                getProps: () => ({ style: { textAlign: 'center' } })
+            },
             {
                 Header: 'Priority',
                 accessor: 'priority',
-                width: 100
+                width: 80,
+                getProps: () => ({ style: { textAlign: 'center' } })
             },
             {
-                Header: 'Name',
-                accessor: 'name',
-                width: 100
+                Header: 'Enabled',
+                accessor: 'enabled',
+                width: 80,
+                Cell: row => (
+                    <div style={{ textAlign: 'center' }}>
+                        <Icon
+                            style={{
+                                margin: '0 auto',
+                                color: row.value ? 'green' : 'red'
+                            }}
+                            type={row.value ? 'check-circle' : 'close-circle'}
+                        />
+                    </div>
+                )
             },
-            {
-                Header: 'JSON string',
-                accessor: 'json_value',
-                width: 500
-            },
+            { Header: 'JSON string', accessor: 'classifier', width: 250 },
+            { Header: 'Created at', accessor: 'createdAt', width: 100 },
+            { Header: 'Updated at', accessor: 'updatedAt', width: 100 },
             {
                 Header: 'Edit',
                 width: 100,
                 Cell: row => (
-                    <div>
-                        <a onClick={() => this.setState({ editor: true })}>
+                    <div style={{ textAlign: 'center' }}>
+                        <a
+                            onClick={() => {
+                                this.props.editClassClassifierIntent(
+                                    row.original
+                                );
+                                this.setState({
+                                    json_editor_value: row.original.classifier
+                                });
+                            }}
+                        >
                             Edit
+                        </a>
+                    </div>
+                )
+            },
+            {
+                Header: 'Delete',
+                width: 100,
+                Cell: row => (
+                    <div style={{ textAlign: 'center' }}>
+                        <a
+                            onClick={() =>
+                                this.props.deleteClassClassifier(
+                                    row.original.id
+                                )
+                            }
+                        >
+                            Delete
                         </a>
                     </div>
                 )
@@ -52,52 +115,66 @@ class ClassTriggerConfiguration extends Component {
         return (
             <div>
                 <p>Current criteria:</p>
-                {/* <TextArea rows={7} /> */}
                 <div>
                     <ReactTable
                         columns={columns}
-                        data={data}
-                        defaultPageSize={4}
-                        showPagination={false}
+                        data={this.props.classifiers}
+                        defaultPageSize={10}
+                        showPagination={this.props.classifiers.length > 10}
                         optionClassName="react-table"
                     />
                 </div>
+                <h3>
+                    {this.props.editor && this.state.json_editor_value === ''
+                        ? 'Adding new trigger'
+                        : this.state.json_editor_value !== null
+                            ? 'Editing trigger'
+                            : ''}
+                </h3>
                 <div className="trigger_button">
-                    {!this.state.editor && (
+                    {!this.props.editor && (
                         <Button
                             type="primary"
-                            onClick={() => this.setState({ editor: true })}
+                            onClick={() => {
+                                this.props.newClassClassifierIntent();
+                                this.setState({
+                                    json_editor_value: ''
+                                });
+                            }}
                         >
                             Add Trigger
                         </Button>
                     )}
                 </div>
-                {this.state.editor && (
+                {this.props.editor && (
                     <TextEditor
                         onChange={this.onEditorChange}
+                        value={this.state.json_editor_value}
                         lan="javascript"
                         theme="github"
                     />
                 )}
-                <div className="trigger_button">
-                    {this.state.editor && (
+                {this.props.editor && (
+                    <div className="trigger_button">
+                        <span className="cancel_button">
+                            <Button
+                                onClick={() => {
+                                    this.setState({ json_editor_value: null });
+                                    this.props.hideJsonEditor();
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </span>
                         <Button
                             loading={this.state.loading}
                             type="primary"
-                            onClick={() => {
-                                this.setState({ loading: true });
-                                setTimeout(() => {
-                                    this.setState({ loading: false });
-                                    this.setState({
-                                        editor: false
-                                    });
-                                }, 800);
-                            }}
+                            onClick={this.saveClassClassifier}
                         >
                             Save
                         </Button>
-                    )}
-                </div>
+                    </div>
+                )}
 
                 <style jsx>{`
                     .trigger_button {
@@ -107,8 +184,8 @@ class ClassTriggerConfiguration extends Component {
                         justify-content: flex-end;
                     }
 
-                    div :global(.react-table) {
-                        color: red !important;
+                    .cancel_button {
+                        margin-right: 10px;
                     }
                 `}</style>
             </div>
@@ -116,7 +193,27 @@ class ClassTriggerConfiguration extends Component {
     }
 }
 
-export default ClassTriggerConfiguration;
+const mapStateToProps = state => {
+    return {
+        classifiers: state.online.classifiers.class.classifiers,
+        editor: state.online.classifiers.class.ui.json_editor,
+        editor_save_loading:
+            state.online.classifiers.class.ui.editor_save_loading
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    {
+        fetchClassClassifiers,
+        newClassClassifier,
+        editClassClassifier,
+        deleteClassClassifier,
+        editClassClassifierIntent,
+        newClassClassifierIntent,
+        hideJsonEditor
+    }
+)(ClassTriggerConfiguration);
 
 const long_string = `{
    "ECAL": {

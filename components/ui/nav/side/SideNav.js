@@ -89,7 +89,6 @@ class SideNav extends Component {
                                 <Menu.Item key="JETMET">JETMET</Menu.Item>
                                 <Menu.Item key="L1T">L1T</Menu.Item>
                                 <Menu.Item key="LUMI">LUMI</Menu.Item>
-                                <Menu.Item key="LUMI">LUMI</Menu.Item>
                                 <Menu.Item key="MUON">MUON</Menu.Item>
                                 <Menu.Item key="RPC">RPC</Menu.Item>
                                 <Menu.Item key="TAU">TAU</Menu.Item>
