@@ -30,7 +30,7 @@ app.prepare().then(() => {
 
     // Redirects primary url to runs/all
     router.get('/', (req, res) => {
-        res.redirect('/online/runs/all');
+        res.redirect('runtest/online/runs/all');
     });
 
     router.get('/:type/:section/:run_filter', (req, res) => {
