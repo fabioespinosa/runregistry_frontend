@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Link from 'next/link';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
@@ -11,8 +12,10 @@ class TopNav extends Component {
         const {
             router: {
                 query: { type, section, run_filter }
-            }
+            },
+            user
         } = this.props;
+        console.log(user.adfs_fullname);
         return (
             <Header className="header">
                 <Menu
@@ -24,7 +27,7 @@ class TopNav extends Component {
                     <Menu.Item key="0">
                         <img
                             className="logo"
-                            src="/static/images/cms_logo.png"
+                            src="/runtest/static/images/cms_logo.png"
                         />
                         <h4
                             style={{
@@ -39,7 +42,7 @@ class TopNav extends Component {
                     </Menu.Item>
                     <Menu.Item key="online">
                         <Link
-                            as="/online/runs/all"
+                            as="/runtest/online/runs/all"
                             href="/online?type=online&section=runs&run_filter=all"
                         >
                             <a>ONLINE</a>
@@ -47,21 +50,32 @@ class TopNav extends Component {
                     </Menu.Item>
                     <Menu.Item key="offline">
                         <Link
-                            as="/offline/workspaces/global"
+                            as="/runtest/offline/workspaces/global"
                             href="/offline?type=offline&section=workspaces&run_filter=global"
                         >
                             <a>OFFLINE</a>
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="user">
+                    {/* <Menu.Item key="user">
                         <Link href="/user/runs/all">
                             <a>USER</a>
                         </Link>
-                    </Menu.Item>
+                    </Menu.Item> */}
                 </Menu>
-                <style jsx>{`
+                <div>
+                    <h3 className="user_name">{user.adfs_fullname}</h3>
+                </div>
+                <style jsx global>{`
                     .logo {
                         width: 50px;
+                    }
+
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                    .user_name {
+                        color: white;
                     }
                 `}</style>
             </Header>
@@ -69,4 +83,10 @@ class TopNav extends Component {
     }
 }
 
-export default TopNav;
+const mapStateToProps = state => {
+    return {
+        user: state.info
+    };
+};
+
+export default connect(mapStateToProps)(TopNav);

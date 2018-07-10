@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import online from './online/index';
+import info from './info';
 
 export const ROOT_URL =
     process.env.NODE_ENV === 'production'
@@ -7,6 +8,7 @@ export const ROOT_URL =
         : 'http://localhost:3000';
 
 const rootReducer = combineReducers({
+    info,
     online
 });
 

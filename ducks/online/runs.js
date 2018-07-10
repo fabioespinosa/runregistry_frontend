@@ -1,7 +1,7 @@
-export function fetchInitialOnlineRuns(store) {
+export function fetchInitialOnlineRuns(store, params) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            resolve(JSON.parse(runs));
+            resolve();
         }, 100);
     });
     // return axios

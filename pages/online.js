@@ -5,6 +5,7 @@ import Router from 'next/router';
 import Link from 'next/link';
 import { Layout, Breadcrumb } from 'antd';
 
+import { initializeUser } from '../ducks/info';
 import { fetchInitialOnlineRuns } from '../ducks/online/runs';
 
 import store from '../store/configure-store';
@@ -14,11 +15,13 @@ import RunTable from '../components/online/run_table/RunTableReactTable';
 const { Content } = Layout;
 
 class Online extends Component {
-    static async getInitialProps({ store, isServer }) {
+    static getInitialProps({ store, query, isServer }) {
+        // console.log(query);
         // Init auth
         // console.log(fetchInitialOnlineRuns);
         // const promise = await fetchInitialOnlineRuns(store);
-        // return fetchInitialOnlineRuns(store);
+        initializeUser(store, query);
+        // return fetchInitialOnlineRuns(store, query);
     }
 
     render() {
@@ -26,10 +29,11 @@ class Online extends Component {
         const {
             router: {
                 query: { type, section, run_filter }
-            }
+            },
+            user
         } = this.props;
         return (
-            <Page router={router} show_sidebar={false}>
+            <Page router={router} show_sidebar={false} user={user}>
                 <BreadcrumbCmp router={router}>
                     <Breadcrumb.Item>{type}</Breadcrumb.Item>
                     <Breadcrumb.Item>{section}</Breadcrumb.Item>
@@ -50,9 +54,15 @@ class Online extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        user: state.info
+    };
+};
+
 export default withRouter(
     connect(
-        null,
+        mapStateToProps,
         null
     )(Online)
 );

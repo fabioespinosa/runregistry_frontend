@@ -19,7 +19,7 @@ export default class MyDocument extends Document {
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href="/static/nprogress.css"
+                        href="/runtest/static/nprogress.css"
                     />
                     <meta charSet="utf-8" />
                     <meta

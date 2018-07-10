@@ -19,7 +19,7 @@ class SideNav extends Component {
         } else {
             Router.push(
                 `/${type}?type=${type}&section=${keyPath[1]}&run_filter=${key}`,
-                `/${type}/${keyPath[1]}/${key}`
+                `/runtest/${type}/${keyPath[1]}/${key}`
             );
         }
     }

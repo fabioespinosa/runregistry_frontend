@@ -30,13 +30,13 @@ app.prepare().then(() => {
 
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
-        console.log('pasa');
         res.redirect('/runtest/online/runs/all');
     });
 
     server.get('/:type/:section/:run_filter', (req, res) => {
         const actual_page = '/online';
-        app.render(req, res, `/${req.params.type}`, req.params);
+        const params = { ...req.headers, ...req.params };
+        app.render(req, res, `/${req.params.type}`, params);
     });
 
     server.get('/:type/:section', (req, res) => {
