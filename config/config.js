@@ -22,4 +22,5 @@ module.exports =
             ? config['production']
             : config['development'];
 
+console.log(process.env.NODE_ENV);
 console.log(module.exports);
