@@ -7,7 +7,8 @@
         "dev": "NODE_ENV=development node server",
         "build": "next build",
         "start": "next build && NODE_ENV=production node server",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "pm2-next": "next build && pm2 start ./node_modules/next/dist/bin/next-start"
     },
     "keywords": [],
     "author": "",
@@ -20,6 +21,7 @@
         "babel-plugin-import": "^1.7.0",
         "brace": "^0.11.1",
         "express": "^4.16.3",
+        "forever": "^0.15.3",
         "lodash": "^4.17.10",
         "material-ui": "^1.0.0-beta.47",
         "micro": "^9.3.2",
@@ -27,6 +29,7 @@
         "next": "^6.1.1",
         "next-redux-wrapper": "^2.0.0-beta.6",
         "nprogress": "^0.2.0",
+        "pm2": "^3.0.0",
         "react": "^16.3.2",
         "react-ace": "^6.1.1",
         "react-dom": "^16.3.2",
