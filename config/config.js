@@ -4,23 +4,16 @@ const config = {
         root_url: '',
         api_url: 'http://localhost:7002'
     },
-    test: {
+    production: {
         root_url_prefix: '/runtest',
         root_url: '',
         api_url: 'https://cms-pdmv-dev.cern.ch/runregistry_api'
-    },
-    production: {
-        root_url_prefix: '',
-        root_url: ''
     }
 };
 
-module.exports =
-    process.env.NODE_ENV === 'test'
-        ? config['test']
-        : process.env.NODE_ENV === 'production'
-            ? config['production']
-            : config['development'];
+exports.root_url_prefix =
+    config[process.env.NODE_ENV || 'development']['root_url_prefix'];
 
-console.log(process.env.NODE_ENV);
-console.log(module.exports);
+exports.api_url = config[process.env.NODE_ENV || 'development']['api_url'];
+
+console.log(config[process.env.NODE_ENV || 'development']);
