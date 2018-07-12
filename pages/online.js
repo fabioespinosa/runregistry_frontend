@@ -21,7 +21,7 @@ class Online extends Component {
         // console.log(fetchInitialOnlineRuns);
         // const promise = await fetchInitialOnlineRuns(store);
         initializeUser(store, query);
-        // return fetchInitialOnlineRuns(store, query);
+        return fetchInitialOnlineRuns(store, query);
     }
 
     render() {

@@ -1,13 +1,18 @@
 const config = {
-    development: {
+    development2: {
         root_url_prefix: '',
         root_url: '',
         api_url: 'http://localhost:7002'
     },
+    development: {
+        root_url_prefix: '/runtest',
+        root_url: '',
+        api_url: 'https://cms-pdmv-dev.cern.ch/runtest_api'
+    },
     production: {
         root_url_prefix: '/runtest',
         root_url: '',
-        api_url: 'https://cms-pdmv-dev.cern.ch/runregistry_api'
+        api_url: 'https://cms-pdmv-dev.cern.ch/runtest_api'
     }
 };
 
