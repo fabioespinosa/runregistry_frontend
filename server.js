@@ -56,8 +56,8 @@ app.prepare().then(() => {
         console.log(`> HTTPS listening in port ${https_port}`);
     });
 
-    server.listen(port, err => {
-        if (err) throw err;
-        console.log(`> Ready on http://localhost:${port}`);
-    });
+    // server.listen(port, err => {
+    //     if (err) throw err;
+    //     console.log(`> Ready on http://localhost:${port}`);
+    // });
 });
