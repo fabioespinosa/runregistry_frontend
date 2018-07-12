@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "NODE_ENV=development node server",
         "build": "next build",
-        "start": "next build && NODE_ENV=test node server",
+        "start": "next build && NODE_ENV=production node server",
         "test": "echo \"Error: no test specified\" && exit 1",
         "pm2-next": "next build && pm2 start ./node_modules/next/dist/bin/next-start"
     },
