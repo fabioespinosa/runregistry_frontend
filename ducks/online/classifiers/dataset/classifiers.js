@@ -1,6 +1,6 @@
 // COPIED FROM CLASS CLASSIFIERS
 import axios from 'axios';
-import { ROOT_URL } from '../../../rootReducer';
+import { api_url } from '../../../../config/config';
 const FETCH_DATASET_CLASSIFIERS = 'FETCH_DATASET_CLASSIFIERS';
 const NEW_CLASS_CLASSIFIER = 'NEW_CLASS_CLASSIFIER';
 const EDIT_CLASS_CLASSIFIER = 'EDIT_CLASS_CLASSIFIER';
@@ -8,13 +8,13 @@ const DELETE_CLASS_CLASSIFIER = 'DELETE_CLASS_CLASSIFIER';
 
 export const fetchClassClassifiers = () => async dispatch => {
     const { data: classifiers } = await axios.get(
-        `${ROOT_URL}/classifiers/class`
+        `${api_url}/classifiers/class`
     );
     dispatch({ type: FETCH_DATASET_CLASSIFIERS, payload: classifiers });
 };
 
 export const newClassClassifier = new_classifier => async dispatch => {
-    const { data: classifier } = await axios.post(`${ROOT_URL}/classifiers`, {
+    const { data: classifier } = await axios.post(`${api_url}/classifiers`, {
         classifier: new_classifier,
         // This are for testing:
         priority: 1,

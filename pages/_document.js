@@ -1,4 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document';
+import { root_url_prefix } from '../config/config';
 
 export default class MyDocument extends Document {
     static async getInitialProps(ctx) {
@@ -19,7 +20,9 @@ export default class MyDocument extends Document {
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href="/runtest/static/nprogress.css"
+                        href={`${
+                            this.props.__NEXT_DATA__.assetPrefix
+                        }/static/nprogress.css`}
                     />
                     <meta charSet="utf-8" />
                     <meta

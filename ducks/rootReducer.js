@@ -4,8 +4,8 @@ import info from './info';
 
 export const ROOT_URL =
     process.env.NODE_ENV === 'production'
-        ? 'https://api.onlinerunregistry.cern.ch'
-        : 'http://localhost:3000';
+        ? 'https://cms-pdmv-dev.cern.ch/runregistry_api'
+        : 'http://localhost:7002';
 
 const rootReducer = combineReducers({
     info,

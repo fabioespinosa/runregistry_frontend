@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
 import { Layout, Menu, Icon } from 'antd';
+import { root_url_prefix } from '../../../../config/config';
+
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
@@ -19,7 +21,7 @@ class SideNav extends Component {
         } else {
             Router.push(
                 `/${type}?type=${type}&section=${keyPath[1]}&run_filter=${key}`,
-                `/runtest/${type}/${keyPath[1]}/${key}`
+                `${root_url_prefix}/${type}/${keyPath[1]}/${key}`
             );
         }
     }

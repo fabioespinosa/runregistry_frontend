@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import { Icon } from 'antd';
 import _ from 'lodash';
 import { makeData, Logo, Tips } from './Utils';
-import { ROOT_URL } from '../../../ducks/rootReducer';
+import { api_url } from '../../../ducks/rootReducer';
 import { toggleTableFilters } from '../../../ducks/online/ui';
 import runs from '../../../ducks/runs.json';
 
@@ -47,7 +47,7 @@ const requestData = (pageSize, page, sorted, filtered) => {
         );
 
         if (rawData.length === 0) {
-            // axios.get(`${ROOT_URL}/online/runs`).then(res => {
+            // axios.get(`${api_url}/online/runs`).then(res => {
             // rawData = res.data;
             console.log(runs);
             rawData = runs;
