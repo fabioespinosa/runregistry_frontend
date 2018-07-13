@@ -16,11 +16,9 @@ import 'react-table/react-table.css';
 let rawData = [];
 
 const requestData = (pageSize, page, sorted, filtered, runs) => {
-    console.log(pageSize, page, sorted, filtered, runs);
     return new Promise((resolve, reject) => {
         // You can retrieve your data however you want, in this case, we will just use some local data.
         let filteredData = rawData;
-        console.log(filteredData);
 
         // You can use the filters in your request, but you are responsible for applying them.
         if (filtered.length) {
@@ -49,7 +47,6 @@ const requestData = (pageSize, page, sorted, filtered, runs) => {
         if (rawData.length === 0) {
             // axios.get(`${api_url}/online/runs`).then(res => {
             // rawData = res.data;
-            console.log(runs);
             rawData = runs;
             resolve({
                 rows: rawData.slice(
@@ -207,8 +204,7 @@ return (
 }
 
 const mapStateToProps = state => {
-	console.log(state);    
-return {
+    return {
         filterable: state.online.ui.table.filterable,
         runs: state.online.runs
     };

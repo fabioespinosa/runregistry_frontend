@@ -6,10 +6,9 @@ import { api_url } from '../../config/config';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 
 export function fetchInitialOnlineRuns(store, query, isServer) {
-    console.log(query.cookie);
     let url = api_url;
     if (isServer) {
-	url = 'http://localhost:7003'
+        url = 'http://localhost:7003'
     }
     return axios
         .get(`${url}/runs`, {
@@ -35,7 +34,7 @@ export function fetchInitialOnlineRuns(store, query, isServer) {
 
 const INITIAL_STATE = [];
 
-export default function(state = INITIAL_STATE, action) {
+export default function (state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
         case FETCH_INITIAL_RUNS:
