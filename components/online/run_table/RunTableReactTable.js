@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { makeData, Logo, Tips } from './Utils';
 import { api_url } from '../../../ducks/rootReducer';
 import { toggleTableFilters } from '../../../ducks/online/ui';
-import runs from '../../../ducks/runs.json';
+// import runs from '../../../ducks/runs.json';
 
 // Import React Table
 import ReactTable from 'react-table';
@@ -15,7 +15,7 @@ import 'react-table/react-table.css';
 
 let rawData = [];
 
-const requestData = (pageSize, page, sorted, filtered) => {
+const requestData = (pageSize, page, sorted, filtered, runs) => {
     console.log(pageSize, page, sorted, filtered);
     return new Promise((resolve, reject) => {
         // You can retrieve your data however you want, in this case, we will just use some local data.
@@ -70,7 +70,7 @@ const requestData = (pageSize, page, sorted, filtered) => {
             };
 
             // Here we'll simulate a server response with 500ms of delay.
-            setTimeout(() => resolve(res), 500);
+            setTimeout(() => resolve(res), 0);
         }
     });
 };
@@ -94,7 +94,8 @@ class App extends React.Component {
             state.pageSize,
             state.page,
             state.sorted,
-            state.filtered
+            state.filtered,
+            this.props.runs
         ).then(res => {
             // Now just get the rows of data to your React Table (and update anything else like total pages or loading)
             this.setState({
@@ -109,91 +110,104 @@ class App extends React.Component {
         const { filterable } = this.props;
         let columns = [
             {
-                Header: 'Number',
-                accessor: 'RUNNUMBER'
+                Header: 'Run Number',
+                accessor: 'run_number'
             },
             { Header: 'LHC Fill', accessor: 'LHCFILL' },
-            { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },
-            { Header: 'B2 stable', accessor: 'BEAM2_STABLE' },
-            { Header: 'B-Field', accessor: 'BFIELD' },
-            { Header: 'Events', accessor: 'EVENTS' },
-            { Header: 'Started', accessor: 'STARTTIME' },
-            { Header: 'Stopped', accessor: 'STOPTIME' },
+            // { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },
+            // { Header: 'B2 stable', accessor: 'BEAM2_STABLE' },
+            { Header: 'B-Field', accessor: 'b_field' },
+            // { Header: 'Events', accessor: 'EVENTS' },
+            { Header: 'Started', accessor: 'start_time' },
+            // { Header: 'Stopped', accessor: 'STOPTIME' },
             { Header: 'Duration', accessor: 'duration' },
             {
                 Header: 'Hlt Key Description',
-                accessor: 'HLTKEYDESCRIPTION'
+                accessor: 'hlt_key'
             },
-            { Header: 'Class', accessor: 'class' },
-            { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
-            { Header: 'TEC+ on', accessor: 'TECP_READY' },
-            { Header: 'TEC- on', accessor: 'TECM_READY' },
-            { Header: 'FPIX on', accessor: 'FPIX_READY' },
-            { Header: 'BPIX on', accessor: 'BPIX_READY' },
-            { Header: 'RPC on', accessor: 'RPC_READY' },
-            { Header: 'CSC+ on', accessor: 'CSCP_READY' },
-            { Header: 'CSC- on', accessor: 'CSCM_READY' },
-            { Header: 'CSC in', accessor: 'CSC_PRESENT' },
-            { Header: 'DT+ on', accessor: 'DTP_READY' },
-            { Header: 'DT- on', accessor: 'DTM_READY' },
-            { Header: 'DT0 on', accessor: 'DT0_READY' },
-            { Header: 'DT in', accessor: 'DT_PRESENT' },
-            { Header: 'RPC in', accessor: 'RPC_PRESENT' }
+            // { Header: 'Class', accessor: 'class' },
+            // { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
+            // { Header: 'TEC+ on', accessor: 'TECP_READY' },
+            // { Header: 'TEC- on', accessor: 'TECM_READY' },
+            // { Header: 'FPIX on', accessor: 'FPIX_READY' },
+            // { Header: 'BPIX on', accessor: 'BPIX_READY' },
+            // { Header: 'RPC on', accessor: 'RPC_READY' },
+            // { Header: 'CSC+ on', accessor: 'CSCP_READY' },
+            // { Header: 'CSC- on', accessor: 'CSCM_READY' },
+            // { Header: 'CSC in', accessor: 'CSC_PRESENT' },
+            // { Header: 'DT+ on', accessor: 'DTP_READY' },
+            // { Header: 'DT- on', accessor: 'DTM_READY' },
+            // { Header: 'DT0 on', accessor: 'DT0_READY' },
+            // { Header: 'DT in', accessor: 'DT_PRESENT' },
+            // { Header: 'RPC in', accessor: 'RPC_PRESENT' }
+            // The new ones from OMS:
+            {
+                Header: 'Clock Type', accessor: 'clock_type'
+            },
+            {
+                Header: 'Cms Sw Version', accessor: 'cmssw_version'
+            },
+            {
+                Header: 'Delivered Lumi', accessor: 'delivered_lumi'
+            }, {
+                Header: 'end_lumi', accessor: 'end_lumi'
+            }
         ];
         columns = columns.map(column => {
             return {
                 ...column,
-                Header: () => (
-                    <div>
-                        {column.Header}&nbsp;&nbsp;
+            Header: () => (
+                <div>
+                    {column.Header}&nbsp;&nbsp;
                         <Icon
-                            onClick={() => this.props.toggleTableFilters()}
-                            type="search"
-                            style={{ fontSize: '10px' }}
+                        onClick={() => this.props.toggleTableFilters()}
+                        type="search"
+                        style={{ fontSize: '10px' }}
                         />
-                    </div>
-                )
+                </div>
+            )
             };
-        });
-        return (
-            <div>
-                <ReactTable
-                    columns={columns}
-                    manual
-                    data={
-                        data // Forces table not to paginate or sort automatically, so we can handle it server-side
-                    }
-                    pages={pages}
-                    loading={
-                        loading // Display the total number of pages
-                    }
-                    onFetchData={
-                        this.fetchData // Display the loading overlay when we need it
-                    }
-                    filterable={filterable}
-                    defaultPageSize={
-                        20 // Request new data when things change
-                    }
-                    className="-striped -highlight"
-                />
-                <br />
-                {/* <Tips /> */}
-                {/* <Logo /> */}
-                <style jsx global>{`
+});
+return (
+    <div>
+        <ReactTable
+            columns={columns}
+            manual
+            data={
+                data // Forces table not to paginate or sort automatically, so we can handle it server-side
+            }
+            pages={pages}
+            loading={
+                loading // Display the total number of pages
+            }
+            onFetchData={
+                this.fetchData // Display the loading overlay when we need it
+            }
+            filterable={filterable}
+            defaultPageSize={
+                20 // Request new data when things change
+            }
+            className="-striped -highlight"
+            />
+        <br />
+        {/* <Tips /> */}
+        {/* <Logo /> */}
+        <style jsx global>{`
                     .ReactTable .rt-th,
                     .ReactTable .rt-td {
                         font-size: 11px;
                         padding: 3px 5px;
                     }
                 `}</style>
-            </div>
-        );
+    </div>
+);
     }
 }
 
 const mapStateToProps = state => {
     return {
-        filterable: state.online.ui.table.filterable
+        filterable: state.online.ui.table.filterable,
+        runs: state.online.runs
     };
 };
 
