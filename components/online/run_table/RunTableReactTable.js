@@ -16,7 +16,7 @@ import 'react-table/react-table.css';
 let rawData = [];
 
 const requestData = (pageSize, page, sorted, filtered, runs) => {
-    console.log(pageSize, page, sorted, filtered);
+    console.log(pageSize, page, sorted, filtered, runs);
     return new Promise((resolve, reject) => {
         // You can retrieve your data however you want, in this case, we will just use some local data.
         let filteredData = rawData;
@@ -103,7 +103,9 @@ class App extends React.Component {
                 pages: res.pages,
                 loading: false
             });
-        });
+        }).catch(err => {
+            console.log('error aca')
+        })
     }
     render() {
         const { data, pages, loading } = this.state;
