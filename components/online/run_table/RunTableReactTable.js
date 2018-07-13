@@ -207,7 +207,8 @@ return (
 }
 
 const mapStateToProps = state => {
-    return {
+	console.log(state);    
+return {
         filterable: state.online.ui.table.filterable,
         runs: state.online.runs
     };
