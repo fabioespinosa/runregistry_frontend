@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { errorHandler as eh } from '../../../../utils/error_handlers';
 import { api_url } from '../../../../config/config';
+import { hideJsonEditor } from './ui';
 const FETCH_CLASS_CLASSIFIERS = 'FETCH_CLASS_CLASSIFIERS';
 const NEW_CLASS_CLASSIFIER = 'NEW_CLASS_CLASSIFIER';
 const EDIT_CLASS_CLASSIFIER = 'EDIT_CLASS_CLASSIFIER';
@@ -24,6 +25,7 @@ export const newClassClassifier = new_classifier => async dispatch => {
     });
     classifier.classifier = JSON.stringify(classifier.classifier);
     dispatch({ type: NEW_CLASS_CLASSIFIER, payload: classifier });
+    dispatch(hideJsonEditor());
 };
 
 export const deleteClassClassifier = classifier_id => async dispatch => {
@@ -39,9 +41,10 @@ export const deleteClassClassifier = classifier_id => async dispatch => {
 export const editClassClassifier = new_classifier => async dispatch => {
     const { data: classifier } = await axios.put(
         `${api_url}/classifiers/${new_classifier.id}`,
-        { new_classifier }
+        new_classifier
     );
     dispatch({ type: EDIT_CLASS_CLASSIFIER, payload: classifier });
+    dispatch(hideJsonEditor());
 };
 
 const INITIAL_STATE = [];
@@ -55,6 +58,8 @@ export default function(state = INITIAL_STATE, action) {
             return state.concat(payload);
         case DELETE_CLASS_CLASSIFIER:
             return deleteClassClassifierHelper(state, payload);
+        case EDIT_CLASS_CLASSIFIER:
+            return editClassClassifierHelper(state, payload);
         default:
             return state;
     }
@@ -71,4 +76,13 @@ const findId = (classifiers, id) => {
 const deleteClassClassifierHelper = (classifiers, classifier_id) => {
     const index = findId(classifiers, classifier_id);
     return [...classifiers.slice(0, index), ...classifiers.slice(index + 1)];
+};
+
+const editClassClassifierHelper = (classifiers, classifier) => {
+    const index = findId(classifiers, classifier.id);
+    return [
+        ...classifiers.slice(0, index),
+        classifier,
+        ...classifiers.slice(index + 1)
+    ];
 };

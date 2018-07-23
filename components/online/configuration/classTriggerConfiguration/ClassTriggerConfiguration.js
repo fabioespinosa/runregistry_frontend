@@ -12,7 +12,8 @@ import {
 import {
     editClassClassifierIntent,
     newClassClassifierIntent,
-    hideJsonEditor
+    hideJsonEditor,
+    changeJsonEditorValue
 } from '../../../../ducks/online/classifiers/class/ui';
 const TextEditor = dynamic(import('./JSONEditor/Editor'), {
     ssr: false
@@ -20,26 +21,24 @@ const TextEditor = dynamic(import('./JSONEditor/Editor'), {
 const { TextArea } = Input;
 
 class ClassTriggerConfiguration extends Component {
-    state = {
-        loading: false,
-        json_editor_value: null
-    };
     componentDidMount() {
         this.props.fetchClassClassifiers();
     }
 
     onEditorChange = (value, otherValue) => {
-        this.setState({ json_editor_value: value });
+        this.props.changeJsonEditorValue(value);
     };
 
     saveClassClassifier = () => {
-        const valid_js_object = JSON.parse(this.state.json_editor_value);
+        const valid_js_object = JSON.parse(this.props.json_editor_value);
         // Check if user was editing or creating a new Trigger:
-        // if (this.props.current_editing_classifier !== null) {
-        //     this.props.editClassClassifier(valid_js_object);
-        // } else {
+        if (this.props.currently_editing_classifier) {
+            const { editing_classifier } = this.props;
+            editing_classifier.classifier = valid_js_object;
+            this.props.editClassClassifier(editing_classifier);
+        } else {
             this.props.newClassClassifier(valid_js_object);
-        // }
+        }
     };
     render() {
         const columns = [
@@ -81,12 +80,13 @@ class ClassTriggerConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
+                                console.log(row.original);
                                 this.props.editClassClassifierIntent(
                                     row.original
                                 );
-                                this.setState({
-                                    json_editor_value: row.original.classifier
-                                });
+                                this.props.changeJsonEditorValue(
+                                    row.original.classifier
+                                );
                             }}
                         >
                             Edit
@@ -125,11 +125,10 @@ class ClassTriggerConfiguration extends Component {
                     />
                 </div>
                 <h3>
-                    {this.props.editor && this.state.json_editor_value === ''
-                        ? 'Adding new trigger'
-                        : this.state.json_editor_value !== null
+                    {this.props.editor &&
+                        (this.props.currently_editing_classifier
                             ? 'Editing trigger'
-                            : ''}
+                            : 'Adding new trigger')}
                 </h3>
                 <div className="trigger_button">
                     {!this.props.editor && (
@@ -137,9 +136,6 @@ class ClassTriggerConfiguration extends Component {
                             type="primary"
                             onClick={() => {
                                 this.props.newClassClassifierIntent();
-                                this.setState({
-                                    json_editor_value: ''
-                                });
                             }}
                         >
                             Add Trigger
@@ -149,7 +145,7 @@ class ClassTriggerConfiguration extends Component {
                 {this.props.editor && (
                     <TextEditor
                         onChange={this.onEditorChange}
-                        value={this.state.json_editor_value}
+                        value={this.props.json_editor_value}
                         lan="javascript"
                         theme="github"
                     />
@@ -159,7 +155,6 @@ class ClassTriggerConfiguration extends Component {
                         <span className="cancel_button">
                             <Button
                                 onClick={() => {
-                                    this.setState({ json_editor_value: null });
                                     this.props.hideJsonEditor();
                                 }}
                             >
@@ -167,7 +162,7 @@ class ClassTriggerConfiguration extends Component {
                             </Button>
                         </span>
                         <Button
-                            loading={this.state.loading}
+                            loading={this.props.editor_save_loading}
                             type="primary"
                             onClick={this.saveClassClassifier}
                         >
@@ -197,8 +192,11 @@ const mapStateToProps = state => {
     return {
         classifiers: state.online.classifiers.class.classifiers,
         editor: state.online.classifiers.class.ui.json_editor,
+        json_editor_value: state.online.classifiers.class.ui.json_editor_value,
         editor_save_loading:
-            state.online.classifiers.class.ui.editor_save_loading
+            state.online.classifiers.class.ui.editor_save_loading,
+        currently_editing_classifier: state.online.classifiers.class.ui.editing,
+        editing_classifier: state.online.classifiers.class.ui.editing_classifier
     };
 };
 
@@ -211,7 +209,8 @@ export default connect(
         deleteClassClassifier,
         editClassClassifierIntent,
         newClassClassifierIntent,
-        hideJsonEditor
+        hideJsonEditor,
+        changeJsonEditorValue
     }
 )(ClassTriggerConfiguration);
 

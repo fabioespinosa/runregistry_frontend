@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev_local": "NODE_ENV=development && node server",
+        "dev_local": "NODE_ENV=local && node server",
         "dev": "node server",
         "build": "next build",
         "start": "next build && NODE_ENV=production node server",
