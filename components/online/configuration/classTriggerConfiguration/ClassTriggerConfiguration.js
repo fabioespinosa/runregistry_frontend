@@ -35,11 +35,11 @@ class ClassTriggerConfiguration extends Component {
     saveClassClassifier = () => {
         const valid_js_object = JSON.parse(this.state.json_editor_value);
         // Check if user was editing or creating a new Trigger:
-        if (this.props.current_editing_classifier !== null) {
-            this.props.editClassClassifier(valid_js_object);
-        } else {
+        // if (this.props.current_editing_classifier !== null) {
+        //     this.props.editClassClassifier(valid_js_object);
+        // } else {
             this.props.newClassClassifier(valid_js_object);
-        }
+        // }
     };
     render() {
         const columns = [
