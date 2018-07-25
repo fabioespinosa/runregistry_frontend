@@ -93,38 +93,35 @@ class App extends React.Component {
             state.sorted,
             state.filtered,
             this.props.runs
-        ).then(res => {
-            // Now just get the rows of data to your React Table (and update anything else like total pages or loading)
-            this.setState({
-                data: res.rows,
-                pages: res.pages,
-                loading: false
+        )
+            .then(res => {
+                // Now just get the rows of data to your React Table (and update anything else like total pages or loading)
+                this.setState({
+                    data: res.rows,
+                    pages: res.pages,
+                    loading: false
+                });
+            })
+            .catch(err => {
+                console.log('error aca');
             });
-        }).catch(err => {
-            console.log('error aca')
-        })
     }
     render() {
         const { data, pages, loading } = this.state;
         const { filterable } = this.props;
         let columns = [
-            {
-                Header: 'Run Number',
-                accessor: 'run_number'
-            },
-            { Header: 'LHC Fill', accessor: 'LHCFILL' },
-            // { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },
+            { Header: 'Run Number', accessor: 'run_number' },
+            { Header: 'Started', accessor: 'start_time' }, // { Header: 'Stopped', accessor: 'STOPTIME' },];
+            { Header: 'Hlt Key Description', accessor: 'hlt_key' } // { Header: 'Class', accessor: 'class' },
+        ];
+
+        const other_columns = [
+            // { Header: 'LHC Fill', accessor: 'LHCFILL' }, // { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },
             // { Header: 'B2 stable', accessor: 'BEAM2_STABLE' },
-            { Header: 'B-Field', accessor: 'b_field' },
-            // { Header: 'Events', accessor: 'EVENTS' },
-            { Header: 'Started', accessor: 'start_time' },
-            // { Header: 'Stopped', accessor: 'STOPTIME' },
+            // { Header: 'B-Field', accessor: 'b_field' }, // { Header: 'Events', accessor: 'EVENTS' },
+
             { Header: 'Duration', accessor: 'duration' },
-            {
-                Header: 'Hlt Key Description',
-                accessor: 'hlt_key'
-            },
-            // { Header: 'Class', accessor: 'class' },
+
             // { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
             // { Header: 'TEC+ on', accessor: 'TECP_READY' },
             // { Header: 'TEC- on', accessor: 'TECM_READY' },
@@ -140,66 +137,147 @@ class App extends React.Component {
             // { Header: 'DT in', accessor: 'DT_PRESENT' },
             // { Header: 'RPC in', accessor: 'RPC_PRESENT' }
             // The new ones from OMS:
+            { Header: 'Clock Type', accessor: 'clock_type' }
+            // { Header: 'Cms Sw Version', accessor: 'cmssw_version' },
+            // { Header: 'Delivered Lumi', accessor: 'delivered_lumi' },
+            // { Header: 'end_lumi', accessor: 'end_lumi' }
+        ];
+
+        let component_columns = [
             {
-                Header: 'Clock Type', accessor: 'clock_type'
+                Header: 'CASTOR'
             },
             {
-                Header: 'Cms Sw Version', accessor: 'cmssw_version'
+                Header: 'CSC'
             },
             {
-                Header: 'Delivered Lumi', accessor: 'delivered_lumi'
-            }, {
-                Header: 'end_lumi', accessor: 'end_lumi'
+                Header: 'DT'
+            },
+            {
+                Header: 'ECAL'
+            },
+            {
+                Header: 'ES'
+            },
+            {
+                Header: 'HCAL'
+            },
+            // {
+            //     Header: 'HLT'
+            // },
+            // {
+            //     Header: 'L1T'
+            // },
+            // {
+            //     Header: 'L1TMU'
+            // },
+            // {
+            //     Header: 'L1TCALO'
+            // },
+            // {
+            //     Header: 'LUMI'
+            // },
+            // {
+            //     Header: 'PIX'
+            // },
+            {
+                Header: 'RPC'
+            },
+            // {
+            //     Header: 'STRIP'
+            // },
+            {
+                Header: 'CTPPS'
             }
         ];
+
+        component_columns = component_columns.map(column => {
+            return {
+                ...column,
+                maxWidth: '60px',
+                id: `${column['Header']}_PRESENT`,
+                accessor: data => data.components.includes(column['Header']),
+                Cell: props => (
+                    <span
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            textAlign: 'center'
+                        }}
+                    >
+                        {props.value ? (
+                            <div
+                                style={{
+                                    backgroundColor: 'green',
+                                    borderRadius: '1px'
+                                }}
+                            >
+                                <span style={{ color: 'white' }}>GOOD</span>
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    backgroundColor: 'grey',
+                                    borderRadius: '1px'
+                                }}
+                            >
+                                <span style={{ color: 'white' }}>EXCLUDED</span>
+                            </div>
+                        )}
+                    </span>
+                )
+            };
+        });
+        columns = [...columns, ...component_columns, ...other_columns];
+        // columns = component_columns;
         columns = columns.map(column => {
             return {
                 ...column,
-            Header: () => (
-                <div>
-                    {column.Header}&nbsp;&nbsp;
+                Header: () => (
+                    <div>
+                        {column.Header}&nbsp;&nbsp;
                         <Icon
-                        onClick={() => this.props.toggleTableFilters()}
-                        type="search"
-                        style={{ fontSize: '10px' }}
+                            onClick={() => this.props.toggleTableFilters()}
+                            type="search"
+                            style={{ fontSize: '10px' }}
                         />
-                </div>
-            )
+                    </div>
+                )
             };
-});
-return (
-    <div>
-        <ReactTable
-            columns={columns}
-            manual
-            data={
-                data // Forces table not to paginate or sort automatically, so we can handle it server-side
-            }
-            pages={pages}
-            loading={
-                loading // Display the total number of pages
-            }
-            onFetchData={
-                this.fetchData // Display the loading overlay when we need it
-            }
-            filterable={filterable}
-            defaultPageSize={
-                20 // Request new data when things change
-            }
-            className="-striped -highlight"
-            />
-        <br />
-        {/* <Tips /> */}
-        {/* <Logo /> */}
-        <style jsx global>{`
+        });
+        return (
+            <div>
+                <ReactTable
+                    columns={columns}
+                    manual
+                    data={
+                        data // Forces table not to paginate or sort automatically, so we can handle it server-side
+                    }
+                    pages={pages}
+                    loading={
+                        loading // Display the total number of pages
+                    }
+                    onFetchData={
+                        this.fetchData // Display the loading overlay when we need it
+                    }
+                    filterable={filterable}
+                    defaultPageSize={
+                        20 // Request new data when things change
+                    }
+                    className="-striped -highlight"
+                />
+                <br />
+                {/* <Tips /> */}
+                {/* <Logo /> */}
+                <style jsx global>{`
                     .ReactTable .rt-th,
                     .ReactTable .rt-td {
                         font-size: 11px;
-                        padding: 3px 5px;
+                        padding: 3px 5px !important;
                     }
                 `}</style>
-    </div>
-);
+            </div>
+        );
     }
 }
 
