@@ -126,7 +126,8 @@ const mapStateToProps = state => {
         json_editor_value: state.online.classifiers.class.ui.json_editor_value,
         currently_editing_classifier: state.online.classifiers.class.ui.editing,
         editor_save_loading:
-            state.online.classifiers.class.ui.editor_save_loading
+            state.online.classifiers.class.ui.editor_save_loading,
+        editing_classifier: state.online.classifiers.class.ui.editing_classifier
     };
 };
 
