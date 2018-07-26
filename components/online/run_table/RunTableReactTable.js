@@ -112,7 +112,8 @@ class App extends React.Component {
         let columns = [
             { Header: 'Run Number', accessor: 'run_number' },
             { Header: 'Started', accessor: 'start_time' }, // { Header: 'Stopped', accessor: 'STOPTIME' },];
-            { Header: 'Hlt Key Description', accessor: 'hlt_key' } // { Header: 'Class', accessor: 'class' },
+            { Header: 'Hlt Key Description', accessor: 'hlt_key' },
+            { Header: 'Class', accessor: 'class' }
         ];
 
         const other_columns = [
@@ -177,9 +178,9 @@ class App extends React.Component {
             // {
             //     Header: 'LUMI'
             // },
-            // {
-            //     Header: 'PIX'
-            // },
+            {
+                Header: 'PIXEL'
+            },
             {
                 Header: 'RPC'
             },

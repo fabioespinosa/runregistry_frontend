@@ -39,8 +39,7 @@ class BreadcrumbCmp extends Component {
                 Change which runs classify as a Pre-Selected Run
             </Menu.Item>
             <Menu.Item key="class_configuration">
-                Change which runs classify as a certain Run Class (Collission,
-                Cosmic, Commission)
+                (Collission, Cosmic, Commission) Classifiers
             </Menu.Item>
         </Menu>
     );

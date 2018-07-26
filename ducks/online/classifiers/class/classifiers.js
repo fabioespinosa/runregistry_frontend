@@ -15,13 +15,17 @@ export const fetchClassClassifiers = () => async dispatch => {
     dispatch({ type: FETCH_CLASS_CLASSIFIERS, payload: classifiers });
 };
 
-export const newClassClassifier = new_classifier => async dispatch => {
+export const newClassClassifier = (
+    new_classifier,
+    class_selected
+) => async dispatch => {
     const { data: classifier } = await axios.post(`${api_url}/classifiers`, {
         classifier: new_classifier,
         // This are for testing:
         priority: 1,
         enabled: true,
-        category: 'class'
+        category: 'class',
+        class: class_selected
     });
     classifier.classifier = JSON.stringify(classifier.classifier);
     dispatch({ type: NEW_CLASS_CLASSIFIER, payload: classifier });

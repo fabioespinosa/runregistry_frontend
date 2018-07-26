@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/online/ui';
-import ClassTriggerConfiguration from './classTriggerConfiguration/ClassTriggerConfiguration';
+import ClassClassifierConfiguration from './classClassifierConfiguration/ClassClassifierConfiguration';
 import PreSelectionTriggerConfiguration from './preSelectionTriggerConfiguration/PreSelectionTriggerConfiguration';
 
 class ConfigurationModal extends Component {
-    state = {
-        loading: false
-    };
     render() {
         const {
             configuration_modal_visible,
@@ -22,7 +19,6 @@ class ConfigurationModal extends Component {
                 : configuration_modal_type === 'pre_selection_configuration'
                     ? 'Set automatic triggers for pre selection of runs'
                     : '';
-        const { loading } = this.state;
         return (
             <div>
                 <Modal
@@ -31,21 +27,16 @@ class ConfigurationModal extends Component {
                     onOk={hideConfigurationModal} // confirmLoading={confirmLoading}
                     onCancel={hideConfigurationModal}
                     footer={[
-                        <Button
-                            key="submit"
-                            type="primary"
-                            loading={loading}
-                            onClick={hideConfigurationModal}
-                        >
+                        <Button key="submit" onClick={hideConfigurationModal}>
                             Close
                         </Button>
                     ]}
-                    width={900}
+                    width="90vw"
                 >
-                    <ClassTriggerConfiguration />
+                    <ClassClassifierConfiguration />
 
                     {/* // {configuration_modal_type === 'class_configuration' && (
-                    //     <ClassTriggerConfiguration />
+                    //     <ClassClassifierConfiguration />
                     // )}
                     // {configuration_modal_type ===
                     //     'pre_selection_configuration' && (
