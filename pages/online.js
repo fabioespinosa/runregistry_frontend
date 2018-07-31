@@ -11,7 +11,7 @@ import { fetchInitialOnlineRuns } from '../ducks/online/runs';
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
-import RunTable from '../components/online/run_table/RunTableReactTable';
+import RunTable from '../components/online/run_table/RunTable';
 const { Content } = Layout;
 
 class Online extends Component {

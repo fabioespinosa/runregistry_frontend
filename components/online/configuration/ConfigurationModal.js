@@ -15,9 +15,9 @@ class ConfigurationModal extends Component {
         } = this.props;
         const title =
             configuration_modal_type === 'class_configuration'
-                ? 'Set Automatic triggers for class of run selection'
+                ? 'Set Automatic classifiers for class of run selection'
                 : configuration_modal_type === 'pre_selection_configuration'
-                    ? 'Set automatic triggers for pre selection of runs'
+                    ? 'Set automatic classifiers for pre selection of runs'
                     : '';
         return (
             <div>
