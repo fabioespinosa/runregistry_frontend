@@ -25,7 +25,12 @@ class ClassClassifierEditor extends Component {
 
     saveClassClassifier = () => {
         const { class_selected } = this.state;
-        const valid_js_object = JSON.parse(this.props.json_editor_value);
+        const { json_editor_value } = this.props;
+        const valid_js_object = this.formatClassifierCorrectly(
+            json_editor_value,
+            class_selected
+        );
+        console.log(valid_js_object);
         // Check if user was editing or creating a new Classifier:
         if (this.props.currently_editing_classifier) {
             const { editing_classifier } = this.props;
@@ -35,6 +40,15 @@ class ClassClassifierEditor extends Component {
             this.props.newClassClassifier(valid_js_object, class_selected);
         }
     };
+
+    formatClassifierCorrectly(inside_input, class_selected) {
+        const parsed_input = JSON.parse(inside_input);
+        let classifier = {
+            if: [parsed_input, class_selected, 'COMMISSIONING']
+        };
+        return classifier;
+    }
+
     render() {
         const { show, currently_editing_classifier } = this.props;
         const { class_selected } = this.state;

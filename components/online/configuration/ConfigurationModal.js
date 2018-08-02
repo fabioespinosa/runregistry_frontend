@@ -24,14 +24,18 @@ class ConfigurationModal extends Component {
                 <Modal
                     title={title}
                     visible={configuration_modal_visible}
-                    onOk={hideConfigurationModal} // confirmLoading={confirmLoading}
-                    onCancel={hideConfigurationModal}
+                    onOk={hideConfigurationModal}
+                    onCancel={
+                        hideConfigurationModal // confirmLoading={confirmLoading}
+                    }
                     footer={[
                         <Button key="submit" onClick={hideConfigurationModal}>
                             Close
                         </Button>
                     ]}
                     width="90vw"
+                    maskClosable={false}
+                    destroyOnClose={true}
                 >
                     <ClassClassifierConfiguration />
 

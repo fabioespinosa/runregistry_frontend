@@ -11,6 +11,7 @@ import {
     editClassClassifierIntent,
     changeJsonEditorValue
 } from '../../../../ducks/online/classifiers/class/ui';
+import stringify from 'json-stringify-pretty-compact';
 const Editor = dynamic(
     import('./classClassifierEditor/ClassClassifierEditor'),
     {
@@ -21,6 +22,12 @@ const Editor = dynamic(
 class ClassClassifierConfiguration extends Component {
     componentDidMount() {
         this.props.fetchClassClassifiers();
+    }
+
+    getDisplayedClassifier(classifier) {
+        classifier = JSON.parse(classifier);
+        const displayed_text = classifier.if[0];
+        return stringify(displayed_text);
     }
 
     render() {
@@ -59,7 +66,17 @@ class ClassClassifierConfiguration extends Component {
                     </div>
                 )
             },
-            { Header: 'JSON string', accessor: 'classifier', width: 250 },
+            {
+                Header: 'JSON string',
+                accessor: 'classifier',
+                width: 250,
+                Cell: row => {
+                    const displayed_text = this.getDisplayedClassifier(
+                        row.value
+                    );
+                    return <span>{displayed_text}</span>;
+                }
+            },
             { Header: 'Created at', accessor: 'createdAt', width: 100 },
             { Header: 'Updated at', accessor: 'updatedAt', width: 100 },
             {
@@ -69,13 +86,13 @@ class ClassClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
-                                console.log(row.original);
+                                const classifier = this.getDisplayedClassifier(
+                                    row.original.classifier
+                                );
                                 this.props.editClassClassifierIntent(
                                     row.original
                                 );
-                                this.props.changeJsonEditorValue(
-                                    row.original.classifier
-                                );
+                                this.props.changeJsonEditorValue(classifier);
                             }}
                         >
                             Edit
