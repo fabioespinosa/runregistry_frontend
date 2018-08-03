@@ -22,7 +22,8 @@ class ClassifierEditor extends Component {
             json_editor_value,
             formatClassifierCorrectly,
             editClassifier,
-            newClassifier
+            newClassifier,
+            currently_editing_classifier
         } = this.props;
 
         const valid_js_object = formatClassifierCorrectly(json_editor_value);
@@ -33,7 +34,7 @@ class ClassifierEditor extends Component {
             editing_classifier.classifier = valid_js_object;
             editClassifier(editing_classifier);
         } else {
-            newClassifier(valid_js_object, class_selected);
+            newClassifier(valid_js_object);
         }
     };
 

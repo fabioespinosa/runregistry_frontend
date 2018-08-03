@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Select, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
+import { Select, Icon } from 'antd';
 import {
-    fetchClassClassifiers,
-    deleteClassClassifier,
-    editClassClassifier,
-    newClassClassifier
-} from '../../../../ducks/online/classifiers/class';
+    fetchComponentClassifiers,
+    deleteComponentClassifier,
+    editComponentClassifier,
+    newComponentClassifier
+} from '../../../../ducks/online/classifiers/component';
 import {
     editClassifierIntent,
     changeJsonEditorValue
@@ -23,10 +23,10 @@ const Editor = dynamic(
     }
 );
 
-class ClassClassifierConfiguration extends Component {
-    state = { class_selected: 'COLLISSIONS' };
+class ComponentClassifierConfiguration extends Component {
+    state = { component: 'castor', status_selected: 'GOOD' };
     componentDidMount() {
-        this.props.fetchClassClassifiers();
+        this.props.fetchComponentClassifiers(this.state.component);
     }
 
     getDisplayedClassifier(classifier) {
@@ -36,24 +36,27 @@ class ClassClassifierConfiguration extends Component {
     }
 
     formatClassifierCorrectly = inside_input => {
-        const { class_selected } = this.state;
+        const { status_selected } = this.state;
         const parsed_input = JSON.parse(inside_input);
-        let classifier = {
-            if: [parsed_input, class_selected, 'COMMISSIONING']
-        };
+        let classifier = { if: [parsed_input, status_selected, 'BAD'] };
         return classifier;
+    };
+
+    changeComponent = component => {
+        this.props.fetchComponentClassifiers(component);
+        this.setState({ component });
     };
 
     render() {
         const {
-            newClassClassifier,
-            editClassClassifier,
+            newComponentClassifier,
+            editComponentClassifier,
             editClassifierIntent,
             changeJsonEditorValue,
-            deleteClassClassifier,
+            deleteComponentClassifier,
             classifiers
         } = this.props;
-        const { class_selected } = this.state;
+        const { component, status_selected } = this.state;
         const columns = [
             {
                 Header: 'id',
@@ -68,8 +71,14 @@ class ClassClassifierConfiguration extends Component {
                 getProps: () => ({ style: { textAlign: 'center' } })
             },
             {
-                Header: 'Class',
-                accessor: 'class',
+                Header: 'Status',
+                accessor: 'status',
+                width: 80,
+                getProps: () => ({ style: { textAlign: 'center' } })
+            },
+            {
+                Header: 'Component',
+                accessor: 'component',
                 width: 90,
                 getProps: () => ({ style: { textAlign: 'center' } })
             },
@@ -128,7 +137,7 @@ class ClassClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() =>
-                                deleteClassClassifier(row.original.id)
+                                deleteComponentClassifier(row.original.id)
                             }
                         >
                             Delete
@@ -139,7 +148,18 @@ class ClassClassifierConfiguration extends Component {
         ];
         return (
             <div>
-                <p>Current criteria:</p>
+                <label htmlFor="status_select">Component:</label>&nbsp;
+                <Select
+                    name=""
+                    id="component_select"
+                    defaultValue={component}
+                    onChange={this.changeComponent}
+                >
+                    <Option value="castor">castor</Option>
+                    <Option value="cms">cms</Option>
+                    <Option value="csc">csc</Option>
+                    <Option value="cttps">cttps</Option>
+                </Select>
                 <ReactTable
                     columns={columns}
                     data={classifiers}
@@ -149,24 +169,45 @@ class ClassClassifierConfiguration extends Component {
                 />
                 <Editor
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
+                    editClassifier={editComponentClassifier}
                     newClassifier={valid_js_object =>
-                        newClassClassifier(valid_js_object, class_selected)
+                        newComponentClassifier(
+                            valid_js_object,
+                            status_selected,
+                            component
+                        )
                     }
-                    editClassifier={editClassClassifier}
                 >
                     <div>
-                        <label htmlFor="class_select">Class:</label>&nbsp;
+                        <label htmlFor="status_select">Class:</label>&nbsp;
                         <Select
                             name=""
-                            id="class_select"
-                            defaultValue={class_selected}
+                            id="status_select"
+                            defaultValue={status_selected}
                             onChange={value =>
-                                this.setState({ class_selected: value })
+                                this.setState({ status_selected: value })
                             }
                         >
-                            <Option value="COSMICS">COSMICS</Option>
-                            <Option value="COLLISSIONS">COLLISSIONS</Option>
-                            <Option value="COSMMISSION">COMMISSION</Option>
+                            <Option value="GOOD">GOOD</Option>
+                            <Option value="BAD">BAD</Option>
+                            <Option value="STANDBY">STANDBY</Option>
+                            <Option value="EXCLUDED">EXCLUDED</Option>
+                        </Select>
+                        <label htmlFor="component_select_create">
+                            Component:
+                        </label>&nbsp;
+                        <Select
+                            name=""
+                            id="component_select_create"
+                            defaultValue={component}
+                            onChange={value =>
+                                this.setState({ component: value })
+                            }
+                        >
+                            <Option value="castor">castor</Option>
+                            <Option value="cms">cms</Option>
+                            <Option value="csc">csc</Option>
+                            <Option value="cttps">cttps</Option>
                         </Select>
                     </div>
                 </Editor>
@@ -174,21 +215,20 @@ class ClassClassifierConfiguration extends Component {
         );
     }
 }
-
 const mapStateToProps = state => {
     return {
-        classifiers: state.online.classifiers.class
+        classifiers: state.online.classifiers.component
     };
 };
 
 export default connect(
     mapStateToProps,
     {
-        fetchClassClassifiers,
-        deleteClassClassifier,
-        editClassClassifier,
-        newClassClassifier,
+        fetchComponentClassifiers,
+        deleteComponentClassifier,
+        editComponentClassifier,
+        newComponentClassifier,
         changeJsonEditorValue,
         editClassifierIntent
     }
-)(ClassClassifierConfiguration);
+)(ComponentClassifierConfiguration);

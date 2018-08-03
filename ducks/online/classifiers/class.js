@@ -19,14 +19,16 @@ export const newClassClassifier = (
     new_classifier,
     class_selected
 ) => async dispatch => {
-    const { data: classifier } = await axios.post(`${api_url}/classifiers`, {
-        classifier: new_classifier,
-        // This are for testing:
-        priority: 1,
-        enabled: true,
-        category: 'class',
-        class: class_selected
-    });
+    const { data: classifier } = await axios.post(
+        `${api_url}/classifiers/class`,
+        {
+            classifier: new_classifier,
+            class: class_selected,
+            // This are for testing:
+            priority: 1,
+            enabled: true
+        }
+    );
     classifier.classifier = JSON.stringify(classifier.classifier);
     dispatch({ type: NEW_CLASS_CLASSIFIER, payload: classifier });
     dispatch(hideJsonEditor());
@@ -34,7 +36,7 @@ export const newClassClassifier = (
 
 export const deleteClassClassifier = classifier_id => async dispatch => {
     const { data: classifier } = await axios.delete(
-        `${api_url}/classifiers/${classifier_id}`
+        `${api_url}/classifiers/class/${classifier_id}`
     );
     dispatch({
         type: DELETE_CLASS_CLASSIFIER,
@@ -44,7 +46,7 @@ export const deleteClassClassifier = classifier_id => async dispatch => {
 
 export const editClassClassifier = new_classifier => async dispatch => {
     const { data: classifier } = await axios.put(
-        `${api_url}/classifiers/${new_classifier.id}`,
+        `${api_url}/classifiers/class/${new_classifier.id}`,
         new_classifier
     );
     dispatch({ type: EDIT_CLASS_CLASSIFIER, payload: classifier });

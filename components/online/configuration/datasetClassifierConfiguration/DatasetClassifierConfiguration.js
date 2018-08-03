@@ -13,4 +13,10 @@ class DatasetClassifierConfiguration extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        classifiers: state.online.classifiers.dataset
+    };
+};
+
 export default DatasetClassifierConfiguration;

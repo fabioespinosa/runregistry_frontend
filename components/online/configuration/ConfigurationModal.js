@@ -4,6 +4,7 @@ import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/online/ui';
 import ClassClassifierConfiguration from './classClassifierConfiguration/ClassClassifierConfiguration';
 import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
+import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
 
 class ConfigurationModal extends Component {
     render() {
@@ -13,16 +14,19 @@ class ConfigurationModal extends Component {
             children,
             configuration_modal_type
         } = this.props;
-        const title =
-            configuration_modal_type === 'class_classifiers'
-                ? 'Set automatic classifiers for class of run selection'
-                : configuration_modal_type === 'dataset_classifiers'
-                    ? 'Set automatic classifiers for pre selection of runs'
-                    : '';
+        const title_options = {
+            class_classifiers:
+                'Set automatic classifiers for class of run selection',
+            dataset_classifiers:
+                'Set automatic classifiers for datasets considered relevant',
+            component_classifiers:
+                "Set automatic classifiers for each component's status"
+        };
+
         return (
             <div>
                 <Modal
-                    title={title}
+                    title={title_options[configuration_modal_type]}
                     visible={configuration_modal_visible}
                     onOk={hideConfigurationModal}
                     onCancel={
@@ -42,6 +46,9 @@ class ConfigurationModal extends Component {
                     )}
                     {configuration_modal_type === 'dataset_classifiers' && (
                         <DatasetClassifierConfiguration />
+                    )}
+                    {configuration_modal_type === 'component_classifiers' && (
+                        <ComponentClassifierConfiguration />
                     )}
                 </Modal>
             </div>
