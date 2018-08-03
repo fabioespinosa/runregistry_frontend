@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-import { errorHandler as eh } from '../../../../utils/error_handlers';
-import { api_url } from '../../../../config/config';
-import { hideJsonEditor } from './ui';
+import { errorHandler as eh } from '../../../utils/error_handlers';
+import { api_url } from '../../../config/config';
+import { hideJsonEditor } from '../../classifier_editor';
 const FETCH_CLASS_CLASSIFIERS = 'FETCH_CLASS_CLASSIFIERS';
 const NEW_CLASS_CLASSIFIER = 'NEW_CLASS_CLASSIFIER';
 const EDIT_CLASS_CLASSIFIER = 'EDIT_CLASS_CLASSIFIER';

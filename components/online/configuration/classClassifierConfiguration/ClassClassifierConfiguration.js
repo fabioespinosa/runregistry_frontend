@@ -1,25 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Input, Icon } from 'antd';
+import { Button, Input, Icon, Select } from 'antd';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
 import {
     fetchClassClassifiers,
-    deleteClassClassifier
-} from '../../../../ducks/online/classifiers/class/classifiers';
+    deleteClassClassifier,
+    editClassClassifier,
+    newClassClassifier
+} from '../../../../ducks/online/classifiers/class';
 import {
-    editClassClassifierIntent,
+    editClassifierIntent,
     changeJsonEditorValue
-} from '../../../../ducks/online/classifiers/class/ui';
+} from '../../../../ducks/classifier_editor';
 import stringify from 'json-stringify-pretty-compact';
+const { Option } = Select;
+
 const Editor = dynamic(
-    import('./classClassifierEditor/ClassClassifierEditor'),
+    import('../../../common/ClassifierEditor/ClassifierEditor'),
     {
         ssr: false
     }
 );
 
 class ClassClassifierConfiguration extends Component {
+    state = { class_selected: 'COLLISSIONS' };
     componentDidMount() {
         this.props.fetchClassClassifiers();
     }
@@ -30,7 +35,24 @@ class ClassClassifierConfiguration extends Component {
         return stringify(displayed_text);
     }
 
+    formatClassifierCorrectly = (inside_input, class_selected) => {
+        const parsed_input = JSON.parse(inside_input);
+        let classifier = {
+            if: [parsed_input, class_selected, 'COMMISSIONING']
+        };
+        return classifier;
+    };
+
     render() {
+        const {
+            newClassClassifier,
+            editClassClassifier,
+            editClassifierIntent,
+            changeJsonEditorValue,
+            deleteClassClassifier,
+            classifiers
+        } = this.props;
+        const { class_selected } = this.state;
         const columns = [
             {
                 Header: 'id',
@@ -89,10 +111,8 @@ class ClassClassifierConfiguration extends Component {
                                 const classifier = this.getDisplayedClassifier(
                                     row.original.classifier
                                 );
-                                this.props.editClassClassifierIntent(
-                                    row.original
-                                );
-                                this.props.changeJsonEditorValue(classifier);
+                                editClassifierIntent(row.original);
+                                changeJsonEditorValue(classifier);
                             }}
                         >
                             Edit
@@ -107,9 +127,7 @@ class ClassClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() =>
-                                this.props.deleteClassClassifier(
-                                    row.original.id
-                                )
+                                deleteClassClassifier(row.original.id)
                             }
                         >
                             Delete
@@ -123,12 +141,32 @@ class ClassClassifierConfiguration extends Component {
                 <p>Current criteria:</p>
                 <ReactTable
                     columns={columns}
-                    data={this.props.classifiers}
+                    data={classifiers}
                     defaultPageSize={10}
-                    showPagination={this.props.classifiers.length > 10}
+                    showPagination={classifiers.length > 10}
                     optionClassName="react-table"
                 />
-                <Editor />
+                <Editor
+                    formatClassifierCorrectly={this.formatClassifierCorrectly}
+                    newClassifier={newClassClassifier}
+                    editClassClassifier={editClassClassifier}
+                >
+                    <div>
+                        <label htmlFor="class_select">Class:</label>&nbsp;
+                        <Select
+                            name=""
+                            id="class_select"
+                            defaultValue={class_selected}
+                            onChange={value =>
+                                this.setState({ class_selected: value })
+                            }
+                        >
+                            <Option value="COSMICS">COSMICS</Option>
+                            <Option value="COLLISSIONS">COLLISSIONS</Option>
+                            <Option value="COSMMISSION">COMMISSION</Option>
+                        </Select>
+                    </div>
+                </Editor>
             </div>
         );
     }
@@ -136,7 +174,7 @@ class ClassClassifierConfiguration extends Component {
 
 const mapStateToProps = state => {
     return {
-        classifiers: state.online.classifiers.class.classifiers
+        classifiers: state.online.classifiers.class
     };
 };
 
@@ -145,7 +183,9 @@ export default connect(
     {
         fetchClassClassifiers,
         deleteClassClassifier,
-        editClassClassifierIntent,
-        changeJsonEditorValue
+        editClassifierIntent,
+        changeJsonEditorValue,
+        editClassClassifier,
+        newClassClassifier
     }
 )(ClassClassifierConfiguration);

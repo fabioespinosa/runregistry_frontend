@@ -35,11 +35,10 @@ class BreadcrumbCmp extends Component {
                 this.props.showConfigurationModal(key);
             }}
         >
-            <Menu.Item key="pre_selection_configuration">
-                Change which runs classify as a Pre-Selected Run
-            </Menu.Item>
-            <Menu.Item key="class_configuration">
-                (Collission, Cosmic, Commission) Classifiers
+            <Menu.Item key="dataset_classifiers">Dataset Classifiers</Menu.Item>
+            <Menu.Item key="class_classifiers">Run Class Classifiers</Menu.Item>
+            <Menu.Item key="component_classifiers">
+                Component Classifiers
             </Menu.Item>
         </Menu>
     );

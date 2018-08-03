@@ -1,6 +1,6 @@
 // COPIED FROM CLASS CLASSIFIERS
 import axios from 'axios';
-import { api_url } from '../../../../config/config';
+import { api_url } from '../../../config/config';
 const FETCH_DATASET_CLASSIFIERS = 'FETCH_DATASET_CLASSIFIERS';
 const NEW_CLASS_CLASSIFIER = 'NEW_CLASS_CLASSIFIER';
 const EDIT_CLASS_CLASSIFIER = 'EDIT_CLASS_CLASSIFIER';
@@ -57,7 +57,7 @@ const findId = (classifiers, id) => {
     }
 };
 
-const deleteClassClassifierHelper = (classifiers, idTrigger) => {
+const deleteClassClassifierHelper = (classifiers, id) => {
     const index = findId(classifiers, id);
     return [...classifiers.slice(0, index), ...classifiers.slice(index + 1)];
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Input } from 'antd';
 const { TextArea } = Input;
 
-class PreSelectionTriggerConfiguration extends Component {
+class DatasetClassifierConfiguration extends Component {
     render() {
         return (
             <div>
@@ -13,4 +13,4 @@ class PreSelectionTriggerConfiguration extends Component {
     }
 }
 
-export default PreSelectionTriggerConfiguration;
+export default DatasetClassifierConfiguration;

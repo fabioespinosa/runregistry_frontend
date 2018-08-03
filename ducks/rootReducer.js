@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import online from './online/index';
 import info from './info';
+import classifier_editor from './classifier_editor';
 
 export const ROOT_URL =
     process.env.NODE_ENV === 'production'
@@ -9,7 +10,8 @@ export const ROOT_URL =
 
 const rootReducer = combineReducers({
     info,
-    online
+    online,
+    classifier_editor
 });
 
 export default rootReducer;

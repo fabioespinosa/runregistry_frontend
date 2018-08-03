@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/online/ui';
 import ClassClassifierConfiguration from './classClassifierConfiguration/ClassClassifierConfiguration';
-import PreSelectionTriggerConfiguration from './preSelectionTriggerConfiguration/PreSelectionTriggerConfiguration';
+import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
 
 class ConfigurationModal extends Component {
     render() {
@@ -14,9 +14,9 @@ class ConfigurationModal extends Component {
             configuration_modal_type
         } = this.props;
         const title =
-            configuration_modal_type === 'class_configuration'
-                ? 'Set Automatic classifiers for class of run selection'
-                : configuration_modal_type === 'pre_selection_configuration'
+            configuration_modal_type === 'class_classifiers'
+                ? 'Set automatic classifiers for class of run selection'
+                : configuration_modal_type === 'dataset_classifiers'
                     ? 'Set automatic classifiers for pre selection of runs'
                     : '';
         return (
@@ -37,15 +37,12 @@ class ConfigurationModal extends Component {
                     maskClosable={false}
                     destroyOnClose={true}
                 >
-                    <ClassClassifierConfiguration />
-
-                    {/* // {configuration_modal_type === 'class_configuration' && (
-                    //     <ClassClassifierConfiguration />
-                    // )}
-                    // {configuration_modal_type ===
-                    //     'pre_selection_configuration' && (
-                    //     <PreSelectionTriggerConfiguration />
-                    // )} */}
+                    {configuration_modal_type === 'class_classifiers' && (
+                        <ClassClassifierConfiguration />
+                    )}
+                    {configuration_modal_type === 'dataset_classifiers' && (
+                        <DatasetClassifierConfiguration />
+                    )}
                 </Modal>
             </div>
         );
