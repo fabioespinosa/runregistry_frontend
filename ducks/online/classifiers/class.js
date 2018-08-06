@@ -15,15 +15,11 @@ export const fetchClassClassifiers = () => async dispatch => {
     dispatch({ type: FETCH_CLASS_CLASSIFIERS, payload: classifiers });
 };
 
-export const newClassClassifier = (
-    new_classifier,
-    class_selected
-) => async dispatch => {
+export const newClassClassifier = new_classifier => async dispatch => {
     const { data: classifier } = await axios.post(
         `${api_url}/classifiers/class`,
         {
             classifier: new_classifier,
-            class: class_selected,
             // This are for testing:
             priority: 1,
             enabled: true

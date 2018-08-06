@@ -1,6 +1,6 @@
-// COPIED FROM CLASS CLASSIFIERS
 import axios from 'axios';
 import { api_url } from '../../../config/config';
+import { hideJsonEditor } from '../../classifier_editor';
 const FETCH_DATASET_CLASSIFIERS = 'FETCH_DATASET_CLASSIFIERS';
 const NEW_DATASET_CLASSIFIER = 'NEW_DATASET_CLASSIFIER';
 const EDIT_DATASET_CLASSIFIER = 'EDIT_DATASET_CLASSIFIER';
@@ -8,38 +8,51 @@ const DELETE_DATASET_CLASSIFIER = 'DELETE_DATASET_CLASSIFIER';
 
 export const fetchDatasetClassifiers = () => async dispatch => {
     const { data: classifiers } = await axios.get(
-        `${api_url}/classifiers/class`
+        `${api_url}/classifiers/dataset`
     );
     dispatch({ type: FETCH_DATASET_CLASSIFIERS, payload: classifiers });
 };
 
-export const newDatasetClassifier = new_classifier => async dispatch => {
+export const newDatasetClassifier = (
+    new_classifier,
+    class_selected
+) => async dispatch => {
     const { data: classifier } = await axios.post(
         `${api_url}/classifiers/dataset`,
         {
             classifier: new_classifier,
+            class: class_selected,
             // This are for testing:
-            priority: 1,
             enabled: true
         }
     );
     classifier.classifier = JSON.stringify(classifier.classifier);
     dispatch({ type: NEW_DATASET_CLASSIFIER, payload: classifier });
+    dispatch(hideJsonEditor());
 };
 
-export const deleteDatasetClassifier = () => async dispatch => {
+export const deleteDatasetClassifier = classifier_id => async dispatch => {
     const { data: classifier } = await axios.delete(
-        `${api_url}/classifiers/class/${classifier_id}`
+        `${api_url}/classifiers/dataset/${classifier_id}`
     );
-    dispatch({ type: DELETE_DATASET_CLASSIFIER, payload: classifier.id });
+    dispatch({
+        type: DELETE_DATASET_CLASSIFIER,
+        payload: classifier.id
+    });
 };
 
-export const editClassClassifier = () => async dispatch => {
+export const editDatasetClassifier = (
+    new_classifier,
+    class_selected
+) => async dispatch => {
     const { data: classifier } = await axios.put(
-        `${api_url}/classifiers/class/${new_classifier.id}`,
-        new_classifier
+        `${api_url}/classifiers/dataset/${new_classifier.id}`,
+        { ...new_classifier, class: class_selected }
     );
-    dispatch({ type: EDIT_DATASET_CLASSIFIER, payload: classifier });
+    dispatch({
+        type: EDIT_DATASET_CLASSIFIER,
+        payload: classifier
+    });
     dispatch(hideJsonEditor());
 };
 
@@ -53,7 +66,9 @@ export default function(state = INITIAL_STATE, action) {
         case NEW_DATASET_CLASSIFIER:
             return state.concat(payload);
         case DELETE_DATASET_CLASSIFIER:
-            return deleteDatasetClassifierHelper(payload);
+            return deleteDatasetClassifierHelper(state, payload);
+        case EDIT_DATASET_CLASSIFIER:
+            return editDatasetClassifierHelper(state, payload);
         default:
             return state;
     }
@@ -67,7 +82,16 @@ const findId = (classifiers, id) => {
     }
 };
 
-const deleteDatasetClassifierHelper = (classifiers, id) => {
-    const index = findId(classifiers, id);
+const deleteDatasetClassifierHelper = (classifiers, classifier_id) => {
+    const index = findId(classifiers, classifier_id);
     return [...classifiers.slice(0, index), ...classifiers.slice(index + 1)];
+};
+
+const editDatasetClassifierHelper = (classifiers, classifier) => {
+    const index = findId(classifiers, classifier.id);
+    return [
+        ...classifiers.slice(0, index),
+        classifier,
+        ...classifiers.slice(index + 1)
+    ];
 };

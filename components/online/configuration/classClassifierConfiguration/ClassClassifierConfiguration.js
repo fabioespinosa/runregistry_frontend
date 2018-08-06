@@ -44,6 +44,12 @@ class ClassClassifierConfiguration extends Component {
         return classifier;
     };
 
+    getDisplayedClass = classifier => {
+        classifier = JSON.parse(classifier);
+        const displayed_text = classifier.if[classifier.if.length - 2];
+        return displayed_text;
+    };
+
     render() {
         const {
             newClassClassifier,
@@ -69,10 +75,15 @@ class ClassClassifierConfiguration extends Component {
             },
             {
                 Header: 'Class',
-                accessor: 'class',
-                width: 90,
-                getProps: () => ({ style: { textAlign: 'center' } })
+                accessor: 'classifier',
+                width: 80,
+                getProps: () => ({ style: { textAlign: 'center' } }),
+                Cell: row => {
+                    const displayed_text = this.getDisplayedClass(row.value);
+                    return <span>{displayed_text}</span>;
+                }
             },
+
             {
                 Header: 'Enabled',
                 accessor: 'enabled',
@@ -139,7 +150,7 @@ class ClassClassifierConfiguration extends Component {
         ];
         return (
             <div>
-                <p>Current criteria:</p>
+                <p>Current Class Classifier criteria:</p>
                 <ReactTable
                     columns={columns}
                     data={classifiers}
@@ -149,9 +160,7 @@ class ClassClassifierConfiguration extends Component {
                 />
                 <Editor
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
-                    newClassifier={valid_js_object =>
-                        newClassClassifier(valid_js_object, class_selected)
-                    }
+                    newClassifier={newClassClassifier}
                     editClassifier={editClassClassifier}
                 >
                     <div>
