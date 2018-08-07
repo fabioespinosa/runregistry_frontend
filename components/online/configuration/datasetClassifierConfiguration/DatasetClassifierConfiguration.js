@@ -161,7 +161,7 @@ class DatasetClassifierConfiguration extends Component {
                         >
                             <Option value="COSMICS">COSMICS</Option>
                             <Option value="COLLISSIONS">COLLISSIONS</Option>
-                            <Option value="COMMISSION">COMMISSION</Option>
+                            <Option value="COMMISSIONING">COMMISSIONING</Option>
                         </Select>
                     </div>
                 </Editor>

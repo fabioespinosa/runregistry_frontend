@@ -7,11 +7,16 @@ import {
     Dropdown,
     Button,
     Icon,
+    Radio,
     message,
     Progress
 } from 'antd';
 
-import { showConfigurationModal } from '../../../ducks/online/ui';
+import {
+    showConfigurationModal,
+    toggleShowAllRuns
+} from '../../../ducks/online/ui';
+const RadioGroup = Radio.Group;
 
 class BreadcrumbCmp extends Component {
     state = {
@@ -42,14 +47,29 @@ class BreadcrumbCmp extends Component {
             </Menu.Item>
         </Menu>
     );
+
     render() {
-        const { children } = this.props;
+        const { children, show_all_runs, toggleShowAllRuns } = this.props;
         return (
             <div className="breadcrumb_container">
                 <Breadcrumb className="breadcrumb properly_capitalized">
                     {children}
                 </Breadcrumb>
-
+                <div>
+                    <RadioGroup
+                        onChange={evt => toggleShowAllRuns(evt.target.value)}
+                        value={
+                            show_all_runs
+                                ? 'show_all_runs'
+                                : 'show_significant_runs'
+                        }
+                    >
+                        <Radio value="show_all_runs">Show all runs</Radio>
+                        <Radio value="show_significant_runs">
+                            Show significant runs
+                        </Radio>
+                    </RadioGroup>
+                </div>
                 <div className="progresscircle_container">
                     <p className="progresscircle_label">Refreshing in:</p>
                     <div className="progresscircle">
@@ -96,7 +116,13 @@ class BreadcrumbCmp extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        show_all_runs: state.online.ui.show_all_runs
+    };
+};
+
 export default connect(
-    null,
-    { showConfigurationModal }
+    mapStateToProps,
+    { showConfigurationModal, toggleShowAllRuns }
 )(BreadcrumbCmp);

@@ -175,7 +175,7 @@ class ClassClassifierConfiguration extends Component {
                         >
                             <Option value="COSMICS">COSMICS</Option>
                             <Option value="COLLISSIONS">COLLISSIONS</Option>
-                            <Option value="COSMMISSION">COMMISSION</Option>
+                            <Option value="COMMISSIONING">COMMISSIONING</Option>
                         </Select>
                     </div>
                 </Editor>

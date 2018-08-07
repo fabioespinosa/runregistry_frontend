@@ -1,16 +1,14 @@
-import React from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { render } from 'react-dom';
 import { Icon } from 'antd';
 import _ from 'lodash';
-import { api_url } from '../../../ducks/rootReducer';
 import { toggleTableFilters } from '../../../ducks/online/ui';
 // import runs from '../../../ducks/runs.json';
 
 // Import React Table
 import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 
 let rawData = [];
 
@@ -52,7 +50,7 @@ const requestData = (pageSize, page, sorted, filtered, runs) => {
                     pageSize * page,
                     pageSize * page + pageSize
                 ),
-                pages: Math.ceil(filteredData.length / pageSize)
+                pages: Math.ceil(rawData.length / pageSize)
                 // });
             });
         } else {
@@ -71,16 +69,20 @@ const requestData = (pageSize, page, sorted, filtered, runs) => {
     });
 };
 
-class App extends React.Component {
-    constructor() {
-        super();
+class App extends Component {
+    constructor(props) {
+        super(props);
         this.state = {
+            // data: props.runs.slice(20 * 1, 20 * 1 + 20),
             data: [],
+            // pages: Math.ceil(props.runs.length / 20),
             pages: null,
-            loading: true
+            loading: true,
+            pageSize: 20
         };
         this.fetchData = this.fetchData.bind(this);
     }
+
     fetchData(state, instance) {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
@@ -106,14 +108,14 @@ class App extends React.Component {
             });
     }
     render() {
-        const { data, pages, loading } = this.state;
-        const { filterable } = this.props;
+        // const { data, pages, loading } = this.state;
+        const { filterable, run_table } = this.props;
+        const { runs, pages, loading } = run_table;
         let columns = [
             {
                 Header: 'Run Number',
                 accessor: 'run_number',
                 Cell: props => {
-                    console.log(props);
                     return (
                         <div style={{ textAlign: 'center', width: '100%' }}>
                             <a onClick={evt => console.log(evt.target)}>
@@ -158,6 +160,9 @@ class App extends React.Component {
 
         let component_columns = [
             {
+                Header: 'CMS'
+            },
+            {
                 Header: 'CASTOR'
             },
             {
@@ -191,7 +196,7 @@ class App extends React.Component {
             //     Header: 'LUMI'
             // },
             {
-                Header: 'PIXEL'
+                Header: 'PIX'
             },
             {
                 Header: 'RPC'
@@ -209,36 +214,71 @@ class App extends React.Component {
                 ...column,
                 maxWidth: '60px',
                 id: `${column['Header']}_PRESENT`,
-                accessor: data => data.components.includes(column['Header']),
-                Cell: props => (
-                    <span
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            textAlign: 'center'
-                        }}
-                    >
-                        {props.value ? (
-                            <div
-                                style={{
-                                    backgroundColor: 'green',
-                                    borderRadius: '1px'
-                                }}
-                            >
-                                <span style={{ color: 'white' }}>GOOD</span>
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    backgroundColor: 'grey',
-                                    borderRadius: '1px'
-                                }}
-                            >
-                                <span style={{ color: 'white' }}>EXCLUDED</span>
-                            </div>
-                        )}
-                    </span>
-                )
+                accessor: data => {
+                    let status = 'EXCLUDED';
+                    const dataset = data.datasets[0];
+                    if (dataset) {
+                        status = dataset[column['Header'].toLowerCase()].status;
+                    }
+                    return status;
+                },
+                Cell: props => {
+                    const { value } = props;
+                    return (
+                        <span
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                textAlign: 'center'
+                            }}
+                        >
+                            {value === 'GOOD' && (
+                                <div
+                                    style={{
+                                        backgroundColor: 'green',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span style={{ color: 'white' }}>GOOD</span>
+                                </div>
+                            )}
+                            {value === 'EXCLUDED' && (
+                                <div
+                                    style={{
+                                        backgroundColor: 'grey',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span style={{ color: 'white' }}>
+                                        EXCLUDED
+                                    </span>
+                                </div>
+                            )}
+                            {value === 'BAD' && (
+                                <div
+                                    style={{
+                                        backgroundColor: 'red',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span style={{ color: 'white' }}>BAD</span>
+                                </div>
+                            )}
+                            {value === 'STANDBY' && (
+                                <div
+                                    style={{
+                                        backgroundColor: 'yellow',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span style={{ color: 'black' }}>
+                                        STANDBY
+                                    </span>
+                                </div>
+                            )}
+                        </span>
+                    );
+                }
             };
         });
         columns = [...columns, ...component_columns, ...other_columns];
@@ -264,7 +304,7 @@ class App extends React.Component {
                     columns={columns}
                     manual
                     data={
-                        data // Forces table not to paginate or sort automatically, so we can handle it server-side
+                        runs // Forces table not to paginate or sort automatically, so we can handle it server-side
                     }
                     pages={pages}
                     loading={
@@ -297,7 +337,7 @@ class App extends React.Component {
 const mapStateToProps = state => {
     return {
         filterable: state.online.ui.table.filterable,
-        runs: state.online.runs
+        run_table: state.online.runs
     };
 };
 

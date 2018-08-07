@@ -156,8 +156,8 @@ class ComponentClassifierConfiguration extends Component {
             <Option key="csc" value="csc">
                 csc
             </Option>,
-            <Option key="cttps" value="cttps">
-                cttps
+            <Option key="ctpps" value="ctpps">
+                ctpps
             </Option>,
             <Option key="dt" value="dt">
                 dt

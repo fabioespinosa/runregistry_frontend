@@ -1,6 +1,21 @@
+import { fetchSignificantRuns, fetchAllRuns } from './runs';
+const TOGGLE_SHOW_ALL_RUNS = 'TOGGLE_SHOW_ALL_RUNS';
 const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL';
 export const HIDE_CONFIGURATION_MODAL = 'HIDE_CONFIGURATION_MODAL';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS';
+
+export const toggleShowAllRuns = new_value => dispatch => {
+    if (new_value === 'show_significant_runs') {
+        dispatch(fetchSignificantRuns());
+    }
+    if (new_value === 'show_all_runs') {
+        dispatch(fetchAllRuns());
+    }
+    dispatch({
+        type: TOGGLE_SHOW_ALL_RUNS,
+        payload: new_value === 'show_all_runs'
+    });
+};
 
 export const showConfigurationModal = configuration_modal_type => {
     return {
@@ -16,6 +31,7 @@ export const hideConfigurationModal = () => ({
 export const toggleTableFilters = () => ({ type: TOGGLE_TABLE_FILTERS });
 
 const INITIAL_STATE = {
+    show_all_runs: true,
     configuration_modal_visible: false,
     configuration_modal_type: '',
     table: {
@@ -26,6 +42,11 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
+        case TOGGLE_SHOW_ALL_RUNS:
+            return {
+                ...state,
+                show_all_runs: !state.show_all_runs
+            };
         case SHOW_CONFIGURATION_MODAL:
             return {
                 ...state,
