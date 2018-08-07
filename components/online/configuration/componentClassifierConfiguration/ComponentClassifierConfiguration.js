@@ -146,6 +146,56 @@ class ComponentClassifierConfiguration extends Component {
                 )
             }
         ];
+        const components_options = [
+            <Option key="castor" value="castor">
+                castor
+            </Option>,
+            <Option key="cms" value="cms">
+                cms
+            </Option>,
+            <Option key="csc" value="csc">
+                csc
+            </Option>,
+            <Option key="cttps" value="cttps">
+                cttps
+            </Option>,
+            <Option key="dt" value="dt">
+                dt
+            </Option>,
+            <Option key="ecal" value="ecal">
+                ecal
+            </Option>,
+            <Option key="es" value="es">
+                es
+            </Option>,
+            <Option key="hcal" value="hcal">
+                hcal
+            </Option>,
+            <Option key="hlt" value="hlt">
+                hlt
+            </Option>,
+            <Option key="l1t" value="l1t">
+                l1t
+            </Option>,
+            <Option key="l1tcalo" value="l1tcalo">
+                l1tcalo
+            </Option>,
+            <Option key="l1tmu" value="l1tmu">
+                l1t
+            </Option>,
+            <Option key="lumi" value="lumi">
+                lumi
+            </Option>,
+            <Option key="pix" value="pix">
+                pix
+            </Option>,
+            <Option key="rpc" value="rpc">
+                rpc
+            </Option>,
+            <Option key="strip" value="strip">
+                strip
+            </Option>
+        ];
         return (
             <div>
                 <label htmlFor="status_select">Component:</label>&nbsp;
@@ -155,10 +205,7 @@ class ComponentClassifierConfiguration extends Component {
                     defaultValue={component}
                     onChange={this.changeComponent}
                 >
-                    <Option value="castor">castor</Option>
-                    <Option value="cms">cms</Option>
-                    <Option value="csc">csc</Option>
-                    <Option value="cttps">cttps</Option>
+                    {components_options}
                 </Select>
                 <ReactTable
                     columns={columns}
@@ -204,10 +251,7 @@ class ComponentClassifierConfiguration extends Component {
                                 this.setState({ component: value })
                             }
                         >
-                            <Option value="castor">castor</Option>
-                            <Option value="cms">cms</Option>
-                            <Option value="csc">csc</Option>
-                            <Option value="cttps">cttps</Option>
+                            {components_options}
                         </Select>
                     </div>
                 </Editor>
