@@ -17,6 +17,7 @@ class TopNav extends Component {
             },
             user
         } = this.props;
+        console.log(user.adfs_fullname);
         return (
             <Header className="header">
                 <Menu
