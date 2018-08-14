@@ -23,14 +23,6 @@ const requestData = (pageSize, page, sorted, filtered) => {
         // You can retrieve your data however you want, in this case, we will just use some local data.
         let filteredData = rawData;
 
-        // You can use the filters in your request, but you are responsible for applying them.
-        if (filtered.length) {
-            filteredData = filtered.reduce((filteredSoFar, nextFilter) => {
-                return filteredSoFar.filter(row => {
-                    return (row[nextFilter.id] + '').includes(nextFilter.value);
-                });
-            }, filteredData);
-        }
         // You can also use the sorting in your request, but again, you are responsible for applying it.
         const sortedData = _.orderBy(
             filteredData,
@@ -56,7 +48,7 @@ class App extends Component {
         this.setState({ loading: true });
         // Request the data however you want.  Here, we'll use our mocked service we created earlier
         this.props.filterRuns(
-            // table.pageSize,
+            table.pageSize,
             table.page,
             table.sorted,
             table.filtered

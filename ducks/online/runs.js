@@ -48,13 +48,16 @@ export const fetchAllRuns = () => async dispatch => {
     dispatch({ type: FETCH_ALL_RUNS, payload: runs });
 };
 
-export const filterRuns = (page, sorted, filtered) => async dispatch => {
-    const query_object = {};
+export const filterRuns = (
+    page_size,
+    page,
+    sorted,
+    filtered
+) => async dispatch => {
+    const query_object = { page_size, filter: {} };
     filtered.forEach(criteria => {
-        query_object[criteria.id] = criteria.value;
+        query_object.filter[criteria.id] = criteria.value;
     });
-    console.log(filtered);
-    console.log(query_object);
     const { data: runs } = await axios.post(
         `${api_url}/runs_filtered_ordered/${page}`,
         query_object
