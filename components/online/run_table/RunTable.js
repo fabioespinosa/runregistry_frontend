@@ -4,7 +4,12 @@ import { connect } from 'react-redux';
 import { render } from 'react-dom';
 import { Icon } from 'antd';
 import _ from 'lodash';
-import { toggleTableFilters } from '../../../ducks/online/ui';
+import { filterRuns } from '../../../ducks/online/runs';
+import {
+    toggleTableFilters,
+    showManageRunModal
+} from '../../../ducks/online/ui';
+import ManageRunModal from '../manage_run/ManageRunModal';
 // import runs from '../../../ducks/runs.json';
 
 // Import React Table
@@ -12,8 +17,9 @@ import ReactTable from 'react-table';
 
 let rawData = [];
 
-const requestData = (pageSize, page, sorted, filtered, runs) => {
+const requestData = (pageSize, page, sorted, filtered) => {
     return new Promise((resolve, reject) => {
+        console.log(sorted, filtered);
         // You can retrieve your data however you want, in this case, we will just use some local data.
         let filteredData = rawData;
 
@@ -40,76 +46,25 @@ const requestData = (pageSize, page, sorted, filtered, runs) => {
             }),
             sorted.map(d => (d.desc ? 'desc' : 'asc'))
         );
-
-        if (rawData.length === 0) {
-            // axios.get(`${api_url}/online/runs`).then(res => {
-            // rawData = res.data;
-            rawData = runs;
-            resolve({
-                rows: rawData.slice(
-                    pageSize * page,
-                    pageSize * page + pageSize
-                ),
-                pages: Math.ceil(rawData.length / pageSize)
-                // });
-            });
-        } else {
-            // You must return an object containing the rows of the current page, and optionally the total pages number.
-            const res = {
-                rows: sortedData.slice(
-                    pageSize * page,
-                    pageSize * page + pageSize
-                ),
-                pages: Math.ceil(filteredData.length / pageSize)
-            };
-
-            // Here we'll simulate a server response with 500ms of delay.
-            setTimeout(() => resolve(res), 0);
-        }
     });
 };
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            // data: props.runs.slice(20 * 1, 20 * 1 + 20),
-            data: [],
-            // pages: Math.ceil(props.runs.length / 20),
-            pages: null,
-            loading: true,
-            pageSize: 20
-        };
-        this.fetchData = this.fetchData.bind(this);
-    }
-
-    fetchData(state, instance) {
+    fetchData = (table, instance) => {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
         this.setState({ loading: true });
         // Request the data however you want.  Here, we'll use our mocked service we created earlier
-        requestData(
-            state.pageSize,
-            state.page,
-            state.sorted,
-            state.filtered,
-            this.props.runs
-        )
-            .then(res => {
-                // Now just get the rows of data to your React Table (and update anything else like total pages or loading)
-                this.setState({
-                    data: res.rows,
-                    pages: res.pages,
-                    loading: false
-                });
-            })
-            .catch(err => {
-                console.log('error aca');
-            });
-    }
+        this.props.filterRuns(
+            // table.pageSize,
+            table.page,
+            table.sorted,
+            table.filtered
+        );
+    };
     render() {
         // const { data, pages, loading } = this.state;
-        const { filterable, run_table } = this.props;
+        const { filterable, run_table, showManageRunModal } = this.props;
         const { runs, pages, loading } = run_table;
         let columns = [
             {
@@ -124,6 +79,15 @@ class App extends Component {
                         </div>
                     );
                 }
+            },
+            {
+                Header: 'Manage',
+                id: 'manage',
+                Cell: () => (
+                    <div>
+                        <a>Manage</a>
+                    </div>
+                )
             },
             { Header: 'Started', accessor: 'start_time' },
             { Header: 'Hlt Key Description', accessor: 'hlt_key' },
@@ -288,7 +252,8 @@ class App extends Component {
                 ...column,
                 Header: () => (
                     <div>
-                        {column.Header}&nbsp;&nbsp;
+                        {column.Header}
+                        &nbsp;&nbsp;
                         <Icon
                             onClick={() => this.props.toggleTableFilters()}
                             type="search"
@@ -300,6 +265,7 @@ class App extends Component {
         });
         return (
             <div>
+                <ManageRunModal />
                 <ReactTable
                     columns={columns}
                     manual
@@ -315,9 +281,26 @@ class App extends Component {
                     }
                     filterable={filterable}
                     defaultPageSize={
-                        20 // Request new data when things change
+                        25 // Request new data when things change
                     }
                     className="-striped -highlight"
+                    getTdProps={(state, rowInfo, column, instance) => {
+                        return {
+                            onClick: (e, handleOriginal) => {
+                                if (column.id === 'manage') {
+                                    showManageRunModal(rowInfo.original);
+                                }
+                                // IMPORTANT! React-Table uses onClick internally to trigger
+                                // events like expanding SubComponents and pivots.
+                                // By default a custom 'onClick' handler will override this functionality.
+                                // If you want to fire the original onClick handler, call the
+                                // 'handleOriginal' function.
+                                if (handleOriginal) {
+                                    handleOriginal();
+                                }
+                            }
+                        };
+                    }}
                 />
                 <br />
                 {/* <Tips /> */}
@@ -343,5 +326,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { toggleTableFilters }
+    { filterRuns, toggleTableFilters, showManageRunModal }
 )(App);
