@@ -48,7 +48,25 @@ export const fetchAllRuns = () => async dispatch => {
     dispatch({ type: FETCH_ALL_RUNS, payload: runs });
 };
 
-export const filterRuns = (
+export const filterRuns = (page_size, page, sorted, filtered) => async (
+    dispatch,
+    getState
+) => {
+    const run_endpoint = getState().online.ui.show_all_runs
+        ? 'runs_filtered_ordered'
+        : 'significant_runs_filtered_ordered';
+    const query_object = { page_size, filter: {} };
+    filtered.forEach(criteria => {
+        query_object.filter[criteria.id] = criteria.value;
+    });
+    const { data: runs } = await axios.post(
+        `${api_url}/${run_endpoint}/${page}`,
+        query_object
+    );
+    dispatch({ type: FILTER_RUNS, payload: runs });
+};
+
+export const filterSignificantRuns = (
     page_size,
     page,
     sorted,
@@ -59,7 +77,7 @@ export const filterRuns = (
         query_object.filter[criteria.id] = criteria.value;
     });
     const { data: runs } = await axios.post(
-        `${api_url}/runs_filtered_ordered/${page}`,
+        `${api_url}/significant_runs_filtered_ordered/${page}`,
         query_object
     );
     dispatch({ type: FILTER_RUNS, payload: runs });

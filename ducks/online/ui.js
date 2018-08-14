@@ -1,4 +1,4 @@
-import { fetchSignificantRuns, fetchAllRuns } from './runs';
+import { filterRuns, filterSignificantRuns } from './runs';
 const TOGGLE_SHOW_ALL_RUNS = 'TOGGLE_SHOW_ALL_RUNS';
 const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL';
 export const HIDE_CONFIGURATION_MODAL = 'HIDE_CONFIGURATION_MODAL';
@@ -7,16 +7,11 @@ const HIDE_MANAGE_RUN_MODAL = 'HIDE_MANAGE_RUN_MODAL';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS';
 
 export const toggleShowAllRuns = new_value => dispatch => {
-    if (new_value === 'show_significant_runs') {
-        dispatch(fetchSignificantRuns());
-    }
-    if (new_value === 'show_all_runs') {
-        dispatch(fetchAllRuns());
-    }
     dispatch({
         type: TOGGLE_SHOW_ALL_RUNS,
         payload: new_value === 'show_all_runs'
     });
+    dispatch(filterRuns(25, 0, [], []));
 };
 
 export const showConfigurationModal = configuration_modal_type => ({
