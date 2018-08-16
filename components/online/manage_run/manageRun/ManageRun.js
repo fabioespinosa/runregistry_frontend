@@ -15,7 +15,7 @@ class ManageRun extends Component {
                     <p>Edit Run</p>
                 </Panel>
                 <Panel header="Edit run">
-                    <EditRun />
+                    <EditRun run={run} />
                 </Panel>
                 <Panel header="Move run">
                     <p>Edit Run</p>

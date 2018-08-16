@@ -9,30 +9,7 @@ const FETCH_ALL_RUNS = 'FETCH_ALL_RUNS';
 const FILTER_RUNS = 'FILTER_RUNS';
 const TABLE_LOADING = 'TABLE_LOADING';
 
-export function fetchInitialOnlineRuns(store, query, isServer) {
-    const url = isServer ? 'http://localhost:7003' : api_url;
-
-    // return axios
-    //     .get(`${url}/runs_paginated/1`, {
-    //         withCredentials: true,
-    //         Cookie: query.cookie
-    //     })
-    //     .then(res => {
-    //         store.dispatch({ type: FETCH_INITIAL_RUNS, payload: res.data });
-    //     })
-    //     .catch(err => {
-    //         console.log(err.message);
-    //         // store.dispatch({
-    //         //     type: SHOW_NOTIFICATION,
-    //         //     payload: {
-    //         //         notification_title:
-    //         //             'An error occurred fetching initial runs',
-    //         //         notification_message: err.response,
-    //         //         notification_type: 'danger'
-    //         //     }
-    //         // });
-    //     });
-}
+export function fetchInitialOnlineRuns(store, query, isServer) {}
 
 export const fetchSignificantRuns = () => async dispatch => {
     dispatch({ type: TABLE_LOADING });
@@ -61,23 +38,6 @@ export const filterRuns = (page_size, page, sorted, filtered) => async (
     });
     const { data: runs } = await axios.post(
         `${api_url}/${run_endpoint}/${page}`,
-        query_object
-    );
-    dispatch({ type: FILTER_RUNS, payload: runs });
-};
-
-export const filterSignificantRuns = (
-    page_size,
-    page,
-    sorted,
-    filtered
-) => async dispatch => {
-    const query_object = { page_size, filter: {} };
-    filtered.forEach(criteria => {
-        query_object.filter[criteria.id] = criteria.value;
-    });
-    const { data: runs } = await axios.post(
-        `${api_url}/significant_runs_filtered_ordered/${page}`,
         query_object
     );
     dispatch({ type: FILTER_RUNS, payload: runs });

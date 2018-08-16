@@ -9,13 +9,14 @@ class ManageRunModal extends Component {
         const {
             manage_run_modal_visible,
             hideManageRunModal,
-            children
+            children,
+            run
         } = this.props;
 
         return (
             <div>
                 <Modal
-                    title={'Manage Run'}
+                    title={`Managing Run # ${run.run_number}`}
                     visible={manage_run_modal_visible}
                     onOk={hideManageRunModal}
                     onCancel={
@@ -39,7 +40,8 @@ class ManageRunModal extends Component {
 
 const mapStateToProps = state => {
     return {
-        manage_run_modal_visible: state.online.ui.manage_run_modal_visible
+        manage_run_modal_visible: state.online.ui.manage_run_modal_visible,
+        run: state.online.ui.manage_run_modal_run
     };
 };
 export default connect(

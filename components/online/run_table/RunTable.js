@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { render } from 'react-dom';
 import { Icon } from 'antd';
 import _ from 'lodash';
+import { components } from '../../../config/config';
 import { filterRuns } from '../../../ducks/online/runs';
 import {
     toggleTableFilters,
@@ -14,32 +15,6 @@ import ManageRunModal from '../manage_run/ManageRunModal';
 
 // Import React Table
 import ReactTable from 'react-table';
-
-let rawData = [];
-
-const requestData = (pageSize, page, sorted, filtered) => {
-    return new Promise((resolve, reject) => {
-        console.log(sorted, filtered);
-        // You can retrieve your data however you want, in this case, we will just use some local data.
-        let filteredData = rawData;
-
-        // You can also use the sorting in your request, but again, you are responsible for applying it.
-        const sortedData = _.orderBy(
-            filteredData,
-            sorted.map(sort => {
-                return row => {
-                    if (row[sort.id] === null || row[sort.id] === undefined) {
-                        return -Infinity;
-                    }
-                    return typeof row[sort.id] === 'string'
-                        ? row[sort.id].toLowerCase()
-                        : row[sort.id];
-                };
-            }),
-            sorted.map(d => (d.desc ? 'desc' : 'asc'))
-        );
-    });
-};
 
 class App extends Component {
     fetchData = (table, instance) => {
@@ -114,56 +89,10 @@ class App extends Component {
             // { Header: 'end_lumi', accessor: 'end_lumi' }
         ];
 
-        let component_columns = [
-            {
-                Header: 'CMS'
-            },
-            {
-                Header: 'CASTOR'
-            },
-            {
-                Header: 'CSC'
-            },
-            {
-                Header: 'DT'
-            },
-            {
-                Header: 'ECAL'
-            },
-            {
-                Header: 'ES'
-            },
-            {
-                Header: 'HCAL'
-            },
-            // {
-            //     Header: 'HLT'
-            // },
-            // {
-            //     Header: 'L1T'
-            // },
-            // {
-            //     Header: 'L1TMU'
-            // },
-            // {
-            //     Header: 'L1TCALO'
-            // },
-            // {
-            //     Header: 'LUMI'
-            // },
-            {
-                Header: 'PIX'
-            },
-            {
-                Header: 'RPC'
-            },
-            // {
-            //     Header: 'STRIP'
-            // },
-            {
-                Header: 'CTPPS'
-            }
-        ];
+        // Put components in format Header: component
+        let component_columns = components.map(component => ({
+            Header: component
+        }));
 
         component_columns = component_columns.map(column => {
             return {
@@ -172,9 +101,9 @@ class App extends Component {
                 id: `${column['Header']}_PRESENT`,
                 accessor: data => {
                     let status = 'EXCLUDED';
-                    const dataset = data.datasets[0];
-                    if (dataset) {
-                        status = dataset[column['Header'].toLowerCase()].status;
+                    const triplet = data[`${column['Header']}_triplet`];
+                    if (triplet) {
+                        status = triplet.status;
                     }
                     return status;
                 },
