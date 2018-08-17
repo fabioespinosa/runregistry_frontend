@@ -39,7 +39,7 @@ class ClassClassifierConfiguration extends Component {
         const { class_selected } = this.state;
         const parsed_input = JSON.parse(inside_input);
         let classifier = {
-            if: [parsed_input, class_selected, 'COMMISSIONING']
+            if: [parsed_input, class_selected, 'commissioning']
         };
         return classifier;
     };
@@ -164,7 +164,8 @@ class ClassClassifierConfiguration extends Component {
                     editClassifier={editClassClassifier}
                 >
                     <div>
-                        <label htmlFor="class_select">Class:</label>&nbsp;
+                        <label htmlFor="class_select">Class:</label>
+                        &nbsp;
                         <Select
                             name=""
                             id="class_select"
@@ -173,9 +174,9 @@ class ClassClassifierConfiguration extends Component {
                                 this.setState({ class_selected: value })
                             }
                         >
-                            <Option value="COSMICS">COSMICS</Option>
-                            <Option value="COLLISSIONS">COLLISSIONS</Option>
-                            <Option value="COMMISSIONING">COMMISSIONING</Option>
+                            <Option value="cosmics">cosmics</Option>
+                            <Option value="collisions">collissions</Option>
+                            <Option value="commissioning">commissioning</Option>
                         </Select>
                     </div>
                 </Editor>

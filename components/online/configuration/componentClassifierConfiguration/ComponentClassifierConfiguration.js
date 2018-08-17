@@ -59,12 +59,6 @@ class ComponentClassifierConfiguration extends Component {
         const { component, status_selected } = this.state;
         const columns = [
             {
-                Header: 'id',
-                width: 50,
-                accessor: 'id',
-                getProps: () => ({ style: { textAlign: 'center' } })
-            },
-            {
                 Header: 'Priority',
                 accessor: 'priority',
                 width: 80,
@@ -198,7 +192,8 @@ class ComponentClassifierConfiguration extends Component {
         ];
         return (
             <div>
-                <label htmlFor="status_select">Component:</label>&nbsp;
+                <label htmlFor="status_select">Component:</label>
+                &nbsp;
                 <Select
                     name=""
                     id="component_select"
@@ -226,7 +221,26 @@ class ComponentClassifierConfiguration extends Component {
                     }
                 >
                     <div>
-                        <label htmlFor="status_select">Class:</label>&nbsp;
+                        <label htmlFor="component_select_create">
+                            Component:
+                        </label>
+                        &nbsp;
+                        <Select
+                            disabled
+                            name=""
+                            id="component_select_create"
+                            value={component}
+                        >
+                            {components_options}
+                        </Select>
+                        <label>
+                            {' '}
+                            (To change the component, change it above)
+                        </label>
+                        <br />
+                        <br />
+                        <label htmlFor="status_select">Class:</label>
+                        &nbsp;
                         <Select
                             name=""
                             id="status_select"
@@ -239,19 +253,6 @@ class ComponentClassifierConfiguration extends Component {
                             <Option value="BAD">BAD</Option>
                             <Option value="STANDBY">STANDBY</Option>
                             <Option value="EXCLUDED">EXCLUDED</Option>
-                        </Select>
-                        <label htmlFor="component_select_create">
-                            Component:
-                        </label>&nbsp;
-                        <Select
-                            name=""
-                            id="component_select_create"
-                            defaultValue={component}
-                            onChange={value =>
-                                this.setState({ component: value })
-                            }
-                        >
-                            {components_options}
                         </Select>
                     </div>
                 </Editor>

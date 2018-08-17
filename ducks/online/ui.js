@@ -4,6 +4,8 @@ const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL';
 export const HIDE_CONFIGURATION_MODAL = 'HIDE_CONFIGURATION_MODAL';
 const SHOW_MANAGE_RUN_MODAL = 'SHOW_MANAGE_RUN_MODAL';
 const HIDE_MANAGE_RUN_MODAL = 'HIDE_MANAGE_RUN_MODAL';
+const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL';
+const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS';
 
 export const toggleShowAllRuns = new_value => dispatch => {
@@ -32,6 +34,13 @@ export const hideManageRunModal = () => ({
     type: HIDE_MANAGE_RUN_MODAL
 });
 
+export const showLumisectionModal = run => ({
+    type: SHOW_LUMISECTION_MODAL,
+    payload: run
+});
+
+export const hideLumisectionModal = () => ({ type: HIDE_LUMISECTION_MODAL });
+
 export const toggleTableFilters = () => ({ type: TOGGLE_TABLE_FILTERS });
 
 const INITIAL_STATE = {
@@ -40,6 +49,8 @@ const INITIAL_STATE = {
     configuration_modal_type: '',
     manage_run_modal_visible: false,
     manage_run_modal_run: {},
+    lumisection_modal_visible: false,
+    lumisection_modal_run: {},
     table: {
         filterable: false
     }
@@ -76,6 +87,14 @@ export default function(state = INITIAL_STATE, action) {
                 ...state,
                 manage_run_modal_visible: false
             };
+        case SHOW_LUMISECTION_MODAL:
+            return {
+                ...state,
+                lumisection_modal_visible: true,
+                lumisection_modal_run: payload
+            };
+        case HIDE_LUMISECTION_MODAL:
+            return { ...state, lumisection_modal_visible: false };
         case TOGGLE_TABLE_FILTERS:
             return {
                 ...state,

@@ -3,14 +3,16 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { render } from 'react-dom';
 import { Icon } from 'antd';
-import _ from 'lodash';
+import Swal from 'sweetalert2';
 import { components } from '../../../config/config';
 import { filterRuns } from '../../../ducks/online/runs';
 import {
     toggleTableFilters,
-    showManageRunModal
+    showManageRunModal,
+    showLumisectionModal
 } from '../../../ducks/online/ui';
 import ManageRunModal from '../manage_run/ManageRunModal';
+import LumisectionModal from '../lumisections/LumisectionModal';
 // import runs from '../../../ducks/runs.json';
 
 // Import React Table
@@ -31,7 +33,12 @@ class App extends Component {
     };
     render() {
         // const { data, pages, loading } = this.state;
-        const { filterable, run_table, showManageRunModal } = this.props;
+        const {
+            filterable,
+            run_table,
+            showManageRunModal,
+            showLumisectionModal
+        } = this.props;
         const { runs, pages, loading } = run_table;
         let columns = [
             {
@@ -47,18 +54,102 @@ class App extends Component {
                     );
                 }
             },
+            { Header: 'Class', accessor: 'class' },
             {
-                Header: 'Manage',
+                Header: 'Manage / LS',
                 id: 'manage',
-                Cell: () => (
+                maxWidth: 75,
+                Cell: ({ original }) => (
                     <div>
-                        <a>Manage</a>
+                        <a onClick={() => showManageRunModal(original)}>
+                            Manage
+                        </a>
+                        {' / '}
+                        <a onClick={evt => showLumisectionModal(original)}>
+                            LS
+                        </a>
                     </div>
                 )
             },
+            {
+                Header: 'Significant',
+                id: 'significant',
+                maxWidth: 62,
+                Cell: ({ original }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        {original.significant ? (
+                            <Icon type={'check'} />
+                        ) : (
+                            <a
+                                onClick={async () => {
+                                    const { value } = await Swal({
+                                        type: 'warning',
+                                        title:
+                                            'Are you sure you want to make the run Significant',
+                                        text: '',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Yes',
+                                        reverseButtons: true,
+                                        footer: '<a >What does this mean?</a>'
+                                    });
+                                    if (value) {
+                                        console.log('f');
+                                        await Swal(
+                                            `Run ${
+                                                original.run_number
+                                            } marked significant`,
+                                            '',
+                                            'success'
+                                        );
+                                    }
+                                }}
+                            >
+                                <Icon type={'close-square'} />
+                            </a>
+                        )}
+                    </div>
+                )
+            },
+            {
+                Header: 'State',
+                id: 'state',
+                accessor: 'state',
+                Cell: ({ value }) => (
+                    <span style={{ textAlign: 'center' }}>
+                        <span
+                            style={{
+                                color: 'white',
+                                fontSize: '0.95em',
+                                backgroundColor: 'grey',
+                                borderRadius: '1px'
+                            }}
+                        >
+                            <span style={{ padding: '4px' }}>SIGNOFF</span>
+                        </span>
+                        {' / '}
+                        <a
+                            onClick={async () => {
+                                const { value: state } = await Swal({
+                                    title: 'Move to...',
+                                    input: 'select',
+                                    inputOptions: {
+                                        OPEN: 'To OPEN',
+                                        SIGNOFF: 'to SIGNOFF',
+                                        COMPLETED: 'to COMPLETED'
+                                    },
+                                    showCancelButton: true,
+                                    reverseButtons: true
+                                });
+                                console.log(state);
+                            }}
+                        >
+                            move
+                        </a>
+                    </span>
+                )
+            },
             { Header: 'Started', accessor: 'start_time' },
-            { Header: 'Hlt Key Description', accessor: 'hlt_key' },
-            { Header: 'Class', accessor: 'class' }
+            { Header: 'Hlt Key Description', accessor: 'hlt_key' }
         ]; // { Header: 'Stopped', accessor: 'STOPTIME' },];
 
         const other_columns = [
@@ -97,12 +188,13 @@ class App extends Component {
         component_columns = component_columns.map(column => {
             return {
                 ...column,
-                maxWidth: '60px',
+                maxWidth: 66,
                 id: `${column['Header']}_PRESENT`,
                 accessor: data => {
                     let status = 'EXCLUDED';
                     const triplet = data[`${column['Header']}_triplet`];
-                    if (triplet) {
+                    const { significant } = data;
+                    if (triplet && significant) {
                         status = triplet.status;
                     }
                     return status;
@@ -124,7 +216,13 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span style={{ color: 'white' }}>GOOD</span>
+                                    <span
+                                        style={{
+                                            color: 'white'
+                                        }}
+                                    >
+                                        GOOD
+                                    </span>
                                 </div>
                             )}
                             {value === 'EXCLUDED' && (
@@ -134,7 +232,12 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span style={{ color: 'white' }}>
+                                    <span
+                                        style={{
+                                            color: 'white',
+                                            fontSize: '0.85em'
+                                        }}
+                                    >
                                         EXCLUDED
                                     </span>
                                 </div>
@@ -146,7 +249,13 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span style={{ color: 'white' }}>BAD</span>
+                                    <span
+                                        style={{
+                                            color: 'white'
+                                        }}
+                                    >
+                                        BAD
+                                    </span>
                                 </div>
                             )}
                             {value === 'STANDBY' && (
@@ -156,7 +265,11 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span style={{ color: 'black' }}>
+                                    <span
+                                        style={{
+                                            color: 'black'
+                                        }}
+                                    >
                                         STANDBY
                                     </span>
                                 </div>
@@ -187,6 +300,7 @@ class App extends Component {
         return (
             <div>
                 <ManageRunModal />
+                <LumisectionModal />
                 <ReactTable
                     columns={columns}
                     manual
@@ -205,23 +319,23 @@ class App extends Component {
                         25 // Request new data when things change
                     }
                     className="-striped -highlight"
-                    getTdProps={(state, rowInfo, column, instance) => {
-                        return {
-                            onClick: (e, handleOriginal) => {
-                                if (column.id === 'manage') {
-                                    showManageRunModal(rowInfo.original);
-                                }
-                                // IMPORTANT! React-Table uses onClick internally to trigger
-                                // events like expanding SubComponents and pivots.
-                                // By default a custom 'onClick' handler will override this functionality.
-                                // If you want to fire the original onClick handler, call the
-                                // 'handleOriginal' function.
-                                if (handleOriginal) {
-                                    handleOriginal();
-                                }
-                            }
-                        };
-                    }}
+                    // getTdProps={(state, rowInfo, column, instance) => {
+                    //     return {
+                    //         onClick: (e, handleOriginal) => {
+                    //             if (column.id === 'significant') {
+                    //                 console.log('f');
+                    //             }
+                    //             // IMPORTANT! React-Table uses onClick internally to trigger
+                    //             // events like expanding SubComponents and pivots.
+                    //             // By default a custom 'onClick' handler will override this functionality.
+                    //             // If you want to fire the original onClick handler, call the
+                    //             // 'handleOriginal' function.
+                    //             if (handleOriginal) {
+                    //                 handleOriginal();
+                    //             }
+                    //         }
+                    //     };
+                    // }}
                 />
                 <br />
                 {/* <Tips /> */}
@@ -230,7 +344,7 @@ class App extends Component {
                     .ReactTable .rt-th,
                     .ReactTable .rt-td {
                         font-size: 11px;
-                        padding: 3px 5px !important;
+                        padding: 3px 3px !important;
                     }
                 `}</style>
             </div>
@@ -247,5 +361,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { filterRuns, toggleTableFilters, showManageRunModal }
+    { filterRuns, toggleTableFilters, showManageRunModal, showLumisectionModal }
 )(App);

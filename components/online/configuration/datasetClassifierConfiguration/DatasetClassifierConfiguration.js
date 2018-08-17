@@ -150,7 +150,8 @@ class DatasetClassifierConfiguration extends Component {
                     }
                 >
                     <div>
-                        <label htmlFor="class_select">For class:</label>&nbsp;
+                        <label htmlFor="class_select">For class:</label>
+                        &nbsp;
                         <Select
                             name=""
                             id="class_select"
@@ -159,9 +160,9 @@ class DatasetClassifierConfiguration extends Component {
                                 this.setState({ class_selected: value })
                             }
                         >
-                            <Option value="COSMICS">COSMICS</Option>
-                            <Option value="COLLISSIONS">COLLISSIONS</Option>
-                            <Option value="COMMISSIONING">COMMISSIONING</Option>
+                            <Option value="cosmics">cosmics</Option>
+                            <Option value="collisions">collissions</Option>
+                            <Option value="commissioning">commissioning</Option>
                         </Select>
                     </div>
                 </Editor>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import Progress from 'nprogress';
+import sweet from 'sweetalert2/dist/sweetalert2.min.css';
 import stylesheet from 'antd/dist/antd.min.css';
 import { initGA, logPageView } from '../services/analytics';
 import Nav from './../components/ui/nav/Nav';
