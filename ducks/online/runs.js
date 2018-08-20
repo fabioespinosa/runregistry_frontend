@@ -6,6 +6,7 @@ import { api_url } from '../../config/config';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 const FETCH_SIGNIFICANT_RUNS = 'FETCH_SIGNIFICANT_RUNS';
 const FETCH_ALL_RUNS = 'FETCH_ALL_RUNS';
+const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
 const TABLE_LOADING = 'TABLE_LOADING';
 
@@ -23,6 +24,14 @@ export const fetchAllRuns = () => async dispatch => {
     dispatch({ type: TABLE_LOADING });
     const { data: runs } = await axios.get(`${api_url}/runs_paginated/1`);
     dispatch({ type: FETCH_ALL_RUNS, payload: runs });
+};
+
+export const editRun = new_run => async dispatch => {
+    const { data: run } = await axios.put(
+        `${api_url}/runs/id_run/${new_run.run_number}`,
+        new_run
+    );
+    dispatch({ type: EDIT_RUN, payload: run });
 };
 
 export const filterRuns = (page_size, page, sorted, filtered) => async (
@@ -72,6 +81,11 @@ export default function(state = INITIAL_STATE, action) {
                 runs: payload.runs,
                 pages: payload.pages
             };
+        case EDIT_RUN:
+            return {
+                ...state,
+                runs: editRunHelper(state.runs, payload)
+            };
         case TABLE_LOADING:
             return {
                 ...state,
@@ -81,3 +95,16 @@ export default function(state = INITIAL_STATE, action) {
             return state;
     }
 }
+
+const findId = (array, id) => {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].id === id) {
+            return i;
+        }
+    }
+};
+
+const editRunHelper = (runs, new_run) => {
+    const index = findId(runs, new_run.id);
+    return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
+};

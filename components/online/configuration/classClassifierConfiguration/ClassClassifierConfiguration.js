@@ -24,7 +24,7 @@ const Editor = dynamic(
 );
 
 class ClassClassifierConfiguration extends Component {
-    state = { class_selected: 'COLLISSIONS' };
+    state = { class_selected: 'collisions' };
     componentDidMount() {
         this.props.fetchClassClassifiers();
     }
@@ -175,7 +175,7 @@ class ClassClassifierConfiguration extends Component {
                             }
                         >
                             <Option value="cosmics">cosmics</Option>
-                            <Option value="collisions">collissions</Option>
+                            <Option value="collisions">collisions</Option>
                             <Option value="commissioning">commissioning</Option>
                         </Select>
                     </div>

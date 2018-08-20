@@ -1,22 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
 import { Input, Button } from 'antd';
 
+import { editRun } from '../../.././../../ducks/online/runs';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
 
 class EditRun extends Component {
     render() {
-        const {
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isSubmitting,
-            run
-        } = this.props;
+        const { run, editRun } = this.props;
 
         const initialValues = {};
         for (const [key, val] of Object.entries(run)) {
@@ -27,30 +20,39 @@ class EditRun extends Component {
             ) {
                 // We are dealing now with a triplet:
                 const { status, comment, cause } = val;
-                initialValues[`${key}_status`] = status;
-                initialValues[`${key}_cause`] = cause;
-                initialValues[`${key}_comment`] = comment;
+                initialValues[`${key}>status`] = status;
+                initialValues[`${key}>cause`] = cause;
+                initialValues[`${key}>comment`] = comment;
             }
         }
-        // Object.keys(run).forEach(component => {
-        //     const triplet = run[component];
-        //     if (component !== null && key.indexOf('') typeof triplet === 'object' ) {
-        //         initialValues[`${component}_status`] = run[component].status;
-        //         initialValues[`${component}_cause`] = dataset[component].cause;
-        //         initialValues[`${component}_comment`] =
-        //             dataset[component].comment;
-        //     }
-        // });
-        console.log(initialValues);
         return (
             <div>
                 <Formik
                     initialValues={initialValues}
-                    onSubmit={evt => {
-                        console.log(evt);
+                    onSubmit={values => {
+                        const components_triplets = {};
+                        for (const [key, val] of Object.entries(values)) {
+                            const component_key = key.split('>')[0];
+                            const triplet_key = key.split('>')[1];
+                            components_triplets[component_key] = {
+                                ...components_triplets[component_key],
+                                [triplet_key]: val
+                            };
+                        }
+                        const new_run = { ...run, ...components_triplets };
+                        editRun(new_run);
                     }}
-                    render={props => (
-                        <form onSubmit={props.handleSubmit}>
+                    render={({
+                        values,
+                        setFieldValue,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        isSubmitting
+                    }) => (
+                        <form onSubmit={handleSubmit}>
                             <table className="edit_run_form">
                                 <thead>
                                     <tr className="table_header">
@@ -68,7 +70,7 @@ class EditRun extends Component {
                                                 <Field
                                                     key={component}
                                                     component="select"
-                                                    name={`${component}_triplet_status`}
+                                                    name={`${component}_triplet>status`}
                                                 >
                                                     <option value="GOOD">
                                                         GOOD
@@ -95,7 +97,18 @@ class EditRun extends Component {
                                             </td>
                                             <td className="comment">
                                                 <TextArea
-                                                    name={`${component}_triplet_comment`}
+                                                    value={
+                                                        values[
+                                                            `${component}_triplet>comment`
+                                                        ]
+                                                    }
+                                                    onChange={evt =>
+                                                        setFieldValue(
+                                                            `${component}_triplet>comment`,
+                                                            evt.target.value
+                                                        )
+                                                    }
+                                                    name={`${component}_triplet>comment`}
                                                     row={1}
                                                     type="text"
                                                     autosize
@@ -108,7 +121,9 @@ class EditRun extends Component {
                             <div className="buttons">
                                 <Button type="">Cancel</Button>
                                 <Button type="">Reset</Button>
-                                <Button type="primary">Save</Button>
+                                <Button type="primary" htmlType="submit">
+                                    Save
+                                </Button>
                             </div>
                         </form>
                     )}
@@ -159,4 +174,7 @@ class EditRun extends Component {
     }
 }
 
-export default EditRun;
+export default connect(
+    null,
+    { editRun }
+)(EditRun);
