@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
 import { hideLumisectionModal } from '../../../ducks/online/ui';
-// import ManageRun from './manageRun/ManageRun';
+import Lumisections from './lumisections/Lumisections';
 
 class LumisectionModal extends Component {
     render() {
@@ -31,7 +31,7 @@ class LumisectionModal extends Component {
                     maskClosable={false}
                     destroyOnClose={true}
                 >
-                    {/* <ManageRun /> */}
+                    <Lumisections run={run} />
                 </Modal>
             </div>
         );

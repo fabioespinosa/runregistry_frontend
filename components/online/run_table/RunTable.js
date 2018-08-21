@@ -60,7 +60,7 @@ class App extends Component {
                 id: 'manage',
                 maxWidth: 75,
                 Cell: ({ original }) => (
-                    <div>
+                    <div style={{ textAlign: 'center' }}>
                         <a onClick={() => showManageRunModal(original)}>
                             Manage
                         </a>
@@ -115,7 +115,7 @@ class App extends Component {
                 id: 'state',
                 accessor: 'state',
                 Cell: ({ value }) => (
-                    <span style={{ textAlign: 'center' }}>
+                    <div style={{ textAlign: 'center' }}>
                         <span
                             style={{
                                 color: 'white',
@@ -145,7 +145,7 @@ class App extends Component {
                         >
                             move
                         </a>
-                    </span>
+                    </div>
                 )
             },
             { Header: 'Started', accessor: 'start_time' },
