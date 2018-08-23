@@ -28,12 +28,12 @@ exports.components = [
     'ecal',
     'es',
     'hcal',
-    // 'hlt',
-    // 'l1t',
-    // 'l1tcalo',
-    // 'lumi',
+    'hlt',
+    'l1t',
+    'l1tcalo',
+    'lumi',
     'pix',
     'rpc',
-    // 'strip',
+    'strip',
     'ctpps'
 ];

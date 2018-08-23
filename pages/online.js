@@ -27,7 +27,7 @@ class Online extends Component {
         // console.log(fetchInitialOnlineRuns);
         // const promise = await fetchInitialOnlineRuns(store);
         initializeUser(store, query);
-        return fetchInitialOnlineRuns(store, query, isServer);
+        // return fetchInitialOnlineRuns(store, query, isServer);
     }
 
     render() {
@@ -40,7 +40,7 @@ class Online extends Component {
         } = this.props;
         return (
             <Page router={router} show_sidebar={false} user={user}>
-                <BreadcrumbCmp router={router}>
+                <BreadcrumbCmp router={router} online={true}>
                     <Breadcrumb.Item>{type}</Breadcrumb.Item>
                     <Breadcrumb.Item>{section}</Breadcrumb.Item>
                     <Breadcrumb.Item>{run_filter}</Breadcrumb.Item>

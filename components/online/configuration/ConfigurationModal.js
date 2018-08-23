@@ -18,7 +18,7 @@ class ConfigurationModal extends Component {
             class_classifiers:
                 'Set automatic classifiers for class of run selection',
             dataset_classifiers:
-                'Set automatic classifiers for datasets considered relevant',
+                'Set automatic classifiers for datasets considered significant',
             component_classifiers:
                 "Set automatic classifiers for each component's status"
         };

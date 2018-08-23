@@ -16,6 +16,8 @@ import {
     showConfigurationModal,
     toggleShowAllRuns
 } from '../../../ducks/online/ui';
+
+import { toggleWaitingList } from '../../../ducks/offline/ui';
 const RadioGroup = Radio.Group;
 
 class BreadcrumbCmp extends Component {
@@ -49,29 +51,56 @@ class BreadcrumbCmp extends Component {
     );
 
     render() {
-        const { children, show_all_runs, toggleShowAllRuns } = this.props;
+        const {
+            children,
+            show_all_runs,
+            show_waiting_list,
+            toggleShowAllRuns,
+            toggleWaitingList,
+            online
+        } = this.props;
         return (
             <div className="breadcrumb_container">
                 <Breadcrumb className="breadcrumb properly_capitalized">
                     {children}
                 </Breadcrumb>
                 <div>
-                    <RadioGroup
-                        onChange={evt => toggleShowAllRuns(evt.target.value)}
-                        value={
-                            show_all_runs
-                                ? 'show_all_runs'
-                                : 'show_significant_runs'
-                        }
-                    >
-                        <Radio value="show_all_runs">Show all runs</Radio>
-                        <Radio value="show_significant_runs">
-                            Show significant runs
-                        </Radio>
-                    </RadioGroup>
+                    {online ? (
+                        <RadioGroup
+                            onChange={evt =>
+                                toggleShowAllRuns(evt.target.value)
+                            }
+                            value={
+                                show_all_runs
+                                    ? 'show_all_runs'
+                                    : 'show_significant_runs'
+                            }
+                        >
+                            <Radio value="show_all_runs">Show all runs</Radio>
+                            <Radio value="show_significant_runs">
+                                Show significant runs
+                            </Radio>
+                        </RadioGroup>
+                    ) : (
+                        <RadioGroup
+                            onChange={evt =>
+                                toggleWaitingList(evt.target.value)
+                            }
+                            value={
+                                show_waiting_list
+                                    ? 'show_waiting_list'
+                                    : 'show_datasets'
+                            }
+                        >
+                            <Radio value="show_waiting_list">
+                                Show waiting list
+                            </Radio>
+                            <Radio value="show_datasets">Show datasets</Radio>
+                        </RadioGroup>
+                    )}
                 </div>
                 <div className="progresscircle_container">
-                    <p className="progresscircle_label">Refreshing in:</p>
+                    {/* <p className="progresscircle_label">Refreshing in:</p>
                     <div className="progresscircle">
                         <Progress
                             status="active"
@@ -80,7 +109,7 @@ class BreadcrumbCmp extends Component {
                             percent={this.state.seconds_to_refresh * 2.5}
                             format={progress => `${progress / 2.5}s`}
                         />
-                    </div>
+                    </div> */}
                     <Dropdown overlay={this.menu}>
                         <Button style={{ marginTop: '-6px' }}>
                             Configuration
@@ -118,11 +147,12 @@ class BreadcrumbCmp extends Component {
 
 const mapStateToProps = state => {
     return {
-        show_all_runs: state.online.ui.show_all_runs
+        show_all_runs: state.online.ui.show_all_runs,
+        show_waiting_list: state.offline.ui.show_waiting_list
     };
 };
 
 export default connect(
     mapStateToProps,
-    { showConfigurationModal, toggleShowAllRuns }
+    { showConfigurationModal, toggleShowAllRuns, toggleWaitingList }
 )(BreadcrumbCmp);

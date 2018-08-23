@@ -14,7 +14,6 @@ class Offline extends Component {
     static getInitialProps({ store, query, isServer }) {
         // Init auth
         initializeUser(store, query);
-        return {};
     }
 
     render() {
@@ -26,7 +25,7 @@ class Offline extends Component {
         } = this.props;
         return (
             <Page router={router} show_sidebar={true}>
-                <BreadcrumbCmp router={router}>
+                <BreadcrumbCmp router={router} online={false}>
                     <Breadcrumb.Item>{type}</Breadcrumb.Item>
                     <Breadcrumb.Item>{section}</Breadcrumb.Item>
                     <Breadcrumb.Item>{run_filter}</Breadcrumb.Item>
@@ -46,9 +45,15 @@ class Offline extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        user: state.info
+    };
+};
+
 export default withRouter(
     connect(
-        null,
+        mapStateToProps,
         null
     )(Offline)
 );
