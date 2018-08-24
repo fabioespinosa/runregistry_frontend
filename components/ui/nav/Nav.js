@@ -4,6 +4,7 @@ import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import TopNav from './top/TopNav';
 import SideNav from './side/SideNav';
 import OnlineConfigurationModal from '../../../components/online/configuration/ConfigurationModal';
+import OfflineConfigurationModal from '../../../components/offline/configuration/ConfigurationModal';
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
@@ -13,6 +14,7 @@ class Nav extends Component {
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <OnlineConfigurationModal />
+                <OfflineConfigurationModal />
                 <TopNav router={router} />
                 <SideNav show_sidebar={show_sidebar} router={router}>
                     {children}

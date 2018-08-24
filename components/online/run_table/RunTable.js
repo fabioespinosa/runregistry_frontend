@@ -23,7 +23,6 @@ class App extends Component {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
         this.setState({ loading: true });
-        // Request the data however you want.  Here, we'll use our mocked service we created earlier
         this.props.filterRuns(
             table.pageSize,
             table.page,

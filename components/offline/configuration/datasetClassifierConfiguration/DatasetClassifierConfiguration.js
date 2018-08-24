@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Select, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
+import { Select, Icon } from 'antd';
 import {
-    fetchClassClassifiers,
-    deleteClassClassifier,
-    editClassClassifier,
-    newClassClassifier
-} from '../../../../ducks/online/classifiers/class';
+    fetchDatasetClassifiers,
+    deleteDatasetClassifier,
+    editDatasetClassifier,
+    newDatasetClassifier
+} from '../../../../ducks/online/classifiers/dataset';
 import {
     editClassifierIntent,
     changeJsonEditorValue
@@ -23,61 +23,49 @@ const Editor = dynamic(
     }
 );
 
-class ClassClassifierConfiguration extends Component {
+class DatasetClassifierConfiguration extends Component {
     state = { class_selected: 'collisions' };
     componentDidMount() {
-        this.props.fetchClassClassifiers();
+        this.props.fetchDatasetClassifiers(this.state.component);
     }
 
-    getDisplayedClassifier(classifier) {
+    getDisplayedClassifier = classifier => {
         classifier = JSON.parse(classifier);
         const displayed_text = classifier.if[0];
         return stringify(displayed_text);
-    }
+    };
 
     formatClassifierCorrectly = inside_input => {
-        const { class_selected } = this.state;
         const parsed_input = JSON.parse(inside_input);
         let classifier = {
-            if: [parsed_input, class_selected, 'commissioning']
+            if: [parsed_input, 'CREATE_DATASET', 'IRRELEVANT']
         };
         return classifier;
     };
 
-    getDisplayedClass = classifier => {
-        classifier = JSON.parse(classifier);
-        const displayed_text = classifier.if[classifier.if.length - 2];
-        return displayed_text;
-    };
-
     render() {
         const {
-            newClassClassifier,
-            editClassClassifier,
+            newDatasetClassifier,
+            editDatasetClassifier,
             editClassifierIntent,
             changeJsonEditorValue,
-            deleteClassClassifier,
+            deleteDatasetClassifier,
             classifiers
         } = this.props;
         const { class_selected } = this.state;
         const columns = [
             {
-                Header: 'Priority',
-                accessor: 'priority',
-                width: 80,
+                Header: 'id',
+                width: 50,
+                accessor: 'id',
                 getProps: () => ({ style: { textAlign: 'center' } })
             },
             {
                 Header: 'Class',
-                accessor: 'classifier',
-                width: 80,
-                getProps: () => ({ style: { textAlign: 'center' } }),
-                Cell: row => {
-                    const displayed_text = this.getDisplayedClass(row.value);
-                    return <span>{displayed_text}</span>;
-                }
+                accessor: 'class',
+                width: 90,
+                getProps: () => ({ style: { textAlign: 'center' } })
             },
-
             {
                 Header: 'Enabled',
                 accessor: 'enabled',
@@ -133,7 +121,7 @@ class ClassClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() =>
-                                deleteClassClassifier(row.original.id)
+                                deleteDatasetClassifier(row.original.id)
                             }
                         >
                             Delete
@@ -144,7 +132,7 @@ class ClassClassifierConfiguration extends Component {
         ];
         return (
             <div>
-                <p>Current Class Classifier criteria:</p>
+                <p>Current Dataset Classifier criteria:</p>
                 <ReactTable
                     columns={columns}
                     data={classifiers}
@@ -154,11 +142,15 @@ class ClassClassifierConfiguration extends Component {
                 />
                 <Editor
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
-                    newClassifier={newClassClassifier}
-                    editClassifier={editClassClassifier}
+                    editClassifier={valid_js_object =>
+                        editDatasetClassifier(valid_js_object, class_selected)
+                    }
+                    newClassifier={valid_js_object =>
+                        newDatasetClassifier(valid_js_object, class_selected)
+                    }
                 >
                     <div>
-                        <label htmlFor="class_select">Class:</label>
+                        <label htmlFor="class_select">For class:</label>
                         &nbsp;
                         <Select
                             name=""
@@ -178,21 +170,20 @@ class ClassClassifierConfiguration extends Component {
         );
     }
 }
-
 const mapStateToProps = state => {
     return {
-        classifiers: state.online.classifiers.class
+        classifiers: state.online.classifiers.dataset
     };
 };
 
 export default connect(
     mapStateToProps,
     {
-        fetchClassClassifiers,
-        deleteClassClassifier,
-        editClassClassifier,
-        newClassClassifier,
+        fetchDatasetClassifiers,
+        deleteDatasetClassifier,
+        editDatasetClassifier,
+        newDatasetClassifier,
         changeJsonEditorValue,
         editClassifierIntent
     }
-)(ClassClassifierConfiguration);
+)(DatasetClassifierConfiguration);

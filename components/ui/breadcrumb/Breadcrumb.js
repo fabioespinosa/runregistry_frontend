@@ -13,9 +13,11 @@ import {
 } from 'antd';
 
 import {
-    showConfigurationModal,
+    showConfigurationModal as showOnlineConfigurationModal,
     toggleShowAllRuns
 } from '../../../ducks/online/ui';
+
+import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
 
 import { toggleWaitingList } from '../../../ducks/offline/ui';
 const RadioGroup = Radio.Group;
@@ -36,10 +38,14 @@ class BreadcrumbCmp extends Component {
         }, 1000);
     }
 
-    menu = (
+    menu = online => (
         <Menu
             onClick={({ key }) => {
-                this.props.showConfigurationModal(key);
+                if (online) {
+                    this.props.showOnlineConfigurationModal(key);
+                } else {
+                    this.props.showOfflineConfigurationModal(key);
+                }
             }}
         >
             <Menu.Item key="dataset_classifiers">Dataset Classifiers</Menu.Item>
@@ -47,6 +53,9 @@ class BreadcrumbCmp extends Component {
             <Menu.Item key="component_classifiers">
                 Component Classifiers
             </Menu.Item>
+            {!online && (
+                <Menu.Item key="column_configuration">Manage Columns</Menu.Item>
+            )}
         </Menu>
     );
 
@@ -110,7 +119,7 @@ class BreadcrumbCmp extends Component {
                             format={progress => `${progress / 2.5}s`}
                         />
                     </div> */}
-                    <Dropdown overlay={this.menu}>
+                    <Dropdown overlay={this.menu(online)}>
                         <Button style={{ marginTop: '-6px' }}>
                             Configuration
                             <Icon type="down" />
@@ -154,5 +163,10 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { showConfigurationModal, toggleShowAllRuns, toggleWaitingList }
+    {
+        showOnlineConfigurationModal,
+        showOfflineConfigurationModal,
+        toggleShowAllRuns,
+        toggleWaitingList
+    }
 )(BreadcrumbCmp);
