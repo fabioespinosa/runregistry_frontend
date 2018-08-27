@@ -8,21 +8,21 @@ import { initializeUser } from '../ducks/info';
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
-import RunTable from '../components/offline/run_table/RunTable';
+import DatasetTable from '../components/offline/dataset_table/DatasetTable';
 const { Content } = Layout;
 
 class Offline extends Component {
     static getInitialProps({ store, query, isServer }) {
         // Init auth
         initializeUser(store, query);
-        return fetchWorkspaces(store);
+        return fetchWorkspaces(store, query, isServer);
     }
 
     render() {
         const { router } = this.props;
         const {
             router: {
-                query: { type, section, run_filter }
+                query: { type, section, workspace }
             }
         } = this.props;
         return (
@@ -30,7 +30,7 @@ class Offline extends Component {
                 <BreadcrumbCmp router={router} online={false}>
                     <Breadcrumb.Item>{type}</Breadcrumb.Item>
                     <Breadcrumb.Item>{section}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{run_filter}</Breadcrumb.Item>
+                    <Breadcrumb.Item>{workspace}</Breadcrumb.Item>
                 </BreadcrumbCmp>
                 <Content
                     style={{
@@ -40,7 +40,7 @@ class Offline extends Component {
                         minHeight: 280
                     }}
                 >
-                    <RunTable />
+                    <DatasetTable />
                 </Content>
             </Page>
         );

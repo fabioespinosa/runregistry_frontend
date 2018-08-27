@@ -1,16 +1,16 @@
 import { combineReducers } from 'redux';
 
 // import classifiers from './classifiers/index';
-// import runs from './runs';
+import datasets from './datasets';
 // import lumisection_ranges from './lumisection_ranges';
-import workspaces from './workspace';
+import workspace from './workspace';
 import ui from './ui';
 
 const offlineRootReducer = combineReducers({
     // classifiers,
-    // runs,
+    datasets,
     // lumisection_ranges,
-    workspaces,
+    workspace,
     ui
 });
 

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
-import { render } from 'react-dom';
 import { Icon } from 'antd';
 import Swal from 'sweetalert2';
 import { components } from '../../../config/config';
@@ -18,7 +16,7 @@ import LumisectionModal from '../lumisections/LumisectionModal';
 // Import React Table
 import ReactTable from 'react-table';
 
-class App extends Component {
+class RunTable extends Component {
     fetchData = (table, instance) => {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
@@ -377,4 +375,4 @@ const mapStateToProps = state => {
 export default connect(
     mapStateToProps,
     { filterRuns, toggleTableFilters, showManageRunModal, showLumisectionModal }
-)(App);
+)(RunTable);

@@ -13,7 +13,7 @@ class TopNav extends Component {
     render() {
         const {
             router: {
-                query: { type, section, run_filter }
+                query: { type, section, workspace }
             },
             user
         } = this.props;
@@ -45,7 +45,7 @@ class TopNav extends Component {
                     <Menu.Item key="online">
                         <Link
                             as={`${root_url_prefix}/online/runs/all`}
-                            href="/online?type=online&section=runs&run_filter=all"
+                            href="/online?type=online&section=runs&workspace=all"
                         >
                             <a>ONLINE</a>
                         </Link>
@@ -53,7 +53,7 @@ class TopNav extends Component {
                     <Menu.Item key="offline">
                         <Link
                             as={`${root_url_prefix}/offline/workspaces/global`}
-                            href="/offline?type=offline&section=workspaces&run_filter=global"
+                            href="/offline?type=offline&section=workspaces&workspace=global"
                         >
                             <a>OFFLINE</a>
                         </Link>

@@ -60,7 +60,7 @@ class ColumnConfiguration extends Component {
             {
                 Header: 'Columns',
                 accessor: 'columns',
-                width: 280,
+                width: 680,
                 getProps: () => ({ style: { textAlign: 'center' } }),
                 Cell: row => {
                     const displayed_text = row.value.join(', ');
@@ -89,14 +89,15 @@ class ColumnConfiguration extends Component {
                 )
             }
         ];
+        const default_page_size = 17;
         return (
             <div>
                 <p>Current Class Classifier criteria:</p>
                 <ReactTable
                     columns={columns}
                     data={workspaces}
-                    defaultPageSize={10}
-                    showPagination={false}
+                    defaultPageSize={default_page_size}
+                    showPagination={workspaces.length > default_page_size}
                     optionClassName="react-table"
                 />
                 <br />
@@ -115,7 +116,7 @@ class ColumnConfiguration extends Component {
 
 const mapStateToProps = state => {
     return {
-        workspaces: state.offline.workspaces
+        workspaces: state.offline.workspace.workspaces
     };
 };
 

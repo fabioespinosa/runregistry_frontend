@@ -10,7 +10,7 @@ class SideNav extends Component {
     onRouteChangeHandler({ key, keyPath }) {
         const {
             router: {
-                query: { type, section, run_filter }
+                query: { type, section, workspace }
             }
         } = this.props;
         if (key === 'lumisections') {
@@ -20,7 +20,7 @@ class SideNav extends Component {
             );
         } else {
             Router.push(
-                `/${type}?type=${type}&section=${keyPath[1]}&run_filter=${key}`,
+                `/${type}?type=${type}&section=${keyPath[1]}&workspace=${key}`,
                 `${root_url_prefix}/${type}/${keyPath[1]}/${key}`
             );
         }
@@ -30,11 +30,11 @@ class SideNav extends Component {
         const {
             show_sidebar,
             router: {
-                query: { type, section, run_filter }
+                query: { type, section, workspace }
             }
         } = this.props;
         const defaultSelectedKey =
-            section === 'lumisections' ? 'lumisections' : run_filter;
+            section === 'lumisections' ? 'lumisections' : workspace;
         return (
             <Layout hasSider={true}>
                 {show_sidebar && (

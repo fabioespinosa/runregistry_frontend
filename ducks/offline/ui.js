@@ -1,3 +1,4 @@
+import { filterDatasets } from './datasets';
 const TOGGLE_SHOW_WAITING_LIST = 'TOGGLE_SHOW_WAITING_LIST-OFFLINE';
 const TOGGLE_SHOW_ALL_RUNS = 'TOGGLE_SHOW_ALL_RUNS-OFFLINE';
 const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL-OFFLINE';
@@ -13,7 +14,7 @@ export const toggleWaitingList = new_value => dispatch => {
         type: TOGGLE_SHOW_WAITING_LIST,
         payload: new_value === 'show_waiting_list'
     });
-    // dispatch(filterRuns(25, 0, [], []));
+    dispatch(filterDatasets(25, 0, [], []));
 };
 
 export const showConfigurationModal = configuration_modal_type => ({

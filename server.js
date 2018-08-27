@@ -33,14 +33,13 @@ app.prepare().then(() => {
         res.redirect('/runtest/online/runs/all');
     });
 
-    server.get('/:type/:section/:run_filter', (req, res) => {
-        const actual_page = '/online';
+    // offline:
+    server.get('/:type/:section/:workspace', (req, res) => {
         const params = { ...req.headers, ...req.params };
         app.render(req, res, `/${req.params.type}`, params);
     });
 
     server.get('/:type/:section', (req, res) => {
-        const actual_page = '/online';
         app.render(req, res, `/${req.params.type}`, req.params);
     });
 

@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
-import { render } from 'react-dom';
 import { Icon } from 'antd';
 import Swal from 'sweetalert2';
-import { components } from '../../../config/config';
-import { filterRuns } from '../../../ducks/online/runs';
+import { offline_columns } from '../../../config/config';
+import { filterDatasets } from '../../../ducks/offline/datasets';
 import {
     toggleTableFilters,
     showManageRunModal,
     showLumisectionModal
-} from '../../../ducks/online/ui';
+} from '../../../ducks/offline/ui';
 // import ManageRunModal from '../manage_run/ManageRunModal';
 // import LumisectionModal from '../lumisections/LumisectionModal';
 // import runs from '../../../ducks/runs.json';
@@ -18,12 +16,12 @@ import {
 // Import React Table
 import ReactTable from 'react-table';
 
-class App extends Component {
+class DatasetTable extends Component {
     fetchData = (table, instance) => {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
         this.setState({ loading: true });
-        this.props.filterRuns(
+        this.props.filterDatasets(
             table.pageSize,
             table.page,
             table.sorted,
@@ -33,12 +31,13 @@ class App extends Component {
     render() {
         // const { data, pages, loading } = this.state;
         const {
+            workspace,
             filterable,
-            run_table,
+            dataset_table,
             showManageRunModal,
             showLumisectionModal
         } = this.props;
-        const { runs, pages, loading } = run_table;
+        const { datasets, pages, loading } = dataset_table;
         let columns = [
             {
                 Header: 'Run Number',
@@ -51,9 +50,14 @@ class App extends Component {
                             </a>
                         </div>
                     );
-                }
+                },
+                maxWidth: 100
             },
-            { Header: 'Class', accessor: 'class' },
+            {
+                Header: 'Class',
+                Cell: ({ original }) => original.run.class,
+                maxWidth: 100
+            },
             {
                 Header: 'Manage / LS',
                 id: 'manage',
@@ -68,7 +72,8 @@ class App extends Component {
                             LS
                         </a>
                     </div>
-                )
+                ),
+                maxWidth: 100
             },
             {
                 Header: 'Significant',
@@ -145,19 +150,18 @@ class App extends Component {
                             move
                         </a>
                     </div>
-                )
-            },
-            { Header: 'Started', accessor: 'start_time' },
-            { Header: 'Hlt Key Description', accessor: 'hlt_key' }
+                ),
+                maxWidth: 100
+            }
+            // { Header: 'Started', accessor: 'start_time' },
+            // { Header: 'Hlt Key Description', accessor: 'hlt_key' }
         ]; // { Header: 'Stopped', accessor: 'STOPTIME' },];
 
         const other_columns = [
             // { Header: 'LHC Fill', accessor: 'LHCFILL' }, // { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },
             // { Header: 'B2 stable', accessor: 'BEAM2_STABLE' },
             // { Header: 'B-Field', accessor: 'b_field' }, // { Header: 'Events', accessor: 'EVENTS' },
-
-            { Header: 'Duration', accessor: 'duration' },
-
+            // { Header: 'Duration', accessor: 'duration' },
             // { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
             // { Header: 'TEC+ on', accessor: 'TECP_READY' },
             // { Header: 'TEC- on', accessor: 'TECM_READY' },
@@ -173,25 +177,32 @@ class App extends Component {
             // { Header: 'DT in', accessor: 'DT_PRESENT' },
             // { Header: 'RPC in', accessor: 'RPC_PRESENT' }
             // The new ones from OMS:
-            { Header: 'Clock Type', accessor: 'clock_type' }
+            // { Header: 'Clock Type', accessor: 'clock_type' }
             // { Header: 'Cms Sw Version', accessor: 'cmssw_version' },
             // { Header: 'Delivered Lumi', accessor: 'delivered_lumi' },
             // { Header: 'end_lumi', accessor: 'end_lumi' }
         ];
 
         // Put components in format Header: component
-        let component_columns = components.map(component => ({
-            Header: component
-        }));
+        let offline_columns_composed = offline_columns
+            .filter(column => {
+                if (workspace === 'global') {
+                    return !column.includes('_');
+                }
+                return column.startsWith(workspace.toLowerCase());
+            })
+            .map(column => ({
+                Header: column.split('_').join(' ')
+            }));
 
-        component_columns = component_columns.map(column => {
+        offline_columns_composed = offline_columns_composed.map(column => {
             return {
                 ...column,
-                maxWidth: 66,
+                maxWidth: 100,
                 id: `${column['Header']}_PRESENT`,
                 accessor: data => {
                     let status = 'EXCLUDED';
-                    const triplet = data[`${column['Header']}_triplet`];
+                    const triplet = data[`${column['Header']}`];
                     const { significant } = data;
                     if (triplet && significant) {
                         status = triplet.status;
@@ -215,13 +226,7 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        GOOD
-                                    </span>
+                                    <span style={{ color: 'white' }}>GOOD</span>
                                 </div>
                             )}
                             {value === 'EXCLUDED' && (
@@ -248,13 +253,7 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        BAD
-                                    </span>
+                                    <span style={{ color: 'white' }}>BAD</span>
                                 </div>
                             )}
                             {value === 'STANDBY' && (
@@ -264,11 +263,7 @@ class App extends Component {
                                         borderRadius: '1px'
                                     }}
                                 >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
+                                    <span style={{ color: 'black' }}>
                                         STANDBY
                                     </span>
                                 </div>
@@ -278,8 +273,9 @@ class App extends Component {
                 }
             };
         });
-        columns = [...columns, ...component_columns, ...other_columns];
-        // columns = component_columns;
+
+        columns = [...columns, ...offline_columns_composed, ...other_columns];
+
         columns = columns.map(column => {
             return {
                 ...column,
@@ -304,7 +300,7 @@ class App extends Component {
                     columns={columns}
                     manual
                     data={
-                        runs // Forces table not to paginate or sort automatically, so we can handle it server-side
+                        datasets // Forces table not to paginate or sort automatically, so we can handle it server-side
                     }
                     pages={pages}
                     loading={
@@ -353,12 +349,18 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return {
-        filterable: state.online.ui.table.filterable,
-        run_table: state.online.runs
+        filterable: state.offline.ui.table.filterable,
+        dataset_table: state.offline.datasets,
+        workspace: state.offline.workspace.workspace
     };
 };
 
 export default connect(
     mapStateToProps,
-    { filterRuns, toggleTableFilters, showManageRunModal, showLumisectionModal }
-)(App);
+    {
+        filterDatasets,
+        toggleTableFilters,
+        showManageRunModal,
+        showLumisectionModal
+    }
+)(DatasetTable);

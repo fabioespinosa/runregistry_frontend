@@ -1,5 +1,3 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 import axios from 'axios';
 
 import { api_url } from '../../config/config';
