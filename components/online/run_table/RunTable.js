@@ -273,6 +273,22 @@ class App extends Component {
                                     </span>
                                 </div>
                             )}
+                            {value === 'NOTSET' && (
+                                <div
+                                    style={{
+                                        backgroundColor: 'white',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            color: 'black'
+                                        }}
+                                    >
+                                        NOTSET
+                                    </span>
+                                </div>
+                            )}
                         </span>
                     );
                 }
