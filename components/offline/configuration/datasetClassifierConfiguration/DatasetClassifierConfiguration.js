@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
-import ReactTable from 'react-table';
+import Swal from 'sweetalert2';
 import { Select, Icon } from 'antd';
 import {
-    fetchDatasetClassifiers,
-    deleteDatasetClassifier,
-    editDatasetClassifier,
-    newDatasetClassifier
-} from '../../../../ducks/online/classifiers/dataset';
+    fetchDatasetClassifier,
+    editDatasetClassifier
+} from '../../../../ducks/offline/classifiers/dataset';
 import {
     editClassifierIntent,
     changeJsonEditorValue
@@ -24,9 +22,17 @@ const Editor = dynamic(
 );
 
 class DatasetClassifierConfiguration extends Component {
-    state = { class_selected: 'collisions' };
-    componentDidMount() {
-        this.props.fetchDatasetClassifiers(this.state.component);
+    async componentDidMount() {
+        const {
+            fetchDatasetClassifier,
+            classifier,
+            editClassifierIntent
+        } = this.props;
+        await fetchDatasetClassifier();
+        classifier.classifier = this.getDisplayedClassifier(
+            classifier.classifier
+        );
+        editClassifierIntent(classifier);
     }
 
     getDisplayedClassifier = classifier => {
@@ -44,146 +50,38 @@ class DatasetClassifierConfiguration extends Component {
     };
 
     render() {
-        const {
-            newDatasetClassifier,
-            editDatasetClassifier,
-            editClassifierIntent,
-            changeJsonEditorValue,
-            deleteDatasetClassifier,
-            classifiers
-        } = this.props;
-        const { class_selected } = this.state;
-        const columns = [
-            {
-                Header: 'id',
-                width: 50,
-                accessor: 'id',
-                getProps: () => ({ style: { textAlign: 'center' } })
-            },
-            {
-                Header: 'Class',
-                accessor: 'class',
-                width: 90,
-                getProps: () => ({ style: { textAlign: 'center' } })
-            },
-            {
-                Header: 'Enabled',
-                accessor: 'enabled',
-                width: 80,
-                Cell: row => (
-                    <div style={{ textAlign: 'center' }}>
-                        <Icon
-                            style={{
-                                margin: '0 auto',
-                                color: row.value ? 'green' : 'red'
-                            }}
-                            type={row.value ? 'check-circle' : 'close-circle'}
-                        />
-                    </div>
-                )
-            },
-            {
-                Header: 'JSON string',
-                accessor: 'classifier',
-                width: 250,
-                Cell: row => {
-                    const displayed_text = this.getDisplayedClassifier(
-                        row.value
-                    );
-                    return <span>{displayed_text}</span>;
-                }
-            },
-            { Header: 'Created at', accessor: 'createdAt', width: 100 },
-            { Header: 'Updated at', accessor: 'updatedAt', width: 100 },
-            {
-                Header: 'Edit',
-                width: 100,
-                Cell: row => (
-                    <div style={{ textAlign: 'center' }}>
-                        <a
-                            onClick={() => {
-                                const classifier = this.getDisplayedClassifier(
-                                    row.original.classifier
-                                );
-                                editClassifierIntent(row.original);
-                                changeJsonEditorValue(classifier);
-                            }}
-                        >
-                            Edit
-                        </a>
-                    </div>
-                )
-            },
-            {
-                Header: 'Delete',
-                width: 100,
-                Cell: row => (
-                    <div style={{ textAlign: 'center' }}>
-                        <a
-                            onClick={() =>
-                                deleteDatasetClassifier(row.original.id)
-                            }
-                        >
-                            Delete
-                        </a>
-                    </div>
-                )
-            }
-        ];
+        const { editDatasetClassifier } = this.props;
         return (
             <div>
                 <p>Current Dataset Classifier criteria:</p>
-                <ReactTable
-                    columns={columns}
-                    data={classifiers}
-                    defaultPageSize={10}
-                    showPagination={classifiers.length > 10}
-                    optionClassName="react-table"
-                />
                 <Editor
+                    show_cancel={false}
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
-                    editClassifier={valid_js_object =>
-                        editDatasetClassifier(valid_js_object, class_selected)
-                    }
-                    newClassifier={valid_js_object =>
-                        newDatasetClassifier(valid_js_object, class_selected)
-                    }
-                >
-                    <div>
-                        <label htmlFor="class_select">For class:</label>
-                        &nbsp;
-                        <Select
-                            name=""
-                            id="class_select"
-                            defaultValue={class_selected}
-                            onChange={value =>
-                                this.setState({ class_selected: value })
-                            }
-                        >
-                            <Option value="cosmics">cosmics</Option>
-                            <Option value="collisions">collisions</Option>
-                            <Option value="commissioning">commissioning</Option>
-                        </Select>
-                    </div>
-                </Editor>
+                    editClassifier={async valid_js_object => {
+                        await editDatasetClassifier(valid_js_object);
+                        await Swal(
+                            `Dataset classifier edited successfully`,
+                            '',
+                            'success'
+                        );
+                    }}
+                />
             </div>
         );
     }
 }
 const mapStateToProps = state => {
     return {
-        classifiers: state.online.classifiers.dataset
+        classifier: state.offline.classifiers.dataset
     };
 };
 
 export default connect(
     mapStateToProps,
     {
-        fetchDatasetClassifiers,
-        deleteDatasetClassifier,
+        fetchDatasetClassifier,
         editDatasetClassifier,
-        newDatasetClassifier,
-        changeJsonEditorValue,
-        editClassifierIntent
+        editClassifierIntent,
+        changeJsonEditorValue
     }
 )(DatasetClassifierConfiguration);

@@ -46,8 +46,10 @@ class ClassifierEditor extends Component {
             hideJsonEditor,
             editor_save_loading,
             newClassifierIntent,
-            children
+            children,
+            show_cancel
         } = this.props;
+        console.log(currently_editing_classifier);
         return (
             <div>
                 {show ? (
@@ -68,9 +70,13 @@ class ClassifierEditor extends Component {
                             theme="github"
                         />
                         <div className="classsifier_button">
-                            <span className="cancel_button">
-                                <Button onClick={hideJsonEditor}>Cancel</Button>
-                            </span>
+                            {show_cancel !== false && (
+                                <span className="cancel_button">
+                                    <Button onClick={hideJsonEditor}>
+                                        Cancel
+                                    </Button>
+                                </span>
+                            )}
                             <Button
                                 loading={editor_save_loading}
                                 type="primary"

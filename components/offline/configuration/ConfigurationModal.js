@@ -6,6 +6,7 @@ import ClassClassifierConfiguration from './classClassifierConfiguration/ClassCl
 import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
 import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
+import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 
 class ConfigurationModal extends Component {
     render() {
@@ -22,7 +23,9 @@ class ConfigurationModal extends Component {
                 'Set automatic classifiers for datasets considered significant',
             component_classifiers:
                 "Set automatic classifiers for each component's status",
-            column_configuration: 'Add or remove columns from workspace'
+            column_configuration: 'Add or remove columns from workspace',
+            datasets_accepted_configuration:
+                'Change the RegExp of the Datasets Accepted in RR'
         };
 
         return (
@@ -54,6 +57,10 @@ class ConfigurationModal extends Component {
                     )}
                     {configuration_modal_type === 'column_configuration' && (
                         <ColumnConfiguration />
+                    )}
+                    {configuration_modal_type ===
+                        'datasets_accepted_configuration' && (
+                        <DatasetsAccepted />
                     )}
                 </Modal>
             </div>

@@ -23,39 +23,31 @@ import { toggleWaitingList } from '../../../ducks/offline/ui';
 const RadioGroup = Radio.Group;
 
 class BreadcrumbCmp extends Component {
-    state = {
-        seconds_to_refresh: 40
-    };
-    componentDidMount() {
-        const interval = setInterval(() => {
-            if (this.state.seconds_to_refresh >= 0) {
-                this.setState({
-                    seconds_to_refresh: this.state.seconds_to_refresh - 1
-                });
-            } else {
-                this.setState({ seconds_to_refresh: 40 });
-            }
-        }, 1000);
-    }
-
-    menu = online => (
+    online_menu = (
         <Menu
-            onClick={({ key }) => {
-                if (online) {
-                    this.props.showOnlineConfigurationModal(key);
-                } else {
-                    this.props.showOfflineConfigurationModal(key);
-                }
-            }}
+            onClick={({ key }) => this.props.showOnlineConfigurationModal(key)}
         >
             <Menu.Item key="dataset_classifiers">Dataset Classifiers</Menu.Item>
             <Menu.Item key="class_classifiers">Run Class Classifiers</Menu.Item>
             <Menu.Item key="component_classifiers">
                 Component Classifiers
             </Menu.Item>
-            {!online && (
-                <Menu.Item key="column_configuration">Manage Columns</Menu.Item>
-            )}
+        </Menu>
+    );
+
+    offline_menu = (
+        <Menu
+            onClick={({ key }) => this.props.showOfflineConfigurationModal(key)}
+        >
+            <Menu.Item key="dataset_classifiers">Dataset Classifiers</Menu.Item>
+            <Menu.Item key="class_classifiers">Run Class Classifiers</Menu.Item>
+            <Menu.Item key="component_classifiers">
+                Component Classifiers
+            </Menu.Item>
+            <Menu.Item key="column_configuration">Manage Columns</Menu.Item>
+            <Menu.Item key="datasets_accepted_configuration">
+                Manage Datasets Accepted
+            </Menu.Item>
         </Menu>
     );
 
@@ -109,17 +101,9 @@ class BreadcrumbCmp extends Component {
                     )}
                 </div>
                 <div className="progresscircle_container">
-                    {/* <p className="progresscircle_label">Refreshing in:</p>
-                    <div className="progresscircle">
-                        <Progress
-                            status="active"
-                            type="circle"
-                            width={35}
-                            percent={this.state.seconds_to_refresh * 2.5}
-                            format={progress => `${progress / 2.5}s`}
-                        />
-                    </div> */}
-                    <Dropdown overlay={this.menu(online)}>
+                    <Dropdown
+                        overlay={online ? this.online_menu : this.offline_menu}
+                    >
                         <Button style={{ marginTop: '-6px' }}>
                             Configuration
                             <Icon type="down" />

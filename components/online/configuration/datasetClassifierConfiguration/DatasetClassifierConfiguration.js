@@ -26,7 +26,7 @@ const Editor = dynamic(
 class DatasetClassifierConfiguration extends Component {
     state = { class_selected: 'collisions' };
     componentDidMount() {
-        this.props.fetchDatasetClassifiers(this.state.component);
+        this.props.fetchDatasetClassifiers();
     }
 
     getDisplayedClassifier = classifier => {
