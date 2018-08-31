@@ -314,6 +314,9 @@ class RunTable extends Component {
             <div>
                 <ManageRunModal />
                 <LumisectionModal />
+                {
+                    'Supported operations: <>, like, notlike (for strings). >, >=, <, <=, = (for integers/doubles)'
+                }
                 <ReactTable
                     columns={columns}
                     manual

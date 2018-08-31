@@ -44,6 +44,17 @@ class RegexpEditor extends Component {
                                 type="text"
                                 autosize
                             />
+                            Run Class:
+                            <TextArea
+                                value={values['class']}
+                                onChange={evt =>
+                                    setFieldValue('class', evt.target.value)
+                                }
+                                name="class"
+                                row={1}
+                                type="text"
+                                autosize
+                            />
                             <br />
                             <br />
                             Runs from :

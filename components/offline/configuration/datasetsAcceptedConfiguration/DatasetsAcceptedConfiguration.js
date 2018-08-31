@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 import Swal from 'sweetalert2';
 import {
     fetchDatasetsAccepted,
@@ -45,20 +45,44 @@ class DatasetsAcceptedConfiguration extends Component {
     };
 
     render() {
-        const { datasets_accepted, addRegexp, editRegexp } = this.props;
+        const { datasets_accepted } = this.props;
         const { add, edit } = this.state;
         const columns = [
             {
                 Header: 'Name',
                 accessor: 'name',
-                width: 80,
-                getProps: () => ({ style: { textAlign: 'center' } })
+                width: 280
             },
             {
                 Header: 'Regular Expression',
                 accessor: 'regexp',
-                width: 680,
-                getProps: () => ({ style: { textAlign: 'center' } })
+                width: 1100
+            },
+            {
+                Header: 'Run Number from ',
+                accessor: 'run_from',
+                width: 100
+            },
+            {
+                Header: 'Run Number to',
+                accessor: 'run_to',
+                width: 100
+            },
+            {
+                Header: 'Enabled',
+                accessor: 'enabled',
+                width: 100,
+                Cell: row => (
+                    <div style={{ textAlign: 'center' }}>
+                        <Icon
+                            style={{
+                                margin: '0 auto',
+                                color: row.value ? 'green' : 'red'
+                            }}
+                            type={row.value ? 'check-circle' : 'close-circle'}
+                        />
+                    </div>
+                )
             },
             { Header: 'Updated at', accessor: 'updatedAt', width: 100 },
             {
@@ -89,7 +113,7 @@ class DatasetsAcceptedConfiguration extends Component {
                 )
             }
         ];
-        const default_page_size = 17;
+        const default_page_size = 10;
         return (
             <div>
                 <p>Current Datasets Accepted Regular Expressions:</p>

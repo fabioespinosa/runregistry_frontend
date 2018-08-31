@@ -40,8 +40,25 @@ export const filterRuns = (page_size, page, sorted, filtered) => async (
         ? 'runs_filtered_ordered'
         : 'significant_runs_filtered_ordered';
     const query_object = { page_size, filter: {} };
-    filtered.forEach(criteria => {
-        query_object.filter[criteria.id] = criteria.value;
+    filtered.forEach(({ id, value }) => {
+        const criteria = value.split(' ').filter(arg => arg !== '');
+        let query = {};
+        if (criteria.length === 1) {
+            criteria.unshift('=');
+        }
+        if (criteria.length === 2) {
+            query = { [criteria[0]]: criteria[1] };
+        }
+        if (criteria.length === 5) {
+            query = {
+                [criteria[2]]: {
+                    [criteria[0]]: criteria[1],
+                    [criteria[3]]: criteria[4]
+                }
+            };
+        }
+        console.log(query);
+        query_object.filter[id] = query;
     });
     const { data: runs } = await axios.post(
         `${api_url}/${run_endpoint}/${page}`,
