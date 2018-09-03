@@ -40,11 +40,30 @@ export const filterRuns = (page_size, page, sorted, filtered) => async (
         ? 'runs_filtered_ordered'
         : 'significant_runs_filtered_ordered';
     const query_object = { page_size, filter: {} };
+    // If querying a triplet, change it so that JSONB filtering works in back end:
+    filtered = filtered.map(filter => {
+        const new_filter = { ...filter };
+        if (filter.id.includes('_triplet')) {
+            new_filter.id = `${filter.id}.status`;
+            new_filter.value = filter.value.toUpperCase();
+        }
+        return new_filter;
+    });
+    console.log(filtered);
     filtered.forEach(({ id, value }) => {
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
         if (criteria.length === 1) {
-            criteria.unshift('=');
+            // If user types '=' or '<' like operator not perform like:
+            console.log(criteria[0][0]);
+            if (['=', '<', '>', '<=', '>='].includes(criteria[0][0])) {
+                const operator = criteria[0][0];
+                criteria[0] = criteria[0].substring(1);
+                criteria.unshift(operator);
+            } else {
+                criteria[0] = `%${criteria[0]}%`;
+                criteria.unshift('like');
+            }
         }
         if (criteria.length === 2) {
             query = { [criteria[0]]: criteria[1] };
@@ -55,6 +74,11 @@ export const filterRuns = (page_size, page, sorted, filtered) => async (
                     [criteria[0]]: criteria[1],
                     [criteria[3]]: criteria[4]
                 }
+            };
+        }
+        if (criteria.length === 7) {
+            query = {
+                [criteria[2]]: {}
             };
         }
         console.log(query);

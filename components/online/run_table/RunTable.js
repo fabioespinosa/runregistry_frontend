@@ -16,17 +16,25 @@ import LumisectionModal from '../lumisections/LumisectionModal';
 // Import React Table
 import ReactTable from 'react-table';
 
+const filter_description = {
+    string: '(=, like, notlike, <>)',
+    date: '(=, >, <, >=, <=, <>)',
+    component: '(=, like, notlike, <>)',
+    boolean: '(true, false)'
+};
+
 class RunTable extends Component {
-    fetchData = (table, instance) => {
+    fetchData = async (table, instance) => {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
         this.setState({ loading: true });
-        this.props.filterRuns(
+        await this.props.filterRuns(
             table.pageSize,
             table.page,
             table.sorted,
             table.filtered
         );
+        this.setState({ loading: false });
     };
     render() {
         // const { data, pages, loading } = this.state;
@@ -41,6 +49,8 @@ class RunTable extends Component {
             {
                 Header: 'Run Number',
                 accessor: 'run_number',
+                maxWidth: 90,
+                type: 'string',
                 Cell: props => {
                     return (
                         <div style={{ textAlign: 'center', width: '100%' }}>
@@ -51,10 +61,11 @@ class RunTable extends Component {
                     );
                 }
             },
-            { Header: 'Class', accessor: 'class' },
+            { Header: 'Class', accessor: 'class', type: 'string' },
             {
                 Header: 'Manage / LS',
                 id: 'manage',
+                filterable: false,
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
@@ -72,6 +83,7 @@ class RunTable extends Component {
                 Header: 'Significant',
                 id: 'significant',
                 maxWidth: 62,
+                type: 'boolean',
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
                         {original.significant ? (
@@ -111,6 +123,7 @@ class RunTable extends Component {
                 Header: 'State',
                 id: 'state',
                 accessor: 'state',
+                type: 'string',
                 Cell: ({ value }) => (
                     <div style={{ textAlign: 'center' }}>
                         <span
@@ -145,8 +158,12 @@ class RunTable extends Component {
                     </div>
                 )
             },
-            { Header: 'Started', accessor: 'start_time' },
-            { Header: 'Hlt Key Description', accessor: 'hlt_key' }
+            { Header: 'Started', accessor: 'start_time', type: 'date' },
+            {
+                Header: 'Hlt Key Description',
+                accessor: 'hlt_key',
+                type: 'string'
+            }
         ]; // { Header: 'Stopped', accessor: 'STOPTIME' },];
 
         const other_columns = [
@@ -154,9 +171,7 @@ class RunTable extends Component {
             // { Header: 'B2 stable', accessor: 'BEAM2_STABLE' },
             // { Header: 'B-Field', accessor: 'b_field' }, // { Header: 'Events', accessor: 'EVENTS' },
 
-            { Header: 'Duration', accessor: 'duration' },
-
-            // { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
+            { Header: 'Duration', accessor: 'duration', type: 'integer' }, // { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
             // { Header: 'TEC+ on', accessor: 'TECP_READY' },
             // { Header: 'TEC- on', accessor: 'TECM_READY' },
             // { Header: 'FPIX on', accessor: 'FPIX_READY' },
@@ -172,13 +187,14 @@ class RunTable extends Component {
             // { Header: 'RPC in', accessor: 'RPC_PRESENT' }
             // The new ones from OMS:
             { Header: 'Clock Type', accessor: 'clock_type' }
-            // { Header: 'Cms Sw Version', accessor: 'cmssw_version' },
-            // { Header: 'Delivered Lumi', accessor: 'delivered_lumi' },
-            // { Header: 'end_lumi', accessor: 'end_lumi' }
         ];
+        // { Header: 'Cms Sw Version', accessor: 'cmssw_version' },
+        // { Header: 'Delivered Lumi', accessor: 'delivered_lumi' },
+        // { Header: 'end_lumi', accessor: 'end_lumi' }
 
         // Put components in format Header: component
         let component_columns = components.map(component => ({
+            type: 'component',
             Header: component
         }));
 
@@ -186,7 +202,7 @@ class RunTable extends Component {
             return {
                 ...column,
                 maxWidth: 66,
-                id: `${column['Header']}_PRESENT`,
+                id: `${column['Header']}_triplet`,
                 accessor: data => {
                     let status = 'EXCLUDED';
                     const triplet = data[`${column['Header']}_triplet`];
@@ -307,16 +323,71 @@ class RunTable extends Component {
                             style={{ fontSize: '10px' }}
                         />
                     </div>
-                )
+                ),
+                Filter: ({ column, onChange }) => {
+                    const { type } = column;
+                    const style = `
+                        text-align: left;
+                        border: 1px solid grey;
+                        white-space: pre-wrap;
+                        transition: all 1s;
+                        margin-left: -10px;
+                        margin-top: 20px;
+                        padding: 9px;
+                        width: 200px;
+                        z-index: 900;
+                        height: 200px;
+                        background: white;
+                        position: fixed;
+                        display: none;`;
+                    return (
+                        <div style={{ zIndex: 999 }}>
+                            <input
+                                onMouseEnter={evt => {
+                                    const block = document.querySelector(
+                                        `#${column.id}`
+                                    );
+                                    block.setAttribute(
+                                        'style',
+                                        `${style} display: inline-block;`
+                                    );
+                                }}
+                                onMouseLeave={({ clientX, clientY }) => {
+                                    const block = document.querySelector(
+                                        `#${column.id}`
+                                    );
+                                    block.setAttribute('style', style);
+                                }}
+                                type="text"
+                                onKeyPress={evt => {
+                                    if (evt.key == 'Enter') {
+                                        onChange(evt.target.value);
+                                    }
+                                }}
+                                // onChange={evt => onChange(evt.target.value)}
+                                style={{ width: '100%' }}
+                            />
+                            <div style={{ display: 'none' }} id={column.id}>
+                                <h3
+                                    style={{
+                                        textTransform: 'capitalize'
+                                    }}
+                                >
+                                    {type} filter
+                                </h3>
+                                Supported operations:
+                                <p>{filter_description[type]}</p>
+                            </div>
+                        </div>
+                    );
+                }
             };
         });
         return (
             <div>
                 <ManageRunModal />
                 <LumisectionModal />
-                {
-                    'Supported operations: <>, like, notlike (for strings). >, >=, <, <=, = (for integers/doubles)'
-                }
+                {'Filters now working except for State column'}
                 <ReactTable
                     columns={columns}
                     manual

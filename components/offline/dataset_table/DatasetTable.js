@@ -62,6 +62,7 @@ class DatasetTable extends Component {
                 Header: 'Manage / LS',
                 id: 'manage',
                 maxWidth: 75,
+                filterable: false,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
                         <a onClick={() => showManageRunModal(original)}>
@@ -199,7 +200,7 @@ class DatasetTable extends Component {
             return {
                 ...column,
                 maxWidth: 100,
-                id: `${column['Header']}_PRESENT`,
+                id: `${column['Header']}_triplet`,
                 accessor: data => {
                     let status = 'EXCLUDED';
                     const triplet = data[`${column['Header']}`];
