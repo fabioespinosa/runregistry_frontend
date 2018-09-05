@@ -32,61 +32,16 @@ export const editRun = new_run => async dispatch => {
     dispatch({ type: EDIT_RUN, payload: run });
 };
 
-export const filterRuns = (page_size, page, sorted, filtered) => async (
+export const filterRuns = (page_size, page, sortings, filter) => async (
     dispatch,
     getState
 ) => {
     const run_endpoint = getState().online.ui.show_all_runs
         ? 'runs_filtered_ordered'
         : 'significant_runs_filtered_ordered';
-    const query_object = { page_size, filter: {} };
-    // If querying a triplet, change it so that JSONB filtering works in back end:
-    filtered = filtered.map(filter => {
-        const new_filter = { ...filter };
-        if (filter.id.includes('_triplet')) {
-            new_filter.id = `${filter.id}.status`;
-            new_filter.value = filter.value.toUpperCase();
-        }
-        return new_filter;
-    });
-    console.log(filtered);
-    filtered.forEach(({ id, value }) => {
-        const criteria = value.split(' ').filter(arg => arg !== '');
-        let query = {};
-        if (criteria.length === 1) {
-            // If user types '=' or '<' like operator not perform like:
-            console.log(criteria[0][0]);
-            if (['=', '<', '>', '<=', '>='].includes(criteria[0][0])) {
-                const operator = criteria[0][0];
-                criteria[0] = criteria[0].substring(1);
-                criteria.unshift(operator);
-            } else {
-                criteria[0] = `%${criteria[0]}%`;
-                criteria.unshift('like');
-            }
-        }
-        if (criteria.length === 2) {
-            query = { [criteria[0]]: criteria[1] };
-        }
-        if (criteria.length === 5) {
-            query = {
-                [criteria[2]]: {
-                    [criteria[0]]: criteria[1],
-                    [criteria[3]]: criteria[4]
-                }
-            };
-        }
-        if (criteria.length === 7) {
-            query = {
-                [criteria[2]]: {}
-            };
-        }
-        console.log(query);
-        query_object.filter[id] = query;
-    });
     const { data: runs } = await axios.post(
         `${api_url}/${run_endpoint}/${page}`,
-        query_object
+        { page_size, sortings, filter }
     );
     dispatch({ type: FILTER_RUNS, payload: runs });
 };
@@ -103,22 +58,26 @@ export default function(state = INITIAL_STATE, action) {
         case FETCH_INITIAL_RUNS:
             return {
                 runs: payload.runs,
-                pages: payload.pages
+                pages: payload.pages,
+                loading: false
             };
         case FETCH_ALL_RUNS:
             return {
                 runs: payload.runs,
-                pages: payload.pages
+                pages: payload.pages,
+                loading: false
             };
         case FETCH_SIGNIFICANT_RUNS:
             return {
                 runs: payload.runs,
-                pages: payload.pages
+                pages: payload.pages,
+                loading: false
             };
         case FILTER_RUNS:
             return {
                 runs: payload.runs,
-                pages: payload.pages
+                pages: payload.pages,
+                loading: false
             };
         case EDIT_RUN:
             return {

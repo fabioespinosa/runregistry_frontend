@@ -44,7 +44,7 @@ export const hideLumisectionModal = () => ({ type: HIDE_LUMISECTION_MODAL });
 export const toggleTableFilters = () => ({ type: TOGGLE_TABLE_FILTERS });
 
 const INITIAL_STATE = {
-    show_all_runs: true,
+    show_all_runs: false,
     configuration_modal_visible: false,
     configuration_modal_type: '',
     manage_run_modal_visible: false,

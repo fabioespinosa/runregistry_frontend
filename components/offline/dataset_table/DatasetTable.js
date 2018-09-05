@@ -42,16 +42,15 @@ class DatasetTable extends Component {
             {
                 Header: 'Run Number',
                 accessor: 'run_number',
-                Cell: props => {
-                    return (
-                        <div style={{ textAlign: 'center', width: '100%' }}>
-                            <a onClick={evt => console.log(evt.target)}>
-                                {props.value}
-                            </a>
-                        </div>
-                    );
-                },
-                maxWidth: 100
+                maxWidth: 90,
+                type: 'string',
+                Cell: ({ original, value }) => (
+                    <div style={{ textAlign: 'center', width: '100%' }}>
+                        <a onClick={() => showManageRunModal(original)}>
+                            {value}
+                        </a>
+                    </div>
+                )
             },
             {
                 Header: 'Class',
@@ -153,10 +152,27 @@ class DatasetTable extends Component {
                     </div>
                 ),
                 maxWidth: 100
+            },
+            {
+                Header: 'GUI',
+                filterable: false,
+                maxWidth: 50,
+                Cell: ({ original }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        <a
+                            target="_blank"
+                            href={`https://cmsweb.cern.ch/dqm/offline/start?runnr=${
+                                original.run_number
+                            };sampletype=online_data;workspace=Summary`}
+                        >
+                            GUI
+                        </a>
+                    </div>
+                )
             }
-            // { Header: 'Started', accessor: 'start_time' },
-            // { Header: 'Hlt Key Description', accessor: 'hlt_key' }
-        ]; // { Header: 'Stopped', accessor: 'STOPTIME' },];
+        ];
+        // { Header: 'Started', accessor: 'start_time' },
+        // { Header: 'Hlt Key Description', accessor: 'hlt_key' } // { Header: 'Stopped', accessor: 'STOPTIME' },];
 
         const other_columns = [
             // { Header: 'LHC Fill', accessor: 'LHCFILL' }, // { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },

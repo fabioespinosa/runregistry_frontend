@@ -11,36 +11,51 @@ import {
 } from '../../../ducks/online/ui';
 import ManageRunModal from '../manage_run/ManageRunModal';
 import LumisectionModal from '../lumisections/LumisectionModal';
-// import runs from '../../../ducks/runs.json';
 
-// Import React Table
 import ReactTable from 'react-table';
 
-const filter_description = {
+const column_filter_description = {
     string: '(=, like, notlike, <>)',
     date: '(=, >, <, >=, <=, <>)',
     component: '(=, like, notlike, <>)',
     boolean: '(true, false)'
 };
+const column_types = {
+    run_number: 'integer',
+    class: 'string',
+    significant: 'boolean',
+    state: 'string',
+    start_time: 'date',
+    hlt_key: 'string',
+    duration: 'integer',
+    clock_type: 'string',
+    component: 'component'
+};
 
 class RunTable extends Component {
     fetchData = async (table, instance) => {
-        // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
-        // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
-        this.setState({ loading: true });
-        await this.props.filterRuns(
-            table.pageSize,
-            table.page,
-            table.sorted,
-            table.filtered
-        );
-        this.setState({ loading: false });
+        const renamed_sortings = rename_triplets(table.sorted);
+        const renamed_filters = rename_triplets(table.filtered);
+        const sortings = formatSortings(renamed_sortings);
+        const filters = formatFilters(renamed_filters);
+        console.log(table.sorted);
+        await this.props
+            .filterRuns(table.pageSize, table.page, sortings, filters)
+            .catch(err => {
+                console.log(err);
+                console.log(err.message);
+                if (err.response) {
+                    // Successfully went to the server:
+                    console.log(err.response.data.err);
+                }
+            });
     };
     render() {
         // const { data, pages, loading } = this.state;
         const {
             filterable,
             run_table,
+            show_all_runs,
             showManageRunModal,
             showLumisectionModal
         } = this.props;
@@ -50,16 +65,13 @@ class RunTable extends Component {
                 Header: 'Run Number',
                 accessor: 'run_number',
                 maxWidth: 90,
-                type: 'string',
-                Cell: props => {
-                    return (
-                        <div style={{ textAlign: 'center', width: '100%' }}>
-                            <a onClick={evt => console.log(evt.target)}>
-                                {props.value}
-                            </a>
-                        </div>
-                    );
-                }
+                Cell: ({ original, value }) => (
+                    <div style={{ textAlign: 'center', width: '100%' }}>
+                        <a onClick={() => showManageRunModal(original)}>
+                            {value}
+                        </a>
+                    </div>
+                )
             },
             { Header: 'Class', accessor: 'class', type: 'string' },
             {
@@ -83,7 +95,7 @@ class RunTable extends Component {
                 Header: 'Significant',
                 id: 'significant',
                 maxWidth: 62,
-                type: 'boolean',
+                filterable: show_all_runs && filterable,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
                         {original.significant ? (
@@ -102,7 +114,6 @@ class RunTable extends Component {
                                         footer: '<a >What does this mean?</a>'
                                     });
                                     if (value) {
-                                        console.log('f');
                                         await Swal(
                                             `Run ${
                                                 original.run_number
@@ -123,8 +134,7 @@ class RunTable extends Component {
                 Header: 'State',
                 id: 'state',
                 accessor: 'state',
-                type: 'string',
-                Cell: ({ value }) => (
+                Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center' }}>
                         <span
                             style={{
@@ -140,7 +150,9 @@ class RunTable extends Component {
                         <a
                             onClick={async () => {
                                 const { value: state } = await Swal({
-                                    title: 'Move to...',
+                                    title: `Move run ${
+                                        original.run_number
+                                    } to...`,
                                     input: 'select',
                                     inputOptions: {
                                         OPEN: 'To OPEN',
@@ -158,43 +170,36 @@ class RunTable extends Component {
                     </div>
                 )
             },
-            { Header: 'Started', accessor: 'start_time', type: 'date' },
+            { Header: 'Started', accessor: 'start_time' },
             {
                 Header: 'Hlt Key Description',
-                accessor: 'hlt_key',
-                type: 'string'
+                accessor: 'hlt_key'
+            },
+            {
+                Header: 'GUI',
+                filterable: false,
+                maxWidth: 50,
+                Cell: ({ original }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        <a
+                            target="_blank"
+                            href={`https://cmsweb.cern.ch/dqm/online/start?runnr=${
+                                original.run_number
+                            };sampletype=online_data;workspace=Summary`}
+                        >
+                            GUI
+                        </a>
+                    </div>
+                )
             }
-        ]; // { Header: 'Stopped', accessor: 'STOPTIME' },];
+        ];
 
         const other_columns = [
-            // { Header: 'LHC Fill', accessor: 'LHCFILL' }, // { Header: 'B1 stable', accessor: 'BEAM1_STABLE' },
-            // { Header: 'B2 stable', accessor: 'BEAM2_STABLE' },
-            // { Header: 'B-Field', accessor: 'b_field' }, // { Header: 'Events', accessor: 'EVENTS' },
-
-            { Header: 'Duration', accessor: 'duration', type: 'integer' }, // { Header: 'TIBTID on', accessor: 'TIBTID_READY' },
-            // { Header: 'TEC+ on', accessor: 'TECP_READY' },
-            // { Header: 'TEC- on', accessor: 'TECM_READY' },
-            // { Header: 'FPIX on', accessor: 'FPIX_READY' },
-            // { Header: 'BPIX on', accessor: 'BPIX_READY' },
-            // { Header: 'RPC on', accessor: 'RPC_READY' },
-            // { Header: 'CSC+ on', accessor: 'CSCP_READY' },
-            // { Header: 'CSC- on', accessor: 'CSCM_READY' },
-            // { Header: 'CSC in', accessor: 'CSC_PRESENT' },
-            // { Header: 'DT+ on', accessor: 'DTP_READY' },
-            // { Header: 'DT- on', accessor: 'DTM_READY' },
-            // { Header: 'DT0 on', accessor: 'DT0_READY' },
-            // { Header: 'DT in', accessor: 'DT_PRESENT' },
-            // { Header: 'RPC in', accessor: 'RPC_PRESENT' }
-            // The new ones from OMS:
+            { Header: 'Duration', accessor: 'duration' },
             { Header: 'Clock Type', accessor: 'clock_type' }
         ];
-        // { Header: 'Cms Sw Version', accessor: 'cmssw_version' },
-        // { Header: 'Delivered Lumi', accessor: 'delivered_lumi' },
-        // { Header: 'end_lumi', accessor: 'end_lumi' }
-
         // Put components in format Header: component
         let component_columns = components.map(component => ({
-            type: 'component',
             Header: component
         }));
 
@@ -325,7 +330,8 @@ class RunTable extends Component {
                     </div>
                 ),
                 Filter: ({ column, onChange }) => {
-                    const { type } = column;
+                    const { id } = column;
+                    const type = column_types[id] || 'string';
                     const style = `
                         text-align: left;
                         border: 1px solid grey;
@@ -363,20 +369,15 @@ class RunTable extends Component {
                                     if (evt.key == 'Enter') {
                                         onChange(evt.target.value);
                                     }
-                                }}
-                                // onChange={evt => onChange(evt.target.value)}
+                                }} // onChange={evt => onChange(evt.target.value)}
                                 style={{ width: '100%' }}
                             />
                             <div style={{ display: 'none' }} id={column.id}>
-                                <h3
-                                    style={{
-                                        textTransform: 'capitalize'
-                                    }}
-                                >
+                                <h3 style={{ textTransform: 'capitalize' }}>
                                     {type} filter
                                 </h3>
                                 Supported operations:
-                                <p>{filter_description[type]}</p>
+                                <p>{column_filter_description[type]}</p>
                             </div>
                         </div>
                     );
@@ -387,7 +388,7 @@ class RunTable extends Component {
             <div>
                 <ManageRunModal />
                 <LumisectionModal />
-                {'Filters now working except for State column'}
+                {'Hold shift for multiple column sorting'}
                 <ReactTable
                     columns={columns}
                     manual
@@ -406,27 +407,8 @@ class RunTable extends Component {
                         25 // Request new data when things change
                     }
                     className="-striped -highlight"
-                    // getTdProps={(state, rowInfo, column, instance) => {
-                    //     return {
-                    //         onClick: (e, handleOriginal) => {
-                    //             if (column.id === 'significant') {
-                    //                 console.log('f');
-                    //             }
-                    //             // IMPORTANT! React-Table uses onClick internally to trigger
-                    //             // events like expanding SubComponents and pivots.
-                    //             // By default a custom 'onClick' handler will override this functionality.
-                    //             // If you want to fire the original onClick handler, call the
-                    //             // 'handleOriginal' function.
-                    //             if (handleOriginal) {
-                    //                 handleOriginal();
-                    //             }
-                    //         }
-                    //     };
-                    // }}
                 />
                 <br />
-                {/* <Tips /> */}
-                {/* <Logo /> */}
                 <style jsx global>{`
                     .ReactTable .rt-th,
                     .ReactTable .rt-td {
@@ -441,9 +423,84 @@ class RunTable extends Component {
 
 const mapStateToProps = state => {
     return {
+        show_all_runs: state.online.ui.show_all_runs,
         filterable: state.online.ui.table.filterable,
         run_table: state.online.runs
     };
+};
+
+const rename_triplets = original_criteria => {
+    return original_criteria.map(filter => {
+        const new_filter = { ...filter };
+        if (filter.id.includes('_triplet')) {
+            new_filter.id = `${filter.id}.status`;
+            new_filter.value = filter.value.toUpperCase();
+        }
+        return new_filter;
+    });
+};
+
+const formatFilters = original_filters => {
+    const column_filters = {};
+    original_filters.forEach(({ id, value }) => {
+        value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
+        const criteria = value.split(' ').filter(arg => arg !== '');
+        let query = {};
+        if (criteria.length === 1) {
+            // If user types '=' or '<' alike operator, do not perform default 'like' or '=':
+            if (['=', '<', '>', '<=', '>='].includes(criteria[0][0])) {
+                const operator = criteria[0][0];
+                criteria[0] = criteria[0].substring(1);
+                criteria.unshift(operator);
+            } else if (column_types[id] === 'string') {
+                // If it is a string, default is like:
+                criteria[0] = `%${criteria[0]}%`;
+                criteria.unshift('like');
+            } else {
+                // Else, default is operator '='
+                criteria.unshift('=');
+            }
+        }
+        // Format And/Or up to three levels:
+        if (criteria.length === 2) {
+            query = { [criteria[0]]: criteria[1] };
+        }
+        if (criteria.length === 5) {
+            query = {
+                [criteria[2]]: [
+                    { [criteria[0]]: criteria[1] },
+                    { [criteria[3]]: criteria[4] }
+                ]
+            };
+        }
+        if (criteria.length === 8) {
+            query = {
+                [criteria[5]]: [
+                    { [criteria[6]]: criteria[7] },
+                    {
+                        [criteria[2]]: [
+                            { [criteria[0]]: criteria[1] },
+                            { [criteria[3]]: criteria[4] }
+                        ]
+                    }
+                ]
+            };
+        }
+        // If query is blank, there was an error in query format
+        if (Object.keys(query).length === 0) {
+            throw 'query invalid';
+        }
+        column_filters[id] = query;
+    });
+    return column_filters;
+};
+
+const formatSortings = original_sortings => {
+    console.log(original_sortings);
+    return original_sortings.map(sorting => [
+        sorting.id,
+        sorting.desc ? 'DESC' : 'ASC'
+    ]);
 };
 
 export default connect(
