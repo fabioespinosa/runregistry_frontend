@@ -1,6 +1,10 @@
+import axios from 'axios';
 const INITIAL_INFO = 'INITIAL_INFO';
 
 export const initializeUser = (store, query) => {
+    axios.defaults.headers.common = {
+        'adfs-group': query['adfs-group']
+    };
     store.dispatch({
         type: INITIAL_INFO,
         payload: query
