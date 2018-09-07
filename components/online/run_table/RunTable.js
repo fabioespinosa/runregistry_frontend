@@ -15,10 +15,10 @@ import LumisectionModal from '../lumisections/LumisectionModal';
 import ReactTable from 'react-table';
 
 const column_filter_description = {
-    string: '(=, like, notlike, <>)',
-    date: '(=, >, <, >=, <=, <>)',
-    component: '(=, like, notlike, <>)',
-    boolean: '(true, false)'
+    string: '=, like, notlike, <>',
+    date: '=, >, <, >=, <=, <>',
+    component: '=, like, notlike, <>',
+    boolean: 'true, false'
 };
 const column_types = {
     run_number: 'integer',
@@ -342,7 +342,7 @@ class RunTable extends Component {
                         padding: 9px;
                         width: 200px;
                         z-index: 900;
-                        height: 200px;
+                        height: 270px;
                         background: white;
                         position: fixed;
                         display: none;`;
@@ -369,15 +369,46 @@ class RunTable extends Component {
                                     if (evt.key == 'Enter') {
                                         onChange(evt.target.value);
                                     }
-                                }} // onChange={evt => onChange(evt.target.value)}
-                                style={{ width: '100%' }}
+                                }}
+                                style={
+                                    { width: '100%' } // onChange={evt => onChange(evt.target.value)}
+                                }
                             />
                             <div style={{ display: 'none' }} id={column.id}>
-                                <h3 style={{ textTransform: 'capitalize' }}>
+                                <h3
+                                    style={{
+                                        textTransform: 'capitalize'
+                                    }}
+                                >
                                     {type} filter
                                 </h3>
-                                Supported operations:
-                                <p>{column_filter_description[type]}</p>
+                                Supported operators:{' '}
+                                {column_filter_description[type]}
+                                <p />
+                                <p>Structure:</p>
+                                <p>
+                                    <i>operator</i> value <i>and/or</i>{' '}
+                                    <i>operator</i> value
+                                </p>
+                                <p>Examples:</p>
+                                <p>
+                                    <i>{'='}</i> 322433
+                                </p>
+                                <p>
+                                    <i>{'>'}</i> 40 <i>and</i> <i>{'<'}</i> 100{' '}
+                                    <i>or</i> <i>{'>'}</i> 500
+                                </p>
+                                <p>
+                                    <i>{'like'}</i> %physics% <i>and</i>{' '}
+                                    <i>{'like'}</i> %2018%
+                                </p>
+                                <p>
+                                    <strong>
+                                        {
+                                            'Space between operator and value is mandatory'
+                                        }
+                                    </strong>
+                                </p>
                             </div>
                         </div>
                     );
@@ -388,7 +419,7 @@ class RunTable extends Component {
             <div>
                 <ManageRunModal />
                 <LumisectionModal />
-                {'Hold shift for multiple column sorting'}
+                Hold <i>shift</i> for multiple column sorting
                 <ReactTable
                     columns={columns}
                     manual

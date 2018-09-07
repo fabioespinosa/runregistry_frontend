@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Collapse } from 'antd';
 import EditRun from './editRun/EditRun';
+import History from './history/History';
 
 const Panel = Collapse.Panel;
 
@@ -10,18 +11,15 @@ class ManageRun extends Component {
         const { run } = this.props;
         console.log(run);
         return (
-            <Collapse>
-                <Panel header="Run info">
-                    <p>Edit Run</p>
-                </Panel>
-                <Panel header="Edit run">
+            <Collapse defaultActiveKey={['2']}>
+                {/* <Panel key="1" header="Run info">
+                    <p>Run info</p>
+                </Panel> */}
+                <Panel key="2" header="Edit run">
                     <EditRun run={run} />
                 </Panel>
-                <Panel header="Move run">
-                    <p>Edit Run</p>
-                </Panel>
-                <Panel header="Other">
-                    <p>Edit Run</p>
+                <Panel key="3" header="Run History">
+                    <History run={run} />
                 </Panel>
             </Collapse>
         );

@@ -65,7 +65,7 @@ class BreadcrumbCmp extends Component {
                 <Breadcrumb className="breadcrumb properly_capitalized">
                     {children}
                 </Breadcrumb>
-                <div>
+                <div className="show_all">
                     {online ? (
                         <RadioGroup
                             onChange={evt =>
@@ -101,6 +101,15 @@ class BreadcrumbCmp extends Component {
                     )}
                 </div>
                 <div className="progresscircle_container">
+                    <div>
+                        <a
+                            className="jira"
+                            target="_blank"
+                            href="https://its.cern.ch/jira/projects/NEWRUNREGISTRY/issues/"
+                        >
+                            Feedback is welcome! (JIRA)
+                        </a>
+                    </div>
                     <Dropdown
                         overlay={online ? this.online_menu : this.offline_menu}
                     >
@@ -119,8 +128,15 @@ class BreadcrumbCmp extends Component {
                         margin-top: 12px;
                         margin-bottom: 8px;
                     }
+                    .show_all {
+                        margin-right: -170px;
+                    }
+                    .jira {
+                        margin-right: 15px;
+                    }
                     .progresscircle_container {
                         display: flex;
+                        justify-content: space-around;
                     }
                     .progresscircle_label {
                         margin: 0;

@@ -65,7 +65,16 @@ class TopNav extends Component {
                     </Menu.Item> */}
                 </Menu>
                 <div>
-                    <h3 className="user_name">{user.adfs_fullname}</h3>
+                    <h3 className="user_name white">
+                        {user.adfs_fullname || 'Fabio Alberto Espinosa Burbano'}
+                    </h3>
+                    {/* <br /> */}
+                    <a
+                        className="white"
+                        href="https://login.cern.ch/adfs/ls/?wa=wsignout1.0"
+                    >
+                        Log out
+                    </a>
                 </div>
                 <style jsx global>{`
                     .logo {
@@ -76,8 +85,12 @@ class TopNav extends Component {
                         display: flex;
                         justify-content: space-between;
                     }
-                    .user_name {
+                    .white {
                         color: white;
+                    }
+                    .user_name {
+                        display: inline-block;
+                        margin-right: 20px;
                     }
                 `}</style>
             </Header>

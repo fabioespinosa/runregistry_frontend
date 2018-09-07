@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { api_url } from '../../config/config';
-import auth_configuration from '../../auth/auth';
+import auth from '../../auth/auth';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 const FETCH_SIGNIFICANT_RUNS = 'FETCH_SIGNIFICANT_RUNS';
 const FETCH_ALL_RUNS = 'FETCH_ALL_RUNS';
@@ -43,7 +43,7 @@ export const filterRuns = (page_size, page, sortings, filter) => async (
     const { data: runs } = await axios.post(
         `${api_url}/${run_endpoint}/${page}`,
         { page_size, sortings, filter },
-        auth_configuration(getState)
+        auth(getState)
     );
     dispatch({ type: FILTER_RUNS, payload: runs });
 };
