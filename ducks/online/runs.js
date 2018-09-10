@@ -2,28 +2,44 @@ import axios from 'axios';
 
 import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
+import { toggleShowAllRuns } from './ui';
+const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS-ONLINE';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 const FETCH_SIGNIFICANT_RUNS = 'FETCH_SIGNIFICANT_RUNS';
 const FETCH_ALL_RUNS = 'FETCH_ALL_RUNS';
+const TABLE_LOADING = 'TABLE_LOADING';
 const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
-const TABLE_LOADING = 'TABLE_LOADING';
 
 export function fetchInitialOnlineRuns(store, query, isServer) {}
 
-export const fetchSignificantRuns = () => async dispatch => {
-    dispatch({ type: TABLE_LOADING });
-    const { data: runs } = await axios.get(
-        `${api_url}/significant_runs_paginated/1`
-    );
-    dispatch({ type: FETCH_SIGNIFICANT_RUNS, payload: runs });
+export const initializeFilters = (store, query) => {
+    const { filters } = query;
+    if (filters) {
+        if (Object.keys(filters).length > 0) {
+            store.dispatch({
+                type: INITIALIZE_FILTERS,
+                payload: Object.keys(filters).map(key => ({
+                    id: key,
+                    value: filters[key]
+                })),
+                filters,
+                from_url: true
+            });
+        }
+    }
+    if (query.workspace === 'all') {
+        store.dispatch(toggleShowAllRuns('show_all_runs'));
+    }
+    store.dispatch({ type: TABLE_LOADING });
 };
 
-export const fetchAllRuns = () => async dispatch => {
-    dispatch({ type: TABLE_LOADING });
-    const { data: runs } = await axios.get(`${api_url}/runs_paginated/1`);
-    dispatch({ type: FETCH_ALL_RUNS, payload: runs });
-};
+export const changeFilters = (filter_array, filters = {}) => ({
+    type: INITIALIZE_FILTERS,
+    payload: filter_array,
+    from_url: false,
+    filters
+});
 
 export const editRun = new_run => async dispatch => {
     const { data: run } = await axios.put(
@@ -33,7 +49,7 @@ export const editRun = new_run => async dispatch => {
     dispatch({ type: EDIT_RUN, payload: run });
 };
 
-export const filterRuns = (page_size, page, sortings, filter) => async (
+export const filterRuns = (page_size, page, sortings, filtered) => async (
     dispatch,
     getState
 ) => {
@@ -42,44 +58,44 @@ export const filterRuns = (page_size, page, sortings, filter) => async (
         : 'significant_runs_filtered_ordered';
     const { data: runs } = await axios.post(
         `${api_url}/${run_endpoint}/${page}`,
-        { page_size, sortings, filter },
+        { page_size, sortings, filter: filtered },
         auth(getState)
     );
-    dispatch({ type: FILTER_RUNS, payload: runs });
+    dispatch({
+        type: FILTER_RUNS,
+        payload: runs,
+        filter: sortings.length > 0 || Object.keys(filtered).length > 0
+    });
 };
 
 const INITIAL_STATE = {
     runs: [],
     pageSize: 25,
-    loading: false
+    loading: false,
+    filter: false,
+    url_filter: [],
+    filters: {}
 };
 
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
-        case FETCH_INITIAL_RUNS:
+        case INITIALIZE_FILTERS:
             return {
-                runs: payload.runs,
-                pages: payload.pages,
-                loading: false
+                ...state,
+                filter: true,
+                url_filter: payload,
+                filters: action.filters
             };
-        case FETCH_ALL_RUNS:
-            return {
-                runs: payload.runs,
-                pages: payload.pages,
-                loading: false
-            };
-        case FETCH_SIGNIFICANT_RUNS:
-            return {
-                runs: payload.runs,
-                pages: payload.pages,
-                loading: false
-            };
+        case TABLE_LOADING:
+            return { ...state, loading: true };
         case FILTER_RUNS:
             return {
+                ...state,
                 runs: payload.runs,
                 pages: payload.pages,
-                loading: false
+                loading: false,
+                filter: action.filter
             };
         case EDIT_RUN:
             return {

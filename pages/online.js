@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { Layout, Breadcrumb } from 'antd';
 
 import { initializeUser } from '../ducks/info';
-import { fetchInitialOnlineRuns } from '../ducks/online/runs';
+import { initializeFilters } from '../ducks/online/runs';
 
 import store from '../store/configure-store';
 import Page from '../layout/page';
@@ -26,6 +26,7 @@ class Online extends Component {
         // Init auth
         // console.log(fetchInitialOnlineRuns);
         // const promise = await fetchInitialOnlineRuns(store);
+        initializeFilters(store, query);
         initializeUser(store, query, isServer);
         // return fetchInitialOnlineRuns(store, query, isServer);
     }

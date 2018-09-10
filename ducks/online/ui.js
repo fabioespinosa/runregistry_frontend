@@ -8,13 +8,18 @@ const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL-ONLINE';
 const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL-ONLINE';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-ONLINE';
 
-export const toggleShowAllRuns = new_value => dispatch => {
+export const toggleShowAllRunsAndFetch = new_value => dispatch => {
     dispatch({
         type: TOGGLE_SHOW_ALL_RUNS,
         payload: new_value === 'show_all_runs'
     });
     dispatch(filterRuns(25, 0, [], []));
 };
+
+export const toggleShowAllRuns = new_value => ({
+    type: TOGGLE_SHOW_ALL_RUNS,
+    payload: new_value === 'show_all_runs'
+});
 
 export const showConfigurationModal = configuration_modal_type => ({
     type: SHOW_CONFIGURATION_MODAL,

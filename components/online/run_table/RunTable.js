@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Router, { withRouter } from 'next/router';
 import { Icon } from 'antd';
 import Swal from 'sweetalert2';
+import qs from 'qs';
 import { components } from '../../../config/config';
-import { filterRuns } from '../../../ducks/online/runs';
+import { filterRuns, changeFilters } from '../../../ducks/online/runs';
 import {
     toggleTableFilters,
     showManageRunModal,
@@ -33,12 +35,41 @@ const column_types = {
 };
 
 class RunTable extends Component {
+    removeFilters = () => {
+        // Navigate entirely to a route without filters
+        let { asPath } = this.props.router;
+        if (asPath.includes('?')) {
+            asPath = asPath.split('?')[0];
+        }
+        window.location.href = `${window.location.origin}${asPath}`;
+    };
+    applyFiltersToUrl = filters => {
+        const object_filter = {};
+        filters.forEach(filter => {
+            object_filter[filter.id] = filter.value;
+        });
+        let { pathname, asPath } = this.props.router;
+        const query = qs.stringify(object_filter);
+        if (asPath.includes('?')) {
+            pathname = pathname.split('?')[0];
+            asPath = asPath.split('?')[0];
+        }
+        this.props.changeFilters(filters, object_filter);
+        Router.push(`${pathname}?${query}`, `${asPath}?${query}`, {
+            shallow: true
+        });
+        return filters;
+    };
     fetchData = async (table, instance) => {
-        const renamed_sortings = rename_triplets(table.sorted);
-        const renamed_filters = rename_triplets(table.filtered);
+        // debugger;
+        let { url_filter } = this.props.run_table;
+        if (table.filtered.length > 0) {
+            url_filter = this.applyFiltersToUrl(table.filtered);
+        }
+        const renamed_sortings = rename_triplets(table.sorted, false);
+        const renamed_filters = rename_triplets(url_filter, true);
         const sortings = formatSortings(renamed_sortings);
         const filters = formatFilters(renamed_filters);
-        console.log(table.sorted);
         await this.props
             .filterRuns(table.pageSize, table.page, sortings, filters)
             .catch(err => {
@@ -51,7 +82,6 @@ class RunTable extends Component {
             });
     };
     render() {
-        // const { data, pages, loading } = this.state;
         const {
             filterable,
             run_table,
@@ -59,7 +89,7 @@ class RunTable extends Component {
             showManageRunModal,
             showLumisectionModal
         } = this.props;
-        const { runs, pages, loading } = run_table;
+        const { runs, pages, loading, filter, filters } = run_table;
         let columns = [
             {
                 Header: 'Run Number',
@@ -78,6 +108,7 @@ class RunTable extends Component {
                 Header: 'Manage / LS',
                 id: 'manage',
                 filterable: false,
+                sortable: false,
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
@@ -96,6 +127,7 @@ class RunTable extends Component {
                 id: 'significant',
                 maxWidth: 62,
                 filterable: show_all_runs && filterable,
+                sortable: show_all_runs,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
                         {original.significant ? (
@@ -140,11 +172,14 @@ class RunTable extends Component {
                             style={{
                                 color: 'white',
                                 fontSize: '0.95em',
-                                backgroundColor: 'grey',
+                                fontWeight: 'bold',
+                                color: value.value === 'OPEN' ? 'red' : 'grey',
                                 borderRadius: '1px'
                             }}
                         >
-                            <span style={{ padding: '4px' }}>SIGNOFF</span>
+                            <span style={{ padding: '4px' }}>
+                                {value.value}
+                            </span>
                         </span>
                         {' / '}
                         <a
@@ -347,8 +382,12 @@ class RunTable extends Component {
                         position: fixed;
                         display: none;`;
                     return (
-                        <div style={{ zIndex: 999 }}>
+                        <div
+                            className="filter_selector"
+                            style={{ zIndex: 999 }}
+                        >
                             <input
+                                defaultValue={filters[column.id]}
                                 onMouseEnter={evt => {
                                     const block = document.querySelector(
                                         `#${column.id}`
@@ -420,6 +459,28 @@ class RunTable extends Component {
                 <ManageRunModal />
                 <LumisectionModal />
                 Hold <i>shift</i> for multiple column sorting
+                {filter && (
+                    <div
+                        style={{
+                            width: '100%',
+                            backgroundColor: 'rgba(1,0.1,0.1,0.1)'
+                        }}
+                    >
+                        <h3
+                            style={{
+                                color: 'red',
+                                display: 'inline-block',
+                                marginBottom: 0
+                            }}
+                        >
+                            Filter/Sorting are ON
+                        </h3>
+                        {'    -    '}
+                        <a onClick={this.removeFilters}>
+                            Click here to remove filters and sortings
+                        </a>
+                    </div>
+                )}
                 <ReactTable
                     columns={columns}
                     manual
@@ -460,12 +521,21 @@ const mapStateToProps = state => {
     };
 };
 
-const rename_triplets = original_criteria => {
+// SQL Understands a dot syntax for JSONB values (in this case triplets), they are transformed to this syntax in this function
+const rename_triplets = (original_criteria, filtering) => {
     return original_criteria.map(filter => {
         const new_filter = { ...filter };
+        if (filter.id === 'state') {
+            new_filter.id = `${filter.id}.value`;
+            if (filtering) {
+                new_filter.value = filter.value.toUpperCase();
+            }
+        }
         if (filter.id.includes('_triplet')) {
             new_filter.id = `${filter.id}.status`;
-            new_filter.value = filter.value.toUpperCase();
+            if (filtering) {
+                new_filter.value = filter.value.toUpperCase();
+            }
         }
         return new_filter;
     });
@@ -527,14 +597,21 @@ const formatFilters = original_filters => {
 };
 
 const formatSortings = original_sortings => {
-    console.log(original_sortings);
     return original_sortings.map(sorting => [
         sorting.id,
         sorting.desc ? 'DESC' : 'ASC'
     ]);
 };
 
-export default connect(
-    mapStateToProps,
-    { filterRuns, toggleTableFilters, showManageRunModal, showLumisectionModal }
-)(RunTable);
+export default withRouter(
+    connect(
+        mapStateToProps,
+        {
+            filterRuns,
+            toggleTableFilters,
+            showManageRunModal,
+            showLumisectionModal,
+            changeFilters
+        }
+    )(RunTable)
+);

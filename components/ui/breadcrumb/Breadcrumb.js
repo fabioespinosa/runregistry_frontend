@@ -14,7 +14,7 @@ import {
 
 import {
     showConfigurationModal as showOnlineConfigurationModal,
-    toggleShowAllRuns
+    toggleShowAllRunsAndFetch
 } from '../../../ducks/online/ui';
 
 import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
@@ -56,7 +56,7 @@ class BreadcrumbCmp extends Component {
             children,
             show_all_runs,
             show_waiting_list,
-            toggleShowAllRuns,
+            toggleShowAllRunsAndFetch,
             toggleWaitingList,
             online
         } = this.props;
@@ -68,9 +68,14 @@ class BreadcrumbCmp extends Component {
                 <div className="show_all">
                     {online ? (
                         <RadioGroup
-                            onChange={evt =>
-                                toggleShowAllRuns(evt.target.value)
-                            }
+                            onChange={evt => {
+                                const { value } = evt.target;
+                                if (value === 'show_all_runs') {
+                                    Router.push('/online/runs/all');
+                                } else {
+                                    Router.push('/online/runs/significant');
+                                }
+                            }}
                             value={
                                 show_all_runs
                                     ? 'show_all_runs'
@@ -166,7 +171,7 @@ export default connect(
     {
         showOnlineConfigurationModal,
         showOfflineConfigurationModal,
-        toggleShowAllRuns,
+        toggleShowAllRunsAndFetch,
         toggleWaitingList
     }
 )(BreadcrumbCmp);

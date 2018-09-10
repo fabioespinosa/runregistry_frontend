@@ -35,7 +35,7 @@ app.prepare().then(() => {
 
     // offline:
     server.get('/:type/:section/:workspace', (req, res) => {
-        const params = { ...req.headers, ...req.params };
+        const params = { ...req.headers, ...req.params, filters: req.query };
         app.render(req, res, `/${req.params.type}`, params);
     });
 
