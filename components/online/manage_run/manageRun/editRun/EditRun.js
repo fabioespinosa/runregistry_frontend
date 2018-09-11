@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
 import { Input, Button } from 'antd';
 
-import { editRun } from '../../.././../../ducks/online/runs';
+import { editComponents } from '../../.././../../ducks/online/runs';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
 
 class EditRun extends Component {
     render() {
-        const { run, editRun } = this.props;
+        const { run, editComponents } = this.props;
 
         const initialValues = {};
         for (const [key, val] of Object.entries(run)) {
@@ -41,8 +41,7 @@ class EditRun extends Component {
                         }
                         console.log(run);
                         console.log(components_triplets);
-                        const new_run = { ...run, ...components_triplets };
-                        editRun(new_run);
+                        editComponents(run.run_number, components_triplets);
                     }}
                     render={({
                         values,
@@ -175,5 +174,5 @@ class EditRun extends Component {
 
 export default connect(
     null,
-    { editRun }
+    { editComponents }
 )(EditRun);

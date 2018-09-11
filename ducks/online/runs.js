@@ -60,10 +60,14 @@ export const filterRuns = (page_size, page, sortings, filtered) => async (
     });
 };
 
-export const editRun = new_run => async dispatch => {
+export const editComponents = (run_number, components) => async (
+    dispatch,
+    getState
+) => {
     const { data: run } = await axios.put(
-        `${api_url}/runs/id_run/${new_run.run_number}`,
-        new_run
+        `${api_url}/runs/id_run/${run_number}`,
+        components,
+        auth(getState)
     );
     dispatch({ type: EDIT_RUN, payload: run });
 };
