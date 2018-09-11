@@ -5,7 +5,12 @@ import { Icon } from 'antd';
 import Swal from 'sweetalert2';
 import qs from 'qs';
 import { components } from '../../../config/config';
-import { filterRuns, changeFilters } from '../../../ducks/online/runs';
+import {
+    moveRun,
+    markSignificant,
+    filterRuns,
+    changeFilters
+} from '../../../ducks/online/runs';
 import {
     toggleTableFilters,
     showManageRunModal,
@@ -125,12 +130,13 @@ class RunTable extends Component {
             {
                 Header: 'Significant',
                 id: 'significant',
+                accessor: 'significant',
                 maxWidth: 62,
                 filterable: show_all_runs && filterable,
                 sortable: show_all_runs,
-                Cell: ({ original }) => (
+                Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center' }}>
-                        {original.significant ? (
+                        {value.value ? (
                             <Icon type={'check'} />
                         ) : (
                             <a
@@ -146,6 +152,9 @@ class RunTable extends Component {
                                         footer: '<a >What does this mean?</a>'
                                     });
                                     if (value) {
+                                        await this.props.markSignificant(
+                                            original
+                                        );
                                         await Swal(
                                             `Run ${
                                                 original.run_number
@@ -184,20 +193,31 @@ class RunTable extends Component {
                         {' / '}
                         <a
                             onClick={async () => {
+                                const options = {
+                                    OPEN: 'To OPEN',
+                                    SIGNOFF: 'to SIGNOFF',
+                                    COMPLETED: 'to COMPLETED'
+                                };
+                                delete options[value.value];
                                 const { value: state } = await Swal({
                                     title: `Move run ${
                                         original.run_number
                                     } to...`,
                                     input: 'select',
-                                    inputOptions: {
-                                        OPEN: 'To OPEN',
-                                        SIGNOFF: 'to SIGNOFF',
-                                        COMPLETED: 'to COMPLETED'
-                                    },
+                                    inputOptions: options,
                                     showCancelButton: true,
                                     reverseButtons: true
                                 });
-                                console.log(state);
+                                if (state) {
+                                    await this.props.moveRun(original, state);
+                                    await Swal(
+                                        `Run ${
+                                            original.run_number
+                                        } Moved to ${state}`,
+                                        '',
+                                        'success'
+                                    );
+                                }
                             }}
                         >
                             move
@@ -247,7 +267,7 @@ class RunTable extends Component {
                     let status = 'EXCLUDED';
                     const triplet = data[`${column['Header']}_triplet`];
                     const { significant } = data;
-                    if (triplet && significant) {
+                    if (triplet && significant.value) {
                         status = triplet.status;
                     }
                     return status;
@@ -611,7 +631,9 @@ export default withRouter(
             toggleTableFilters,
             showManageRunModal,
             showLumisectionModal,
-            changeFilters
+            changeFilters,
+            moveRun,
+            markSignificant
         }
     )(RunTable)
 );

@@ -221,7 +221,7 @@ class DatasetTable extends Component {
                     let status = 'EXCLUDED';
                     const triplet = data[`${column['Header']}`];
                     const { significant } = data;
-                    if (triplet && significant) {
+                    if (triplet && significant.value) {
                         status = triplet.status;
                     }
                     return status;

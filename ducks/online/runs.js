@@ -41,14 +41,6 @@ export const changeFilters = (filter_array, filters = {}) => ({
     filters
 });
 
-export const editRun = new_run => async dispatch => {
-    const { data: run } = await axios.put(
-        `${api_url}/runs/id_run/${new_run.run_number}`,
-        new_run
-    );
-    dispatch({ type: EDIT_RUN, payload: run });
-};
-
 export const filterRuns = (page_size, page, sortings, filtered) => async (
     dispatch,
     getState
@@ -66,6 +58,32 @@ export const filterRuns = (page_size, page, sortings, filtered) => async (
         payload: runs,
         filter: sortings.length > 0 || Object.keys(filtered).length > 0
     });
+};
+
+export const editRun = new_run => async dispatch => {
+    const { data: run } = await axios.put(
+        `${api_url}/runs/id_run/${new_run.run_number}`,
+        new_run
+    );
+    dispatch({ type: EDIT_RUN, payload: run });
+};
+
+export const markSignificant = original_run => async (dispatch, getState) => {
+    const { data: run } = await axios.post(
+        `${api_url}/runs/mark_significant`,
+        { original_run },
+        auth(getState)
+    );
+    dispatch({ type: EDIT_RUN, payload: run });
+};
+
+export const moveRun = (original_run, state) => async (dispatch, getState) => {
+    const { data: run } = await axios.post(
+        `${api_url}/runs/move_run`,
+        { original_run, state },
+        auth(getState)
+    );
+    dispatch({ type: EDIT_RUN, payload: run });
 };
 
 const INITIAL_STATE = {

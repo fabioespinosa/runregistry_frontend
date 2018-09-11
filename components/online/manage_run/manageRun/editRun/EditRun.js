@@ -39,6 +39,8 @@ class EditRun extends Component {
                                 [triplet_key]: val
                             };
                         }
+                        console.log(run);
+                        console.log(components_triplets);
                         const new_run = { ...run, ...components_triplets };
                         editRun(new_run);
                     }}
@@ -164,9 +166,6 @@ class EditRun extends Component {
                     .buttons {
                         display: flex;
                         justify-content: flex-end;
-                    }
-
-                    .buttons * {
                     }
                 `}</style>
             </div>
