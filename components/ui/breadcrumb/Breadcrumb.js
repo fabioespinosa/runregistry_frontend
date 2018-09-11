@@ -11,6 +11,7 @@ import {
     message,
     Progress
 } from 'antd';
+import { root_url_prefix } from '../../../config/config';
 
 import {
     showConfigurationModal as showOnlineConfigurationModal,
@@ -71,9 +72,13 @@ class BreadcrumbCmp extends Component {
                             onChange={evt => {
                                 const { value } = evt.target;
                                 if (value === 'show_all_runs') {
-                                    Router.push('/online/runs/all');
+                                    Router.push(
+                                        `${root_url_prefix}/online/runs/all`
+                                    );
                                 } else {
-                                    Router.push('/online/runs/significant');
+                                    Router.push(
+                                        `${root_url_prefix}/online/runs/significant`
+                                    );
                                 }
                             }}
                             value={

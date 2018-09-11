@@ -4,7 +4,7 @@ import Router, { withRouter } from 'next/router';
 import { Icon } from 'antd';
 import Swal from 'sweetalert2';
 import qs from 'qs';
-import { components } from '../../../config/config';
+import { components, root_url_prefix } from '../../../config/config';
 import {
     moveRun,
     markSignificant,
@@ -60,9 +60,13 @@ class RunTable extends Component {
             asPath = asPath.split('?')[0];
         }
         this.props.changeFilters(filters, object_filter);
-        Router.push(`${pathname}?${query}`, `${asPath}?${query}`, {
-            shallow: true
-        });
+        Router.push(
+            `${root_url_prefix}/${pathname}?${query}`,
+            `${root_url_prefix}/${asPath}?${query}`,
+            {
+                shallow: true
+            }
+        );
         return filters;
     };
     fetchData = async (table, instance) => {
