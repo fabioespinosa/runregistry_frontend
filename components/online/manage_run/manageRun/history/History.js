@@ -8,26 +8,28 @@ class History extends Component {
         const { run } = this.props;
         let dates = {};
         for (const [key, val] of Object.entries(run)) {
-            const history = val.history;
-            if (Array.isArray(history)) {
-                // Add local value
-                val[key] = { ...val };
-                const { when } = val;
-                if (dates[when]) {
-                    dates[when] = dates[when].concat(val);
-                } else {
-                    dates[when] = [val];
-                }
-                // Add historic values:
-                history.forEach(change => {
-                    change[key] = { ...change };
-                    const { when } = change;
+            if (val) {
+                const history = val.history;
+                if (Array.isArray(history)) {
+                    // Add local value
+                    val[key] = { ...val };
+                    const { when } = val;
                     if (dates[when]) {
-                        dates[when] = dates[when].concat(change);
+                        dates[when] = dates[when].concat(val);
                     } else {
-                        dates[when] = [change];
+                        dates[when] = [val];
                     }
-                });
+                    // Add historic values:
+                    history.forEach(change => {
+                        change[key] = { ...change };
+                        const { when } = change;
+                        if (dates[when]) {
+                            dates[when] = dates[when].concat(change);
+                        } else {
+                            dates[when] = [change];
+                        }
+                    });
+                }
             }
         }
         console.log(dates);

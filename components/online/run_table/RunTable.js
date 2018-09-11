@@ -4,7 +4,7 @@ import Router, { withRouter } from 'next/router';
 import { Icon } from 'antd';
 import Swal from 'sweetalert2';
 import qs from 'qs';
-import { components, root_url_prefix } from '../../../config/config';
+import { components } from '../../../config/config';
 import {
     moveRun,
     markSignificant,
