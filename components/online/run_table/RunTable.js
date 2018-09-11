@@ -548,7 +548,7 @@ const rename_triplets = (original_criteria, filtering) => {
         if (filter.id === 'state' || filter.id === 'significant') {
             new_filter.id = `${filter.id}.value`;
             // If its just sorting no need for upper case
-            if (filtering) {
+            if (filtering && filter.id === 'state') {
                 new_filter.value = filter.value.toUpperCase();
             }
         }
