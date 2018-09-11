@@ -60,13 +60,9 @@ class RunTable extends Component {
             asPath = asPath.split('?')[0];
         }
         this.props.changeFilters(filters, object_filter);
-        Router.push(
-            `${root_url_prefix}/${pathname}?${query}`,
-            `${root_url_prefix}/${asPath}?${query}`,
-            {
-                shallow: true
-            }
-        );
+        Router.push(`${pathname}?${query}`, `${asPath}?${query}`, {
+            shallow: true
+        });
         return filters;
     };
     fetchData = async (table, instance) => {
