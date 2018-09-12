@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import Progress from 'nprogress';
-import sweet from 'sweetalert2/dist/sweetalert2.min.css';
 import stylesheet from 'antd/dist/antd.min.css';
+import sweet from 'sweetalert2/dist/sweetalert2.min.css';
 import { initGA, logPageView } from '../services/analytics';
 import Nav from './../components/ui/nav/Nav';
 import { colors } from '../components/ui/theme';
@@ -22,6 +22,15 @@ Router.onRouteChangeError = () => Progress.done();
  */
 const Page = props => (
     <div>
+        <Head>
+            <meta charSet="utf-8" />
+            <title>CMS Run Registry</title>
+            {/* <link
+                rel="shortcut icon"
+                href="/static/images/favicon.ico"
+                type="image/x-icon"
+            /> */}
+        </Head>
         <Nav router={props.router} show_sidebar={props.show_sidebar}>
             {props.children}
         </Nav>
@@ -42,6 +51,9 @@ const Page = props => (
                 font-size: 62.5%;
             }
 
+            .swal2-popup {
+                font-size: 1.4rem !important;
+            }
             .properly_capitalized {
                 text-transform: capitalize;
             }

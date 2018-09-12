@@ -35,16 +35,23 @@ class Online extends Component {
         const { router } = this.props;
         const {
             router: {
+                asPath,
                 query: { type, section, run_filter }
             },
             user
         } = this.props;
+
+        const breadcrumbs = asPath.split('/');
         return (
             <Page router={router} show_sidebar={false} user={user}>
                 <BreadcrumbCmp router={router} online={true}>
-                    <Breadcrumb.Item>{type}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{section}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{run_filter}</Breadcrumb.Item>
+                    <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        {section || breadcrumbs[1]}
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        {run_filter || breadcrumbs[2]}
+                    </Breadcrumb.Item>
                 </BreadcrumbCmp>
                 <Content
                     style={{

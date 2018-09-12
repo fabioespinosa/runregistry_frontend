@@ -1,6 +1,7 @@
 import axios from 'axios';
-
 import { api_url } from '../../config/config';
+import { error_handler } from '../../utils/error_handlers';
+import auth from '../../auth/auth';
 const FETCH_INITIAL_DATASETS = 'FETCH_INITIAL_DATASETS';
 const FETCH_SIGNIFICANT_DATASETS = 'FETCH_SIGNIFICANT_DATASETS';
 const FETCH_ALL_DATASETS = 'FETCH_ALL_DATASETS';
@@ -10,47 +11,50 @@ const TABLE_LOADING = 'TABLE_LOADING';
 
 export function fetchInitialOfflineDatasets(store, query, isServer) {}
 
-export const fetchSignificantDatasets = () => async dispatch => {
-    dispatch({ type: TABLE_LOADING });
-    const { data: datasets } = await axios.get(
-        `${api_url}/significant_datasets_paginated/1`
-    );
-    dispatch({ type: FETCH_SIGNIFICANT_DATASETS, payload: datasets });
-};
-
-export const fetchAllDatasets = () => async dispatch => {
-    dispatch({ type: TABLE_LOADING });
-    const { data: datasets } = await axios.get(
-        `${api_url}/datasets_paginated/1`
-    );
-    dispatch({ type: FETCH_ALL_DATASETS, payload: datasets });
-};
-
-export const editDataset = new_dataset => async dispatch => {
-    const { data: dataset } = await axios.put(
-        `${api_url}/datasets/id_dataset/${new_dataset.dataset_number}`,
-        new_dataset
-    );
-    dispatch({ type: EDIT_DATASET, payload: dataset });
-};
-
-export const filterDatasets = (page_size, page, sorted, filtered) => async (
-    dispatch,
-    getState
-) => {
-    const dataset_endpoint = getState().offline.ui.show_waiting_list
-        ? 'signoff_runs_filtered_ordered'
-        : 'datasets_filtered_ordered';
-    const query_object = { page_size, filter: {} };
-    filtered.forEach(criteria => {
-        query_object.filter[criteria.id] = criteria.value;
+export const fetchSignificantDatasets = () =>
+    error_handler(async dispatch => {
+        dispatch({ type: TABLE_LOADING });
+        const { data: datasets } = await axios.get(
+            `${api_url}/significant_datasets_paginated/1`
+        );
+        dispatch({ type: FETCH_SIGNIFICANT_DATASETS, payload: datasets });
     });
-    const { data: datasets } = await axios.post(
-        `${api_url}/${dataset_endpoint}/${page}`,
-        query_object
-    );
-    dispatch({ type: FILTER_DATASETS, payload: datasets });
-};
+
+export const fetchAllDatasets = () =>
+    error_handler(async dispatch => {
+        dispatch({ type: TABLE_LOADING });
+        const { data: datasets } = await axios.get(
+            `${api_url}/datasets_paginated/1`
+        );
+        dispatch({ type: FETCH_ALL_DATASETS, payload: datasets });
+    });
+
+export const editDataset = new_dataset =>
+    error_handler(async (dispatch, getState) => {
+        const { data: dataset } = await axios.put(
+            `${api_url}/datasets/id_dataset/${new_dataset.dataset_number}`,
+            new_dataset,
+            auth(getState)
+        );
+        dispatch({ type: EDIT_DATASET, payload: dataset });
+    });
+
+export const filterDatasets = (page_size, page, sorted, filtered) =>
+    error_handler(async (dispatch, getState) => {
+        const dataset_endpoint = getState().offline.ui.show_waiting_list
+            ? 'signoff_runs_filtered_ordered'
+            : 'datasets_filtered_ordered';
+        const query_object = { page_size, filter: {} };
+        filtered.forEach(criteria => {
+            query_object.filter[criteria.id] = criteria.value;
+        });
+        const { data: datasets } = await axios.post(
+            `${api_url}/${dataset_endpoint}/${page}`,
+            query_object,
+            auth(getState)
+        );
+        dispatch({ type: FILTER_DATASETS, payload: datasets });
+    });
 
 const INITIAL_STATE = {
     datasets: [],

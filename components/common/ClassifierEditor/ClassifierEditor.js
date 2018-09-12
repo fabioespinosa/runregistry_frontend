@@ -39,6 +39,7 @@ class ClassifierEditor extends Component {
     };
 
     render() {
+        console.log(json_editor_value);
         const {
             show,
             json_editor_value,
@@ -49,7 +50,6 @@ class ClassifierEditor extends Component {
             children,
             show_cancel
         } = this.props;
-        console.log(currently_editing_classifier);
         return (
             <div>
                 {show ? (

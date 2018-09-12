@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Swal from 'sweetalert2';
 import { Formik, Field } from 'formik';
 import { Input, Button } from 'antd';
 
@@ -29,7 +30,7 @@ class EditRun extends Component {
             <div>
                 <Formik
                     initialValues={initialValues}
-                    onSubmit={values => {
+                    onSubmit={async values => {
                         const components_triplets = {};
                         for (const [key, val] of Object.entries(values)) {
                             const component_key = key.split('>')[0];
@@ -41,7 +42,17 @@ class EditRun extends Component {
                         }
                         console.log(run);
                         console.log(components_triplets);
-                        editComponents(run.run_number, components_triplets);
+                        await editComponents(
+                            run.run_number,
+                            components_triplets
+                        );
+                        await Swal(
+                            `Run ${
+                                run.run_number
+                            } component's edited successfully`,
+                            '',
+                            'success'
+                        );
                     }}
                     render={({
                         values,
@@ -120,8 +131,6 @@ class EditRun extends Component {
                                 </tbody>
                             </table>
                             <div className="buttons">
-                                <Button type="">Cancel</Button>
-                                <Button type="">Reset</Button>
                                 <Button type="primary" htmlType="submit">
                                     Save
                                 </Button>

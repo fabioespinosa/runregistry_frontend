@@ -1,60 +1,68 @@
 import axios from 'axios';
 
-import { errorHandler as eh } from '../../../utils/error_handlers';
+import { error_handler } from '../../../utils/error_handlers';
 import { api_url } from '../../../config/config';
+import auth from '../../../auth/auth';
 import { hideJsonEditor } from '../../classifier_editor';
 const FETCH_COMPONENT_CLASSIFIERS = 'FETCH_COMPONENT_CLASSIFIERS';
 const NEW_COMPONENT_CLASSIFIER = 'NEW_COMPONENT_CLASSIFIER';
 const EDIT_COMPONENT_CLASSIFIER = 'EDIT_COMPONENT_CLASSIFIER';
 const DELETE_COMPONENT_CLASSIFIER = 'DELETE_COMPONENT_CLASSIFIER';
 
-export const fetchComponentClassifiers = component => async dispatch => {
-    const { data: classifiers } = await axios.get(
-        `${api_url}/classifiers/component/filter_by_component/${component}`
-    );
-    dispatch({ type: FETCH_COMPONENT_CLASSIFIERS, payload: classifiers });
-};
+export const fetchComponentClassifiers = component =>
+    error_handler(async dispatch => {
+        const { data: classifiers } = await axios.get(
+            `${api_url}/classifiers/component/filter_by_component/${component}`
+        );
+        dispatch({ type: FETCH_COMPONENT_CLASSIFIERS, payload: classifiers });
+    });
 
 export const newComponentClassifier = (
     new_classifier,
     status_selected,
     component
-) => async dispatch => {
-    const { data: classifier } = await axios.post(
-        `${api_url}/classifiers/component`,
-        {
-            classifier: new_classifier,
-            status: status_selected,
-            component,
-            // This are for testing:
-            priority: 1,
-            enabled: true,
-            category: 'class'
-        }
-    );
-    classifier.classifier = JSON.stringify(classifier.classifier);
-    dispatch({ type: NEW_COMPONENT_CLASSIFIER, payload: classifier });
-    dispatch(hideJsonEditor());
-};
-
-export const deleteComponentClassifier = classifier_id => async dispatch => {
-    const { data: classifier } = await axios.delete(
-        `${api_url}/classifiers/component/${classifier_id}`
-    );
-    dispatch({
-        type: DELETE_COMPONENT_CLASSIFIER,
-        payload: classifier.id
+) =>
+    error_handler(async (dispatch, getState) => {
+        const { data: classifier } = await axios.post(
+            `${api_url}/classifiers/component`,
+            {
+                classifier: new_classifier,
+                status: status_selected,
+                component,
+                // This are for testing:
+                priority: 1,
+                enabled: true,
+                category: 'class'
+            },
+            auth(getState)
+        );
+        classifier.classifier = JSON.stringify(classifier.classifier);
+        dispatch({ type: NEW_COMPONENT_CLASSIFIER, payload: classifier });
+        dispatch(hideJsonEditor());
     });
-};
 
-export const editComponentClassifier = new_classifier => async dispatch => {
-    const { data: classifier } = await axios.put(
-        `${api_url}/classifiers/component/${new_classifier.id}`,
-        new_classifier
-    );
-    dispatch({ type: EDIT_COMPONENT_CLASSIFIER, payload: classifier });
-    dispatch(hideJsonEditor());
-};
+export const deleteComponentClassifier = classifier_id =>
+    error_handler(async (dispatch, getState) => {
+        const { data: classifier } = await axios.delete(
+            `${api_url}/classifiers/component/${classifier_id}`,
+            auth(getState)
+        );
+        dispatch({
+            type: DELETE_COMPONENT_CLASSIFIER,
+            payload: classifier.id
+        });
+    });
+
+export const editComponentClassifier = new_classifier =>
+    error_handler(async (dispatch, getState) => {
+        const { data: classifier } = await axios.put(
+            `${api_url}/classifiers/component/${new_classifier.id}`,
+            new_classifier,
+            auth(getState)
+        );
+        dispatch({ type: EDIT_COMPONENT_CLASSIFIER, payload: classifier });
+        dispatch(hideJsonEditor());
+    });
 
 const INITIAL_STATE = [];
 

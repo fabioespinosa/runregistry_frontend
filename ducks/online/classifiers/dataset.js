@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { error_handler } from '../../../utils/error_handlers';
 import { api_url } from '../../../config/config';
+import auth from '../../../auth/auth';
 import { hideJsonEditor } from '../../classifier_editor';
 const FETCH_DATASET_CLASSIFIERS = 'FETCH_DATASET_CLASSIFIERS';
 const NEW_DATASET_CLASSIFIER = 'NEW_DATASET_CLASSIFIER';
@@ -13,48 +15,48 @@ export const fetchDatasetClassifiers = () => async dispatch => {
     dispatch({ type: FETCH_DATASET_CLASSIFIERS, payload: classifiers });
 };
 
-export const newDatasetClassifier = (
-    new_classifier,
-    class_selected
-) => async dispatch => {
-    const { data: classifier } = await axios.post(
-        `${api_url}/classifiers/dataset`,
-        {
-            classifier: new_classifier,
-            class: class_selected,
-            // This are for testing:
-            enabled: true
-        }
-    );
-    classifier.classifier = JSON.stringify(classifier.classifier);
-    dispatch({ type: NEW_DATASET_CLASSIFIER, payload: classifier });
-    dispatch(hideJsonEditor());
-};
-
-export const deleteDatasetClassifier = classifier_id => async dispatch => {
-    const { data: classifier } = await axios.delete(
-        `${api_url}/classifiers/dataset/${classifier_id}`
-    );
-    dispatch({
-        type: DELETE_DATASET_CLASSIFIER,
-        payload: classifier.id
+export const newDatasetClassifier = (new_classifier, class_selected) =>
+    error_handler(async (dispatch, getState) => {
+        const { data: classifier } = await axios.post(
+            `${api_url}/classifiers/dataset`,
+            {
+                classifier: new_classifier,
+                class: class_selected,
+                // This are for testing:
+                enabled: true
+            },
+            auth(getState)
+        );
+        classifier.classifier = JSON.stringify(classifier.classifier);
+        dispatch({ type: NEW_DATASET_CLASSIFIER, payload: classifier });
+        dispatch(hideJsonEditor());
     });
-};
 
-export const editDatasetClassifier = (
-    new_classifier,
-    class_selected
-) => async dispatch => {
-    const { data: classifier } = await axios.put(
-        `${api_url}/classifiers/dataset/${new_classifier.id}`,
-        { ...new_classifier, class: class_selected }
-    );
-    dispatch({
-        type: EDIT_DATASET_CLASSIFIER,
-        payload: classifier
+export const deleteDatasetClassifier = classifier_id =>
+    error_handler(async (dispatch, getState) => {
+        const { data: classifier } = await axios.delete(
+            `${api_url}/classifiers/dataset/${classifier_id}`,
+            auth(getState)
+        );
+        dispatch({
+            type: DELETE_DATASET_CLASSIFIER,
+            payload: classifier.id
+        });
     });
-    dispatch(hideJsonEditor());
-};
+
+export const editDatasetClassifier = (new_classifier, class_selected) =>
+    error_handler(async (dispatch, getState) => {
+        const { data: classifier } = await axios.put(
+            `${api_url}/classifiers/dataset/${new_classifier.id}`,
+            { ...new_classifier, class: class_selected },
+            auth(getState)
+        );
+        dispatch({
+            type: EDIT_DATASET_CLASSIFIER,
+            payload: classifier
+        });
+        dispatch(hideJsonEditor());
+    });
 
 const INITIAL_STATE = [];
 

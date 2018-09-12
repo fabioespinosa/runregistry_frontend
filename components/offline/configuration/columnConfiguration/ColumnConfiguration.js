@@ -11,7 +11,7 @@ class ColumnConfiguration extends Component {
     addColumn = async (pog, column) => {
         const { value } = await Swal({
             type: 'question',
-            title: `Are you sure you want to add the column <i>${column}</i> to the <i>${pog}</i> workspace?`,
+            title: `Are you sure you want to add the column ${column} to the ${pog} workspace?`,
             text: '',
             showCancelButton: true,
             confirmButtonText: 'Yes',
@@ -19,7 +19,7 @@ class ColumnConfiguration extends Component {
             footer: '<a >What does this mean?</a>'
         });
         if (value) {
-            // this.props.addColumn(pog, column);
+            this.props.addColumn(pog, column);
             await Swal(
                 `Column ${column} added to worskpace ${pog}.`,
                 '',
@@ -31,7 +31,7 @@ class ColumnConfiguration extends Component {
     removeColumn = async (pog, column) => {
         const { value } = await Swal({
             type: 'warning',
-            title: `Are you sure you want to delete the column <i>${column}</i> from <i>${pog}</i> workspace?`,
+            title: `Are you sure you want to delete the column ${column} from ${pog} workspace?`,
             text: '',
             showCancelButton: true,
             confirmButtonText: 'Yes',
@@ -39,7 +39,7 @@ class ColumnConfiguration extends Component {
             footer: '<a >What does this mean?</a>'
         });
         if (value) {
-            // await this.props.removeColumn(pog, column)
+            await this.props.removeColumn(pog, column);
             await Swal(
                 `Column ${column} deleted from worskpace ${pog}.`,
                 '',

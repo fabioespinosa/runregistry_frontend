@@ -22,15 +22,21 @@ class Offline extends Component {
         const { router } = this.props;
         const {
             router: {
+                asPath,
                 query: { type, section, workspace }
             }
         } = this.props;
+        const breadcrumbs = asPath.split('/');
         return (
             <Page router={router} show_sidebar={true}>
                 <BreadcrumbCmp router={router} online={false}>
-                    <Breadcrumb.Item>{type}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{section}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{workspace}</Breadcrumb.Item>
+                    <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        {section || breadcrumbs[1]}
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        {workspace || breadcrumbs[2]}
+                    </Breadcrumb.Item>
                 </BreadcrumbCmp>
                 <Content
                     style={{

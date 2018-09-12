@@ -23,12 +23,8 @@ const Editor = dynamic(
 
 class DatasetClassifierConfiguration extends Component {
     async componentDidMount() {
-        const {
-            fetchDatasetClassifier,
-            classifier,
-            editClassifierIntent
-        } = this.props;
-        await fetchDatasetClassifier();
+        const { fetchDatasetClassifier, editClassifierIntent } = this.props;
+        const classifier = await fetchDatasetClassifier();
         classifier.classifier = this.getDisplayedClassifier(
             classifier.classifier
         );

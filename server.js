@@ -40,6 +40,7 @@ app.prepare().then(() => {
     });
 
     server.get('/:type/:section', (req, res) => {
+        const params = { ...req.headers, ...req.params, filters: req.query };
         app.render(req, res, `/${req.params.type}`, req.params);
     });
 

@@ -32,8 +32,6 @@ class History extends Component {
                 }
             }
         }
-        console.log(dates);
-        // debugger;
         let timeline = [];
         for (const [key, val] of Object.entries(dates)) {
             const event_in_timeline = {};
@@ -43,20 +41,24 @@ class History extends Component {
             });
             timeline.push(event_in_timeline);
         }
-
-        timeline.sort((a, b) => a.when - b.when);
         console.log(timeline);
+        timeline.sort((a, b) => a.when - b.when);
         let columns = [
             {
                 Header: 'Time',
                 accessor: 'when',
-                Cell: ({ original, value }) => (
-                    <div style={{ textAlign: 'center' }}>
-                        {new Date(value).toString()}
-                    </div>
-                )
+                minWidth: 200,
+                Cell: ({ original, value }) => {
+                    const date = new Date(value).toString();
+                    const displayed_date = date.split('GMT')[0];
+                    return (
+                        <div style={{ textAlign: 'center' }}>
+                            {displayed_date}
+                        </div>
+                    );
+                }
             },
-            { Header: 'User', accessor: 'by' },
+            { Header: 'User', accessor: 'by', minWidth: 200 },
             { Header: 'Class', accessor: 'class' },
             {
                 Header: 'Significant',
@@ -70,6 +72,21 @@ class History extends Component {
                                 ) : (
                                     <Icon type={'cross'} />
                                 )}
+                            </div>
+                        );
+                    }
+                    return <div />;
+                }
+            },
+            {
+                Header: 'State',
+                accessor: 'state',
+                Cell: ({ original, value }) => {
+                    console.log(value);
+                    if (value) {
+                        return (
+                            <div style={{ textAlign: 'center' }}>
+                                {value.value}
                             </div>
                         );
                     }

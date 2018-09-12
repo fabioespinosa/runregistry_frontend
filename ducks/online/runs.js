@@ -2,7 +2,8 @@ import axios from 'axios';
 
 import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
-import { toggleShowAllRuns } from './ui';
+import { error_handler } from '../../utils/error_handlers';
+import { toggleShowAllRuns, hideManageRunModal } from './ui';
 const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS-ONLINE';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 const FETCH_SIGNIFICANT_RUNS = 'FETCH_SIGNIFICANT_RUNS';
@@ -41,54 +42,53 @@ export const changeFilters = (filter_array, filters = {}) => ({
     filters
 });
 
-export const filterRuns = (page_size, page, sortings, filtered) => async (
-    dispatch,
-    getState
-) => {
-    const run_endpoint = getState().online.ui.show_all_runs
-        ? 'runs_filtered_ordered'
-        : 'significant_runs_filtered_ordered';
-    const { data: runs } = await axios.post(
-        `${api_url}/${run_endpoint}/${page}`,
-        { page_size, sortings, filter: filtered },
-        auth(getState)
-    );
-    dispatch({
-        type: FILTER_RUNS,
-        payload: runs,
-        filter: sortings.length > 0 || Object.keys(filtered).length > 0
+export const filterRuns = (page_size, page, sortings, filtered) =>
+    error_handler(async (dispatch, getState) => {
+        const run_endpoint = getState().online.ui.show_all_runs
+            ? 'runs_filtered_ordered'
+            : 'significant_runs_filtered_ordered';
+        const { data: runs } = await axios.post(
+            `${api_url}/${run_endpoint}/${page}`,
+            { page_size, sortings, filter: filtered },
+            auth(getState)
+        );
+        dispatch({
+            type: FILTER_RUNS,
+            payload: runs,
+            filter: sortings.length > 0 || Object.keys(filtered).length > 0
+        });
     });
-};
 
-export const editComponents = (run_number, components) => async (
-    dispatch,
-    getState
-) => {
-    const { data: run } = await axios.put(
-        `${api_url}/runs/id_run/${run_number}`,
-        components,
-        auth(getState)
-    );
-    dispatch({ type: EDIT_RUN, payload: run });
-};
+export const editComponents = (run_number, components) =>
+    error_handler(async (dispatch, getState) => {
+        const { data: run } = await axios.put(
+            `${api_url}/runs/id_run/${run_number}`,
+            components,
+            auth(getState)
+        );
+        dispatch({ type: EDIT_RUN, payload: run });
+        dispatch(hideManageRunModal());
+    });
 
-export const markSignificant = original_run => async (dispatch, getState) => {
-    const { data: run } = await axios.post(
-        `${api_url}/runs/mark_significant`,
-        { original_run },
-        auth(getState)
-    );
-    dispatch({ type: EDIT_RUN, payload: run });
-};
+export const markSignificant = original_run =>
+    error_handler(async (dispatch, getState) => {
+        const { data: run } = await axios.post(
+            `${api_url}/runs/mark_significant`,
+            { original_run },
+            auth(getState)
+        );
+        dispatch({ type: EDIT_RUN, payload: run });
+    });
 
-export const moveRun = (original_run, state) => async (dispatch, getState) => {
-    const { data: run } = await axios.post(
-        `${api_url}/runs/move_run`,
-        { original_run, state },
-        auth(getState)
-    );
-    dispatch({ type: EDIT_RUN, payload: run });
-};
+export const moveRun = (original_run, state) =>
+    error_handler(async (dispatch, getState) => {
+        const { data: run } = await axios.post(
+            `${api_url}/runs/move_run`,
+            { original_run, state },
+            auth(getState)
+        );
+        dispatch({ type: EDIT_RUN, payload: run });
+    });
 
 const INITIAL_STATE = {
     runs: [],

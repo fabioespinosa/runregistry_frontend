@@ -55,12 +55,6 @@ class DatasetClassifierConfiguration extends Component {
         const { class_selected } = this.state;
         const columns = [
             {
-                Header: 'id',
-                width: 50,
-                accessor: 'id',
-                getProps: () => ({ style: { textAlign: 'center' } })
-            },
-            {
                 Header: 'Class',
                 accessor: 'class',
                 width: 90,
