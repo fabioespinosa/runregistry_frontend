@@ -4,13 +4,14 @@ import Swal from 'sweetalert2';
 import { Formik, Field } from 'formik';
 import { Input, Button } from 'antd';
 
-import { editComponents } from '../../.././../../ducks/online/runs';
+import { editRun } from '../../.././../../ducks/online/runs';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
+import EditClass from './editClass/EditClass';
 
 class EditRun extends Component {
     render() {
-        const { run, editComponents } = this.props;
+        const { run, editRun } = this.props;
 
         const initialValues = {};
         for (const [key, val] of Object.entries(run)) {
@@ -28,6 +29,7 @@ class EditRun extends Component {
         }
         return (
             <div>
+                <EditClass run={run} />
                 <Formik
                     initialValues={initialValues}
                     onSubmit={async values => {
@@ -40,12 +42,9 @@ class EditRun extends Component {
                                 [triplet_key]: val
                             };
                         }
-                        console.log(run);
+                        console.log(values);
                         console.log(components_triplets);
-                        await editComponents(
-                            run.run_number,
-                            components_triplets
-                        );
+                        await editRun(run.run_number, components_triplets);
                         await Swal(
                             `Run ${
                                 run.run_number
@@ -183,5 +182,5 @@ class EditRun extends Component {
 
 export default connect(
     null,
-    { editComponents }
+    { editRun }
 )(EditRun);

@@ -5,12 +5,14 @@ export const error_handler = (fn, error_message) => (...params) =>
         let swal_message = {
             type: 'error',
             title: 'Something went wrong:',
+
             text: error_message || err ? err.message : ''
         };
         if (err.response) {
             console.log(err.response);
-            const { status, data } = err.response;
-            swal_message.text = data.err;
+            const { status, statusText, data } = err.response;
+            swal_message.text =
+                data.err || `Status code ${status}, ${statusText}`;
             if (status === 401) {
                 // User has no authorization:
                 swal_message.type = 'warning';
@@ -20,6 +22,6 @@ export const error_handler = (fn, error_message) => (...params) =>
             }
         }
         Swal(swal_message);
-        throw 'Error occured';
         console.log(err);
+        throw 'Error occured';
     });

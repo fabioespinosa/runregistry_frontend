@@ -59,7 +59,7 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
         });
     });
 
-export const editComponents = (run_number, components) =>
+export const editRun = (run_number, components) =>
     error_handler(async (dispatch, getState) => {
         const { data: run } = await axios.put(
             `${api_url}/runs/id_run/${run_number}`,

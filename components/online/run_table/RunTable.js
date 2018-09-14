@@ -108,7 +108,13 @@ class RunTable extends Component {
                     </div>
                 )
             },
-            { Header: 'Class', accessor: 'class', type: 'string' },
+            {
+                Header: 'Class',
+                accessor: 'class',
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value.value}</div>
+                )
+            },
             {
                 Header: 'Manage / LS',
                 id: 'manage',

@@ -59,7 +59,15 @@ class History extends Component {
                 }
             },
             { Header: 'User', accessor: 'by', minWidth: 200 },
-            { Header: 'Class', accessor: 'class' },
+            {
+                Header: 'Class',
+                accessor: 'class',
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        {value ? value.value : ''}
+                    </div>
+                )
+            },
             {
                 Header: 'Significant',
                 accessor: 'significant',
@@ -214,7 +222,7 @@ class History extends Component {
         columns = [...columns, ...component_columns];
         return (
             <div>
-                <h4>History, Changes in the run as time progresses down</h4>
+                <h4>History - Changes in the run as time progresses down</h4>
                 <ReactTable
                     columns={columns}
                     data={timeline}
