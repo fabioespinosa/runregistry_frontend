@@ -14,7 +14,6 @@ import store from '../store/configure-store';
 import Page from '../layout/page';
 import RunTable from '../components/online/run_table/RunTable';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
-import 'react-table/react-table.css';
 // const RunTable = dynamic(import('../components/online/run_table/RunTable'), {
 //     ssr: false
 // });

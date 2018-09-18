@@ -24,6 +24,20 @@ export default class MyDocument extends Document {
                             this.props.__NEXT_DATA__.assetPrefix
                         }/static/nprogress.css`}
                     />
+                    <link
+                        rel="stylesheet"
+                        type="text/css"
+                        href={`${
+                            this.props.__NEXT_DATA__.assetPrefix
+                        }/static/ant-modified.min.css`}
+                    />
+                    <link
+                        rel="stylesheet"
+                        type="text/css"
+                        href={`${
+                            this.props.__NEXT_DATA__.assetPrefix
+                        }/static/react-table.css`}
+                    />
                     <meta charSet="utf-8" />
                     <meta
                         name="viewport"
