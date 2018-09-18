@@ -13,17 +13,6 @@ module.exports = withCss({
         config.output.publicPath = `/${root_url_prefix}${
             config.output.publicPath
         }`; // affects 'chunks'
-        defaultLoaders.babel.options.plugins.push([
-            'transform-decorators-legacy',
-            [
-                'import',
-                {
-                    libraryName: 'antd',
-                    style: 'css'
-                }
-            ]
-        ]);
-
         return config;
     }
 });
