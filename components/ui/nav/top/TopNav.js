@@ -58,6 +58,12 @@ class TopNav extends Component {
                             <a>OFFLINE</a>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="warning">
+                        <a onClick={() => {}} style={{ color: 'red' }}>
+                            THIS IS NOT THE OFFICIAL RUN REGISTRY (YET), ALL
+                            INPUT WILL NOT BE PERSISTED
+                        </a>
+                    </Menu.Item>
                     {/* <Menu.Item key="user">
                         <Link href="/user/runs/all">
                             <a>USER</a>

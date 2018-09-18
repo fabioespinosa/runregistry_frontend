@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import Progress from 'nprogress';
+import { hotjar } from 'react-hotjar';
 // import stylesheet from 'antd/dist/antd.min.css';
 // import sweet from 'sweetalert2/dist/sweetalert2.min.css';
 import { initGA, logPageView } from '../services/analytics';
@@ -16,25 +17,26 @@ Router.onRouteChangeStart = url => Progress.start();
 Router.onRouteChangeComplete = () => Progress.done();
 Router.onRouteChangeError = () => Progress.done();
 
-/**
- * This functional component is used for
- * @param {} props
- */
-const Page = props => (
-    <div>
-        <Head>
-            <meta charSet="utf-8" />
-            <title>CMS Run Registry</title>
-            {/* <link
+class Page extends Component {
+    componentDidMount() {
+        hotjar.initialize(1018467, 6);
+    }
+    render() {
+        return (
+            <div>
+                <Head>
+                    <meta charSet="utf-8" />
+                    <title>CMS Run Registry</title>
+                    {/* <link
                 rel="shortcut icon"
                 href="/static/images/favicon.ico"
                 type="image/x-icon"
             /> */}
 
-            {process.env.NODE_ENV === 'production' && (
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: `(function(h,o,t,j,a,r){
+                    {/* {process.env.NODE_ENV === 'production' && (
+                        <script
+                            dangerouslySetInnerHTML={{
+                                __html: `(function(h,o,t,j,a,r){
                                     h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
                                     h._hjSettings={hjid:1018467,hjsv:6};
                                     a=o.getElementsByTagName('head')[0];
@@ -43,38 +45,43 @@ const Page = props => (
                                     a.appendChild(r);
                                 })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
                                 `
-                    }}
-                />
-            )}
-        </Head>
-        <Nav router={props.router} show_sidebar={props.show_sidebar}>
-            {props.children}
-        </Nav>
-        <style jsx global>{`
-            * {
-                margin: 0;
-                padding: 0;
-            }
+                            }}
+                        />
+                    )} */}
+                </Head>
+                <Nav
+                    router={this.props.router}
+                    show_sidebar={this.props.show_sidebar}
+                >
+                    {this.props.children}
+                </Nav>
+                <style jsx global>{`
+                    * {
+                        margin: 0;
+                        padding: 0;
+                    }
 
-            *,
-            *::before,
-            *::after {
-                box-sizing: inherit;
-            }
+                    *,
+                    *::before,
+                    *::after {
+                        box-sizing: inherit;
+                    }
 
-            html {
-                box-sizing: border-box;
-                font-size: 62.5%;
-            }
+                    html {
+                        box-sizing: border-box;
+                        font-size: 62.5%;
+                    }
 
-            .swal2-popup {
-                font-size: 1.4rem !important;
-            }
-            .properly_capitalized {
-                text-transform: capitalize;
-            }
-        `}</style>
-    </div>
-);
+                    .swal2-popup {
+                        font-size: 1.4rem !important;
+                    }
+                    .properly_capitalized {
+                        text-transform: capitalize;
+                    }
+                `}</style>
+            </div>
+        );
+    }
+}
 
 export default Page;

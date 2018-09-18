@@ -112,7 +112,7 @@ class History extends Component {
         component_columns = component_columns.map(column => {
             return {
                 ...column,
-                // maxWidth: 66,
+                maxWidth: 66,
                 id: `${column['Header']}_triplet`,
                 accessor: data => {
                     let status = '';

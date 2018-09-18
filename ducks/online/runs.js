@@ -9,6 +9,7 @@ const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 const FETCH_SIGNIFICANT_RUNS = 'FETCH_SIGNIFICANT_RUNS';
 const FETCH_ALL_RUNS = 'FETCH_ALL_RUNS';
 const TABLE_LOADING = 'TABLE_LOADING';
+const TABLE_LOADING_DONE = 'TABLE_LOADING_DONE';
 const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
 
@@ -33,6 +34,9 @@ export const initializeFilters = (store, query) => {
         store.dispatch(toggleShowAllRuns('show_all_runs'));
     }
     store.dispatch({ type: TABLE_LOADING });
+    setTimeout(() => {
+        store.dispatch({ type: TABLE_LOADING_DONE });
+    }, 500);
 };
 
 export const changeFilters = (filter_array, filters = {}) => ({
@@ -111,6 +115,8 @@ export default function(state = INITIAL_STATE, action) {
             };
         case TABLE_LOADING:
             return { ...state, loading: true };
+        case TABLE_LOADING_DONE:
+            return { ...state, loading: false };
         case FILTER_RUNS:
             return {
                 ...state,
