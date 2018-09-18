@@ -30,7 +30,7 @@ app.prepare().then(() => {
 
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
-        res.redirect('/runtest/online/runs/all');
+        res.redirect('/runtest/online/runs/significant');
     });
 
     // offline:
