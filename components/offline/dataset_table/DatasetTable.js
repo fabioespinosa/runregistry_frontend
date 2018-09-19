@@ -524,8 +524,9 @@ const rename_triplets = (original_criteria, filtering) => {
             if (filtering && filter.id === 'state') {
                 new_filter.value = filter.value.toUpperCase();
             }
-        }
-        if (filter.id.includes('_triplet')) {
+        } else if (filter.id === 'run_number' || filter.id === 'started') {
+        } else {
+            // Must be a triplet:
             new_filter.id = `${filter.id}.status`;
             if (filtering) {
                 new_filter.value = filter.value.toUpperCase();
