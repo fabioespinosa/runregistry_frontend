@@ -130,11 +130,6 @@ export default function(state = INITIAL_STATE, action) {
                 ...state,
                 runs: editRunHelper(state.runs, payload)
             };
-        case TABLE_LOADING:
-            return {
-                ...state,
-                loading: true
-            };
         default:
             return state;
     }

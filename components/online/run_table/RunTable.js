@@ -23,15 +23,16 @@ import ReactTable from 'react-table';
 
 const column_filter_description = {
     string: '=, like, notlike, <>',
-    date: '=, >, <, >=, <=, <>',
+    date: '>, <, >=, <=, <>',
     component: '=, like, notlike, <>',
     boolean: 'true, false'
 };
 const column_types = {
+    'class.value': 'string',
     run_number: 'integer',
     class: 'string',
     significant: 'boolean',
-    state: 'string',
+    'state.value': 'string',
     start_time: 'date',
     hlt_key: 'string',
     duration: 'integer',
@@ -66,7 +67,6 @@ class RunTable extends Component {
         return filters;
     };
     fetchData = async (table, instance) => {
-        // debugger;
         let { url_filter } = this.props.run_table;
         if (table.filtered.length > 0) {
             url_filter = this.applyFiltersToUrl(table.filtered);
@@ -551,7 +551,11 @@ const mapStateToProps = state => {
 const rename_triplets = (original_criteria, filtering) => {
     return original_criteria.map(filter => {
         const new_filter = { ...filter };
-        if (filter.id === 'state' || filter.id === 'significant') {
+        if (
+            filter.id === 'state' ||
+            filter.id === 'significant' ||
+            filter.id === 'class'
+        ) {
             new_filter.id = `${filter.id}.value`;
             // If its just sorting no need for upper case
             if (filtering && filter.id === 'state') {

@@ -58,11 +58,17 @@ class TopNav extends Component {
                             <a>OFFLINE</a>
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="warning">
-                        <a onClick={() => {}} style={{ color: 'red' }}>
+                    <Menu.Item disabled key="warning" style={{ opacity: 1 }}>
+                        <span
+                            onClick={() => {}}
+                            style={{
+                                color: 'red !important',
+                                fontSize: '1.3em'
+                            }}
+                        >
                             THIS IS NOT THE OFFICIAL RUN REGISTRY (YET), ALL
                             INPUT WILL NOT BE PERSISTED
-                        </a>
+                        </span>
                     </Menu.Item>
                     {/* <Menu.Item key="user">
                         <Link href="/user/runs/all">

@@ -19,7 +19,9 @@ Router.onRouteChangeError = () => Progress.done();
 
 class Page extends Component {
     componentDidMount() {
-        hotjar.initialize(1018467, 6);
+        if (process.env.NODE_ENV === 'production') {
+            hotjar.initialize(1018467, 6);
+        }
     }
     render() {
         return (
