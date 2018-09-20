@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { api_url } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
+import { hideManageDatasetModal } from './ui';
 import auth from '../../auth/auth';
 const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS-OFFLINE';
 const FETCH_INITIAL_DATASETS = 'FETCH_INITIAL_DATASETS';
@@ -45,8 +46,8 @@ export const changeFilters = (filter_array, filters = {}) => ({
 export const filterDatasets = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
         const dataset_endpoint = getState().offline.ui.show_waiting_list
-            ? 'signoff_runs_filtered_ordered'
-            : 'datasets_filtered_ordered';
+            ? 'datasets_filtered_ordered'
+            : 'signoff_runs_filtered_ordered';
         const { data: datasets } = await axios.post(
             `${api_url}/${dataset_endpoint}/${page}`,
             { page_size, sortings, filter: filtered },
@@ -77,14 +78,15 @@ export const filterDatasets = (page_size, page, sortings, filtered) =>
 //         dispatch({ type: FETCH_ALL_DATASETS, payload: datasets });
 //     });
 
-export const editDataset = new_dataset =>
+export const editDataset = (id_dataset, components) =>
     error_handler(async (dispatch, getState) => {
         const { data: dataset } = await axios.put(
-            `${api_url}/datasets/id_dataset/${new_dataset.dataset_number}`,
-            new_dataset,
+            `${api_url}/datasets`,
+            { ...components, id_dataset },
             auth(getState)
         );
         dispatch({ type: EDIT_DATASET, payload: dataset });
+        dispatch(hideManageDatasetModal());
     });
 
 const INITIAL_STATE = {

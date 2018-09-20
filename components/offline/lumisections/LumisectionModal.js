@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
-import { hideLumisectionModal } from '../../../ducks/online/ui';
+import { hideLumisectionModal } from '../../../ducks/offline/ui';
 import Lumisections from './lumisections/Lumisections';
 
 class LumisectionModal extends Component {
     render() {
         const {
-            manage_run_modal_visible,
+            manage_dataset_modal_visible,
             hideLumisectionModal,
             children,
-            run
+            dataset
         } = this.props;
 
         return (
             <div>
                 <Modal
-                    title={`Lumisections of run # ${run.run_number}`}
-                    visible={manage_run_modal_visible}
+                    title={`Lumisections of run # ${dataset.run_number}`}
+                    visible={manage_dataset_modal_visible}
                     onOk={hideLumisectionModal}
                     onCancel={
                         hideLumisectionModal // confirmLoading={confirmLoading}
@@ -31,7 +31,7 @@ class LumisectionModal extends Component {
                     maskClosable={false}
                     destroyOnClose={true}
                 >
-                    <Lumisections run={run} />
+                    <Lumisections dataset={dataset} />
                 </Modal>
             </div>
         );
@@ -40,8 +40,9 @@ class LumisectionModal extends Component {
 
 const mapStateToProps = state => {
     return {
-        manage_run_modal_visible: state.online.ui.lumisection_modal_visible,
-        run: state.online.ui.lumisection_modal_run
+        manage_dataset_modal_visible:
+            state.offline.ui.lumisection_modal_visible,
+        dataset: state.offline.ui.lumisection_modal_dataset
     };
 };
 export default connect(

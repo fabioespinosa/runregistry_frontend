@@ -111,8 +111,14 @@ class RunTable extends Component {
                 )
             },
             {
+                Header: 'Dataset Name',
+                accessor: 'name',
+                maxWidth: 250
+            },
+            {
                 Header: 'Class',
                 accessor: 'class',
+                maxWidth: 90,
                 Cell: ({ value }) => (
                     <div style={{ textAlign: 'center' }}>{value.value}</div>
                 )
@@ -125,10 +131,18 @@ class RunTable extends Component {
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
-                        <a onClick={() => showManageDatasetModal(original)}>
-                            Manage
-                        </a>
-                        {' / '}
+                        {original.state.value === 'OPEN' && (
+                            <span>
+                                <a
+                                    onClick={() =>
+                                        showManageDatasetModal(original)
+                                    }
+                                >
+                                    Manage
+                                </a>
+                                {' / '}
+                            </span>
+                        )}
                         <a onClick={evt => showLumisectionModal(original)}>
                             LS
                         </a>
@@ -139,6 +153,7 @@ class RunTable extends Component {
                 Header: 'State',
                 id: 'state',
                 accessor: 'state',
+                maxWidth: 200,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center' }}>
                         <span
@@ -192,7 +207,7 @@ class RunTable extends Component {
                     </div>
                 )
             },
-            { Header: 'Started', accessor: 'start_time' },
+            { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 },
             // {
             //     Header: 'Hlt Key Description',
             //     accessor: 'hlt_key'
@@ -445,7 +460,7 @@ class RunTable extends Component {
         });
         return (
             <div>
-                {/* <ManageDatasetModal /> */}
+                <ManageDatasetModal />
                 <LumisectionModal />
                 Hold <i>shift</i> for multiple column sorting
                 {filter && (
@@ -524,7 +539,11 @@ const rename_triplets = (original_criteria, filtering) => {
             if (filtering && filter.id === 'state') {
                 new_filter.value = filter.value.toUpperCase();
             }
-        } else if (filter.id === 'run_number' || filter.id === 'started') {
+        } else if (
+            filter.id === 'run_number' ||
+            filter.id === 'createdAt' ||
+            filter.id === 'name'
+        ) {
         } else {
             // Must be a triplet:
             new_filter.id = `${filter.id}.status`;

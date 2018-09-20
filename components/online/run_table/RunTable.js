@@ -123,10 +123,13 @@ class RunTable extends Component {
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
-                        <a onClick={() => showManageRunModal(original)}>
-                            Manage
-                        </a>
-                        {' / '}
+                        {/* PENDING MAKE IT SO THAT WHEN A RUN IS ONLY EDITABLE WHEN IN OPEN STATE */}
+                        <span>
+                            <a onClick={() => showManageRunModal(original)}>
+                                Manage
+                            </a>
+                            {' / '}
+                        </span>
                         <a onClick={evt => showLumisectionModal(original)}>
                             LS
                         </a>
@@ -181,61 +184,68 @@ class RunTable extends Component {
                 Header: 'State',
                 id: 'state',
                 accessor: 'state',
-                Cell: ({ original, value }) => (
-                    <div style={{ textAlign: 'center' }}>
-                        <span
-                            style={{
-                                color: 'white',
-                                fontSize: '0.95em',
-                                fontWeight: 'bold',
-                                color: value.value === 'OPEN' ? 'red' : 'grey',
-                                borderRadius: '1px'
-                            }}
-                        >
-                            <span style={{ padding: '4px' }}>
-                                {value.value}
-                            </span>
-                        </span>
-                        {' / '}
-                        <a
-                            onClick={async () => {
-                                const options = {
-                                    OPEN: 'To OPEN',
-                                    SIGNOFF: 'to SIGNOFF',
-                                    COMPLETED: 'to COMPLETED'
-                                };
-                                delete options[value.value];
-                                const { value: state } = await Swal({
-                                    title: `Move run ${
-                                        original.run_number
-                                    } to...`,
-                                    input: 'select',
-                                    inputOptions: options,
-                                    showCancelButton: true,
-                                    reverseButtons: true
-                                });
-                                if (state) {
-                                    await this.props.moveRun(original, state);
-                                    await Swal(
-                                        `Run ${
-                                            original.run_number
-                                        } Moved to ${state}`,
-                                        '',
-                                        'success'
-                                    );
-                                }
-                            }}
-                        >
-                            move
-                        </a>
-                    </div>
-                )
+                Cell: ({ original, value }) => {
+                    if (original.significant.value) {
+                        return (
+                            <div style={{ textAlign: 'center' }}>
+                                <span
+                                    style={{
+                                        color: 'white',
+                                        fontSize: '0.95em',
+                                        fontWeight: 'bold',
+                                        color:
+                                            value.value === 'OPEN'
+                                                ? 'red'
+                                                : 'grey',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span style={{ padding: '4px' }}>
+                                        {value.value}
+                                    </span>
+                                </span>
+                                {' / '}
+                                <a
+                                    onClick={async () => {
+                                        const options = {
+                                            OPEN: 'To OPEN',
+                                            SIGNOFF: 'to SIGNOFF',
+                                            COMPLETED: 'to COMPLETED'
+                                        };
+                                        delete options[value.value];
+                                        const { value: state } = await Swal({
+                                            title: `Move run ${
+                                                original.run_number
+                                            } to...`,
+                                            input: 'select',
+                                            inputOptions: options,
+                                            showCancelButton: true,
+                                            reverseButtons: true
+                                        });
+                                        if (state) {
+                                            await this.props.moveRun(
+                                                original,
+                                                state
+                                            );
+                                            await Swal(
+                                                `Run ${
+                                                    original.run_number
+                                                } Moved to ${state}`,
+                                                '',
+                                                'success'
+                                            );
+                                        }
+                                    }}
+                                >
+                                    move
+                                </a>
+                            </div>
+                        );
+                    }
+                }
             },
             { Header: 'Started', accessor: 'start_time' },
-            {
-                Header: 'Hlt Key Description',
-                accessor: 'hlt_key'
-            },
+            { Header: 'Hlt Key Description', accessor: 'hlt_key' },
             {
                 Header: 'GUI',
                 filterable: false,

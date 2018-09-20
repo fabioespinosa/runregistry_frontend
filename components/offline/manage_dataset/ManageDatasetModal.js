@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
-import { hideManageDatasetModal } from '../../../ducks/online/ui';
+import { hideManageDatasetModal } from '../../../ducks/offline/ui';
 import ManageDataset from './manageDataset/ManageDataset';
 
 class ManageDatasetModal extends Component {
     render() {
         const {
-            manage_run_modal_visible,
+            manage_dataset_modal_visible,
             hideManageDatasetModal,
             children,
-            run
+            dataset
         } = this.props;
 
         return (
             <div>
                 <Modal
-                    title={`Managing Run # ${run.run_number}`}
-                    visible={manage_run_modal_visible}
+                    title={`Managing Dataset # ${dataset.name} of run ${
+                        dataset.run_number
+                    }`}
+                    visible={manage_dataset_modal_visible}
                     onOk={hideManageDatasetModal}
                     onCancel={
                         hideManageDatasetModal // confirmLoading={confirmLoading}
@@ -40,8 +42,9 @@ class ManageDatasetModal extends Component {
 
 const mapStateToProps = state => {
     return {
-        manage_run_modal_visible: state.online.ui.manage_run_modal_visible,
-        run: state.online.ui.manage_run_modal_run
+        manage_dataset_modal_visible:
+            state.offline.ui.manage_dataset_modal_visible,
+        dataset: state.offline.ui.manage_dataset_modal_dataset
     };
 };
 export default connect(

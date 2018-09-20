@@ -3,33 +3,41 @@ import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 import { Formik, Field } from 'formik';
 import { Input, Button } from 'antd';
+import { offline_columns } from '../../../../../config/config';
 
-import { editRun } from '../../../../../ducks/online/runs';
+import { editDataset } from '../../../../../ducks/offline/datasets';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
 import EditClass from './editClass/EditClass';
 
-class EditRun extends Component {
+class EditDataset extends Component {
     render() {
-        const { run, editRun } = this.props;
+        const { dataset, workspace, editDataset } = this.props;
 
         const initialValues = {};
-        for (const [key, val] of Object.entries(run)) {
-            if (
-                key.indexOf('triplet') > 0 &&
-                val !== null &&
-                typeof val === 'object'
-            ) {
-                // We are dealing now with a triplet:
-                const { status, comment, cause } = val;
-                initialValues[`${key}>status`] = status;
-                initialValues[`${key}>cause`] = cause;
-                initialValues[`${key}>comment`] = comment;
+        let offline_columns_composed = offline_columns.filter(column => {
+            if (workspace === 'global') {
+                return !column.includes('_');
             }
-        }
+            return column.startsWith(workspace.toLowerCase());
+        });
+
+        offline_columns_composed.forEach(column => {
+            if (
+                column !== 'run_number' ||
+                column !== 'name' ||
+                column !== 'state' ||
+                column !== 'createdAt'
+            ) {
+                const { status, comment, cause } = dataset[column];
+                initialValues[`${column}>status`] = status;
+                initialValues[`${column}>cause`] = cause;
+                initialValues[`${column}>comment`] = comment;
+            }
+        });
         return (
             <div>
-                <EditClass run={run} />
+                {/* <EditClass dataset={dataset} /> */}
                 <Formik
                     initialValues={initialValues}
                     onSubmit={async values => {
@@ -37,6 +45,7 @@ class EditRun extends Component {
                         for (const [key, val] of Object.entries(values)) {
                             const component_key = key.split('>')[0];
                             const triplet_key = key.split('>')[1];
+                            // Put it again in format component:triplet
                             components_triplets[component_key] = {
                                 ...components_triplets[component_key],
                                 [triplet_key]: val
@@ -44,11 +53,13 @@ class EditRun extends Component {
                         }
                         console.log(values);
                         console.log(components_triplets);
-                        await editRun(run.run_number, components_triplets);
+                        const { run_number, name } = dataset;
+                        await editDataset(
+                            `${run_number}_${name}`,
+                            components_triplets
+                        );
                         await Swal(
-                            `Run ${
-                                run.run_number
-                            } component's edited successfully`,
+                            `Dataset ${`${run_number}_${name}`} component's edited successfully`,
                             '',
                             'success'
                         );
@@ -64,7 +75,7 @@ class EditRun extends Component {
                         isSubmitting
                     }) => (
                         <form onSubmit={handleSubmit}>
-                            <table className="edit_run_form">
+                            <table className="edit_dataset_form">
                                 <thead>
                                     <tr className="table_header">
                                         <td>Component</td>
@@ -74,14 +85,14 @@ class EditRun extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {components.map(component => (
+                                    {offline_columns_composed.map(component => (
                                         <tr key={component}>
                                             <td>{component}</td>
                                             <td className="status_dropdown">
                                                 <Field
                                                     key={component}
                                                     component="select"
-                                                    name={`${component}_triplet>status`}
+                                                    name={`${component}>status`}
                                                 >
                                                     <option value="GOOD">
                                                         GOOD
@@ -110,16 +121,16 @@ class EditRun extends Component {
                                                 <TextArea
                                                     value={
                                                         values[
-                                                            `${component}_triplet>comment`
+                                                            `${component}>comment`
                                                         ]
                                                     }
                                                     onChange={evt =>
                                                         setFieldValue(
-                                                            `${component}_triplet>comment`,
+                                                            `${component}>comment`,
                                                             evt.target.value
                                                         )
                                                     }
-                                                    name={`${component}_triplet>comment`}
+                                                    name={`${component}>comment`}
                                                     row={1}
                                                     type="text"
                                                     autosize
@@ -138,7 +149,7 @@ class EditRun extends Component {
                     )}
                 />
                 <style jsx>{`
-                    .edit_run_form {
+                    .edit_dataset_form {
                         margin: 0 auto;
                         text-align: center;
                         border: 1px solid grey;
@@ -179,8 +190,13 @@ class EditRun extends Component {
         );
     }
 }
+const mapStateToProps = state => {
+    return {
+        workspace: state.offline.workspace.workspace
+    };
+};
 
 export default connect(
-    null,
-    { editRun }
-)(EditRun);
+    mapStateToProps,
+    { editDataset }
+)(EditDataset);

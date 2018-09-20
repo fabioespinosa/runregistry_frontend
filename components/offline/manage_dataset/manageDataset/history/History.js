@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ReactTable from 'react-table';
 import { Icon } from 'antd';
-import { components } from '../../../../../config/config';
+import { offline_columns } from '../../../../../config/config';
 
 class History extends Component {
     render() {
-        const { run } = this.props;
+        const { dataset, workspace } = this.props;
         let dates = {};
-        for (const [key, val] of Object.entries(run)) {
+        for (const [key, val] of Object.entries(dataset)) {
             if (val) {
                 const history = val.history;
                 if (Array.isArray(history)) {
@@ -52,7 +53,11 @@ class History extends Component {
                     const date = new Date(value).toString();
                     const displayed_date = date.split('GMT')[0];
                     return (
-                        <div style={{ textAlign: 'center' }}>
+                        <div
+                            style={{
+                                textAlign: 'center'
+                            }}
+                        >
                             {displayed_date}
                         </div>
                     );
@@ -74,7 +79,11 @@ class History extends Component {
                 Cell: ({ original, value }) => {
                     if (value) {
                         return (
-                            <div style={{ textAlign: 'center' }}>
+                            <div
+                                style={{
+                                    textAlign: 'center'
+                                }}
+                            >
                                 {value.value ? (
                                     <Icon type={'check'} />
                                 ) : (
@@ -93,7 +102,11 @@ class History extends Component {
                     console.log(value);
                     if (value) {
                         return (
-                            <div style={{ textAlign: 'center' }}>
+                            <div
+                                style={{
+                                    textAlign: 'center'
+                                }}
+                            >
                                 {value.value}
                             </div>
                         );
@@ -102,22 +115,27 @@ class History extends Component {
                 }
             }
         ];
-        // {
-        //     Header: 'State',
-        //     accessor: 'state'
-        // }
-        let component_columns = components.map(component => ({
-            Header: component
-        }));
-        component_columns = component_columns.map(column => {
+
+        // Put components in format Header: component
+        let offline_columns_composed = offline_columns
+            .filter(column => {
+                if (workspace === 'global') {
+                    return !column.includes('_');
+                }
+                return column.startsWith(workspace.toLowerCase());
+            })
+            .map(column => ({
+                // Header: column.split('_').join(' ')
+                Header: column
+            }));
+        offline_columns_composed = offline_columns_composed.map(column => {
             return {
                 ...column,
                 maxWidth: 66,
                 id: `${column['Header']}_triplet`,
                 accessor: data => {
                     let status = '';
-                    const triplet = data[`${column['Header']}_triplet`];
-                    const { significant } = data;
+                    const triplet = data[column['Header']];
                     if (triplet) {
                         status = triplet.status;
                     }
@@ -219,10 +237,12 @@ class History extends Component {
                 }
             };
         });
-        columns = [...columns, ...component_columns];
+        columns = [...columns, ...offline_columns_composed];
         return (
             <div>
-                <h4>History - Changes in the run as time progresses down</h4>
+                <h4>
+                    History - Changes in the dataset as time progresses down
+                </h4>
                 <ReactTable
                     columns={columns}
                     data={timeline}
@@ -234,4 +254,10 @@ class History extends Component {
     }
 }
 
-export default History;
+const mapStateToProps = state => {
+    return {
+        workspace: state.offline.workspace.workspace
+    };
+};
+
+export default connect(mapStateToProps)(History);

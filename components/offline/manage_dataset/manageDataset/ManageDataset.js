@@ -6,20 +6,20 @@ import History from './history/History';
 
 const Panel = Collapse.Panel;
 
-class ManageRun extends Component {
+class ManageDataset extends Component {
     render() {
-        const { run } = this.props;
-        console.log(run);
+        const { dataset } = this.props;
+        console.log(dataset);
         return (
             <Collapse defaultActiveKey={['2']}>
                 {/* <Panel key="1" header="Run info">
                     <p>Run info</p>
                 </Panel> */}
-                <Panel key="2" header="Edit run">
-                    <EditDataset run={run} />
+                <Panel key="2" header="Edit dataset">
+                    <EditDataset dataset={dataset} />
                 </Panel>
                 <Panel key="3" header="Run History">
-                    <History run={run} />
+                    <History dataset={dataset} />
                 </Panel>
             </Collapse>
         );
@@ -28,8 +28,8 @@ class ManageRun extends Component {
 
 const mapStateToProps = state => {
     return {
-        run: state.online.ui.manage_run_modal_run
+        dataset: state.offline.ui.manage_dataset_modal_dataset
     };
 };
 
-export default connect(mapStateToProps)(ManageRun);
+export default connect(mapStateToProps)(ManageDataset);

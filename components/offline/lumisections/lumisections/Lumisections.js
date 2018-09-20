@@ -44,7 +44,7 @@ const attributes_required = [
 
 class Lumisections extends Component {
     componentDidMount() {
-        this.props.fetchLumisectionRanges(this.props.run.run_number);
+        this.props.fetchLumisectionRanges(this.props.dataset.run_number);
     }
 
     render() {
@@ -55,7 +55,7 @@ class Lumisections extends Component {
                 accessor: 'run_number',
                 Cell: row => (
                     <div style={{ textAlign: 'center' }}>
-                        <span>{this.props.run.run_number}</span>
+                        <span>{this.props.dataset.run_number}</span>
                     </div>
                 )
             },

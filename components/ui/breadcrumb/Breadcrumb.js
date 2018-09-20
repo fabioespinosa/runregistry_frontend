@@ -106,7 +106,9 @@ class BreadcrumbCmp extends Component {
                             <Radio value="show_waiting_list">
                                 Show waiting list
                             </Radio>
-                            <Radio value="show_datasets">Show datasets</Radio>
+                            <Radio value="show_datasets">
+                                Show Editable datasets
+                            </Radio>
                         </RadioGroup>
                     )}
                 </div>
