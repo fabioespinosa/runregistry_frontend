@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
 import { Icon } from 'antd';
-
+import EditLumisections from './editLumisections/EditLumisections';
 // import {components} from '../../../../config/config';
-import { fetchLumisectionRanges } from '../../../../ducks/online/lumisection_ranges';
+import { fetchLumisectionRanges } from '../../../../ducks/offline/lumisections';
 
 const attributes_required = [
     'beam1_present',
@@ -44,11 +44,11 @@ const attributes_required = [
 
 class Lumisections extends Component {
     componentDidMount() {
-        this.props.fetchLumisectionRanges(this.props.dataset.run_number);
+        this.props.fetchLumisectionRanges(this.props.dataset.id);
     }
 
     render() {
-        const { lumisection_ranges } = this.props;
+        const { lumisections } = this.props;
         let columns = [
             {
                 Header: 'Run Number',
@@ -103,8 +103,9 @@ class Lumisections extends Component {
 
         return (
             <div>
+                <EditLumisections dataset={this.props.dataset} />
                 <ReactTable
-                    data={lumisection_ranges}
+                    data={lumisections}
                     columns={columns}
                     manual
                     defaultPageSize={15}
@@ -115,7 +116,7 @@ class Lumisections extends Component {
 }
 
 const mapStateToProps = state => {
-    return { lumisection_ranges: state.online.lumisection_ranges };
+    return { lumisections: state.offline.lumisections };
 };
 
 export default connect(

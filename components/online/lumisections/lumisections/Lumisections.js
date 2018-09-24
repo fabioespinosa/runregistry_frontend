@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import { Icon } from 'antd';
 
 // import {components} from '../../../../config/config';
-import { fetchLumisectionRanges } from '../../../../ducks/online/lumisection_ranges';
+import { fetchLumisectionRanges } from '../../../../ducks/online/lumisections';
 
 const attributes_required = [
     'beam1_present',
@@ -48,7 +48,7 @@ class Lumisections extends Component {
     }
 
     render() {
-        const { lumisection_ranges } = this.props;
+        const { lumisections } = this.props;
         let columns = [
             {
                 Header: 'Run Number',
@@ -104,7 +104,7 @@ class Lumisections extends Component {
         return (
             <div>
                 <ReactTable
-                    data={lumisection_ranges}
+                    data={lumisections}
                     columns={columns}
                     manual
                     defaultPageSize={15}
@@ -115,7 +115,7 @@ class Lumisections extends Component {
 }
 
 const mapStateToProps = state => {
-    return { lumisection_ranges: state.online.lumisection_ranges };
+    return { lumisections: state.online.lumisections };
 };
 
 export default connect(

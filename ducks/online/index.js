@@ -2,13 +2,13 @@ import { combineReducers } from 'redux';
 
 import classifiers from './classifiers/index';
 import runs from './runs';
-import lumisection_ranges from './lumisection_ranges';
+import lumisections from './lumisections';
 import ui from './ui';
 
 const onlineRootReducer = combineReducers({
     classifiers,
     runs,
-    lumisection_ranges,
+    lumisections,
     ui
 });
 

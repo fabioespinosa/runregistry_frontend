@@ -6,12 +6,12 @@ const FETCH_LUMISECTION_RANGES = 'FETCH_LUMISECTION_RANGES';
 
 export const fetchLumisectionRanges = id_run =>
     error_handler(async dispatch => {
-        const { data: lumisection_ranges } = await axios.get(
+        const { data: lumisections } = await axios.get(
             `${api_url}/lumisections/id_run/${id_run}`
         );
         dispatch({
             type: FETCH_LUMISECTION_RANGES,
-            payload: lumisection_ranges.reverse()
+            payload: lumisections.reverse()
         });
     });
 

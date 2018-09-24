@@ -28,7 +28,7 @@ class Page extends Component {
             <div>
                 <Head>
                     <meta charSet="utf-8" />
-                    <title>CMS Run Registry</title>
+                    <title>*TRIAL* CMS Run Registry</title>
                     {/* <link
                 rel="shortcut icon"
                 href="/static/images/favicon.ico"

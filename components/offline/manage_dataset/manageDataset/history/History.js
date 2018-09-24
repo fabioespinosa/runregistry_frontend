@@ -42,7 +42,7 @@ class History extends Component {
             });
             timeline.push(event_in_timeline);
         }
-        console.log(timeline);
+        // Sort timeline by date:
         timeline.sort((a, b) => a.when - b.when);
         let columns = [
             {
