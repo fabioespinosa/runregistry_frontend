@@ -52,7 +52,7 @@ class ColumnConfiguration extends Component {
         const { workspaces } = this.props;
         const columns = [
             {
-                Header: 'Pog',
+                Header: 'DPG/POG',
                 accessor: 'pog',
                 width: 80,
                 getProps: () => ({ style: { textAlign: 'center' } })

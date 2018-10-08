@@ -245,7 +245,13 @@ class RunTable extends Component {
                 }
             },
             { Header: 'Started', accessor: 'start_time' },
-            { Header: 'Hlt Key Description', accessor: 'hlt_key' },
+            {
+                Header: 'Hlt Key Description',
+                accessor: 'hlt_key',
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value.value}</div>
+                )
+            },
             {
                 Header: 'GUI',
                 filterable: false,
@@ -266,7 +272,7 @@ class RunTable extends Component {
         ];
 
         const other_columns = [
-            { Header: 'Duration', accessor: 'duration' },
+            { Header: 'LS Duration', accessor: 'ls_duration' },
             { Header: 'Clock Type', accessor: 'clock_type' }
         ];
         // Put components in format Header: component

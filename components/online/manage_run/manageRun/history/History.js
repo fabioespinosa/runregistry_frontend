@@ -90,7 +90,34 @@ class History extends Component {
                 Header: 'State',
                 accessor: 'state',
                 Cell: ({ original, value }) => {
-                    console.log(value);
+                    if (value) {
+                        return (
+                            <div style={{ textAlign: 'center' }}>
+                                {value.value}
+                            </div>
+                        );
+                    }
+                    return <div />;
+                }
+            },
+            {
+                Header: 'hlt key',
+                accessor: 'hlt_key',
+                Cell: ({ original, value }) => {
+                    if (value) {
+                        return (
+                            <div style={{ textAlign: 'center' }}>
+                                {value.value}
+                            </div>
+                        );
+                    }
+                    return <div />;
+                }
+            },
+            {
+                Header: 'hlt Physics Counter',
+                accessor: 'hlt_physics_counter',
+                Cell: ({ original, value }) => {
                     if (value) {
                         return (
                             <div style={{ textAlign: 'center' }}>
