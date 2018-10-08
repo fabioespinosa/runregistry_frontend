@@ -58,12 +58,16 @@ class TopNav extends Component {
                             <a>OFFLINE</a>
                         </Link>
                     </Menu.Item>
-                    <Menu.Item disabled key="warning" style={{ opacity: 1 }}>
+                    <Menu.Item
+                        disabled
+                        key="warning"
+                        style={{ opacity: 1, color: 'red !important' }}
+                    >
                         <span
                             onClick={() => {}}
                             style={{
                                 color: 'red !important',
-                                fontSize: '1.3em'
+                                fontSize: '0.9em'
                             }}
                         >
                             THIS IS NOT THE OFFICIAL RUN REGISTRY (YET), ALL
