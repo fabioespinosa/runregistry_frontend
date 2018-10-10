@@ -87,6 +87,20 @@ class History extends Component {
                 }
             },
             {
+                Header: 'Stop Reason',
+                accessor: 'stop_reason',
+                Cell: ({ original, value }) => {
+                    if (value) {
+                        return (
+                            <div style={{ textAlign: 'center' }}>
+                                {value.value}
+                            </div>
+                        );
+                    }
+                    return <div />;
+                }
+            },
+            {
                 Header: 'State',
                 accessor: 'state',
                 Cell: ({ original, value }) => {

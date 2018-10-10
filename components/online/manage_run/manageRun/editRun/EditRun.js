@@ -35,16 +35,21 @@ class EditRun extends Component {
                     onSubmit={async values => {
                         const components_triplets = {};
                         for (const [key, val] of Object.entries(values)) {
-                            const component_key = key.split('>')[0];
-                            const triplet_key = key.split('>')[1];
-                            components_triplets[component_key] = {
-                                ...components_triplets[component_key],
-                                [triplet_key]: val
-                            };
+                            if (key.includes('_triplet')) {
+                                const component_key = key.split('>')[0];
+                                const triplet_key = key.split('>')[1];
+                                components_triplets[component_key] = {
+                                    ...components_triplets[component_key],
+                                    [triplet_key]: val
+                                };
+                            }
                         }
                         console.log(values);
                         console.log(components_triplets);
-                        await editRun(run.run_number, components_triplets);
+                        await editRun(run.run_number, {
+                            ...values,
+                            ...components_triplets
+                        });
                         await Swal(
                             `Run ${
                                 run.run_number
@@ -64,6 +69,31 @@ class EditRun extends Component {
                         isSubmitting
                     }) => (
                         <form onSubmit={handleSubmit}>
+                            <div
+                                style={{
+                                    margin: '0 auto',
+                                    width: '50%',
+                                    display: 'flex'
+                                }}
+                            >
+                                <label style={{ width: '154px' }}>
+                                    <strong>Run stop reason:</strong>
+                                </label>
+                                <TextArea
+                                    value={values['stop_reason']}
+                                    onChange={evt =>
+                                        setFieldValue(
+                                            'stop_reason',
+                                            evt.target.value
+                                        )
+                                    }
+                                    name="stop_reason"
+                                    row={1}
+                                    type="text"
+                                    autosize
+                                />
+                            </div>
+                            <br />
                             <table className="edit_run_form">
                                 <thead>
                                     <tr className="table_header">

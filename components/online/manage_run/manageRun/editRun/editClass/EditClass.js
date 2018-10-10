@@ -57,9 +57,15 @@ class EditClass extends Component {
                     />
                 ) : (
                     <div>
-                        Class: {run.class.value}{' '}
+                        <strong>Class:</strong>{' '}
+                        {run.class.value || (
+                            <i>
+                                This run has not been automatically assigned a
+                                class
+                            </i>
+                        )}{' '}
                         <a onClick={() => this.setState({ editing: true })}>
-                            (Edit Class)
+                            ({run.class.value ? 'Edit Class' : 'Set a class'})
                         </a>
                     </div>
                 )}
