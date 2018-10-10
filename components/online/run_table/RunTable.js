@@ -140,7 +140,7 @@ class RunTable extends Component {
                 Header: 'Significant',
                 id: 'significant',
                 accessor: 'significant',
-                maxWidth: 62,
+                maxWidth: 100,
                 filterable: show_all_runs && filterable,
                 sortable: show_all_runs,
                 Cell: ({ original, value }) => (
@@ -174,7 +174,7 @@ class RunTable extends Component {
                                     }
                                 }}
                             >
-                                <Icon type={'close-square'} />
+                                Make significant
                             </a>
                         )}
                     </div>
