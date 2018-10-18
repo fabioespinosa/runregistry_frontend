@@ -30,7 +30,12 @@ app.prepare().then(() => {
 
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
-        res.redirect('/runtest/online/runs/all');
+        if (process.env.NODE_ENV === 'production') {
+            res.redirect('/runtest/online/runs/all');
+        }
+        if (process.env.NODE_ENV === 'development') {
+            res.redirect('/rr-dev/online/runs/all');
+        }
     });
 
     // offline:
