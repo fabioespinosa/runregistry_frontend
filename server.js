@@ -32,8 +32,7 @@ app.prepare().then(() => {
     server.get('/', (req, res) => {
         if (process.env.NODE_ENV === 'production') {
             res.redirect('/runtest/online/runs/all');
-        }
-        if (process.env.NODE_ENV === 'development') {
+        } else {
             res.redirect('/rr-dev/online/runs/all');
         }
     });

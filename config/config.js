@@ -1,6 +1,6 @@
 const config = {
     local: {
-        root_url_prefix: '',
+        root_url_prefix: '/',
         root_url: '',
         api_url: 'http://localhost:7003'
     },
@@ -18,6 +18,7 @@ const config = {
 exports.root_url_prefix =
     config[process.env.NODE_ENV || 'development']['root_url_prefix'];
 
+console.log(process.env.NODE_ENV);
 exports.api_url = config[process.env.NODE_ENV || 'development']['api_url'];
 
 exports.components = [
