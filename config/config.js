@@ -5,11 +5,6 @@ const config = {
         api_url: 'http://localhost:7003'
     },
     development: {
-        root_url_prefix: '',
-        root_url: '',
-        api_url: 'http://localhost:7003'
-    },
-    staging: {
         root_url_prefix: '/rr-dev',
         root_url: '',
         api_url: 'https://cms-pdmv-dev.cern.ch/rr-dev_api'
