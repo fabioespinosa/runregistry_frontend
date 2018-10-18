@@ -1,6 +1,6 @@
 const config = {
     development: {
-        root_url_prefix: '/',
+        root_url_prefix: '',
         root_url: '',
         api_url: 'http://localhost:7003'
     },
