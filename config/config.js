@@ -9,6 +9,11 @@ const config = {
         root_url: '',
         api_url: 'http://localhost:7003'
     },
+    staging: {
+        root_url_prefix: '/rr-dev',
+        root_url: '',
+        api_url: 'https://cms-pdmv-dev.cern.ch/rr-dev_api'
+    },
     production: {
         root_url_prefix: '/runtest',
         root_url: '',
