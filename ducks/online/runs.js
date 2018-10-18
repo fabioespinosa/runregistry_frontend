@@ -51,6 +51,7 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
         const run_endpoint = getState().online.ui.show_all_runs
             ? 'runs_filtered_ordered'
             : 'significant_runs_filtered_ordered';
+        console.log(api_url);
         const { data: runs } = await axios.post(
             `${api_url}/${run_endpoint}/${page}`,
             { page_size, sortings, filter: filtered },
