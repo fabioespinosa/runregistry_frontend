@@ -19,7 +19,7 @@ Router.onRouteChangeError = () => Progress.done();
 
 class Page extends Component {
     componentDidMount() {
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.ENV === 'production') {
             hotjar.initialize(1018467, 6);
         }
     }
@@ -29,27 +29,6 @@ class Page extends Component {
                 <Head>
                     <meta charSet="utf-8" />
                     <title>*TRIAL* CMS Run Registry</title>
-                    {/* <link
-                rel="shortcut icon"
-                href="/static/images/favicon.ico"
-                type="image/x-icon"
-            /> */}
-
-                    {/* {process.env.NODE_ENV === 'production' && (
-                        <script
-                            dangerouslySetInnerHTML={{
-                                __html: `(function(h,o,t,j,a,r){
-                                    h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                                    h._hjSettings={hjid:1018467,hjsv:6};
-                                    a=o.getElementsByTagName('head')[0];
-                                    r=o.createElement('script');r.async=1;
-                                    r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-                                    a.appendChild(r);
-                                })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-                                `
-                            }}
-                        />
-                    )} */}
                 </Head>
                 <Nav
                     router={this.props.router}

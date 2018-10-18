@@ -1,7 +1,7 @@
 export default function(getState) {
     const state = getState();
     const email =
-        process.env.NODE_ENV === 'development'
+        process.env.ENV === 'development'
             ? 'fespinos@cern.ch'
             : state.info.adfs_email;
     return {

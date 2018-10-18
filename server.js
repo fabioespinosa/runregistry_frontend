@@ -30,10 +30,16 @@ app.prepare().then(() => {
 
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
+        // There are two `production` scenarios, either real production or staging
         if (process.env.NODE_ENV === 'production') {
-            res.redirect('/runtest/online/runs/all');
+            if (process.env.ENV === 'production') {
+                res.redirect('/runtest/online/runs/all');
+            } else if (process.env.ENV === 'staging') {
+                res.redirect('/rr-dev/online/runs/all');
+            } else if (process.env.NODE_ENV === 'development') {
+            }
         } else {
-            res.redirect('/rr-dev/online/runs/all');
+            res.redirect('/online/runs/all');
         }
     });
 
