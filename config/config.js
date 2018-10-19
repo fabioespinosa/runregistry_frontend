@@ -18,7 +18,6 @@ const config = {
 exports.root_url_prefix =
     config[process.env.ENV || 'development']['root_url_prefix'];
 
-console.log(process.env.ENV);
 exports.api_url = config[process.env.ENV || 'development']['api_url'];
 
 exports.components = [

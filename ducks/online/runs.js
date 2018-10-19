@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { api_url } from '../../config/config';
+console.log('api url', api_url);
 import auth from '../../auth/auth';
 import { error_handler } from '../../utils/error_handlers';
 import { toggleShowAllRuns, hideManageRunModal } from './ui';

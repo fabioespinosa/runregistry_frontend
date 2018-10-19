@@ -26,7 +26,11 @@ class EditRun extends Component {
                 initialValues[`${key}>cause`] = cause;
                 initialValues[`${key}>comment`] = comment;
             }
+            if (key === 'stop_reason') {
+                initialValues['stop_reason'] = val.value;
+            }
         }
+
         return (
             <div>
                 <EditClass run={run} />
