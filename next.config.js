@@ -18,6 +18,7 @@ module.exports = withCss({
     publicRuntimeConfig: {
         // Will be available on both server and client
         staticFolder: '/static',
-        NODE_ENV: process.env.NODE_ENV
+        NODE_ENV: process.env.NODE_ENV,
+        ENV: process.env.ENV
     }
 });
