@@ -10,13 +10,13 @@ class EditClass extends Component {
 
     render() {
         const { run, editRun } = this.props;
+        const initialValues = { class: run.class.value };
         return (
             <div
                 style={{ margin: '0 auto', width: '100%', textAlign: 'center' }}
             >
                 {this.state.editing ? (
                     <Formik
-                        initialValues={{ class: run.class.value }}
                         onSubmit={async value => {
                             await editRun(run.run_number, value);
                             await Swal(
@@ -27,6 +27,7 @@ class EditClass extends Component {
                                 'success'
                             );
                         }}
+                        initialValues={initialValues}
                         render={({ values, setFieldValue, handleSubmit }) => (
                             <form onSubmit={handleSubmit}>
                                 <Input

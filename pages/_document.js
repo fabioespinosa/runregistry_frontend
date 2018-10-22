@@ -8,35 +8,29 @@ export default class MyDocument extends Document {
     }
 
     render() {
+        const assetPrefix = this.props.__NEXT_DATA__.assetPrefix;
+
         return (
             <html>
                 <Head>
                     <link
                         rel="stylesheet"
-                        href={`${
-                            this.props.__NEXT_DATA__.assetPrefix
-                        }/_next/static/style.css`}
+                        href={`${root_url_prefix}/_next/static/style.css`}
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`${
-                            this.props.__NEXT_DATA__.assetPrefix
-                        }/static/nprogress.css`}
+                        href={`${root_url_prefix}/static/nprogress.css`}
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`${
-                            this.props.__NEXT_DATA__.assetPrefix
-                        }/static/ant-modified.min.css`}
+                        href={`${root_url_prefix}/static/ant-modified.min.css`}
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`${
-                            this.props.__NEXT_DATA__.assetPrefix
-                        }/static/react-table.css`}
+                        href={`${root_url_prefix}/static/react-table.css`}
                     />
                     <link
                         rel="stylesheet"
