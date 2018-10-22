@@ -1,7 +1,14 @@
 const getConfig = require('next/config');
-const runtimeConfig = getConfig.default() || {};
+const runtimeConfig = getConfig.default() || {
+    publicRuntimeConfig: {
+        NODE_ENV: process.env.NODE_ENV,
+        ENV: process.env.ENV
+    }
+};
 const publicRuntimeConfig = runtimeConfig.publicRuntimeConfig;
-const { ENV } = publicRuntimeConfig || 'development';
+const { ENV, NODE_ENV } = publicRuntimeConfig;
+console.log('Setup: ', NODE_ENV);
+console.log('Environment: ', ENV);
 const config = {
     development: {
         root_url_prefix: '',
@@ -19,6 +26,7 @@ const config = {
         api_url: 'https://cms-pdmv-dev.cern.ch/runtest_api'
     }
 };
+exports.config = config;
 exports.root_url_prefix = config[ENV]['root_url_prefix'];
 
 exports.api_url = config[ENV]['api_url'];
