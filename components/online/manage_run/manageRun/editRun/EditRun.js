@@ -30,150 +30,187 @@ class EditRun extends Component {
                 initialValues['stop_reason'] = val.value;
             }
         }
-
+        console.log(run.significant.value);
         return (
             <div>
-                <EditClass run={run} />
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={async values => {
-                        const components_triplets = {};
-                        for (const [key, val] of Object.entries(values)) {
-                            if (key.includes('_triplet')) {
-                                const component_key = key.split('>')[0];
-                                const triplet_key = key.split('>')[1];
-                                components_triplets[component_key] = {
-                                    ...components_triplets[component_key],
-                                    [triplet_key]: val
-                                };
-                            }
-                        }
-                        console.log(values);
-                        console.log(components_triplets);
-                        await editRun(run.run_number, {
-                            ...values,
-                            ...components_triplets
-                        });
-                        await Swal(
-                            `Run ${
-                                run.run_number
-                            } component's edited successfully`,
-                            '',
-                            'success'
-                        );
-                    }}
-                    render={({
-                        values,
-                        setFieldValue,
-                        errors,
-                        touched,
-                        handleChange,
-                        handleBlur,
-                        handleSubmit,
-                        isSubmitting
-                    }) => (
-                        <form onSubmit={handleSubmit}>
-                            <div
-                                style={{
-                                    margin: '0 auto',
-                                    width: '50%',
-                                    display: 'flex'
-                                }}
-                            >
-                                <label style={{ width: '154px' }}>
-                                    <strong>Run stop reason:</strong>
-                                </label>
-                                <TextArea
-                                    value={values['stop_reason']}
-                                    onChange={evt =>
-                                        setFieldValue(
-                                            'stop_reason',
-                                            evt.target.value
-                                        )
+                {run.significant.value ? (
+                    <div>
+                        <EditClass run={run} />
+                        <Formik
+                            initialValues={initialValues}
+                            onSubmit={async values => {
+                                const components_triplets = {};
+                                for (const [key, val] of Object.entries(
+                                    values
+                                )) {
+                                    if (key.includes('_triplet')) {
+                                        const component_key = key.split('>')[0];
+                                        const triplet_key = key.split('>')[1];
+                                        components_triplets[component_key] = {
+                                            ...components_triplets[
+                                                component_key
+                                            ],
+                                            [triplet_key]: val
+                                        };
                                     }
-                                    name="stop_reason"
-                                    row={1}
-                                    type="text"
-                                    autosize
-                                />
-                            </div>
-                            <br />
-                            <table className="edit_run_form">
-                                <thead>
-                                    <tr className="table_header">
-                                        <td>Component</td>
-                                        <td>Status</td>
-                                        <td>Cause</td>
-                                        <td>Comment</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {components.map(component => (
-                                        <tr key={component}>
-                                            <td>{component}</td>
-                                            <td className="status_dropdown">
-                                                <Field
-                                                    key={component}
-                                                    component="select"
-                                                    name={`${component}_triplet>status`}
-                                                >
-                                                    <option value="GOOD">
-                                                        GOOD
-                                                    </option>
-                                                    <option value="BAD">
-                                                        BAD
-                                                    </option>
-                                                    <option value="STANDBY">
-                                                        STANDBY
-                                                    </option>
-                                                </Field>
-                                            </td>
-                                            <td className="cause_dropdown">
-                                                <Field
-                                                    key={component}
-                                                    component="select"
-                                                    name={component}
-                                                    disabled
-                                                >
-                                                    <option value="undef">
-                                                        undef
-                                                    </option>
-                                                    <option value="other">
-                                                        other
-                                                    </option>
-                                                </Field>
-                                            </td>
-                                            <td className="comment">
-                                                <TextArea
-                                                    value={
-                                                        values[
-                                                            `${component}_triplet>comment`
-                                                        ]
-                                                    }
-                                                    onChange={evt =>
-                                                        setFieldValue(
-                                                            `${component}_triplet>comment`,
-                                                            evt.target.value
-                                                        )
-                                                    }
-                                                    name={`${component}_triplet>comment`}
-                                                    row={1}
-                                                    type="text"
-                                                    autosize
-                                                />
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div className="buttons">
-                                <Button type="primary" htmlType="submit">
-                                    Save
-                                </Button>
-                            </div>
-                        </form>
-                    )}
-                />
+                                }
+                                console.log(values);
+                                console.log(components_triplets);
+                                await editRun(run.run_number, {
+                                    ...values,
+                                    ...components_triplets
+                                });
+                                await Swal(
+                                    `Run ${
+                                        run.run_number
+                                    } component's edited successfully`,
+                                    '',
+                                    'success'
+                                );
+                            }}
+                            render={({
+                                values,
+                                setFieldValue,
+                                errors,
+                                touched,
+                                handleChange,
+                                handleBlur,
+                                handleSubmit,
+                                isSubmitting
+                            }) => (
+                                <form onSubmit={handleSubmit}>
+                                    <div
+                                        style={{
+                                            margin: '0 auto',
+                                            width: '50%',
+                                            display: 'flex'
+                                        }}
+                                    >
+                                        <label style={{ width: '154px' }}>
+                                            <strong>Run stop reason:</strong>
+                                        </label>
+                                        <TextArea
+                                            value={values['stop_reason']}
+                                            onChange={evt =>
+                                                setFieldValue(
+                                                    'stop_reason',
+                                                    evt.target.value
+                                                )
+                                            }
+                                            name="stop_reason"
+                                            row={1}
+                                            type="text"
+                                            autosize
+                                        />
+                                    </div>
+                                    <br />
+                                    <table className="edit_run_form">
+                                        <thead>
+                                            <tr className="table_header">
+                                                <td>Component</td>
+                                                <td>Status</td>
+                                                <td>Cause</td>
+                                                <td>Comment</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {components.map(component => (
+                                                <tr key={component}>
+                                                    <td>{component}</td>
+                                                    <td className="status_dropdown">
+                                                        <Field
+                                                            key={component}
+                                                            component="select"
+                                                            name={`${component}_triplet>status`}
+                                                        >
+                                                            <option value="">
+                                                                -----
+                                                            </option>
+                                                            <option value="GOOD">
+                                                                GOOD
+                                                            </option>
+                                                            <option value="BAD">
+                                                                BAD
+                                                            </option>
+                                                            <option value="STANDBY">
+                                                                STANDBY
+                                                            </option>
+                                                            <option value="EXCLUDED">
+                                                                EXCLUDED
+                                                            </option>
+                                                        </Field>
+                                                    </td>
+                                                    <td className="cause_dropdown">
+                                                        <Field
+                                                            key={component}
+                                                            component="select"
+                                                            name={component}
+                                                            disabled
+                                                        >
+                                                            <option value="undef">
+                                                                undef
+                                                            </option>
+                                                            <option value="other">
+                                                                other
+                                                            </option>
+                                                        </Field>
+                                                    </td>
+                                                    <td className="comment">
+                                                        <TextArea
+                                                            value={
+                                                                values[
+                                                                    `${component}_triplet>comment`
+                                                                ]
+                                                            }
+                                                            onChange={evt =>
+                                                                setFieldValue(
+                                                                    `${component}_triplet>comment`,
+                                                                    evt.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                            name={`${component}_triplet>comment`}
+                                                            row={1}
+                                                            type="text"
+                                                            autosize
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <div className="buttons">
+                                        <Button
+                                            type="primary"
+                                            htmlType="submit"
+                                        >
+                                            Save
+                                        </Button>
+                                    </div>
+                                </form>
+                            )}
+                        />
+                    </div>
+                ) : (
+                    <div>
+                        In order to edit a run's class or change component's
+                        status, the run{' '}
+                        <i style={{ textDecoration: 'underline' }}>
+                            must be marked significant first
+                        </i>
+                        . <br /> <br />
+                        You can mark a run significant by clicking 'make
+                        significant' in the table
+                        <br />
+                        <br />A run is marked as significant automatically if
+                        during the run a certain number of events is reached, so
+                        it is possible that RR automatically marks this run as
+                        significant later on. If you are sure this run is
+                        significant (as in, it appeared significant in the other
+                        RR, or you have reasons to believe it is significant)
+                        please mark it significant.
+                    </div>
+                )}
                 <style jsx>{`
                     .edit_run_form {
                         margin: 0 auto;

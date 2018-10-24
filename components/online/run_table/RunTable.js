@@ -124,7 +124,7 @@ class RunTable extends Component {
             {
                 Header: 'Run Number',
                 accessor: 'run_number',
-                maxWidth: 90,
+                maxWidth: 110,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center', width: '100%' }}>
                         <a onClick={() => showManageRunModal(original)}>

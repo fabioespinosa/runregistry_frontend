@@ -15,11 +15,11 @@ class ManageRun extends Component {
                 {/* <Panel key="1" header="Run info">
                     <p>Run info</p>
                 </Panel> */}
-                <Panel key="2" header="Edit run">
-                    <EditRun run={run} />
-                </Panel>
-                <Panel key="3" header="Run History">
+                <Panel key="2" header="Run History">
                     <History run={run} />
+                </Panel>
+                <Panel key="3" header="Edit run">
+                    <EditRun run={run} />
                 </Panel>
             </Collapse>
         );
