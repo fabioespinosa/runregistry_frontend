@@ -3,7 +3,11 @@ import axios from 'axios';
 import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
 import { error_handler } from '../../utils/error_handlers';
-import { toggleShowAllRuns, hideManageRunModal } from './ui';
+import {
+    toggleTableFilters,
+    toggleShowAllRuns,
+    hideManageRunModal
+} from './ui';
 const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS-ONLINE';
 const FETCH_INITIAL_RUNS = 'FETCH_INITIAL_RUNS';
 const FETCH_SIGNIFICANT_RUNS = 'FETCH_SIGNIFICANT_RUNS';
@@ -28,6 +32,7 @@ export const initializeFilters = (store, query) => {
                 filters,
                 from_url: true
             });
+            store.dispatch(toggleTableFilters());
         }
     }
     if (query.workspace === 'all') {
@@ -39,6 +44,7 @@ export const initializeFilters = (store, query) => {
     }, 500);
 };
 
+// Change filters on the fly:
 export const changeFilters = (filter_array, filters = {}) => ({
     type: INITIALIZE_FILTERS,
     payload: filter_array,
@@ -51,7 +57,6 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
         const run_endpoint = getState().online.ui.show_all_runs
             ? 'runs_filtered_ordered'
             : 'significant_runs_filtered_ordered';
-        console.log(api_url);
         const { data: runs } = await axios.post(
             `${api_url}/${run_endpoint}/${page}`,
             { page_size, sortings, filter: filtered },

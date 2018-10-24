@@ -123,6 +123,9 @@ class EditRun extends Component {
                                                     <option value="BAD">
                                                         BAD
                                                     </option>
+                                                    <option value="STANDBY">
+                                                        STANDBY
+                                                    </option>
                                                 </Field>
                                             </td>
                                             <td className="cause_dropdown">
