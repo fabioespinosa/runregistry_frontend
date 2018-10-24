@@ -11,7 +11,7 @@ class ManageRun extends Component {
         const { run } = this.props;
         console.log(run);
         return (
-            <Collapse defaultActiveKey={['2']}>
+            <Collapse defaultActiveKey={['3']}>
                 {/* <Panel key="1" header="Run info">
                     <p>Run info</p>
                 </Panel> */}
