@@ -96,22 +96,16 @@ class RunTable extends Component {
     // When a user sorts by any field, we want to preserve the filters:
     sortTable = async (sortings, page) => {
         let { url_filter } = this.props.run_table;
-        const { filterable } = this.props;
-        // It checks if its filterable, because if this check is not made, whenever clicking the magnifying glass, it will try to perform a sort, so best to make sure it is already filterable (i.e. the inputs are already shown) in order to make the filter
-        console.log('sortings', sortings, filterable);
-        if (filterable) {
-            console.log('filterable');
-            const renamed_filters = rename_triplets(url_filter, true);
-            const formated_filters = formatFilters(renamed_filters);
-            const renamed_sortings = rename_triplets(sortings, false);
-            const formated_sortings = formatSortings(renamed_sortings);
-            await this.props.filterRuns(
-                defaultPageSize,
-                page,
-                formated_sortings,
-                formated_filters
-            );
-        }
+        const renamed_filters = rename_triplets(url_filter, true);
+        const formated_filters = formatFilters(renamed_filters);
+        const renamed_sortings = rename_triplets(sortings, false);
+        const formated_sortings = formatSortings(renamed_sortings);
+        await this.props.filterRuns(
+            defaultPageSize,
+            page,
+            formated_sortings,
+            formated_filters
+        );
     };
     onPageChange = async page => {
         this.sortTable(local_sortings, page);
