@@ -298,6 +298,7 @@ class RunTable extends Component {
 
         const other_columns = [
             { Header: 'LS Duration', accessor: 'ls_duration' },
+            { Header: 'B Field', accessor: 'b_field' },
             { Header: 'Clock Type', accessor: 'clock_type' }
         ];
         // Put components in format Header: component
