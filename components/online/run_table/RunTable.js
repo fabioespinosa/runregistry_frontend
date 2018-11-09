@@ -72,12 +72,12 @@ class RunTable extends Component {
         return filters;
     };
     // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
-    filterTable = async (filters, page) => {
+    filterTable = async (filters, page, pageSize) => {
         this.applyFiltersToUrl(filters);
         const renamed_filters = rename_triplets(filters, true);
         const formated_filters = formatFilters(renamed_filters);
         await this.props.filterRuns(
-            defaultPageSize,
+            pageSize || defaultPageSize,
             page,
             [],
             formated_filters
@@ -94,14 +94,14 @@ class RunTable extends Component {
     };
 
     // When a user sorts by any field, we want to preserve the filters:
-    sortTable = async (sortings, page) => {
+    sortTable = async (sortings, page, pageSize) => {
         let { url_filter } = this.props.run_table;
         const renamed_filters = rename_triplets(url_filter, true);
         const formated_filters = formatFilters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = formatSortings(renamed_sortings);
         await this.props.filterRuns(
-            defaultPageSize,
+            pageSize || defaultPageSize,
             page,
             formated_sortings,
             formated_filters
@@ -109,6 +109,9 @@ class RunTable extends Component {
     };
     onPageChange = async page => {
         this.sortTable(local_sortings, page);
+    };
+    onPageSizeChange = async (newSize, page) => {
+        this.sortTable(local_sortings, page, newSize);
     };
 
     render() {
@@ -567,8 +570,7 @@ class RunTable extends Component {
                         this.onPageChange(page);
                     }}
                     onPageSizeChange={(pageSize, page) =>
-                        // TODO
-                        console.log(pageSize, page)
+                        this.onPageSizeChange(pageSize, page)
                     }
                     onFilteredChange={(filtered, column, table) => {
                         // 0 is for first page
