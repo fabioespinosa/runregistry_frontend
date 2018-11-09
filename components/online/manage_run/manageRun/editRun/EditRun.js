@@ -7,7 +7,6 @@ import { Input, Button } from 'antd';
 import { editRun } from '../../.././../../ducks/online/runs';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
-import EditClass from './editClass/EditClass';
 
 class EditRun extends Component {
     render() {
@@ -26,16 +25,17 @@ class EditRun extends Component {
                 initialValues[`${key}>cause`] = cause;
                 initialValues[`${key}>comment`] = comment;
             }
+            if (key === 'class') {
+                initialValues['class'] = val.value;
+            }
             if (key === 'stop_reason') {
                 initialValues['stop_reason'] = val.value;
             }
         }
-        console.log(run.significant.value);
         return (
             <div>
                 {run.significant.value ? (
                     <div>
-                        <EditClass run={run} />
                         <Formik
                             initialValues={initialValues}
                             onSubmit={async values => {
@@ -54,8 +54,7 @@ class EditRun extends Component {
                                         };
                                     }
                                 }
-                                console.log(values);
-                                console.log(components_triplets);
+
                                 await editRun(run.run_number, {
                                     ...values,
                                     ...components_triplets
@@ -79,6 +78,30 @@ class EditRun extends Component {
                                 isSubmitting
                             }) => (
                                 <form onSubmit={handleSubmit}>
+                                    <div
+                                        style={{
+                                            margin: '0 auto',
+                                            width: '50%',
+                                            display: 'flex'
+                                        }}
+                                    >
+                                        <label style={{ width: '154px' }}>
+                                            <strong>Class:</strong>
+                                        </label>
+                                        <TextArea
+                                            value={values['class']}
+                                            onChange={evt =>
+                                                setFieldValue(
+                                                    'class',
+                                                    evt.target.value
+                                                )
+                                            }
+                                            name="class"
+                                            type="text"
+                                            autosize
+                                        />
+                                    </div>
+                                    <br />
                                     <div
                                         style={{
                                             margin: '0 auto',
