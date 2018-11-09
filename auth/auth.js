@@ -1,13 +1,18 @@
 export default function(getState) {
     const state = getState();
-    const email =
-        process.env.ENV === 'development' ||
-        process.env.NODE_ENV === 'development'
-            ? 'fespinos@cern.ch'
-            : state.info.adfs_email;
+    let email = state.info.adfs_email;
+    let egroups = state.info.adfs_group;
+    if (
+        process.env.NODE_ENV === 'development' ||
+        process.env.ENV === 'development'
+    ) {
+        email = 'fespinos@cern.ch';
+        egroups = 'runregistry-experts';
+    }
+
     return {
         headers: {
-            egroups: state.info.adfs_group,
+            egroups,
             email
         }
     };
