@@ -97,6 +97,7 @@ class RunTable extends Component {
             showLumisectionModal
         } = this.props;
         const { datasets, pages, loading, filter, filters } = dataset_table;
+        console.log(datasets);
         let columns = [
             {
                 Header: 'Run Number',
@@ -146,6 +147,27 @@ class RunTable extends Component {
                         <a onClick={evt => showLumisectionModal(original)}>
                             LS
                         </a>
+                    </div>
+                )
+            },
+            {
+                Header: 'Appeared In',
+                id: 'appeared_in',
+                accessor: 'appeared_in',
+                maxWidth: 150,
+                Cell: ({ original, value }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        <span
+                            style={{
+                                fontSize: '0.95em',
+                                fontWeight: 'bold',
+                                borderRadius: '1px'
+                            }}
+                        >
+                            <span style={{ padding: '4px' }}>
+                                {value.value}
+                            </span>
+                        </span>
                     </div>
                 )
             },

@@ -11,6 +11,8 @@ import {
 } from '../../../../ducks/offline/datasets_accepted';
 import RegexpEditor from './regexpEditor/RegexpEditor';
 
+const default_page_size = 10;
+
 class DatasetsAcceptedConfiguration extends Component {
     state = { add: false, edit: false };
 
@@ -20,6 +22,7 @@ class DatasetsAcceptedConfiguration extends Component {
     addRegexp = async values => {
         await this.props.addRegexp(values);
         this.setState({ add: false });
+        await Swal('Criteria successfully added', '', 'success');
     };
 
     removeRegexp = async id_dataset_accepted => {
@@ -35,19 +38,25 @@ class DatasetsAcceptedConfiguration extends Component {
         });
         if (value) {
             await this.props.removeRegexp(id_dataset_accepted);
-            await Swal(`Criteria deleted`, '', 'success');
+            await Swal('Criteria deleted', '', 'success');
         }
     };
 
     editRegexp = async values => {
         await this.props.editRegexp(values);
         this.setState({ edit: false });
+        await Swal('Criteria successfully edited', '', 'success');
     };
 
     render() {
         const { datasets_accepted } = this.props;
         const { add, edit } = this.state;
         const columns = [
+            {
+                Header: 'Class',
+                accessor: 'class',
+                width: 280
+            },
             {
                 Header: 'Name',
                 accessor: 'name',
@@ -92,8 +101,10 @@ class DatasetsAcceptedConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
-                                console.log(row.original);
-                                this.setState({ edit: row.original });
+                                this.setState({
+                                    edit: row.original,
+                                    add: false
+                                });
                             }}
                         >
                             Edit
@@ -113,13 +124,21 @@ class DatasetsAcceptedConfiguration extends Component {
                 )
             }
         ];
-        const default_page_size = 10;
+        console.log(datasets_accepted);
         return (
             <div>
-                <p>Current Datasets Accepted Regular Expressions:</p>
+                <p>
+                    Current Datasets Accepted (Regular Expressions) - Ordered by
+                    enabled first:
+                </p>
                 <ReactTable
                     columns={columns}
-                    data={datasets_accepted}
+                    data={datasets_accepted.sort((a, b) =>
+                        // Sort by enabled and then by the one which was updated most recently
+                        b.enabled === a.enabled
+                            ? new Date(b.updatedAt) - new Date(a.updatedAt)
+                            : b.enabled - a.enabled
+                    )}
                     defaultPageSize={default_page_size}
                     showPagination={
                         datasets_accepted.length > default_page_size

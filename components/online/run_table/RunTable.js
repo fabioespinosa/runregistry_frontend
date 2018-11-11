@@ -34,6 +34,7 @@ const column_types = {
     class: 'string',
     significant: 'boolean',
     'state.value': 'string',
+    b_field: 'integer',
     start_time: 'date',
     hlt_key: 'string',
     duration: 'integer',
@@ -128,6 +129,7 @@ class RunTable extends Component {
                 Header: 'Run Number',
                 accessor: 'run_number',
                 maxWidth: 110,
+                resizable: false,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center', width: '100%' }}>
                         <a onClick={() => showManageRunModal(original)}>

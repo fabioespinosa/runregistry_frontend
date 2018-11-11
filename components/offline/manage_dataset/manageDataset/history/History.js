@@ -99,7 +99,24 @@ class History extends Component {
                 Header: 'State',
                 accessor: 'state',
                 Cell: ({ original, value }) => {
-                    console.log(value);
+                    if (value) {
+                        return (
+                            <div
+                                style={{
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {value.value}
+                            </div>
+                        );
+                    }
+                    return <div />;
+                }
+            },
+            {
+                Header: 'Appeared in',
+                accessor: 'appeared_in',
+                Cell: ({ original, value }) => {
                     if (value) {
                         return (
                             <div

@@ -9,6 +9,7 @@ class RegexpEditor extends Component {
         return (
             <div className="editor">
                 <Formik
+                    enableReinitialize
                     initialValues={editing}
                     onSubmit={submit}
                     render={({
@@ -33,7 +34,9 @@ class RegexpEditor extends Component {
                                 type="text"
                                 autosize
                             />
-                            Dataset Regexp:
+                            Dataset Regexp (All datasets of the chosen run class
+                            which match this RegExp will be created) (If more
+                            than one, separate by "Enter"):
                             <TextArea
                                 value={values['regexp']}
                                 onChange={evt =>
@@ -57,7 +60,7 @@ class RegexpEditor extends Component {
                             />
                             <br />
                             <br />
-                            Runs from :
+                            Runs from:{' '}
                             <Input
                                 style={{ width: '100px' }}
                                 value={values['run_from']}
@@ -89,7 +92,12 @@ class RegexpEditor extends Component {
                                 Enabled
                             </Checkbox>
                             <div className="submit_button">
-                                <Button onClick={cancel}>Cancel</Button>
+                                <Button
+                                    style={{ marginRight: '10px' }}
+                                    onClick={cancel}
+                                >
+                                    Cancel
+                                </Button>
                                 <Button type="primary" htmlType="submit">
                                     {editing ? 'Edit' : 'Create'}
                                 </Button>
