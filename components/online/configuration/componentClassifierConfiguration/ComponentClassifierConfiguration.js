@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
 import { Select, Icon } from 'antd';
+import { components } from '../../../../config/config';
 import {
     fetchComponentClassifiers,
     deleteComponentClassifier,
@@ -24,7 +25,7 @@ const Editor = dynamic(
 );
 
 class ComponentClassifierConfiguration extends Component {
-    state = { component: 'castor', status_selected: 'GOOD' };
+    state = { component: 'cms', status_selected: 'GOOD' };
     componentDidMount() {
         this.props.fetchComponentClassifiers(this.state.component);
     }
@@ -140,56 +141,9 @@ class ComponentClassifierConfiguration extends Component {
                 )
             }
         ];
-        const components_options = [
-            <Option key="castor" value="castor">
-                castor
-            </Option>,
-            <Option key="cms" value="cms">
-                cms
-            </Option>,
-            <Option key="csc" value="csc">
-                csc
-            </Option>,
-            <Option key="ctpps" value="ctpps">
-                ctpps
-            </Option>,
-            <Option key="dt" value="dt">
-                dt
-            </Option>,
-            <Option key="ecal" value="ecal">
-                ecal
-            </Option>,
-            <Option key="es" value="es">
-                es
-            </Option>,
-            <Option key="hcal" value="hcal">
-                hcal
-            </Option>,
-            <Option key="hlt" value="hlt">
-                hlt
-            </Option>,
-            <Option key="l1t" value="l1t">
-                l1t
-            </Option>,
-            <Option key="l1tcalo" value="l1tcalo">
-                l1tcalo
-            </Option>,
-            <Option key="l1tmu" value="l1tmu">
-                l1t
-            </Option>,
-            <Option key="lumi" value="lumi">
-                lumi
-            </Option>,
-            <Option key="pix" value="pix">
-                pix
-            </Option>,
-            <Option key="rpc" value="rpc">
-                rpc
-            </Option>,
-            <Option key="strip" value="strip">
-                strip
-            </Option>
-        ];
+        const components_options = components.map(component => (
+            <Option key={component}>{component}</Option>
+        ));
         return (
             <div>
                 <label htmlFor="status_select">Component:</label>

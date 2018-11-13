@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import Swal from 'sweetalert2';
 import { Select, Icon } from 'antd';
+import { offline_column_structure } from '../../../../config/config';
 import {
-    fetchDatasetClassifier,
+    fetchDatasetClassifiers,
     editDatasetClassifier
 } from '../../../../ducks/offline/classifiers/dataset';
 import {
@@ -22,13 +23,21 @@ const Editor = dynamic(
 );
 
 class DatasetClassifierConfiguration extends Component {
+    state = { workspace: 'global', classifiers: {} };
     async componentDidMount() {
-        const { fetchDatasetClassifier, editClassifierIntent } = this.props;
-        const classifier = await fetchDatasetClassifier();
-        classifier.classifier = this.getDisplayedClassifier(
-            classifier.classifier
+        const { fetchDatasetClassifiers, editClassifierIntent } = this.props;
+        const classifiers = await fetchDatasetClassifiers();
+        console.log(classifiers);
+        const classifiers_object = {};
+        classifiers.forEach(classifier => {
+            classifiers_object[classifier.workspace] = classifier;
+        });
+        const displayed_classifier = classifiers_object[this.state.workspace];
+        displayed_classifier.classifier = this.getDisplayedClassifier(
+            displayed_classifier.classifier
         );
-        editClassifierIntent(classifier);
+        this.setState({ ...this.state, classifiers: classifiers_object });
+        editClassifierIntent(displayed_classifier);
     }
 
     getDisplayedClassifier = classifier => {
@@ -45,16 +54,56 @@ class DatasetClassifierConfiguration extends Component {
         return classifier;
     };
 
+    changeWorkspaceSelector = workspace => {
+        const displayed_classifier = this.state.classifiers[workspace];
+        displayed_classifier.classifier = this.getDisplayedClassifier(
+            displayed_classifier.classifier
+        );
+        this.props.editClassifierIntent(displayed_classifier);
+        this.setState({ ...this.state, workspace });
+    };
+
     render() {
-        const { editDatasetClassifier } = this.props;
+        const {
+            editDatasetClassifier,
+            editClassifierIntent,
+            changeJsonEditorValue,
+            dataset_classifiers
+        } = this.props;
+        const { workspace } = this.state;
+        const workspaces = [];
+        const classifiers = this.state.classifiers;
+        for (const [workspace, val] of Object.entries(classifiers)) {
+            workspaces.push(<Option key={workspace}>{workspace}</Option>);
+        }
         return (
             <div>
-                <p>Current Dataset Classifier criteria:</p>
+                &nbsp;
+                <p>
+                    Whenever a dataset appears in DQM GUI, it will run all the
+                    dataset's workspace classifiers' to check if the run is
+                    significant to the respective workspace:
+                </p>
+                <p>
+                    If the run is significant to the respective workspace it
+                    will appear in the editable list
+                </p>
+                <label htmlFor="workspace_select">Workspace: &nbsp;</label>
+                {workspaces.length && (
+                    <Select
+                        name=""
+                        id="workspace_select"
+                        defaultValue={workspace}
+                        onChange={this.changeWorkspaceSelector}
+                    >
+                        {workspaces}
+                    </Select>
+                )}
                 <Editor
                     show_cancel={false}
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
                     editClassifier={async valid_js_object => {
-                        await editDatasetClassifier(valid_js_object);
+                        await editDatasetClassifier(valid_js_object, workspace);
                         await Swal(
                             `Dataset classifier edited successfully`,
                             '',
@@ -75,7 +124,7 @@ const mapStateToProps = state => {
 export default connect(
     mapStateToProps,
     {
-        fetchDatasetClassifier,
+        fetchDatasetClassifiers,
         editDatasetClassifier,
         editClassifierIntent,
         changeJsonEditorValue

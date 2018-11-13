@@ -11,15 +11,15 @@ class ManageDataset extends Component {
         const { dataset } = this.props;
         console.log(dataset);
         return (
-            <Collapse defaultActiveKey={['2']}>
+            <Collapse defaultActiveKey={['3']}>
                 {/* <Panel key="1" header="Run info">
                     <p>Run info</p>
                 </Panel> */}
-                <Panel key="2" header="Edit dataset">
-                    <EditDataset dataset={dataset} />
-                </Panel>
-                <Panel key="3" header="Run History">
+                <Panel key="2" header="Run History">
                     <History dataset={dataset} />
+                </Panel>
+                <Panel key="3" header="Edit dataset">
+                    <EditDataset dataset={dataset} />
                 </Panel>
             </Collapse>
         );

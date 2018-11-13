@@ -8,13 +8,25 @@ class History extends Component {
     render() {
         const { dataset, workspace } = this.props;
         let dates = {};
+        // MARK OF ONLINE TO OFFLINE MOMENT:
+        // When the first global state was entered into a dataset, is when it first was created, therefore it marks the point in time:
+        const moment_run_turn_into_dataset =
+            dataset.global_state.history.length > 0
+                ? dataset.global_state.history[0].when
+                : dataset.global_state.when;
+
         for (const [key, val] of Object.entries(dataset)) {
             if (val) {
                 const history = val.history;
                 if (Array.isArray(history)) {
-                    // Add local value
+                    // Add local value (not the history but the current value:)
                     val[key] = { ...val };
                     const { when } = val;
+                    val.value_comes_from_online = false;
+                    if (when < moment_run_turn_into_dataset) {
+                        // If the date is prior to when the run turn into datset, it comes from ONLINE RUN:
+                        val.value_comes_from_online = true;
+                    }
                     if (dates[when]) {
                         dates[when] = dates[when].concat(val);
                     } else {
@@ -24,6 +36,11 @@ class History extends Component {
                     history.forEach(change => {
                         change[key] = { ...change };
                         const { when } = change;
+                        change.value_comes_from_online = false;
+                        if (when < moment_run_turn_into_dataset) {
+                            // If the date is prior to when the run turn into datset, it comes from ONLINE RUN:
+                            change.value_comes_from_online = true;
+                        }
                         if (dates[when]) {
                             dates[when] = dates[when].concat(change);
                         } else {
@@ -44,6 +61,7 @@ class History extends Component {
         }
         // Sort timeline by date:
         timeline.sort((a, b) => a.when - b.when);
+        console.log(timeline);
         let columns = [
             {
                 Header: 'Time',
@@ -258,13 +276,25 @@ class History extends Component {
         return (
             <div>
                 <h4>
-                    History - Changes in the dataset as time progresses down
+                    History - Changes in the dataset as time progresses down.{' '}
+                    <br />
+                    Changes in Yellow mean they were done in ONLINE and they
+                    belong to the run (they are shared across all datasets that
+                    belong to the same run)
                 </h4>
                 <ReactTable
                     columns={columns}
                     data={timeline}
                     defaultPageSize={20}
                     className="-striped -highlight"
+                    getTrProps={(state, rowInfo) => {
+                        if (rowInfo) {
+                            if (rowInfo.original.value_comes_from_online) {
+                                return { style: { background: 'yellow' } };
+                            }
+                        }
+                        return {};
+                    }}
                 />
             </div>
         );

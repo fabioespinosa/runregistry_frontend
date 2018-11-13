@@ -29,29 +29,34 @@ const column_filter_description = {
     boolean: 'true, false'
 };
 const column_types = {
+    'hlt_key.value': 'string',
     'class.value': 'string',
     run_number: 'integer',
     class: 'string',
     significant: 'boolean',
     'state.value': 'string',
+    b_field: 'integer',
     start_time: 'date',
     hlt_key: 'string',
     duration: 'integer',
     clock_type: 'string',
     component: 'component'
 };
+const defaultPageSize = 25;
+let local_sortings = [];
 
 class RunTable extends Component {
-    removeFilters = () => {
-        // Navigate entirely to a route without filters
-        let { asPath } = this.props.router;
-        if (asPath.includes('?')) {
-            asPath = asPath.split('?')[0];
-        }
-        window.location.href = `${window.location.origin}${asPath}`;
-    };
+    // First time page loads, table grabs filter from query url, then goes and queries them:
+    async componentDidMount() {
+        let { url_filter } = this.props.dataset_table;
+        const renamed_filters = rename_triplets(url_filter, true);
+        const filters = formatFilters(renamed_filters);
+        await this.props.filterDatasets(defaultPageSize, 0, [], filters);
+    }
+    // When a user filters the table, the filters are persisted in the url string, this method takes care of that:
     applyFiltersToUrl = filters => {
         const object_filter = {};
+        // Turn array filter into object:
         filters.forEach(filter => {
             object_filter[filter.id] = filter.value;
         });
@@ -61,48 +66,72 @@ class RunTable extends Component {
             pathname = pathname.split('?')[0];
             asPath = asPath.split('?')[0];
         }
+        // Change filters in redux and in route:
         this.props.changeFilters(filters, object_filter);
         Router.push(`${pathname}?${query}`, `${asPath}?${query}`, {
             shallow: true
         });
         return filters;
     };
-    fetchData = async (table, instance) => {
-        // debugger;
-        let { url_filter } = this.props.dataset_table;
-        if (table.filtered.length > 0) {
-            url_filter = this.applyFiltersToUrl(table.filtered);
-        }
-        const renamed_sortings = rename_triplets(table.sorted, false);
-        const renamed_filters = rename_triplets(url_filter, true);
-        const sortings = formatSortings(renamed_sortings);
-        const filters = formatFilters(renamed_filters);
-        await this.props
-            .filterDatasets(table.pageSize, table.page, sortings, filters)
-            .catch(err => {
-                console.log(err);
-                console.log(err.message);
-                if (err.response) {
-                    // Successfully went to the server:
-                    console.log(err.response.data.err);
-                }
-            });
+    // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
+    filterTable = async (filters, page, pageSize) => {
+        this.applyFiltersToUrl(filters);
+        const renamed_filters = rename_triplets(filters, true);
+        const formated_filters = formatFilters(renamed_filters);
+        await this.props.filterDatasets(
+            pageSize || defaultPageSize,
+            page,
+            [],
+            formated_filters
+        );
     };
+
+    // Navigate entirely to a route without filters (when clicking remove filters)
+    removeFilters = () => {
+        let { asPath } = this.props.router;
+        if (asPath.includes('?')) {
+            asPath = asPath.split('?')[0];
+        }
+        window.location.href = `${window.location.origin}${asPath}`;
+    };
+
+    // When a user sorts by any field, we want to preserve the filters:
+    sortTable = async (sortings, page, pageSize) => {
+        let { url_filter } = this.props.dataset_table;
+        const renamed_filters = rename_triplets(url_filter, true);
+        const formated_filters = formatFilters(renamed_filters);
+        const renamed_sortings = rename_triplets(sortings, false);
+        const formated_sortings = formatSortings(renamed_sortings);
+        await this.props.filterDatasets(
+            pageSize || defaultPageSize,
+            page,
+            formated_sortings,
+            formated_filters
+        );
+    };
+    onPageChange = async page => {
+        this.sortTable(local_sortings, page);
+    };
+    onPageSizeChange = async (newSize, page) => {
+        this.sortTable(local_sortings, page, newSize);
+    };
+
     render() {
         const {
             filterable,
             workspace,
             dataset_table,
+            moveDataset,
             showManageDatasetModal,
             showLumisectionModal
         } = this.props;
         const { datasets, pages, loading, filter, filters } = dataset_table;
-        console.log(datasets);
         let columns = [
             {
                 Header: 'Run Number',
                 accessor: 'run_number',
                 maxWidth: 90,
+                resizable: false,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center', width: '100%' }}>
                         <a onClick={() => showManageDatasetModal(original)}>
@@ -111,11 +140,7 @@ class RunTable extends Component {
                     </div>
                 )
             },
-            {
-                Header: 'Dataset Name',
-                accessor: 'name',
-                maxWidth: 250
-            },
+            { Header: 'Dataset Name', accessor: 'name', maxWidth: 250 },
             {
                 Header: 'Class',
                 accessor: 'class',
@@ -132,7 +157,9 @@ class RunTable extends Component {
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
-                        {original.state.value === 'OPEN' && (
+                        {original[`${workspace.toLowerCase()}_state`][
+                            'value'
+                        ] === 'OPEN' && (
                             <span>
                                 <a
                                     onClick={() =>
@@ -172,10 +199,11 @@ class RunTable extends Component {
                 )
             },
             {
-                Header: 'State',
+                Header: `${workspace} State`,
                 id: 'state',
-                accessor: 'state',
-                maxWidth: 200,
+                accessor: `${workspace.toLowerCase()}_state`,
+                minWidth: 145,
+                maxWidth: 145,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center' }}>
                         <span
@@ -194,28 +222,33 @@ class RunTable extends Component {
                         {' / '}
                         <a
                             onClick={async () => {
-                                const options = {
+                                let options = {
                                     OPEN: 'To OPEN',
                                     SIGNOFF: 'to SIGNOFF',
                                     COMPLETED: 'to COMPLETED'
                                 };
+
+                                if (value.value === 'waiting dqm gui') {
+                                    options = { OPEN: 'To OPEN' };
+                                }
                                 delete options[value.value];
                                 const { value: state } = await Swal({
-                                    title: `Move run ${
-                                        original.run_number
-                                    } to...`,
+                                    title: `Move dataset ${
+                                        original.name
+                                    } of run ${original.run_number} to...`,
                                     input: 'select',
                                     inputOptions: options,
                                     showCancelButton: true,
                                     reverseButtons: true
                                 });
                                 if (state) {
-                                    await this.props.moveDataset(
-                                        original,
+                                    await moveDataset(
+                                        original.id,
+                                        workspace.toLowerCase(),
                                         state
                                     );
                                     await Swal(
-                                        `Run ${
+                                        `Dataset ${original.name} of run ${
                                             original.run_number
                                         } Moved to ${state}`,
                                         '',
@@ -229,29 +262,29 @@ class RunTable extends Component {
                     </div>
                 )
             },
-            { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 },
-            // {
-            //     Header: 'Hlt Key Description',
-            //     accessor: 'hlt_key'
-            // },
-            {
-                Header: 'GUI',
-                filterable: false,
-                maxWidth: 50,
-                Cell: ({ original }) => (
-                    <div style={{ textAlign: 'center' }}>
-                        <a
-                            target="_blank"
-                            href={`https://cmsweb.cern.ch/dqm/offline/start?runnr=${
-                                original.run_number
-                            };sampletype=offline_data;workspace=Summary`}
-                        >
-                            GUI
-                        </a>
-                    </div>
-                )
-            }
+            { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 }
         ];
+        // {
+        //     Header: 'Hlt Key Description',
+        //     accessor: 'hlt_key'
+        // },
+        // {
+        //     Header: 'GUI',
+        //     filterable: false,
+        //     maxWidth: 50,
+        //     Cell: ({ original }) => (
+        //         <div style={{ textAlign: 'center' }}>
+        //             <a
+        //                 target="_blank"
+        //                 href={`https://cmsweb.cern.ch/dqm/offline/start?runnr=${
+        //                     original.run_number
+        //                 };sampletype=offline_data;workspace=Summary`}
+        //             >
+        //                 GUI
+        //             </a>
+        //         </div>
+        //     )
+        // }
 
         // Put components in format Header: component
         let offline_columns_composed = offline_columns
@@ -484,7 +517,9 @@ class RunTable extends Component {
             <div>
                 <ManageDatasetModal />
                 <LumisectionModal />
-                Hold <i>shift</i> for multiple column sorting
+                Hold <i>shift</i> for multiple column sorting. <br />A dataset
+                must appear in DQM GUI for it to be editable (although it can be
+                moved manually by clicking 'move').
                 {filter && (
                     <div
                         style={{
@@ -517,12 +552,24 @@ class RunTable extends Component {
                     loading={
                         loading // Display the total number of pages
                     }
-                    onFetchData={
-                        this.fetchData // Display the loading overlay when we need it
+                    onPageChange={page => {
+                        this.onPageChange(page);
+                    }}
+                    onPageSizeChange={(pageSize, page) =>
+                        this.onPageSizeChange(pageSize, page)
                     }
+                    onFilteredChange={(filtered, column, table) => {
+                        // 0 is for first page
+                        this.filterTable(filtered, 0);
+                    }}
+                    onSortedChange={sortings => {
+                        local_sortings = sortings;
+                        // 0 is for first page
+                        this.sortTable(sortings, 0);
+                    }}
                     filterable={filterable}
                     defaultPageSize={
-                        25 // Request new data when things change
+                        defaultPageSize // Request new data when things change
                     }
                     className="-striped -highlight"
                 />
@@ -548,26 +595,25 @@ const mapStateToProps = state => {
 };
 
 // SQL Understands a dot syntax for JSONB values (in this case triplets), they are transformed to this syntax in this function
+// filtering is true if the user is trying to filter, not to sort
 const rename_triplets = (original_criteria, filtering) => {
     return original_criteria.map(filter => {
         const new_filter = { ...filter };
         if (
             filter.id === 'state' ||
             filter.id === 'significant' ||
-            filter.id === 'class'
+            filter.id === 'class' ||
+            filter.id === 'hlt_key' ||
+            filter.id === 'hlt_physics_counter' ||
+            filter.id === 'appeared_in'
         ) {
             new_filter.id = `${filter.id}.value`;
-            // If its just sorting no need for upper case
+            // If its just sorting no need for upper case, but if its filtering yes (because in back end they are stored uppercase):
             if (filtering && filter.id === 'state') {
                 new_filter.value = filter.value.toUpperCase();
             }
-        } else if (
-            filter.id === 'run_number' ||
-            filter.id === 'createdAt' ||
-            filter.id === 'name'
-        ) {
-        } else {
-            // Must be a triplet:
+        }
+        if (filter.id.includes('_triplet')) {
             new_filter.id = `${filter.id}.status`;
             if (filtering) {
                 new_filter.value = filter.value.toUpperCase();

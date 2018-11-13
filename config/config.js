@@ -35,6 +35,7 @@ exports.components = [
     'cms',
     'castor',
     'csc',
+    'ctpps',
     'dt',
     'ecal',
     'es',
@@ -45,8 +46,7 @@ exports.components = [
     'lumi',
     'pix',
     'rpc',
-    'strip',
-    'ctpps'
+    'strip'
 ];
 
 const offline_column_structure = {
@@ -99,7 +99,6 @@ const offline_column_structure = {
     hlt: [
         'bjets',
         'electrons',
-        'hlt_global',
         'jetmet',
         'muons',
         'photons',
@@ -136,5 +135,5 @@ for (const [key, val] of Object.entries(offline_column_structure)) {
         columns.push(`${key}_${sub_column}`);
     });
 }
-
+exports.offline_column_structure = offline_column_structure;
 exports.offline_columns = columns;

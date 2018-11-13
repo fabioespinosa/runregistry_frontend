@@ -60,9 +60,15 @@ class ClassifierEditor extends Component {
                                 : 'Adding new classifier'}
                         </h3>
                         <br />
-                        {children}
-                        <br />
-                        <br />
+                        {children ? (
+                            <div>
+                                {children}
+                                <br />
+                            </div>
+                        ) : (
+                            <div />
+                        )}
+
                         <TextEditor
                             onChange={this.onEditorChange}
                             value={json_editor_value}

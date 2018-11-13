@@ -45,11 +45,12 @@ export const changeFilters = (filter_array, filters = {}) => ({
 
 export const filterDatasets = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
+        const workspace = getState().offline.workspace.workspace.toLowerCase();
         const dataset_endpoint = getState().offline.ui.show_waiting_list
-            ? 'datasets_filtered_ordered'
-            : 'signoff_runs_filtered_ordered';
+            ? 'waiting_list'
+            : 'editable';
         const { data: datasets } = await axios.post(
-            `${api_url}/${dataset_endpoint}/${page}`,
+            `${api_url}/datasets/${workspace}/${dataset_endpoint}/${page}/`,
             { page_size, sortings, filter: filtered },
             auth(getState)
         );
@@ -77,6 +78,20 @@ export const filterDatasets = (page_size, page, sortings, filtered) =>
 //         );
 //         dispatch({ type: FETCH_ALL_DATASETS, payload: datasets });
 //     });
+
+export const moveDataset = (id_dataset, workspace, state) =>
+    error_handler(async (dispatch, getState) => {
+        const { data: dataset } = await axios.post(
+            `${api_url}/datasets/move_dataset`,
+            {
+                id_dataset,
+                workspace,
+                state
+            },
+            auth(getState)
+        );
+        dispatch({ type: EDIT_DATASET, payload: dataset });
+    });
 
 export const editDataset = (id_dataset, components) =>
     error_handler(async (dispatch, getState) => {

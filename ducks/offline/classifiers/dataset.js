@@ -2,26 +2,23 @@ import axios from 'axios';
 import { api_url } from '../../../config/config';
 import { error_handler } from '../../../utils/error_handlers';
 import auth from '../../../auth/auth';
-import stringify from 'json-stringify-pretty-compact';
-import { editClassifierIntent } from '../../classifier_editor';
 const FETCH_DATASET_CLASSIFIER = 'FETCH_DATASET_CLASSIFIER-OFFLINE';
 const EDIT_DATASET_CLASSIFIER = 'EDIT_DATASET_CLASSIFIER-OFFLINE';
 
-export const fetchDatasetClassifier = () =>
+export const fetchDatasetClassifiers = () =>
     error_handler(async dispatch => {
         const { data: classifiers } = await axios.get(
             `${api_url}/classifiers/offline_dataset`
         );
-        const classifier = classifiers[0];
-        dispatch({ type: FETCH_DATASET_CLASSIFIER, payload: classifier });
-        return classifier;
+        dispatch({ type: FETCH_DATASET_CLASSIFIER, payload: classifiers });
+        return classifiers;
     });
 
-export const editDatasetClassifier = (new_classifier, class_selected) =>
+export const editDatasetClassifier = (new_classifier, workspace) =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.put(
             `${api_url}/classifiers/offline_dataset/${new_classifier.id}`,
-            { ...new_classifier, class: class_selected },
+            { ...new_classifier, workspace },
             auth(getState)
         );
         dispatch({
