@@ -161,6 +161,9 @@ class EditRun extends Component {
                                                             <option value="EXCLUDED">
                                                                 EXCLUDED
                                                             </option>
+                                                            <option value="NOTSET">
+                                                                NOTSET
+                                                            </option>
                                                         </Field>
                                                     </td>
                                                     <td className="cause_dropdown">

@@ -97,11 +97,23 @@ class EditDataset extends Component {
                                                                 component="select"
                                                                 name={`${component}>status`}
                                                             >
+                                                                <option value="">
+                                                                    -----
+                                                                </option>
                                                                 <option value="GOOD">
                                                                     GOOD
                                                                 </option>
                                                                 <option value="BAD">
                                                                     BAD
+                                                                </option>
+                                                                <option value="STANDBY">
+                                                                    STANDBY
+                                                                </option>
+                                                                <option value="EXCLUDED">
+                                                                    EXCLUDED
+                                                                </option>
+                                                                <option value="NOTSET">
+                                                                    NOTSET
                                                                 </option>
                                                             </Field>
                                                         </td>
