@@ -55,8 +55,6 @@ class EditDataset extends Component {
                                         [triplet_key]: val
                                     };
                                 }
-                                console.log(values);
-                                console.log(components_triplets);
                                 const { run_number, name } = dataset;
                                 await editDataset(
                                     `${run_number}_${name}`,
@@ -92,7 +90,7 @@ class EditDataset extends Component {
                                             {offline_columns_composed.map(
                                                 component => (
                                                     <tr key={component}>
-                                                         <td>{component}</td>
+                                                        <td>{component}</td>
                                                         <td className="status_dropdown">
                                                             <Field
                                                                 key={component}

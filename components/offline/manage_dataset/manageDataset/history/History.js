@@ -81,7 +81,20 @@ class History extends Component {
                     );
                 }
             },
-            { Header: 'User', accessor: 'by', minWidth: 200 },
+            {
+                Header: 'User',
+                accessor: 'by',
+                minWidth: 200,
+                Cell: ({ value }) => (
+                    <div>
+                        {value.startsWith('auto') ? (
+                            <span>{value}</span>
+                        ) : (
+                            <span style={{ color: 'blue' }}>{value}</span>
+                        )}
+                    </div>
+                )
+            },
             {
                 Header: 'Class',
                 accessor: 'class',
@@ -114,8 +127,8 @@ class History extends Component {
                 }
             },
             {
-                Header: 'State',
-                accessor: 'state',
+                Header: `${workspace} State`,
+                accessor: `${workspace.toLowerCase()}_state`,
                 Cell: ({ original, value }) => {
                     if (value) {
                         return (
