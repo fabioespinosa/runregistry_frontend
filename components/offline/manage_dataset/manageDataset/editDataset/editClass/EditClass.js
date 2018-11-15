@@ -41,6 +41,7 @@ class EditClass extends Component {
                                     }
                                     name="class"
                                     type="text"
+                                    disabled
                                 />
                                 <Button
                                     style={{ marginRight: '10px' }}

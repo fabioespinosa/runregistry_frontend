@@ -15,7 +15,7 @@ class ManageDataset extends Component {
                 {/* <Panel key="1" header="Run info">
                     <p>Run info</p>
                 </Panel> */}
-                <Panel key="2" header="Run History">
+                <Panel key="2" header="Dataset History">
                     <History dataset={dataset} />
                 </Panel>
                 <Panel key="3" header="Edit dataset">

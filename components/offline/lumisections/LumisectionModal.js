@@ -16,7 +16,9 @@ class LumisectionModal extends Component {
         return (
             <div>
                 <Modal
-                    title={`Lumisections of run # ${dataset.run_number}`}
+                    title={`Lumisections of dataset ${dataset.name} of run # ${
+                        dataset.run_number
+                    }`}
                     visible={manage_dataset_modal_visible}
                     onOk={hideLumisectionModal}
                     onCancel={

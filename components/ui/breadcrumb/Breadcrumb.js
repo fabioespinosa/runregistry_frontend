@@ -41,8 +41,7 @@ class BreadcrumbCmp extends Component {
             onClick={({ key }) => this.props.showOfflineConfigurationModal(key)}
         >
             <Menu.Item key="dataset_classifiers">Dataset Classifiers</Menu.Item>
-            <Menu.Item key="class_classifiers">Run Class Classifiers</Menu.Item>
-            <Menu.Item key="component_classifiers">
+            <Menu.Item key="dataset_component_classifiers">
                 Component Classifiers
             </Menu.Item>
             <Menu.Item key="column_configuration">Manage Columns</Menu.Item>

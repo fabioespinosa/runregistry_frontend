@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
-import { Icon } from 'antd';
+import { Icon, Divider } from 'antd';
 import EditLumisections from './editLumisections/EditLumisections';
 // import {components} from '../../../../config/config';
 import { fetchLumisectionRanges } from '../../../../ducks/offline/lumisections';
 
-const attributes_required = [
+const ls_attributes = [
     'beam1_present',
     'beam1_stable',
     'beam2_present',
     'beam2_stable',
     'bpix_ready',
     'castor_ready',
+    'cms_infrastructure',
     'cms_active',
     'cscm_ready',
     'cscp_ready',
@@ -48,7 +49,7 @@ class Lumisections extends Component {
     }
 
     render() {
-        const { lumisections } = this.props;
+        const { lumisections, dataset, workspace } = this.props;
         let columns = [
             {
                 Header: 'Run Number',
@@ -82,7 +83,7 @@ class Lumisections extends Component {
                 }
             }
         ];
-        attributes_required.forEach(attribute => {
+        ls_attributes.forEach(attribute => {
             columns.push({
                 Header: attribute,
                 accessor: attribute,
@@ -100,10 +101,24 @@ class Lumisections extends Component {
                 )
             });
         });
-
+        console.log(workspace, dataset);
         return (
             <div>
-                <EditLumisections dataset={this.props.dataset} />
+                {dataset[`${workspace.toLowerCase()}_state`].value ===
+                'OPEN' ? (
+                    <EditLumisections
+                        dataset={dataset}
+                        ls_attributes={ls_attributes}
+                    />
+                ) : (
+                    <Divider>
+                        To edit the Lumisections of this dataset in this
+                        workspace, it must be marked OPEN for this workspace{' '}
+                        <strong style={{ textDecoration: 'underline' }}>
+                            ({workspace})
+                        </strong>
+                    </Divider>
+                )}
                 <ReactTable
                     data={lumisections}
                     columns={columns}
@@ -116,7 +131,10 @@ class Lumisections extends Component {
 }
 
 const mapStateToProps = state => {
-    return { lumisections: state.offline.lumisections };
+    return {
+        lumisections: state.offline.lumisections,
+        workspace: state.offline.workspace.workspace
+    };
 };
 
 export default connect(

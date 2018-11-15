@@ -61,28 +61,10 @@ export const filterDatasets = (page_size, page, sortings, filtered) =>
         });
     });
 
-// export const fetchSignificantDatasets = () =>
-//     error_handler(async dispatch => {
-//         dispatch({ type: TABLE_LOADING });
-//         const { data: datasets } = await axios.get(
-//             `${api_url}/significant_datasets_paginated/1`
-//         );
-//         dispatch({ type: FETCH_SIGNIFICANT_DATASETS, payload: datasets });
-//     });
-
-// export const fetchAllDatasets = () =>
-//     error_handler(async dispatch => {
-//         dispatch({ type: TABLE_LOADING });
-//         const { data: datasets } = await axios.get(
-//             `${api_url}/datasets_paginated/1`
-//         );
-//         dispatch({ type: FETCH_ALL_DATASETS, payload: datasets });
-//     });
-
 export const moveDataset = (id_dataset, workspace, state) =>
     error_handler(async (dispatch, getState) => {
         const { data: dataset } = await axios.post(
-            `${api_url}/datasets/move_dataset`,
+            `${api_url}/datasets/${workspace}/move_dataset`,
             {
                 id_dataset,
                 workspace,
@@ -93,10 +75,10 @@ export const moveDataset = (id_dataset, workspace, state) =>
         dispatch({ type: EDIT_DATASET, payload: dataset });
     });
 
-export const editDataset = (id_dataset, components) =>
+export const editDataset = (id_dataset, workspace, components) =>
     error_handler(async (dispatch, getState) => {
         const { data: dataset } = await axios.put(
-            `${api_url}/datasets`,
+            `${api_url}/datasets/${workspace}`,
             { ...components, id_dataset },
             auth(getState)
         );

@@ -8,7 +8,6 @@ import { offline_columns } from '../../../config/config';
 
 import {
     moveDataset,
-    markSignificant,
     filterDatasets,
     changeFilters
 } from '../../../ducks/offline/datasets';
@@ -157,20 +156,12 @@ class RunTable extends Component {
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
-                        {original[`${workspace.toLowerCase()}_state`][
-                            'value'
-                        ] === 'OPEN' && (
-                            <span>
-                                <a
-                                    onClick={() =>
-                                        showManageDatasetModal(original)
-                                    }
-                                >
-                                    Manage
-                                </a>
-                                {' / '}
-                            </span>
-                        )}
+                        <span>
+                            <a onClick={() => showManageDatasetModal(original)}>
+                                Manage
+                            </a>
+                            {' / '}
+                        </span>
                         <a onClick={evt => showLumisectionModal(original)}>
                             LS
                         </a>
@@ -233,7 +224,7 @@ class RunTable extends Component {
                                 }
                                 delete options[value.value];
                                 const { value: state } = await Swal({
-                                    title: `Move dataset ${
+                                    title: `Move dataset manually ${
                                         original.name
                                     } of run ${original.run_number} to...`,
                                     input: 'select',
@@ -694,8 +685,7 @@ export default withRouter(
             showManageDatasetModal,
             showLumisectionModal,
             changeFilters,
-            moveDataset,
-            markSignificant
+            moveDataset
         }
     )(RunTable)
 );

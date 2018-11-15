@@ -9,14 +9,14 @@ const Option = Select.Option;
 
 class EditLumisections extends Component {
     render() {
-        const { dataset } = this.props;
+        const { dataset, ls_attributes, workspace } = this.props;
         return (
             <div className="edit_lumisections">
                 <Divider>Edit</Divider>
                 <Formik
                     onSubmit={async values => {
                         values.id_dataset = dataset.id;
-                        await this.props.editLumisections(values);
+                        await this.props.editLumisections(values, workspace);
                         await Swal(
                             `Dataset LS edited successfully`,
                             '',
@@ -50,12 +50,14 @@ class EditLumisections extends Component {
                                 onChange={value => setFieldValue('bit', value)}
                                 style={{ width: 220, marginRight: '10px' }}
                             >
-                                <Option value="beam1_present">
-                                    beam1_present
-                                </Option>
-                                <Option value="beam2_present">
-                                    beam2_present
-                                </Option>
+                                {ls_attributes.map(ls_attribute => (
+                                    <Option
+                                        key={ls_attribute}
+                                        value={ls_attribute}
+                                    >
+                                        {ls_attribute}
+                                    </Option>
+                                ))}
                             </Select>
                             <label htmlFor="" className="label">
                                 Action:
@@ -90,7 +92,13 @@ class EditLumisections extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        workspace: state.offline.workspace.workspace
+    };
+};
+
 export default connect(
-    null,
+    mapStateToProps,
     { editLumisections }
 )(EditLumisections);

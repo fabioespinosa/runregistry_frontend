@@ -16,10 +16,10 @@ export const fetchLumisectionRanges = id_dataset =>
         dispatch({ type: FETCH_LUMISECTION_RANGES, payload: lumisections });
     });
 
-export const editLumisections = edited_lumisections =>
+export const editLumisections = (edited_lumisections, workspace) =>
     error_handler(async (dispatch, getState) => {
         const { data: lumisections } = await axios.put(
-            `${api_url}/dataset_lumisections`,
+            `${api_url}/dataset_lumisections/${workspace}`,
             edited_lumisections,
             auth(getState)
         );

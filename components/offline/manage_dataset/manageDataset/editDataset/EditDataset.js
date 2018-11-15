@@ -58,6 +58,7 @@ class EditDataset extends Component {
                                 const { run_number, name } = dataset;
                                 await editDataset(
                                     `${run_number}_${name}`,
+                                    workspace,
                                     components_triplets
                                 );
                                 await Swal(
@@ -172,8 +173,7 @@ class EditDataset extends Component {
                     </div>
                 ) : (
                     <div>
-                        In order to edit a dataset's class or change component's
-                        status, the dataset's state{' '}
+                        In order to edit a dataset, the dataset's state{' '}
                         <i style={{ textDecoration: 'underline' }}>
                             must be moved to OPEN
                         </i>
