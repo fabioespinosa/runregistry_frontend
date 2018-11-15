@@ -106,7 +106,6 @@ class Lumisections extends Component {
                 <ReactTable
                     data={lumisections}
                     columns={columns}
-                    manual
                     defaultPageSize={15}
                 />
             </div>
