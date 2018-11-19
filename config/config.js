@@ -43,6 +43,7 @@ exports.components = [
     'hlt',
     'l1t',
     'l1tcalo',
+    'l1tmu',
     'lumi',
     'pix',
     'rpc',

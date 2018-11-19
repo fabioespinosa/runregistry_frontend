@@ -70,8 +70,7 @@ class TopNav extends Component {
                                 fontSize: '0.9em'
                             }}
                         >
-                            THIS IS NOT THE OFFICIAL RUN REGISTRY (YET), ALL
-                            INPUT WILL NOT BE PERSISTED
+                            USE OF BOTH RUN REGISTRIES IS MANDATORY
                         </span>
                     </Menu.Item>
                     {/* <Menu.Item key="user">

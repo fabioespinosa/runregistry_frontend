@@ -39,7 +39,9 @@ class ComponentClassifierConfiguration extends Component {
     formatClassifierCorrectly = inside_input => {
         const { status_selected } = this.state;
         const parsed_input = JSON.parse(inside_input);
-        let classifier = { if: [parsed_input, status_selected, 'BAD'] };
+        let classifier = {
+            if: [parsed_input, true, false]
+        };
         return classifier;
     };
 
