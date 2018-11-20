@@ -326,8 +326,7 @@ class RunTable extends Component {
                     }
                     return status;
                 },
-                Cell: props => {
-                    const { value } = props;
+                Cell: ({ original, value }) => {
                     return (
                         <span
                             style={{
@@ -336,72 +335,91 @@ class RunTable extends Component {
                                 textAlign: 'center'
                             }}
                         >
-                            {value === 'GOOD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'green',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        GOOD
-                                    </span>
+                            {original.significant.value ? (
+                                <div>
+                                    {value === 'GOOD' && (
+                                        <div
+                                            style={{
+                                                backgroundColor: 'green',
+                                                borderRadius: '1px'
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: 'white'
+                                                }}
+                                            >
+                                                GOOD
+                                            </span>
+                                        </div>
+                                    )}
+                                    {value === 'EXCLUDED' && (
+                                        <div
+                                            style={{
+                                                backgroundColor: 'grey',
+                                                borderRadius: '1px'
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: '0.85em'
+                                                }}
+                                            >
+                                                EXCLUDED
+                                            </span>
+                                        </div>
+                                    )}
+                                    {value === 'BAD' && (
+                                        <div
+                                            style={{
+                                                backgroundColor: 'red',
+                                                borderRadius: '1px'
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: 'white'
+                                                }}
+                                            >
+                                                BAD
+                                            </span>
+                                        </div>
+                                    )}
+                                    {value === 'STANDBY' && (
+                                        <div
+                                            style={{
+                                                backgroundColor: 'yellow',
+                                                borderRadius: '1px'
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: 'black'
+                                                }}
+                                            >
+                                                STANDBY
+                                            </span>
+                                        </div>
+                                    )}
+                                    {value === 'NOTSET' && (
+                                        <div
+                                            style={{
+                                                backgroundColor: 'white',
+                                                borderRadius: '1px'
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: 'black'
+                                                }}
+                                            >
+                                                NOTSET
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            {value === 'EXCLUDED' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'grey',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white',
-                                            fontSize: '0.85em'
-                                        }}
-                                    >
-                                        EXCLUDED
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'BAD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'red',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        BAD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'STANDBY' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'yellow',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        STANDBY
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'NOTSET' && (
+                            ) : (
                                 <div
                                     style={{
                                         backgroundColor: 'white',
@@ -411,9 +429,10 @@ class RunTable extends Component {
                                     <span
                                         style={{
                                             color: 'black'
+                                            // fontSize: '0.8em'
                                         }}
                                     >
-                                        NOTSET
+                                        INSIG
                                     </span>
                                 </div>
                             )}
