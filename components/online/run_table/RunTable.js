@@ -42,7 +42,7 @@ const column_types = {
     component: 'component'
 };
 
-const defaultPageSize = 25;
+let defaultPageSize = 25;
 let local_sortings = [];
 class RunTable extends Component {
     // First time page loads, table grabs filter from query url, then goes and queries them:
@@ -112,6 +112,7 @@ class RunTable extends Component {
         this.sortTable(local_sortings, page);
     };
     onPageSizeChange = async (newSize, page) => {
+        defaultPageSize = newSize;
         this.sortTable(local_sortings, page, newSize);
     };
 
