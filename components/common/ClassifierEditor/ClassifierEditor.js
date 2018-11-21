@@ -78,7 +78,17 @@ class ClassifierEditor extends Component {
                         <div className="classsifier_button">
                             {show_cancel !== false && (
                                 <span className="cancel_button">
-                                    <Button onClick={hideJsonEditor}>
+                                    <Button
+                                        onClick={() => {
+                                            if (
+                                                typeof this.props.onCancel ===
+                                                'function'
+                                            ) {
+                                                this.props.onCancel();
+                                            }
+                                            hideJsonEditor();
+                                        }}
+                                    >
                                         Cancel
                                     </Button>
                                 </span>

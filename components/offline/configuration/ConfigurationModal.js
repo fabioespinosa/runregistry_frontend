@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/offline/ui';
-import ClassClassifierConfiguration from './classClassifierConfiguration/ClassClassifierConfiguration';
 import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
 import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
@@ -17,8 +16,6 @@ class ConfigurationModal extends Component {
             configuration_modal_type
         } = this.props;
         const title_options = {
-            class_classifiers:
-                'Set automatic classifiers for class of run selection',
             dataset_classifiers:
                 'Set automatic classifiers for datasets considered significant',
             component_classifiers:
@@ -46,9 +43,6 @@ class ConfigurationModal extends Component {
                     maskClosable={false}
                     destroyOnClose={true}
                 >
-                    {configuration_modal_type === 'class_classifiers' && (
-                        <ClassClassifierConfiguration />
-                    )}
                     {configuration_modal_type === 'dataset_classifiers' && (
                         <DatasetClassifierConfiguration />
                     )}

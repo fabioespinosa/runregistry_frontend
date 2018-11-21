@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
-import { Select, Icon } from 'antd';
+import { Input, Select, Icon } from 'antd';
+import Swal from 'sweetalert2';
 import {
     fetchDatasetClassifiers,
     deleteDatasetClassifier,
@@ -24,7 +25,7 @@ const Editor = dynamic(
 );
 
 class DatasetClassifierConfiguration extends Component {
-    state = { class_selected: 'collisions' };
+    state = { class_selected: '', is_editing: false };
     componentDidMount() {
         this.props.fetchDatasetClassifiers();
     }
@@ -96,6 +97,10 @@ class DatasetClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
+                                this.setState({
+                                    class_selected: row.original.class,
+                                    is_editing: true
+                                });
                                 const classifier = this.getDisplayedClassifier(
                                     row.original.classifier
                                 );
@@ -114,9 +119,27 @@ class DatasetClassifierConfiguration extends Component {
                 Cell: row => (
                     <div style={{ textAlign: 'center' }}>
                         <a
-                            onClick={() =>
-                                deleteDatasetClassifier(row.original.id)
-                            }
+                            onClick={async () => {
+                                const { value } = await Swal({
+                                    type: 'warning',
+                                    title:
+                                        'Are you sure you want to delete this Dataset classifier',
+                                    text: '',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes',
+                                    reverseButtons: true
+                                });
+                                if (value) {
+                                    await deleteDatasetClassifier(
+                                        row.original.id
+                                    );
+                                    await Swal(
+                                        `Classifier deleted`,
+                                        '',
+                                        'success'
+                                    );
+                                }
+                            }}
                         >
                             Delete
                         </a>
@@ -136,30 +159,44 @@ class DatasetClassifierConfiguration extends Component {
                 />
                 <Editor
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
-                    editClassifier={valid_js_object =>
-                        editDatasetClassifier(valid_js_object, class_selected)
-                    }
+                    editClassifier={valid_js_object => {
+                        editDatasetClassifier(valid_js_object, class_selected);
+                        this.setState({
+                            is_editing: false,
+                            class_selected: ''
+                        });
+                    }}
                     newClassifier={valid_js_object =>
                         newDatasetClassifier(valid_js_object, class_selected)
                     }
+                    onCancel={() => {
+                        this.setState({ is_editing: false });
+                    }}
                 >
-                    <div>
-                        <label htmlFor="class_select">For class:</label>
-                        &nbsp;
-                        <Select
-                            name=""
-                            id="class_select"
-                            defaultValue={class_selected}
-                            onChange={value =>
-                                this.setState({ class_selected: value })
-                            }
-                        >
-                            <Option value="cosmics">cosmics</Option>
-                            <Option value="collisions">collisions</Option>
-                            <Option value="commissioning">commissioning</Option>
-                        </Select>
-                    </div>
+                    {this.state.is_editing ? (
+                        <div>
+                            Editing classifier for class{' '}
+                            <strong>{this.state.class_selected}</strong>
+                        </div>
+                    ) : (
+                        <div className="class_name_input">
+                            <Input
+                                addonBefore="New Dataset Classifier for the run's of class:"
+                                placeholder="Insert class name"
+                                onChange={evt =>
+                                    this.setState({
+                                        class_selected: evt.target.value
+                                    })
+                                }
+                            />
+                        </div>
+                    )}
                 </Editor>
+                <style jsx>{`
+                    .class_name_input {
+                        width: 500px;
+                    }
+                `}</style>
             </div>
         );
     }

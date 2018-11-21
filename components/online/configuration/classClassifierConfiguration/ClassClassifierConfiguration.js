@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Select, Icon } from 'antd';
+import { Input, InputNumber, Select, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
+import Swal from 'sweetalert2';
 import {
     fetchClassClassifiers,
     deleteClassClassifier,
@@ -24,7 +25,7 @@ const Editor = dynamic(
 );
 
 class ClassClassifierConfiguration extends Component {
-    state = { class_selected: 'collisions' };
+    state = { class_selected: '', is_editing: false };
     componentDidMount() {
         this.props.fetchClassClassifiers();
     }
@@ -36,10 +37,9 @@ class ClassClassifierConfiguration extends Component {
     }
 
     formatClassifierCorrectly = inside_input => {
-        const { class_selected } = this.state;
         const parsed_input = JSON.parse(inside_input);
         let classifier = {
-            if: [parsed_input, class_selected, 'commissioning']
+            if: [parsed_input, true, false]
         };
         return classifier;
     };
@@ -59,7 +59,7 @@ class ClassClassifierConfiguration extends Component {
             deleteClassClassifier,
             classifiers
         } = this.props;
-        const { class_selected } = this.state;
+        const { class_selected, priority } = this.state;
         const columns = [
             {
                 Header: 'Priority',
@@ -69,13 +69,9 @@ class ClassClassifierConfiguration extends Component {
             },
             {
                 Header: 'Class',
-                accessor: 'classifier',
+                accessor: 'class',
                 width: 80,
-                getProps: () => ({ style: { textAlign: 'center' } }),
-                Cell: row => {
-                    const displayed_text = this.getDisplayedClass(row.value);
-                    return <span>{displayed_text}</span>;
-                }
+                getProps: () => ({ style: { textAlign: 'center' } })
             },
 
             {
@@ -114,6 +110,11 @@ class ClassClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
+                                this.setState({
+                                    class_selected: row.original.class,
+                                    priority: row.original.priority,
+                                    is_editing: true
+                                });
                                 const classifier = this.getDisplayedClassifier(
                                     row.original.classifier
                                 );
@@ -132,9 +133,27 @@ class ClassClassifierConfiguration extends Component {
                 Cell: row => (
                     <div style={{ textAlign: 'center' }}>
                         <a
-                            onClick={() =>
-                                deleteClassClassifier(row.original.id)
-                            }
+                            onClick={async () => {
+                                const { value } = await Swal({
+                                    type: 'warning',
+                                    title:
+                                        'Are you sure you want to delete this Class classifier',
+                                    text: '',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes',
+                                    reverseButtons: true
+                                });
+                                if (value) {
+                                    await deleteClassClassifier(
+                                        row.original.id
+                                    );
+                                    await Swal(
+                                        `Classifier deleted`,
+                                        '',
+                                        'success'
+                                    );
+                                }
+                            }}
                         >
                             Delete
                         </a>
@@ -154,26 +173,69 @@ class ClassClassifierConfiguration extends Component {
                 />
                 <Editor
                     formatClassifierCorrectly={this.formatClassifierCorrectly}
-                    newClassifier={newClassClassifier}
-                    editClassifier={editClassClassifier}
+                    newClassifier={valid_js_object => {
+                        newClassClassifier(
+                            valid_js_object,
+                            class_selected,
+                            priority
+                        );
+                        this.setState({
+                            is_editing: false,
+                            class_selected: ''
+                        });
+                    }}
+                    onCancel={() => {
+                        this.setState({ is_editing: false });
+                    }}
+                    editClassifier={valid_js_object =>
+                        editClassClassifier(
+                            valid_js_object,
+                            class_selected,
+                            priority
+                        )
+                    }
                 >
-                    <div>
-                        <label htmlFor="class_select">Class:</label>
-                        &nbsp;
-                        <Select
-                            name=""
-                            id="class_select"
-                            defaultValue={class_selected}
-                            onChange={value =>
-                                this.setState({ class_selected: value })
-                            }
-                        >
-                            <Option value="cosmics">cosmics</Option>
-                            <Option value="collisions">collisions</Option>
-                            <Option value="commissioning">commissioning</Option>
-                        </Select>
-                    </div>
+                    {this.state.is_editing ? (
+                        <div>
+                            Editing classifier for class{' '}
+                            <strong>{this.state.class_selected}</strong>
+                            <br />
+                            Priority:{' '}
+                            <InputNumber
+                                min={1}
+                                onChange={value =>
+                                    this.setState({ priority: value })
+                                }
+                                value={this.state.priority}
+                            />
+                        </div>
+                    ) : (
+                        <div className="class_name_input">
+                            <Input
+                                addonBefore="For runs of class:"
+                                placeholder="Insert class name"
+                                onChange={evt =>
+                                    this.setState({
+                                        class_selected: evt.target.value
+                                    })
+                                }
+                            />
+                            Priority:{' '}
+                            <InputNumber
+                                min={1}
+                                onChange={value =>
+                                    this.setState({ priority: value })
+                                }
+                                value={this.state.priority}
+                            />
+                        </div>
+                    )}
                 </Editor>
+                <style jsx>{`
+                    .class_name_input {
+                        width: 500px;
+                    }
+                `}</style>
             </div>
         );
     }

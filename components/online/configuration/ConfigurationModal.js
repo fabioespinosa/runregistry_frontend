@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/online/ui';
+import { hideJsonEditor } from '../../../ducks/classifier_editor';
 import ClassClassifierConfiguration from './classClassifierConfiguration/ClassClassifierConfiguration';
 import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
 import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
@@ -11,6 +12,7 @@ class ConfigurationModal extends Component {
         const {
             configuration_modal_visible,
             hideConfigurationModal,
+            hideJsonEditor,
             children,
             configuration_modal_type
         } = this.props;
@@ -40,6 +42,7 @@ class ConfigurationModal extends Component {
                     width="90vw"
                     maskClosable={false}
                     destroyOnClose={true}
+                    afterClose={hideJsonEditor}
                 >
                     {configuration_modal_type === 'class_classifiers' && (
                         <ClassClassifierConfiguration />
@@ -65,5 +68,5 @@ const mapStateToProps = state => {
 };
 export default connect(
     mapStateToProps,
-    { hideConfigurationModal }
+    { hideConfigurationModal, hideJsonEditor }
 )(ConfigurationModal);

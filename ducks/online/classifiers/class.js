@@ -17,14 +17,15 @@ export const fetchClassClassifiers = () =>
         dispatch({ type: FETCH_CLASS_CLASSIFIERS, payload: classifiers });
     });
 
-export const newClassClassifier = new_classifier =>
+export const newClassClassifier = (new_classifier, class_selected, priority) =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.post(
             `${api_url}/classifiers/class`,
             {
                 classifier: new_classifier,
+                class: class_selected,
+                priority,
                 // This are for testing:
-                priority: 1,
                 enabled: true
             },
             auth(getState)
@@ -46,11 +47,11 @@ export const deleteClassClassifier = classifier_id =>
         });
     });
 
-export const editClassClassifier = new_classifier =>
+export const editClassClassifier = (new_classifier, class_selected, priority) =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.put(
             `${api_url}/classifiers/class/${new_classifier.id}`,
-            new_classifier,
+            { ...new_classifier, class: class_selected, priority },
             auth(getState)
         );
         dispatch({ type: EDIT_CLASS_CLASSIFIER, payload: classifier });

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
 import { Select, Icon } from 'antd';
+import Swal from 'sweetalert2';
 import { components } from '../../../../config/config';
 import {
     fetchComponentClassifiers,
@@ -11,6 +12,7 @@ import {
     newComponentClassifier
 } from '../../../../ducks/online/classifiers/component';
 import {
+    hideJsonEditor,
     editClassifierIntent,
     changeJsonEditorValue
 } from '../../../../ducks/classifier_editor';
@@ -25,7 +27,7 @@ const Editor = dynamic(
 );
 
 class ComponentClassifierConfiguration extends Component {
-    state = { component: 'cms', status_selected: 'GOOD' };
+    state = { component: 'cms', status_selected: 'GOOD', is_editing: false };
     componentDidMount() {
         this.props.fetchComponentClassifiers(this.state.component);
     }
@@ -46,6 +48,7 @@ class ComponentClassifierConfiguration extends Component {
     };
 
     changeComponent = component => {
+        this.props.hideJsonEditor();
         this.props.fetchComponentClassifiers(component);
         this.setState({ component });
     };
@@ -115,6 +118,10 @@ class ComponentClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
+                                this.setState({
+                                    status_selected: row.original.status,
+                                    is_editing: true
+                                });
                                 const classifier = this.getDisplayedClassifier(
                                     row.original.classifier
                                 );
@@ -133,9 +140,27 @@ class ComponentClassifierConfiguration extends Component {
                 Cell: row => (
                     <div style={{ textAlign: 'center' }}>
                         <a
-                            onClick={() =>
-                                deleteComponentClassifier(row.original.id)
-                            }
+                            onClick={async () => {
+                                const { value } = await Swal({
+                                    type: 'warning',
+                                    title:
+                                        'Are you sure you want to delete this component classifier',
+                                    text: '',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes',
+                                    reverseButtons: true
+                                });
+                                if (value) {
+                                    await deleteComponentClassifier(
+                                        row.original.id
+                                    );
+                                    await Swal(
+                                        `Classifier deleted`,
+                                        '',
+                                        'success'
+                                    );
+                                }
+                            }}
                         >
                             Delete
                         </a>
@@ -151,13 +176,14 @@ class ComponentClassifierConfiguration extends Component {
                 <label htmlFor="status_select">Component:</label>
                 &nbsp;
                 <Select
-                    name=""
                     id="component_select"
                     defaultValue={component}
                     onChange={this.changeComponent}
                 >
                     {components_options}
                 </Select>
+                <br />
+                <br />
                 <ReactTable
                     columns={columns}
                     data={classifiers}
@@ -175,20 +201,10 @@ class ComponentClassifierConfiguration extends Component {
                             component
                         )
                     }
+                    onCancel={() => this.setState({ is_editing: false })}
                 >
                     <div>
-                        <label htmlFor="component_select_create">
-                            Component:
-                        </label>
-                        &nbsp;
-                        <Select
-                            disabled
-                            name=""
-                            id="component_select_create"
-                            value={component}
-                        >
-                            {components_options}
-                        </Select>
+                        For component: <strong>{component}</strong>.
                         <label>
                             {' '}
                             (To change the component, change it above)
@@ -198,12 +214,12 @@ class ComponentClassifierConfiguration extends Component {
                         <label htmlFor="status_select">Class:</label>
                         &nbsp;
                         <Select
-                            name=""
                             id="status_select"
-                            defaultValue={status_selected}
+                            value={status_selected}
                             onChange={value =>
                                 this.setState({ status_selected: value })
                             }
+                            disabled={this.state.is_editing}
                         >
                             <Option value="GOOD">GOOD</Option>
                             <Option value="BAD">BAD</Option>
@@ -213,6 +229,11 @@ class ComponentClassifierConfiguration extends Component {
                         </Select>
                     </div>
                 </Editor>
+                <style jsx>{`
+                    .status_select {
+                        width: 500px;
+                    }
+                `}</style>
             </div>
         );
     }
@@ -226,6 +247,7 @@ const mapStateToProps = state => {
 export default connect(
     mapStateToProps,
     {
+        hideJsonEditor,
         fetchComponentClassifiers,
         deleteComponentClassifier,
         editComponentClassifier,

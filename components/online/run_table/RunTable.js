@@ -429,10 +429,9 @@ class RunTable extends Component {
                                     <span
                                         style={{
                                             color: 'black'
-                                            // fontSize: '0.8em'
                                         }}
                                     >
-                                        INSIG
+                                        INSIG.
                                     </span>
                                 </div>
                             )}
