@@ -286,7 +286,7 @@ class RunTable extends Component {
             {
                 Header: 'GUI',
                 filterable: false,
-                maxWidth: 50,
+                maxWidth: 40,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
                         <a

@@ -2,16 +2,28 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 import { Formik, Field } from 'formik';
-import { Input, Button } from 'antd';
-
+import { Select, Input, Button } from 'antd';
+import axios from 'axios';
+import { api_url } from '../../../../../config/config';
 import { editRun } from '../../.././../../ducks/online/runs';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
+const { Option, OptGroup } = Select;
 
 class EditRun extends Component {
+    state = { classes: [], not_in_the_list: false };
+    async componentDidMount() {
+        const { data: class_classifiers } = await axios.get(
+            `${api_url}/classifiers/class`
+        );
+        const classes = class_classifiers.map(classifier => classifier.class);
+        this.setState({
+            classes
+        });
+    }
     render() {
         const { run, editRun } = this.props;
-
+        const original_class = run.class.value;
         const initialValues = {};
         for (const [key, val] of Object.entries(run)) {
             if (
@@ -88,18 +100,89 @@ class EditRun extends Component {
                                         <label style={{ width: '154px' }}>
                                             <strong>Class:</strong>
                                         </label>
-                                        <TextArea
-                                            value={values['class']}
-                                            onChange={evt =>
-                                                setFieldValue(
-                                                    'class',
-                                                    evt.target.value
-                                                )
-                                            }
-                                            name="class"
-                                            type="text"
-                                            autosize
-                                        />
+                                        {this.state.not_in_the_list && (
+                                            <div>
+                                                Please write the class manually
+                                                here:
+                                                <TextArea
+                                                    value={values['class']}
+                                                    onChange={evt =>
+                                                        setFieldValue(
+                                                            'class',
+                                                            evt.target.value
+                                                        )
+                                                    }
+                                                    name="class"
+                                                    type="text"
+                                                    autosize
+                                                />
+                                                <Button
+                                                    onClick={() =>
+                                                        this.setState({
+                                                            not_in_the_list: false
+                                                        })
+                                                    }
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                        )}
+                                        {!this.state.not_in_the_list && (
+                                            <Select
+                                                value={values['class']}
+                                                onChange={value => {
+                                                    if (
+                                                        value ===
+                                                        'not_in_the_list'
+                                                    ) {
+                                                        this.setState({
+                                                            not_in_the_list: true
+                                                        });
+                                                    } else {
+                                                        setFieldValue(
+                                                            'class',
+                                                            value
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                <OptGroup label="Run possible classes:">
+                                                    {this.state.classes.map(
+                                                        current_class => (
+                                                            <Option
+                                                                key={
+                                                                    current_class
+                                                                }
+                                                                value={
+                                                                    current_class
+                                                                }
+                                                            >
+                                                                {current_class}
+                                                            </Option>
+                                                        )
+                                                    )}
+                                                </OptGroup>
+                                                <OptGroup label="Current class:">
+                                                    <Option
+                                                        key="disabled"
+                                                        disabled
+                                                    >
+                                                        {original_class}
+                                                    </Option>
+                                                </OptGroup>
+                                                <OptGroup label="Input another class:">
+                                                    <Option
+                                                        key="other"
+                                                        value="not_in_the_list"
+                                                    >
+                                                        <i>
+                                                            The class is not in
+                                                            the list
+                                                        </i>
+                                                    </Option>
+                                                </OptGroup>
+                                            </Select>
+                                        )}
                                     </div>
                                     <br />
                                     <div

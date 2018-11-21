@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Select } from 'antd';
+import { Button } from 'antd';
 
 import {
     hideJsonEditor,
@@ -9,8 +9,6 @@ import {
 } from '../../../ducks/classifier_editor';
 
 import TextEditor from './JSONEditor/JSONEditor';
-
-const { Option } = Select;
 
 class ClassifierEditor extends Component {
     onEditorChange = (value, otherValue) => {

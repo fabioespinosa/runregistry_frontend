@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Input, InputNumber, Select, Icon } from 'antd';
+import { Input, InputNumber, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
 import Swal from 'sweetalert2';
@@ -15,7 +15,6 @@ import {
     changeJsonEditorValue
 } from '../../../../ducks/classifier_editor';
 import stringify from 'json-stringify-pretty-compact';
-const { Option } = Select;
 
 const Editor = dynamic(
     import('../../../common/ClassifierEditor/ClassifierEditor'),
