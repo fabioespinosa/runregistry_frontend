@@ -133,7 +133,10 @@ class RunTable extends Component {
                 resizable: false,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center', width: '100%' }}>
-                        <a onClick={() => showManageRunModal(original)}>
+                        <a
+                            disabled={original.state.value !== 'OPEN'}
+                            onClick={() => showManageRunModal(original)}
+                        >
                             {value}
                         </a>
                     </div>
@@ -156,7 +159,10 @@ class RunTable extends Component {
                     <div style={{ textAlign: 'center' }}>
                         {/* PENDING MAKE IT SO THAT WHEN A RUN IS ONLY EDITABLE WHEN IN OPEN STATE */}
                         <span>
-                            <a onClick={() => showManageRunModal(original)}>
+                            <a
+                                disabled={original.state.value !== 'OPEN'}
+                                onClick={() => showManageRunModal(original)}
+                            >
                                 Manage
                             </a>
                             {' / '}
@@ -244,7 +250,7 @@ class RunTable extends Component {
                                             COMPLETED: 'to COMPLETED'
                                         };
                                         delete options[value.value];
-                                        const { value: state } = await Swal({
+                                        const { value: to_state } = await Swal({
                                             title: `Move run ${
                                                 original.run_number
                                             } to...`,
@@ -253,15 +259,16 @@ class RunTable extends Component {
                                             showCancelButton: true,
                                             reverseButtons: true
                                         });
-                                        if (state) {
+                                        if (to_state) {
                                             await this.props.moveRun(
                                                 original,
-                                                state
+                                                original.state.value,
+                                                to_state
                                             );
                                             await Swal(
                                                 `Run ${
                                                     original.run_number
-                                                } Moved to ${state}`,
+                                                } Moved to ${to_state}`,
                                                 '',
                                                 'success'
                                             );

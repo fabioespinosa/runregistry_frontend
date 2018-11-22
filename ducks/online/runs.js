@@ -90,11 +90,11 @@ export const markSignificant = original_run =>
         dispatch({ type: EDIT_RUN, payload: run });
     });
 
-export const moveRun = (original_run, state) =>
+export const moveRun = (original_run, from_state, to_state) =>
     error_handler(async (dispatch, getState) => {
         const { data: run } = await axios.post(
-            `${api_url}/runs/move_run`,
-            { original_run, state },
+            `${api_url}/runs/move_run/${from_state}/${to_state}`,
+            { original_run, to_state },
             auth(getState)
         );
         dispatch({ type: EDIT_RUN, payload: run });
