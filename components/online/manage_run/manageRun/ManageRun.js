@@ -19,7 +19,11 @@ class ManageRun extends Component {
                     <History run={run} />
                 </Panel>
                 <Panel key="3" header="Edit run">
-                    <EditRun run={run} />
+                    {run.state.value === 'OPEN' ? (
+                        <EditRun run={run} />
+                    ) : (
+                        <div>Run must be in state OPEN to be edited</div>
+                    )}
                 </Panel>
             </Collapse>
         );

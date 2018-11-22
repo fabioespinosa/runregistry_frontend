@@ -133,10 +133,7 @@ class RunTable extends Component {
                 resizable: false,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center', width: '100%' }}>
-                        <a
-                            disabled={original.state.value !== 'OPEN'}
-                            onClick={() => showManageRunModal(original)}
-                        >
+                        <a onClick={() => showManageRunModal(original)}>
                             {value}
                         </a>
                     </div>
@@ -159,10 +156,7 @@ class RunTable extends Component {
                     <div style={{ textAlign: 'center' }}>
                         {/* PENDING MAKE IT SO THAT WHEN A RUN IS ONLY EDITABLE WHEN IN OPEN STATE */}
                         <span>
-                            <a
-                                disabled={original.state.value !== 'OPEN'}
-                                onClick={() => showManageRunModal(original)}
-                            >
+                            <a onClick={() => showManageRunModal(original)}>
                                 Manage
                             </a>
                             {' / '}
