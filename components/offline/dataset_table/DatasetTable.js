@@ -4,7 +4,10 @@ import Router, { withRouter } from 'next/router';
 import { Icon } from 'antd';
 import Swal from 'sweetalert2';
 import qs from 'qs';
-import { offline_columns } from '../../../config/config';
+import {
+    offline_columns,
+    certifiable_offline_components
+} from '../../../config/config';
 
 import {
     moveDataset,
@@ -44,7 +47,7 @@ const column_types = {
 const defaultPageSize = 25;
 let local_sortings = [];
 
-class RunTable extends Component {
+class DatasetTable extends Component {
     // First time page loads, table grabs filter from query url, then goes and queries them:
     async componentDidMount() {
         let { url_filter } = this.props.dataset_table;
@@ -144,8 +147,10 @@ class RunTable extends Component {
                 Header: 'Class',
                 accessor: 'class',
                 maxWidth: 90,
-                Cell: ({ value }) => (
-                    <div style={{ textAlign: 'center' }}>{value.value}</div>
+                Cell: ({ original, value }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        {original.run.class.value}
+                    </div>
                 )
             },
             {
@@ -278,25 +283,36 @@ class RunTable extends Component {
         // }
 
         // Put components in format Header: component
-        let offline_columns_composed = offline_columns
-            .filter(column => {
-                if (workspace === 'global') {
-                    return !column.includes('_');
-                }
-                return column.startsWith(workspace.toLowerCase());
-            })
-            .map(column => ({
-                // Header: column.split('_').join(' ')
-                Header: column
-            }));
+        let offline_columns_composed = [];
+        if (workspace === 'global') {
+            offline_columns_composed = certifiable_offline_components.map(
+                column => ({
+                    accessor: column,
+                    Header: column
+                })
+            );
+        } else {
+            offline_columns_composed = offline_columns
+                .filter(column => {
+                    return (
+                        column.startsWith(workspace.toLowerCase()) &&
+                        column.includes('-')
+                    );
+                })
+                .map(column => ({
+                    accessor: column,
+                    Header: column.split('-')[1]
+                }));
+        }
+
         offline_columns_composed = offline_columns_composed.map(column => {
             return {
                 ...column,
                 maxWidth: 66,
-                id: column.Header,
+                id: column.accessor,
                 accessor: data => {
                     let status = 'EXCLUDED';
-                    const triplet = data[column.Header];
+                    const triplet = data[column.accessor];
                     if (triplet) {
                         status = triplet.status;
                     }
@@ -687,5 +703,5 @@ export default withRouter(
             changeFilters,
             moveDataset
         }
-    )(RunTable)
+    )(DatasetTable)
 );

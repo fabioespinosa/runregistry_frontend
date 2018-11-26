@@ -21,6 +21,8 @@ import {
 import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
 
 import { toggleWaitingList } from '../../../ducks/offline/ui';
+const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.MenuItemGroup;
 const RadioGroup = Radio.Group;
 
 class BreadcrumbCmp extends Component {
@@ -48,6 +50,11 @@ class BreadcrumbCmp extends Component {
             <Menu.Item key="datasets_accepted_configuration">
                 Manage Datasets Accepted
             </Menu.Item>
+            <SubMenu key="expert_tools" title="DC Expert Tools">
+                <Menu.Item key="component_sync">Component Sync</Menu.Item>
+                <Menu.Item key="ls_exception_sync">LS Exception Sync</Menu.Item>
+                {/* <Menu.Item key="component_sync">Component Sync</Menu.Item> */}
+            </SubMenu>
         </Menu>
     );
 

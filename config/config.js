@@ -50,91 +50,145 @@ exports.components = [
     'strip'
 ];
 
-const offline_column_structure = {
-    cms: [],
-    btag: [],
-    castor: [],
-    csc: [
-        'occupancy',
-        'integrity',
-        'strips',
-        'timing',
-        'efficiency',
-        'gasgains',
-        'resolution',
-        'segments',
-        'tf',
-        'triggergpe'
-    ],
-    ctpps: ['rp45_220', 'rp45_cyl', 'rp56_210', 'rp56_220', 'rp56_cyl'],
-    dt: [],
-    ecal: [
-        'ebp',
-        'ebm',
-        'eep',
-        'eem',
-        'es',
-        'esp',
-        'esm',
-        'analysis',
-        'collisions',
-        'laser',
-        'tpg',
-        'noise',
-        'preshower',
-        'timing'
-    ],
-    egamma: [],
-    hcal: [
-        'hb',
-        'he',
-        'hf',
-        'ho0',
-        'ho12',
-        'hb_ls',
-        'he_ls',
-        'hf_ls',
-        'ho0_ls',
-        'ho12_ls'
-    ],
-    hlt: [
-        'bjets',
-        'electrons',
-        'jetmet',
-        'muons',
-        'photons',
-        'tau',
-        'technical'
-    ],
-    jetmet: [],
-    l1t: [
-        'bcs_tech',
-        'bptx_tech',
-        'e_gamma',
-        'energy_sums',
-        'hf_rings',
-        'hf_tech',
-        'l1tcalo',
-        'l1tmu',
-        'muon_csc',
-        'muon_dt',
-        'muon_rpc',
-        'rpc_tech',
-        'software'
-    ],
-    lumi: [],
-    muon: [],
-    rpc: ['rpc', 'hv', 'lv', 'feb', 'noise', 'elog'],
-    tau: [],
-    tracker: ['pix', 'strip', 'track']
-};
+const offline_column_structure =
+    // Non of the offline_column_structure can contain "-" character, only "_".
+    {
+        btag: ['btag'],
+        castor: ['castor'],
+        csc: [
+            'csc',
+            'occupancy',
+            'integrity',
+            'strips',
+            'timing',
+            'efficiency',
+            'gasgains',
+            'pedestals',
+            'resolution',
+            'segments',
+            'tf',
+            'triggergpe'
+        ],
+        ctpps: [
+            'ctpps',
+            'rp45_210',
+            'rp45_220',
+            'rp45_cyl',
+            'rp56_210',
+            'rp56_220',
+            'rp56_cyl',
+            'trk45_210',
+            'time45',
+            'trk56_220',
+            'time56',
+            'time_global'
+        ],
+        dt: ['dt'],
+        ecal: [
+            'ecal',
+            'ebp',
+            'ebm',
+            'eep',
+            'eem',
+            'es',
+            'esp',
+            'esm',
+            'analysis',
+            'collisions',
+            'laser',
+            'tpg',
+            'noise',
+            'preshower',
+            'timing'
+        ],
+        egamma: ['egamma'],
+        hcal: ['hb', 'he', 'hf', 'ho0', 'ho12'],
+        hlt: [
+            'muons',
+            'electrons',
+            'photons',
+            'jetmet',
+            'tau',
+            'bjets',
+            'technical'
+        ],
+        jetmet: ['jetmet'],
+        l1t: ['l1tmu', 'l1tcalo', 'software'],
+        lumi: ['lumi'],
+        muon: ['muon'],
+        rpc: ['rpc', 'hv', 'lv', 'feb', 'noise', 'elog'],
+        tau: ['tau'],
+        tracker: ['track', 'pix', 'strip']
+    };
 
 const columns = [];
 for (const [key, val] of Object.entries(offline_column_structure)) {
-    columns.push(key);
     val.forEach(sub_column => {
-        columns.push(`${key}_${sub_column}`);
+        columns.push(`${key}-${sub_column}`);
     });
 }
 exports.offline_column_structure = offline_column_structure;
 exports.offline_columns = columns;
+
+exports.certifiable_offline_components = [
+    'btag',
+    'castor',
+    'cms',
+    'csc',
+    'ctpps',
+    'dt',
+    'ecal',
+    'egamma',
+    'es',
+    'hcal',
+    'hlt',
+    'jetmet',
+    'l1t',
+    'l1tcalo',
+    'l1tmu',
+    'lowLumi',
+    'lumi',
+    'muon',
+    'pix',
+    'rpc',
+    'strip',
+    'tau',
+    'track'
+];
+
+exports.lumisection_attributes = [
+    'beam1_present',
+    'beam1_stable',
+    'beam2_present',
+    'beam2_stable',
+    'bpix_ready',
+    'castor_ready',
+    'cms_infrastructure',
+    'cms_active',
+    'cscm_ready',
+    'cscp_ready',
+    'dt0_ready',
+    'dtm_ready',
+    'dtp_ready',
+    'ebm_ready',
+    'ebp_ready',
+    'eem_ready',
+    'eep_ready',
+    'esm_ready',
+    'esp_ready',
+    'fpix_ready',
+    'hbhea_ready',
+    'hbheb_ready',
+    'hbhec_ready',
+    'hf_ready',
+    'ho_ready',
+    'rp_sect_45_ready',
+    'rp_sect_56_ready',
+    'rp_time_ready',
+    'rpc_ready',
+    'tecm_ready',
+    'tecp_ready',
+    'tibtid_ready',
+    'tob_ready',
+    'zdc_ready'
+];

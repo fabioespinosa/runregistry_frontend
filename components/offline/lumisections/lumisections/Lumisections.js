@@ -2,50 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
 import { Icon, Divider } from 'antd';
+import { lumisection_attributes } from '../../../../config/config';
 import EditLumisections from './editLumisections/EditLumisections';
 // import {components} from '../../../../config/config';
 import { fetchLumisectionRanges } from '../../../../ducks/offline/lumisections';
 
-const ls_attributes = [
-    'beam1_present',
-    'beam1_stable',
-    'beam2_present',
-    'beam2_stable',
-    'bpix_ready',
-    'castor_ready',
-    'cms_infrastructure',
-    'cms_active',
-    'cscm_ready',
-    'cscp_ready',
-    'dt0_ready',
-    'dtm_ready',
-    'dtp_ready',
-    'ebm_ready',
-    'ebp_ready',
-    'eem_ready',
-    'eep_ready',
-    'esm_ready',
-    'esp_ready',
-    'fpix_ready',
-    'hbhea_ready',
-    'hbheb_ready',
-    'hbhec_ready',
-    'hf_ready',
-    'ho_ready',
-    'rp_sect_45_ready',
-    'rp_sect_56_ready',
-    'rp_time_ready',
-    'rpc_ready',
-    'tecm_ready',
-    'tecp_ready',
-    'tibtid_ready',
-    'tob_ready',
-    'zdc_ready'
-];
-
 class Lumisections extends Component {
     componentDidMount() {
-        this.props.fetchLumisectionRanges(this.props.dataset.id);
+        const { dataset, workspace } = this.props;
+        this.props.fetchLumisectionRanges(dataset.id, workspace);
     }
 
     render() {
@@ -83,7 +48,7 @@ class Lumisections extends Component {
                 }
             }
         ];
-        ls_attributes.forEach(attribute => {
+        lumisection_attributes.forEach(attribute => {
             columns.push({
                 Header: attribute,
                 accessor: attribute,
@@ -108,7 +73,7 @@ class Lumisections extends Component {
                 'OPEN' ? (
                     <EditLumisections
                         dataset={dataset}
-                        ls_attributes={ls_attributes}
+                        lumisection_attributes={lumisection_attributes}
                     />
                 ) : (
                     <Divider>

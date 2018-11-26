@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 import { Formik, Field } from 'formik';
 import { Input, Button } from 'antd';
-import { offline_columns } from '../../../../../config/config';
+import {
+    offline_columns,
+    certifiable_offline_components
+} from '../../../../../config/config';
 
 import { editDataset } from '../../../../../ducks/offline/datasets';
 import { components } from '../../../../../config/config';
@@ -15,12 +18,14 @@ class EditDataset extends Component {
         const { dataset, workspace, editDataset } = this.props;
 
         const initialValues = {};
-        let offline_columns_composed = offline_columns.filter(column => {
-            if (workspace === 'global') {
-                return !column.includes('_');
-            }
-            return column.startsWith(workspace.toLowerCase());
-        });
+        let offline_columns_composed = [];
+        if (workspace === 'global') {
+            offline_columns_composed = certifiable_offline_components;
+        } else {
+            offline_columns_composed = offline_columns.filter(column => {
+                return column.startsWith(workspace.toLowerCase());
+            });
+        }
 
         offline_columns_composed.forEach(column => {
             if (
@@ -91,7 +96,14 @@ class EditDataset extends Component {
                                             {offline_columns_composed.map(
                                                 component => (
                                                     <tr key={component}>
-                                                        <td>{component}</td>
+                                                        <td>
+                                                            {workspace ===
+                                                            'global'
+                                                                ? component
+                                                                : component.split(
+                                                                      '-'
+                                                                  )[1]}
+                                                        </td>
                                                         <td className="status_dropdown">
                                                             <Field
                                                                 key={component}

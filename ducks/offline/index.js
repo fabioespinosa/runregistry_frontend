@@ -6,6 +6,7 @@ import lumisections from './lumisections';
 import workspace from './workspace';
 import datasets_accepted from './datasets_accepted';
 import ui from './ui';
+import dc_tools from './dc_tools';
 
 const offlineRootReducer = combineReducers({
     classifiers,
@@ -13,7 +14,8 @@ const offlineRootReducer = combineReducers({
     lumisections,
     workspace,
     datasets_accepted,
-    ui
+    ui,
+    dc_tools
 });
 
 export default offlineRootReducer;

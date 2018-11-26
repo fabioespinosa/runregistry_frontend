@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
 import { Icon } from 'antd';
-import { offline_columns } from '../../../../../config/config';
+import {
+    offline_columns,
+    certifiable_offline_components
+} from '../../../../../config/config';
 
 class History extends Component {
     render() {
@@ -14,7 +17,10 @@ class History extends Component {
             dataset.global_state.history.length > 0
                 ? dataset.global_state.history[0].when
                 : dataset.global_state.when;
-
+        // Introduce the 3 attributes that come from online:
+        dataset.class = dataset.run.class;
+        dataset.significant = dataset.run.significant;
+        dataset.online_state = dataset.run.state;
         for (const [key, val] of Object.entries(dataset)) {
             if (val) {
                 const history = val.history;
@@ -71,11 +77,7 @@ class History extends Component {
                     const date = new Date(value).toString();
                     const displayed_date = date.split('GMT')[0];
                     return (
-                        <div
-                            style={{
-                                textAlign: 'center'
-                            }}
-                        >
+                        <div style={{ textAlign: 'center' }}>
                             {displayed_date}
                         </div>
                     );
@@ -98,7 +100,7 @@ class History extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ value }) => (
+                Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center' }}>
                         {value ? value.value : ''}
                     </div>
@@ -110,11 +112,7 @@ class History extends Component {
                 Cell: ({ original, value }) => {
                     if (value) {
                         return (
-                            <div
-                                style={{
-                                    textAlign: 'center'
-                                }}
-                            >
+                            <div style={{ textAlign: 'center' }}>
                                 {value.value ? (
                                     <Icon type={'check'} />
                                 ) : (
@@ -127,16 +125,26 @@ class History extends Component {
                 }
             },
             {
+                Header: 'Online State',
+                accessor: 'online_state',
+                Cell: ({ value }) => {
+                    if (value) {
+                        return (
+                            <div style={{ textAlign: 'center' }}>
+                                {value.value}
+                            </div>
+                        );
+                    }
+                    return <div />;
+                }
+            },
+            {
                 Header: `${workspace} State`,
                 accessor: `${workspace.toLowerCase()}_state`,
                 Cell: ({ original, value }) => {
                     if (value) {
                         return (
-                            <div
-                                style={{
-                                    textAlign: 'center'
-                                }}
-                            >
+                            <div style={{ textAlign: 'center' }}>
                                 {value.value}
                             </div>
                         );
@@ -150,11 +158,7 @@ class History extends Component {
                 Cell: ({ original, value }) => {
                     if (value) {
                         return (
-                            <div
-                                style={{
-                                    textAlign: 'center'
-                                }}
-                            >
+                            <div style={{ textAlign: 'center' }}>
                                 {value.value}
                             </div>
                         );
@@ -165,25 +169,35 @@ class History extends Component {
         ];
 
         // Put components in format Header: component
-        let offline_columns_composed = offline_columns
-            .filter(column => {
-                if (workspace === 'global') {
-                    return !column.includes('_');
-                }
-                return column.startsWith(workspace.toLowerCase());
-            })
-            .map(column => ({
-                // Header: column.split('_').join(' ')
-                Header: column
-            }));
+        let offline_columns_composed = [];
+        if (workspace === 'global') {
+            offline_columns_composed = certifiable_offline_components.map(
+                column => ({
+                    accessor: column,
+                    Header: column
+                })
+            );
+        } else {
+            offline_columns_composed = offline_columns
+                .filter(column => {
+                    return (
+                        column.startsWith(workspace.toLowerCase()) &&
+                        column.includes('-')
+                    );
+                })
+                .map(column => ({
+                    accessor: column,
+                    Header: column.split('-')[1]
+                }));
+        }
         offline_columns_composed = offline_columns_composed.map(column => {
             return {
                 ...column,
                 maxWidth: 66,
-                id: `${column['Header']}_triplet`,
+                id: column.accessor,
                 accessor: data => {
                     let status = '';
-                    const triplet = data[column['Header']];
+                    const triplet = data[column.accessor];
                     if (triplet) {
                         status = triplet.status;
                     }

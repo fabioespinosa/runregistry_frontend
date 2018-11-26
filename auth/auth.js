@@ -7,7 +7,7 @@ export default function(getState) {
         process.env.ENV === 'development'
     ) {
         email = 'fespinos@cern.ch';
-        egroups = 'CMS-Shiftlist_shifters_DQM_P5';
+        egroups = 'cms-dqm-runregistry-experts';
     }
 
     return {

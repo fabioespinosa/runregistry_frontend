@@ -7,10 +7,10 @@ const FETCH_LUMISECTION_RANGES = 'FETCH_LUMISECTION_RANGES-OFFLINE';
 
 const EDIT_LUMISECTIONS = 'EDIT_LUMISECTIONS';
 
-export const fetchLumisectionRanges = id_dataset =>
+export const fetchLumisectionRanges = (id_dataset, workspace) =>
     error_handler(async (dispatch, getState) => {
         const { data: lumisections } = await axios.post(
-            `${api_url}/dataset_lumisections`,
+            `${api_url}/dataset_lumisections/${workspace.toLowerCase()}`,
             { id_dataset }
         );
         dispatch({ type: FETCH_LUMISECTION_RANGES, payload: lumisections });
@@ -19,7 +19,7 @@ export const fetchLumisectionRanges = id_dataset =>
 export const editLumisections = (edited_lumisections, workspace) =>
     error_handler(async (dispatch, getState) => {
         const { data: lumisections } = await axios.put(
-            `${api_url}/dataset_lumisections/${workspace}`,
+            `${api_url}/dataset_lumisections/${workspace.toLowerCase()}`,
             edited_lumisections,
             auth(getState)
         );

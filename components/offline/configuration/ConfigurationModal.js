@@ -6,6 +6,7 @@ import DatasetClassifierConfiguration from './datasetClassifierConfiguration/Dat
 import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
+import ComponentSync from './componentSyncConfiguration/ComponentSyncConfiguration';
 
 class ConfigurationModal extends Component {
     render() {
@@ -22,7 +23,8 @@ class ConfigurationModal extends Component {
                 "Set automatic classifiers for each component's status",
             column_configuration: 'Add or remove columns from workspace',
             datasets_accepted_configuration:
-                'Change the RegExp of the Datasets Accepted in RR'
+                'Change the RegExp of the Datasets Accepted in RR',
+            component_sync: 'Sync component status from all workspaces'
         };
 
         return (
@@ -55,6 +57,9 @@ class ConfigurationModal extends Component {
                     {configuration_modal_type ===
                         'datasets_accepted_configuration' && (
                         <DatasetsAccepted />
+                    )}
+                    {configuration_modal_type === 'component_sync' && (
+                        <ComponentSync />
                     )}
                 </Modal>
             </div>

@@ -9,7 +9,7 @@ const Option = Select.Option;
 
 class EditLumisections extends Component {
     render() {
-        const { dataset, ls_attributes, workspace } = this.props;
+        const { dataset, lumisection_attributes, workspace } = this.props;
         return (
             <div className="edit_lumisections">
                 <Divider>Edit</Divider>
@@ -50,7 +50,7 @@ class EditLumisections extends Component {
                                 onChange={value => setFieldValue('bit', value)}
                                 style={{ width: 220, marginRight: '10px' }}
                             >
-                                {ls_attributes.map(ls_attribute => (
+                                {lumisection_attributes.map(ls_attribute => (
                                     <Option
                                         key={ls_attribute}
                                         value={ls_attribute}
