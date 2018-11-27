@@ -33,6 +33,7 @@ const column_filter_description = {
 const column_types = {
     'hlt_key.value': 'string',
     'class.value': 'string',
+    name: 'string',
     run_number: 'integer',
     class: 'string',
     significant: 'boolean',
@@ -620,7 +621,12 @@ const rename_triplets = (original_criteria, filtering) => {
                 new_filter.value = filter.value.toUpperCase();
             }
         }
-        if (filter.id.includes('_triplet')) {
+        // make a separate case for class, since its a join from run
+        // '-' is an indication of a status component
+        if (
+            filter.id.includes('-') ||
+            certifiable_offline_components.includes(filter.id)
+        ) {
             new_filter.id = `${filter.id}.status`;
             if (filtering) {
                 new_filter.value = filter.value.toUpperCase();

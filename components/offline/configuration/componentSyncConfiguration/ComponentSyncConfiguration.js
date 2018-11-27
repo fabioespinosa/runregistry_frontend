@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Formik, Field } from 'formik';
 import { connect } from 'react-redux';
 import { Button } from 'antd';
+import Swal from 'sweetalert2';
 import {
     offline_column_structure,
     certifiable_offline_components
@@ -23,11 +24,11 @@ class ComponentSyncConfiguration extends Component {
                 });
                 if (typeof candidate_option !== 'undefined') {
                     state[
-                        `${certifiable_offline_component}_workspace`
+                        `${certifiable_offline_component}_default_workspace`
                     ] = candidate_option;
                 } else {
                     state[
-                        `${certifiable_offline_component}_workspace`
+                        `${certifiable_offline_component}_default_workspace`
                     ] = Object.keys(offline_column_structure)[0];
                 }
             }
@@ -53,13 +54,22 @@ class ComponentSyncConfiguration extends Component {
                         datasets.forEach(dataset => {
                             dataset_ids.push(dataset.id);
                         });
-                        const sync_values = {};
+                        const components_to_sync = {};
                         for (const [key, val] of Object.entries(values)) {
                             if (key.includes('_value')) {
-                                sync_values[key.split('_value')[0]] = val;
+                                components_to_sync[
+                                    key.split('_value')[0]
+                                ] = val;
                             }
                         }
-                        await syncWorkspaces(sync_values, dataset_ids);
+                        await syncWorkspaces(components_to_sync, dataset_ids);
+                        await Swal(
+                            `Component's synced for ${
+                                datasets.length
+                            } datasets`,
+                            '',
+                            'success'
+                        );
                     }}
                     render={({ values, setFieldValue, handleSubmit }) => {
                         return (
@@ -79,6 +89,15 @@ class ComponentSyncConfiguration extends Component {
                                     <tbody>
                                         {certifiable_offline_components.map(
                                             certifiable_component => {
+                                                // In the following variable we store the default workspace (third column "From workspace") respective to the certifiable component
+                                                const default_workspace_for_certifiable_component = this
+                                                    .state[
+                                                    `${certifiable_component}_default_workspace`
+                                                ];
+                                                const sub_workspace_options =
+                                                    offline_column_structure[
+                                                        default_workspace_for_certifiable_component
+                                                    ];
                                                 return (
                                                     <tr
                                                         key={
@@ -100,29 +119,8 @@ class ComponentSyncConfiguration extends Component {
                                                                         checked
                                                                     } = evt.target;
                                                                     const changing_value_to = `${certifiable_component}_value`;
-                                                                    const new_value =
-                                                                        offline_column_structure[
-                                                                            this
-                                                                                .state[
-                                                                                `${certifiable_component}_workspace`
-                                                                            ]
-                                                                        ][0];
-                                                                    const pre_value = this
-                                                                        .state[
-                                                                        `${certifiable_component}_workspace`
-                                                                    ];
-                                                                    const final_value = `${
-                                                                        this
-                                                                            .state[
-                                                                            `${certifiable_component}_workspace`
-                                                                        ]
-                                                                    }-${
-                                                                        offline_column_structure[
-                                                                            this
-                                                                                .state[
-                                                                                `${certifiable_component}_workspace`
-                                                                            ]
-                                                                        ][0]
+                                                                    const final_value = `${default_workspace_for_certifiable_component}-${
+                                                                        sub_workspace_options[0]
                                                                     }`;
                                                                     if (
                                                                         checked
@@ -167,12 +165,16 @@ class ComponentSyncConfiguration extends Component {
                                                                         `${certifiable_component}_enabled`
                                                                     ]
                                                                 }
+                                                                defaultValue={
+                                                                    default_workspace_for_certifiable_component
+                                                                }
                                                                 onChange={evt => {
+                                                                    const {
+                                                                        value
+                                                                    } = evt.target;
                                                                     this.setState(
                                                                         {
-                                                                            [`${certifiable_component}_workspace`]: evt
-                                                                                .target
-                                                                                .value
+                                                                            [default_workspace_for_certifiable_component]: value
                                                                         }
                                                                     );
                                                                 }}
@@ -184,13 +186,6 @@ class ComponentSyncConfiguration extends Component {
                                                                         <option
                                                                             key={
                                                                                 column
-                                                                            }
-                                                                            selected={
-                                                                                column ===
-                                                                                this
-                                                                                    .state[
-                                                                                    `${certifiable_component}_workspace`
-                                                                                ]
                                                                             }
                                                                         >
                                                                             {
@@ -215,20 +210,14 @@ class ComponentSyncConfiguration extends Component {
                                                                 }
                                                             >
                                                                 {offline_column_structure[
-                                                                    this.state[
-                                                                        `${certifiable_component}_workspace`
-                                                                    ]
+                                                                    default_workspace_for_certifiable_component
                                                                 ].map(bit => {
-                                                                    const parent_workspace = this
-                                                                        .state[
-                                                                        `${certifiable_component}_workspace`
-                                                                    ];
                                                                     return (
                                                                         <option
                                                                             key={
                                                                                 bit
                                                                             }
-                                                                            value={`${parent_workspace}-${bit}`}
+                                                                            value={`${default_workspace_for_certifiable_component}-${bit}`}
                                                                         >
                                                                             {
                                                                                 bit

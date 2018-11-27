@@ -11,6 +11,7 @@ const EDIT_DATASET = 'EDIT_DATASET';
 const FILTER_DATASETS = 'FILTER_DATASETS';
 const TABLE_LOADING = 'TABLE_LOADING-OFFLINE';
 const TABLE_LOADING_DONE = 'TABLE_LOADING_DONE-OFFLINE';
+export const FIND_AND_REPLACE_DATASETS = 'FIND_AND_REPLACE_DATASETS';
 
 export function fetchInitialOfflineDatasets(store, query, isServer) {}
 
@@ -122,6 +123,11 @@ export default function(state = INITIAL_STATE, action) {
                 ...state,
                 datasets: editDatasetHelper(state.datasets, payload)
             };
+        case FIND_AND_REPLACE_DATASETS:
+            return {
+                ...state,
+                datasets: findAndReplaceHelper(state.datasets, payload)
+            };
         default:
             return state;
     }
@@ -142,4 +148,11 @@ const editDatasetHelper = (datasets, new_dataset) => {
         new_dataset,
         ...datasets.slice(index + 1)
     ];
+};
+
+const findAndReplaceHelper = (datasets, new_datasets) => {
+    new_datasets.forEach(new_dataset => {
+        datasets = editDatasetHelper(datasets, new_dataset);
+    });
+    return datasets;
 };

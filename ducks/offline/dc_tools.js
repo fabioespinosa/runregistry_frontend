@@ -2,14 +2,16 @@ import axios from 'axios';
 import { api_url } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 import auth from '../../auth/auth';
+import { FIND_AND_REPLACE_DATASETS } from './datasets';
 
-export const syncWorkspaces = (synced_components, dataset_ids) =>
+export const syncWorkspaces = (components_to_sync, dataset_ids) =>
     error_handler(async (dispatch, getState) => {
-        const { data } = await axios.put(
+        const { data: datasets } = await axios.put(
             `${api_url}/dc_tools/sync_components`,
-            { ...synced_components, dataset_ids },
+            { components_to_sync, dataset_ids },
             auth(getState)
         );
+        dispatch({ type: FIND_AND_REPLACE_DATASETS, payload: datasets });
     });
 
 const INITIAL_STATE = {};
