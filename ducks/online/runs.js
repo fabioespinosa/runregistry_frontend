@@ -100,6 +100,17 @@ export const moveRun = (original_run, from_state, to_state) =>
         dispatch({ type: EDIT_RUN, payload: run });
     });
 
+export const refreshRun = id_run =>
+    error_handler(async (dispatch, getState) => {
+        const { data: run } = await axios.post(
+            `${api_url}/runs/refresh_run/${id_run}`,
+            {},
+            auth(getState)
+        );
+        dispatch({ type: EDIT_RUN, payload: run });
+        return run;
+    });
+
 const INITIAL_STATE = {
     runs: [],
     pageSize: 25,

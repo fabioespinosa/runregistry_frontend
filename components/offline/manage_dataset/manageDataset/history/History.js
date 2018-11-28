@@ -25,6 +25,14 @@ class History extends Component {
             if (val) {
                 const history = val.history;
                 if (Array.isArray(history)) {
+                    if (
+                        workspace !== 'global' &&
+                        key.includes('-') &&
+                        !key.startsWith(workspace.toLowerCase())
+                    ) {
+                        // If its a normal workspace we don't want history from other workspaces colluding
+                        continue;
+                    }
                     // Add local value (not the history but the current value:)
                     val[key] = { ...val };
                     const { when } = val;

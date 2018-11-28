@@ -5,7 +5,8 @@ import { Formik, Field } from 'formik';
 import { Select, Input, Button } from 'antd';
 import axios from 'axios';
 import { api_url } from '../../../../../config/config';
-import { editRun } from '../../.././../../ducks/online/runs';
+import { editRun, refreshRun } from '../../../../../ducks/online/runs';
+import { showManageRunModal } from '../../../../../ducks/online/ui';
 import { components } from '../../../../../config/config';
 const { TextArea } = Input;
 const { Option, OptGroup } = Select;
@@ -50,6 +51,7 @@ class EditRun extends Component {
                     <div>
                         <Formik
                             initialValues={initialValues}
+                            enableReinitialize={true}
                             onSubmit={async values => {
                                 const components_triplets = {};
                                 for (const [key, val] of Object.entries(
@@ -210,6 +212,37 @@ class EditRun extends Component {
                                         />
                                     </div>
                                     <br />
+                                    <div
+                                        style={{
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        <Button
+                                            onClick={async evt => {
+                                                const { value } = await Swal({
+                                                    type: 'warning',
+                                                    title: `If a status was previously edited by a shifter, it will not be updated, it will only change those untouched.`,
+                                                    text: '',
+                                                    showCancelButton: true,
+                                                    confirmButtonText: 'Yes',
+                                                    reverseButtons: true
+                                                });
+                                                if (value) {
+                                                    const updated_run = await this.props.refreshRun(
+                                                        run.run_number
+                                                    );
+                                                    await this.props.showManageRunModal(
+                                                        updated_run
+                                                    );
+                                                }
+                                            }}
+                                            type="primary"
+                                        >
+                                            Manually refresh component's
+                                            statuses
+                                        </Button>
+                                    </div>
+                                    <br />
                                     <table className="edit_run_form">
                                         <thead>
                                             <tr className="table_header">
@@ -365,5 +398,5 @@ class EditRun extends Component {
 
 export default connect(
     null,
-    { editRun }
+    { editRun, refreshRun, showManageRunModal }
 )(EditRun);
