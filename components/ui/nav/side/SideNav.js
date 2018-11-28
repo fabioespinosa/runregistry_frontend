@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
 import { Layout, Menu, Icon } from 'antd';
-import { root_url_prefix } from '../../../../config/config';
+import {
+    root_url_prefix,
+    offline_column_structure
+} from '../../../../config/config';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -13,15 +16,16 @@ class SideNav extends Component {
                 query: { type, section, workspace }
             }
         } = this.props;
+        console.log(keyPath);
         if (key === 'lumisections') {
             Router.push(
-                `/${type}?type=${type}&section=lumisections`,
-                `/${type}/lumisections`
+                `/offline?type=offline&section=lumisections`,
+                `/offline/lumisections`
             );
         } else {
             Router.push(
-                `/${type}?type=${type}&section=${keyPath[1]}&workspace=${key}`,
-                `${root_url_prefix}/${type}/${keyPath[1]}/${key}`
+                `/offline?type=offline&section=${keyPath[1]}&workspace=${key}`,
+                `${root_url_prefix}/offline/${keyPath[1]}/${key}`
             );
         }
     }
@@ -38,8 +42,7 @@ class SideNav extends Component {
         return (
             <Layout hasSider={true}>
                 {show_sidebar && (
-                    <Sider
-                        // collapsible
+                    <Sider // collapsible
                         width={200}
                         style={{ background: '#fff' }}
                     >
@@ -79,22 +82,17 @@ class SideNav extends Component {
                                 }
                             >
                                 <Menu.Item key="global">GLOBAL</Menu.Item>
-                                <Menu.Item key="BTAG">BTAG</Menu.Item>
-                                <Menu.Item key="CASTOR">CASTOR</Menu.Item>
-                                <Menu.Item key="CSC">CSC</Menu.Item>
-                                <Menu.Item key="CTPPS">CTPPS</Menu.Item>
-                                <Menu.Item key="DT">DT</Menu.Item>
-                                <Menu.Item key="ECAL">ECAL</Menu.Item>
-                                <Menu.Item key="EGAMMA">EGAMMA</Menu.Item>
-                                <Menu.Item key="HCAL">HCAL</Menu.Item>
-                                <Menu.Item key="HLT">HLT</Menu.Item>
-                                <Menu.Item key="JETMET">JETMET</Menu.Item>
-                                <Menu.Item key="L1T">L1T</Menu.Item>
-                                <Menu.Item key="LUMI">LUMI</Menu.Item>
-                                <Menu.Item key="MUON">MUON</Menu.Item>
-                                <Menu.Item key="RPC">RPC</Menu.Item>
-                                <Menu.Item key="TAU">TAU</Menu.Item>
-                                <Menu.Item key="TRACKER">TRACKER</Menu.Item>
+                                {Object.keys(offline_column_structure).map(
+                                    offline_component => {
+                                        return (
+                                            <Menu.Item
+                                                key={offline_component.toUpperCase()}
+                                            >
+                                                {offline_component.toUpperCase()}
+                                            </Menu.Item>
+                                        );
+                                    }
+                                )}
                             </SubMenu>
                         </Menu>
                     </Sider>
