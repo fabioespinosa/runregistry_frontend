@@ -661,6 +661,7 @@ const rename_triplets = (original_criteria, filtering) => {
 const formatFilters = original_filters => {
     const column_filters = {};
     original_filters.forEach(({ id, value }) => {
+        value = value.replace(',', ' '); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
@@ -679,11 +680,24 @@ const formatFilters = original_filters => {
                 criteria.unshift('=');
             }
         }
+        let multiple_ids = false;
+        // Special case if its for id runs  separated by commas: 325334, 234563
+        if (criteria.length > 1) {
+            if (!isNaN(criteria[0]) && !isNaN(criteria[1])) {
+                const or = criteria.map(run_number => {
+                    return {
+                        '=': run_number
+                    };
+                });
+                query = { or };
+                multiple_ids = true;
+            }
+        }
         // Format And/Or up to three levels:
-        if (criteria.length === 2) {
+        if (criteria.length === 2 && !multiple_ids) {
             query = { [criteria[0]]: criteria[1] };
         }
-        if (criteria.length === 5) {
+        if (criteria.length === 5 && !multiple_ids) {
             query = {
                 [criteria[2]]: [
                     { [criteria[0]]: criteria[1] },
@@ -691,7 +705,7 @@ const formatFilters = original_filters => {
                 ]
             };
         }
-        if (criteria.length === 8) {
+        if (criteria.length === 8 && !multiple_ids) {
             query = {
                 [criteria[5]]: [
                     { [criteria[6]]: criteria[7] },
