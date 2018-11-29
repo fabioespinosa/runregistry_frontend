@@ -51,9 +51,10 @@ let local_sortings = [];
 class DatasetTable extends Component {
     // First time page loads, table grabs filter from query url, then goes and queries them:
     async componentDidMount() {
-        let { url_filter } = this.props.dataset_table;
-        const renamed_filters = rename_triplets(url_filter, true);
-        const filters = formatFilters(renamed_filters);
+        // let { url_filter } = this.props.dataset_table;
+        // const renamed_filters = rename_triplets(url_filter, true);
+        // const filters = formatFilters(renamed_filters);
+        const filters = {};
         await this.props.filterDatasets(defaultPageSize, 0, [], filters);
     }
     // When a user filters the table, the filters are persisted in the url string, this method takes care of that:
@@ -78,7 +79,7 @@ class DatasetTable extends Component {
     };
     // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
     filterTable = async (filters, page, pageSize) => {
-        this.applyFiltersToUrl(filters);
+        // this.applyFiltersToUrl(filters);
         const renamed_filters = rename_triplets(filters, true);
         const formated_filters = formatFilters(renamed_filters);
         await this.props.filterDatasets(
@@ -105,6 +106,7 @@ class DatasetTable extends Component {
         const formated_filters = formatFilters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = formatSortings(renamed_sortings);
+        console.log(formated_filters);
         await this.props.filterDatasets(
             pageSize || defaultPageSize,
             page,
@@ -197,7 +199,7 @@ class DatasetTable extends Component {
             },
             {
                 Header: `${workspace} State`,
-                id: 'state',
+                id: `${workspace.toLowerCase()}_state`,
                 accessor: `${workspace.toLowerCase()}_state`,
                 minWidth: 145,
                 maxWidth: 145,
@@ -425,7 +427,10 @@ class DatasetTable extends Component {
                         {column.Header}
                         &nbsp;&nbsp;
                         <Icon
-                            onClick={() => this.props.toggleTableFilters()}
+                            onClick={evt => {
+                                this.props.toggleTableFilters();
+                                evt.stopPropagation();
+                            }}
                             type="search"
                             style={{ fontSize: '10px' }}
                         />
@@ -528,7 +533,7 @@ class DatasetTable extends Component {
                 Hold <i>shift</i> for multiple column sorting. <br />A dataset
                 must appear in DQM GUI for it to be editable (although it can be
                 moved manually by clicking 'move').
-                {filter && (
+                {filter ? (
                     <div
                         style={{
                             width: '100%',
@@ -549,6 +554,8 @@ class DatasetTable extends Component {
                             Click here to remove filters and sortings
                         </a>
                     </div>
+                ) : (
+                    <div style={{ height: '24px' }} />
                 )}
                 <ReactTable
                     columns={columns}
@@ -608,11 +615,10 @@ const rename_triplets = (original_criteria, filtering) => {
     return original_criteria.map(filter => {
         const new_filter = { ...filter };
         if (
+            filter.id.includes('state') ||
             filter.id === 'state' ||
             filter.id === 'significant' ||
             filter.id === 'class' ||
-            filter.id === 'hlt_key' ||
-            filter.id === 'hlt_physics_counter' ||
             filter.id === 'appeared_in'
         ) {
             new_filter.id = `${filter.id}.value`;
@@ -632,6 +638,7 @@ const rename_triplets = (original_criteria, filtering) => {
                 new_filter.value = filter.value.toUpperCase();
             }
         }
+        console.log(new_filter);
         return new_filter;
     });
 };
@@ -639,16 +646,23 @@ const rename_triplets = (original_criteria, filtering) => {
 const formatFilters = original_filters => {
     const column_filters = {};
     original_filters.forEach(({ id, value }) => {
+        value = value.replace(',', ' '); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
+        console.log(criteria);
         if (criteria.length === 1) {
             // If user types '=' or '<' alike operator, do not perform default 'like' or '=':
             if (['=', '<', '>', '<=', '>='].includes(criteria[0][0])) {
                 const operator = criteria[0][0];
                 criteria[0] = criteria[0].substring(1);
                 criteria.unshift(operator);
-            } else if (column_types[id] === 'string') {
+            } else if (
+                column_types[id] === 'string' ||
+                id.includes('-') ||
+                id.includes('state') ||
+                id.includes('appeared_in')
+            ) {
                 // If it is a string, default is like:
                 criteria[0] = `%${criteria[0]}%`;
                 criteria.unshift('like');
@@ -657,19 +671,28 @@ const formatFilters = original_filters => {
                 criteria.unshift('=');
             }
         }
-        // Format And/Or up to three levels:
-        if (criteria.length === 2) {
-            query = { [criteria[0]]: criteria[1] };
+        // Special case if its for id runs  separated by commas: 325334, 234563
+        else if (criteria.length > 1) {
+            if (!isNaN(criteria[0]) && !isNaN(criteria[1])) {
+                const or = criteria.map(run_number => {
+                    return { '=': run_number };
+                });
+                query = {
+                    or
+                };
+            }
         }
-        if (criteria.length === 5) {
+        // Format And/Or up to three levels:
+        else if (criteria.length === 2) {
+            query = { [criteria[0]]: criteria[1] };
+        } else if (criteria.length === 5) {
             query = {
                 [criteria[2]]: [
                     { [criteria[0]]: criteria[1] },
                     { [criteria[3]]: criteria[4] }
                 ]
             };
-        }
-        if (criteria.length === 8) {
+        } else if (criteria.length === 8) {
             query = {
                 [criteria[5]]: [
                     { [criteria[6]]: criteria[7] },

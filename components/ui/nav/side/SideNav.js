@@ -16,7 +16,6 @@ class SideNav extends Component {
                 query: { type, section, workspace }
             }
         } = this.props;
-        console.log(keyPath);
         if (key === 'lumisections') {
             Router.push(
                 `/offline?type=offline&section=lumisections`,
