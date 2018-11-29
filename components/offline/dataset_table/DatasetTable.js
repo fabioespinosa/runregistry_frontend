@@ -671,8 +671,9 @@ const formatFilters = original_filters => {
                 criteria.unshift('=');
             }
         }
+        let multiple_ids = false;
         // Special case if its for id runs  separated by commas: 325334, 234563
-        else if (criteria.length > 1) {
+        if (criteria.length > 1) {
             if (!isNaN(criteria[0]) && !isNaN(criteria[1])) {
                 const or = criteria.map(run_number => {
                     return { '=': run_number };
@@ -680,19 +681,22 @@ const formatFilters = original_filters => {
                 query = {
                     or
                 };
+                multiple_ids = true;
             }
         }
         // Format And/Or up to three levels:
-        else if (criteria.length === 2) {
+        if (criteria.length === 2 && !multiple_ids) {
             query = { [criteria[0]]: criteria[1] };
-        } else if (criteria.length === 5) {
+        }
+        if (criteria.length === 5 && !multiple_ids) {
             query = {
                 [criteria[2]]: [
                     { [criteria[0]]: criteria[1] },
                     { [criteria[3]]: criteria[4] }
                 ]
             };
-        } else if (criteria.length === 8) {
+        }
+        if (criteria.length === 8 && !multiple_ids) {
             query = {
                 [criteria[5]]: [
                     { [criteria[6]]: criteria[7] },
