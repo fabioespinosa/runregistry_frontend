@@ -51,10 +51,9 @@ let local_sortings = [];
 class DatasetTable extends Component {
     // First time page loads, table grabs filter from query url, then goes and queries them:
     async componentDidMount() {
-        // let { url_filter } = this.props.dataset_table;
-        // const renamed_filters = rename_triplets(url_filter, true);
-        // const filters = formatFilters(renamed_filters);
-        const filters = {};
+        let { url_filter } = this.props.dataset_table;
+        const renamed_filters = rename_triplets(url_filter, true);
+        const filters = formatFilters(renamed_filters);
         await this.props.filterDatasets(defaultPageSize, 0, [], filters);
     }
     // When a user filters the table, the filters are persisted in the url string, this method takes care of that:
@@ -79,7 +78,7 @@ class DatasetTable extends Component {
     };
     // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
     filterTable = async (filters, page, pageSize) => {
-        // this.applyFiltersToUrl(filters);
+        this.applyFiltersToUrl(filters);
         const renamed_filters = rename_triplets(filters, true);
         const formated_filters = formatFilters(renamed_filters);
         await this.props.filterDatasets(
