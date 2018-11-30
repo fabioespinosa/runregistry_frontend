@@ -9,6 +9,7 @@ import {
     certifiable_offline_components
 } from '../../../config/config';
 
+import Status from '../../common/CommonTableComponents/Status';
 import {
     moveDataset,
     filterDatasets,
@@ -313,107 +314,12 @@ class DatasetTable extends Component {
                 maxWidth: 66,
                 id: column.accessor,
                 accessor: data => {
-                    let status = 'EXCLUDED';
                     const triplet = data[column.accessor];
-                    if (triplet) {
-                        status = triplet.status;
-                    }
-                    return status;
+                    return triplet;
                 },
-                Cell: props => {
-                    const { value } = props;
-                    return (
-                        <span
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                textAlign: 'center'
-                            }}
-                        >
-                            {value === 'GOOD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'green',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        GOOD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'EXCLUDED' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'grey',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white',
-                                            fontSize: '0.85em'
-                                        }}
-                                    >
-                                        EXCLUDED
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'BAD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'red',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        BAD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'STANDBY' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'yellow',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        STANDBY
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'NOTSET' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        NOTSET
-                                    </span>
-                                </div>
-                            )}
-                        </span>
-                    );
-                }
+                Cell: ({ value }) => (
+                    <Status triplet={value} significant={true} />
+                )
             };
         });
         columns = [...columns, ...offline_columns_composed];
@@ -649,7 +555,6 @@ const formatFilters = original_filters => {
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
-        console.log(criteria);
         if (criteria.length === 1) {
             // If user types '=' or '<' alike operator, do not perform default 'like' or '=':
             if (['=', '<', '>', '<=', '>='].includes(criteria[0][0])) {

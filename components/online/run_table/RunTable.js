@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router, { withRouter } from 'next/router';
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import qs from 'qs';
 import { components } from '../../../config/config';
+import Status from '../../common/CommonTableComponents/Status';
 import {
     moveRun,
     markSignificant,
@@ -319,126 +320,15 @@ class RunTable extends Component {
                 maxWidth: 66,
                 id: `${column['Header']}_triplet`,
                 accessor: data => {
-                    let status = 'EXCLUDED';
                     const triplet = data[`${column['Header']}_triplet`];
-                    const { significant } = data;
-                    if (triplet && significant.value) {
-                        status = triplet.status;
-                    }
-                    return status;
+                    return triplet;
                 },
-                Cell: ({ original, value }) => {
-                    return (
-                        <span
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                textAlign: 'center'
-                            }}
-                        >
-                            {original.significant.value ? (
-                                <div>
-                                    {value === 'GOOD' && (
-                                        <div
-                                            style={{
-                                                backgroundColor: 'green',
-                                                borderRadius: '1px'
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'white'
-                                                }}
-                                            >
-                                                GOOD
-                                            </span>
-                                        </div>
-                                    )}
-                                    {value === 'EXCLUDED' && (
-                                        <div
-                                            style={{
-                                                backgroundColor: 'grey',
-                                                borderRadius: '1px'
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'white',
-                                                    fontSize: '0.85em'
-                                                }}
-                                            >
-                                                EXCLUDED
-                                            </span>
-                                        </div>
-                                    )}
-                                    {value === 'BAD' && (
-                                        <div
-                                            style={{
-                                                backgroundColor: 'red',
-                                                borderRadius: '1px'
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'white'
-                                                }}
-                                            >
-                                                BAD
-                                            </span>
-                                        </div>
-                                    )}
-                                    {value === 'STANDBY' && (
-                                        <div
-                                            style={{
-                                                backgroundColor: 'yellow',
-                                                borderRadius: '1px'
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'black'
-                                                }}
-                                            >
-                                                STANDBY
-                                            </span>
-                                        </div>
-                                    )}
-                                    {value === 'NOTSET' && (
-                                        <div
-                                            style={{
-                                                backgroundColor: 'white',
-                                                borderRadius: '1px'
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'black'
-                                                }}
-                                            >
-                                                NOTSET
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        INSIG.
-                                    </span>
-                                </div>
-                            )}
-                        </span>
-                    );
-                }
+                Cell: ({ original, value }) => (
+                    <Status
+                        value={value}
+                        significant={original.significant.value}
+                    />
+                )
             };
         });
         columns = [...columns, ...component_columns, ...other_columns];
