@@ -325,7 +325,7 @@ class RunTable extends Component {
                 },
                 Cell: ({ original, value }) => (
                     <Status
-                        value={value}
+                        triplet={value}
                         significant={original.significant.value}
                     />
                 )
