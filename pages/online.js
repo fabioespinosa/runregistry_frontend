@@ -54,8 +54,8 @@ class Online extends Component {
                 </BreadcrumbCmp>
                 <Content
                     style={{
-                        background: '#fff',
-                        padding: 20,
+                        // background: '#fff',
+                        padding: 0,
                         margin: 0,
                         minHeight: 280
                     }}

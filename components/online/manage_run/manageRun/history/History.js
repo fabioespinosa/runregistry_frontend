@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import { Icon } from 'antd';
 import { components } from '../../../../../config/config';
+import Status from '../../../../common/CommonTableComponents/Status';
+import CommonValueComponent from '../../../../common/CommonTableComponents/CommonValueComponent';
 
 class History extends Component {
     render() {
@@ -75,11 +77,7 @@ class History extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ value }) => (
-                    <div style={{ textAlign: 'center' }}>
-                        {value ? value.value : ''}
-                    </div>
-                )
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'Significant',
@@ -102,58 +100,22 @@ class History extends Component {
             {
                 Header: 'Stop Reason',
                 accessor: 'stop_reason',
-                Cell: ({ original, value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'State',
                 accessor: 'state',
-                Cell: ({ original, value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'hlt key',
                 accessor: 'hlt_key',
-                Cell: ({ original, value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'hlt Physics Counter',
                 accessor: 'hlt_physics_counter',
-                Cell: ({ original, value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             }
         ];
         // {
@@ -169,108 +131,16 @@ class History extends Component {
                 maxWidth: 66,
                 id: `${column['Header']}_triplet`,
                 accessor: data => {
-                    let status = '';
                     const triplet = data[`${column['Header']}_triplet`];
-                    const { significant } = data;
-                    if (triplet) {
-                        status = triplet.status;
+                    if (typeof triplet === 'object') {
+                        return triplet;
                     }
-                    return status;
+                    // If it is not an object that the history changed from, make the components empty:
+                    return { status: '', comment: '', cause: '' };
                 },
-                Cell: props => {
-                    const { value } = props;
-                    return (
-                        <span
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                textAlign: 'center'
-                            }}
-                        >
-                            {value === 'GOOD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'green',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        GOOD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'EXCLUDED' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'grey',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white',
-                                            fontSize: '0.85em'
-                                        }}
-                                    >
-                                        EXCLUDED
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'BAD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'red',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        BAD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'STANDBY' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'yellow',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        STANDBY
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'NOTSET' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        NOTSET
-                                    </span>
-                                </div>
-                            )}
-                        </span>
-                    );
-                }
+                Cell: ({ value }) => (
+                    <Status triplet={value} significant={true} />
+                )
             };
         });
         columns = [...columns, ...component_columns];

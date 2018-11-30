@@ -6,6 +6,8 @@ import {
     offline_columns,
     certifiable_offline_components
 } from '../../../../../config/config';
+import Status from '../../../../common/CommonTableComponents/Status';
+import CommonValueComponent from '../../../../common/CommonTableComponents/CommonValueComponent';
 
 class History extends Component {
     render() {
@@ -21,6 +23,7 @@ class History extends Component {
         dataset.class = dataset.run.class;
         dataset.significant = dataset.run.significant;
         dataset.online_state = dataset.run.state;
+        dataset.stop_reason = dataset.run.stop_reason;
         for (const [key, val] of Object.entries(dataset)) {
             if (val) {
                 const history = val.history;
@@ -108,11 +111,7 @@ class History extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ original, value }) => (
-                    <div style={{ textAlign: 'center' }}>
-                        {value ? value.value : ''}
-                    </div>
-                )
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'Significant',
@@ -135,44 +134,22 @@ class History extends Component {
             {
                 Header: 'Online State',
                 accessor: 'online_state',
-                Cell: ({ value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: `${workspace} State`,
                 accessor: `${workspace.toLowerCase()}_state`,
-                Cell: ({ original, value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
+            },
+            {
+                Header: 'Stop Reason',
+                accessor: 'stop_reason',
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'Appeared in',
                 accessor: 'appeared_in',
-                Cell: ({ original, value }) => {
-                    if (value) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                {value.value}
-                            </div>
-                        );
-                    }
-                    return <div />;
-                }
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             }
         ];
 
@@ -204,107 +181,15 @@ class History extends Component {
                 maxWidth: 66,
                 id: column.accessor,
                 accessor: data => {
-                    let status = '';
                     const triplet = data[column.accessor];
-                    if (triplet) {
-                        status = triplet.status;
+                    if (typeof triplet === 'object') {
+                        return triplet;
                     }
-                    return status;
+                    return { status: '', comment: '', cause: '' };
                 },
-                Cell: props => {
-                    const { value } = props;
-                    return (
-                        <span
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                textAlign: 'center'
-                            }}
-                        >
-                            {value === 'GOOD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'green',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        GOOD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'EXCLUDED' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'grey',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white',
-                                            fontSize: '0.85em'
-                                        }}
-                                    >
-                                        EXCLUDED
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'BAD' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'red',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'white'
-                                        }}
-                                    >
-                                        BAD
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'STANDBY' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'yellow',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        STANDBY
-                                    </span>
-                                </div>
-                            )}
-                            {value === 'NOTSET' && (
-                                <div
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderRadius: '1px'
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            color: 'black'
-                                        }}
-                                    >
-                                        NOTSET
-                                    </span>
-                                </div>
-                            )}
-                        </span>
-                    );
-                }
+                Cell: ({ value }) => (
+                    <Status triplet={value} significant={true} />
+                )
             };
         });
         columns = [...columns, ...offline_columns_composed];

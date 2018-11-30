@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import qs from 'qs';
 import { components } from '../../../config/config';
 import Status from '../../common/CommonTableComponents/Status';
+import CommonValueComponent from '../../common/CommonTableComponents/CommonValueComponent';
 import {
     moveRun,
     markSignificant,
@@ -143,9 +144,7 @@ class RunTable extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ value }) => (
-                    <div style={{ textAlign: 'center' }}>{value.value}</div>
-                )
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'Manage / LS',
@@ -281,9 +280,7 @@ class RunTable extends Component {
             {
                 Header: 'Hlt Key Description',
                 accessor: 'hlt_key',
-                Cell: ({ value }) => (
-                    <div style={{ textAlign: 'center' }}>{value.value}</div>
-                )
+                Cell: ({ value }) => <CommonValueComponent value={value} />
             },
             {
                 Header: 'GUI',
