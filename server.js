@@ -36,7 +36,6 @@ app.prepare().then(() => {
                 res.redirect('/runtest/online/runs/all');
             } else if (process.env.ENV === 'staging') {
                 res.redirect('/rr-dev/online/runs/all');
-            } else if (process.env.NODE_ENV === 'development') {
             }
         } else {
             res.redirect('/online/runs/all');
@@ -51,7 +50,7 @@ app.prepare().then(() => {
 
     server.get('/:type/:section', (req, res) => {
         const params = { ...req.headers, ...req.params, filters: req.query };
-        app.render(req, res, `/${req.params.type}`, req.params);
+        app.render(req, res, `/${req.params.type}`, params);
     });
 
     server.get('*', (req, res) => {

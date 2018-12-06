@@ -22,7 +22,8 @@ export const fetchWorkspaces = error_handler(
             payload: workspace
         });
         if (!isServer) {
-            store.dispatch(filterDatasets(25, 0, [], []));
+            store.dispatch(filterDatasets(10, 0, [], [], 'waiting_list'));
+            store.dispatch(filterDatasets(10, 0, [], [], 'editable'));
         }
     }
 );

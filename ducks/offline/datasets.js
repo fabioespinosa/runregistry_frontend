@@ -12,6 +12,7 @@ const FILTER_DATASETS = 'FILTER_DATASETS';
 const TABLE_LOADING = 'TABLE_LOADING-OFFLINE';
 const TABLE_LOADING_DONE = 'TABLE_LOADING_DONE-OFFLINE';
 export const FIND_AND_REPLACE_DATASETS = 'FIND_AND_REPLACE_DATASETS';
+const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
 
 export function fetchInitialOfflineDatasets(store, query, isServer) {}
 
@@ -30,11 +31,6 @@ export const initializeFilters = (store, query) => {
             });
         }
     }
-    // TODO change workspace
-    store.dispatch({ type: TABLE_LOADING });
-    setTimeout(() => {
-        store.dispatch({ type: TABLE_LOADING_DONE });
-    }, 500);
 };
 
 export const changeFilters = (filter_array, filters = {}) => ({
@@ -44,6 +40,7 @@ export const changeFilters = (filter_array, filters = {}) => ({
     filters
 });
 
+// endpoint can be either waiting_list or editable
 export const filterDatasets = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();
@@ -87,9 +84,13 @@ export const editDataset = (id_dataset, workspace, components) =>
         dispatch(hideManageDatasetModal());
     });
 
+export const toggleTableFilters = () => ({
+    type: TOGGLE_TABLE_FILTERS
+});
+
 const INITIAL_STATE = {
     datasets: [],
-    pageSize: 25,
+    filterable: false,
     loading: false,
     filter: false,
     url_filter: [],
@@ -128,6 +129,8 @@ export default function(state = INITIAL_STATE, action) {
                 ...state,
                 datasets: findAndReplaceHelper(state.datasets, payload)
             };
+        case TOGGLE_TABLE_FILTERS:
+            return { ...state, filterable: !state.filterable };
         default:
             return state;
     }

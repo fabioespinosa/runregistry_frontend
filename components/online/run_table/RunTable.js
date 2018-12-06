@@ -548,7 +548,7 @@ const rename_triplets = (original_criteria, filtering) => {
 const formatFilters = original_filters => {
     const column_filters = {};
     original_filters.forEach(({ id, value }) => {
-        value = value.replace(',', ' '); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
+        value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
@@ -607,6 +607,7 @@ const formatFilters = original_filters => {
         }
         // If query is blank, there was an error in query format
         if (Object.keys(query).length === 0) {
+            Swal('Invalid query', '', 'warning');
             throw 'query invalid';
         }
         column_filters[id] = query;

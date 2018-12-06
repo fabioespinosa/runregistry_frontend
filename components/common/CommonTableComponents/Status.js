@@ -14,16 +14,28 @@ class Status extends Component {
                     }}
                 >
                     {comment.length > 0 && (
-                        <span
-                            style={{
-                                position: 'absolute',
-                                borderLeft: '16px solid transparent',
-                                borderBottom: '16px solid black',
-                                zIndex: '100',
-                                right: '0',
-                                bottom: '0'
-                            }}
-                        />
+                        <span>
+                            <span
+                                style={{
+                                    position: 'absolute',
+                                    borderLeft: '16px solid darkred',
+                                    borderBottom: '16px solid transparent',
+                                    zIndex: '100',
+                                    left: '0',
+                                    top: '0'
+                                }}
+                            />
+                            <span
+                                style={{
+                                    position: 'absolute',
+                                    borderLeft: '16px solid transparent',
+                                    borderBottom: '16px solid darkred',
+                                    zIndex: '100',
+                                    right: '0',
+                                    bottom: '0'
+                                }}
+                            />
+                        </span>
                     )}
                     {significant ? (
                         <div>

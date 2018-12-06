@@ -13,15 +13,13 @@ import Status from '../../common/CommonTableComponents/Status';
 import {
     moveDataset,
     filterDatasets,
-    changeFilters
+    changeFilters,
+    toggleTableFilters
 } from '../../../ducks/offline/datasets';
 import {
-    toggleTableFilters,
     showManageDatasetModal,
     showLumisectionModal
 } from '../../../ducks/offline/ui';
-import ManageDatasetModal from '../manage_dataset/ManageDatasetModal';
-import LumisectionModal from '../lumisections/LumisectionModal';
 
 import ReactTable from 'react-table';
 
@@ -52,7 +50,7 @@ let local_sortings = [];
 class DatasetTable extends Component {
     // First time page loads, table grabs filter from query url, then goes and queries them:
     async componentDidMount() {
-        let { url_filter } = this.props.dataset_table;
+        const { url_filter } = this.props.dataset_table;
         const renamed_filters = rename_triplets(url_filter, true);
         const filters = formatFilters(renamed_filters);
         await this.props.filterDatasets(defaultPageSize, 0, [], filters);
@@ -106,7 +104,6 @@ class DatasetTable extends Component {
         const formated_filters = formatFilters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = formatSortings(renamed_sortings);
-        console.log(formated_filters);
         await this.props.filterDatasets(
             pageSize || defaultPageSize,
             page,
@@ -123,14 +120,21 @@ class DatasetTable extends Component {
 
     render() {
         const {
-            filterable,
             workspace,
             dataset_table,
             moveDataset,
             showManageDatasetModal,
             showLumisectionModal
         } = this.props;
-        const { datasets, pages, loading, filter, filters } = dataset_table;
+        let {
+            datasets,
+            pages,
+            filterable,
+            loading,
+            filter,
+            filters
+        } = dataset_table;
+
         let columns = [
             {
                 Header: 'Run Number',
@@ -150,7 +154,7 @@ class DatasetTable extends Component {
                 Header: 'Class',
                 accessor: 'class',
                 maxWidth: 90,
-                Cell: ({ original, value }) => (
+                Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
                         {original.run.class.value}
                     </div>
@@ -433,11 +437,6 @@ class DatasetTable extends Component {
         });
         return (
             <div>
-                <ManageDatasetModal />
-                <LumisectionModal />
-                Hold <i>shift</i> for multiple column sorting. <br />A dataset
-                must appear in DQM GUI for it to be editable (although it can be
-                moved manually by clicking 'move').
                 {filter ? (
                     <div
                         style={{
@@ -508,7 +507,6 @@ class DatasetTable extends Component {
 
 const mapStateToProps = state => {
     return {
-        filterable: state.offline.ui.table.filterable,
         dataset_table: state.offline.datasets,
         workspace: state.offline.workspace.workspace
     };
@@ -543,7 +541,6 @@ const rename_triplets = (original_criteria, filtering) => {
                 new_filter.value = filter.value.toUpperCase();
             }
         }
-        console.log(new_filter);
         return new_filter;
     });
 };
@@ -551,7 +548,7 @@ const rename_triplets = (original_criteria, filtering) => {
 const formatFilters = original_filters => {
     const column_filters = {};
     original_filters.forEach(({ id, value }) => {
-        value = value.replace(',', ' '); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
+        value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
@@ -615,6 +612,7 @@ const formatFilters = original_filters => {
         }
         // If query is blank, there was an error in query format
         if (Object.keys(query).length === 0) {
+            Swal('Invalid query', '', 'warning');
             throw 'query invalid';
         }
         column_filters[id] = query;

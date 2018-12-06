@@ -32,11 +32,6 @@ export default class MyDocument extends Document {
                         type="text/css"
                         href={`${root_url_prefix}/static/react-table.css`}
                     />
-                    <link
-                        rel="stylesheet"
-                        type="text/css"
-                        href="https://s3.eu-west-3.amazonaws.com/cssrunregistry/all.css.gz"
-                    />
                     <meta charSet="utf-8" />
                     <meta
                         name="viewport"

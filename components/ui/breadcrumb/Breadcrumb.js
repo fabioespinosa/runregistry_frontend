@@ -99,23 +99,30 @@ class BreadcrumbCmp extends Component {
                             </Radio>
                         </RadioGroup>
                     ) : (
-                        <RadioGroup
-                            onChange={evt =>
-                                toggleWaitingList(evt.target.value)
-                            }
-                            value={
+                        <Menu
+                            onClick={evt => {
+                                console.log(evt);
+                                toggleWaitingList(evt.key);
+                            }}
+                            selectedKeys={[
                                 show_waiting_list
                                     ? 'show_waiting_list'
                                     : 'show_datasets'
-                            }
+                            ]}
+                            mode="horizontal"
+                            style={{
+                                background: '#f0f2f5',
+                                marginRight: '60px'
+                            }}
                         >
-                            <Radio value="show_waiting_list">
+                            <Menu.Item key="show_waiting_list">
+                                <Icon type="clock-circle" />
                                 Show waiting list
-                            </Radio>
-                            <Radio value="show_datasets">
-                                Show Editable datasets
-                            </Radio>
-                        </RadioGroup>
+                            </Menu.Item>
+                            <Menu.Item key="show_datasets">
+                                <Icon type="copy" /> Show Editable datasets
+                            </Menu.Item>
+                        </Menu>
                     )}
                 </div>
                 <div className="progresscircle_container">

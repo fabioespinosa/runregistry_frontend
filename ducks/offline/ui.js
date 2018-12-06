@@ -7,7 +7,6 @@ const SHOW_MANAGE_DATASET_MODAL = 'SHOW_MANAGE_DATASET_MODAL-OFFLINE';
 const HIDE_MANAGE_DATASET_MODAL = 'HIDE_MANAGE_DATASET_MODAL-OFFLINE';
 const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL-OFFLINE';
 const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL-OFFLINE';
-const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
 
 export const toggleWaitingList = new_value => dispatch => {
     dispatch({
@@ -42,19 +41,14 @@ export const showLumisectionModal = dataset => ({
 
 export const hideLumisectionModal = () => ({ type: HIDE_LUMISECTION_MODAL });
 
-export const toggleTableFilters = () => ({ type: TOGGLE_TABLE_FILTERS });
-
 const INITIAL_STATE = {
-    show_waiting_list: true,
+    show_waiting_list: false,
     configuration_modal_visible: false,
     configuration_modal_type: '',
     manage_dataset_modal_visible: false,
     manage_dataset_modal_dataset: {},
     lumisection_modal_visible: false,
-    lumisection_modal_dataset: {},
-    table: {
-        filterable: false
-    }
+    lumisection_modal_dataset: {}
 };
 
 export default function(state = INITIAL_STATE, action) {
@@ -93,14 +87,7 @@ export default function(state = INITIAL_STATE, action) {
             };
         case HIDE_LUMISECTION_MODAL:
             return { ...state, lumisection_modal_visible: false };
-        case TOGGLE_TABLE_FILTERS:
-            return {
-                ...state,
-                table: {
-                    ...state.table,
-                    filterable: !state.table.filterable
-                }
-            };
+
         default:
             return state;
     }

@@ -113,7 +113,6 @@ export const refreshRun = id_run =>
 
 const INITIAL_STATE = {
     runs: [],
-    pageSize: 25,
     loading: false,
     filter: false,
     url_filter: [],
