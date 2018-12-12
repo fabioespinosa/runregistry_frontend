@@ -13,16 +13,12 @@ import {
 } from 'antd';
 import { root_url_prefix } from '../../../config/config';
 
-import {
-    showConfigurationModal as showOnlineConfigurationModal,
-    toggleShowAllRunsAndFetch
-} from '../../../ducks/online/ui';
+import { showConfigurationModal as showOnlineConfigurationModal } from '../../../ducks/online/ui';
 
 import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
 
 import { toggleWaitingList } from '../../../ducks/offline/ui';
 const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.MenuItemGroup;
 const RadioGroup = Radio.Group;
 
 class BreadcrumbCmp extends Component {
@@ -63,7 +59,6 @@ class BreadcrumbCmp extends Component {
             children,
             show_all_runs,
             show_waiting_list,
-            toggleShowAllRunsAndFetch,
             toggleWaitingList,
             online
         } = this.props;
@@ -100,10 +95,7 @@ class BreadcrumbCmp extends Component {
                         </RadioGroup>
                     ) : (
                         <Menu
-                            onClick={evt => {
-                                console.log(evt);
-                                toggleWaitingList(evt.key);
-                            }}
+                            onClick={evt => toggleWaitingList(evt.key)}
                             selectedKeys={[
                                 show_waiting_list
                                     ? 'show_waiting_list'
@@ -191,7 +183,6 @@ export default connect(
     {
         showOnlineConfigurationModal,
         showOfflineConfigurationModal,
-        toggleShowAllRunsAndFetch,
         toggleWaitingList
     }
 )(BreadcrumbCmp);

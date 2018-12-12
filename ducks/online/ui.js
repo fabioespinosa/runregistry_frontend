@@ -7,6 +7,10 @@ const HIDE_MANAGE_RUN_MODAL = 'HIDE_MANAGE_RUN_MODAL-ONLINE';
 const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL-ONLINE';
 const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL-ONLINE';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-ONLINE';
+const SHOW_CLASSIFIER_VISUALIZATION_MODAL =
+    'SHOW_CLASSIFIER_VISUALIZATION_MODAL-ONLINE';
+const HIDE_CLASSIFIER_VISUALIZATION_MODAL =
+    'HIDE_CLASSIFIER_VISUALIZATION_MODAL-ONLINE';
 
 export const toggleShowAllRunsAndFetch = new_value => dispatch => {
     dispatch({
@@ -46,6 +50,15 @@ export const showLumisectionModal = run => ({
 
 export const hideLumisectionModal = () => ({ type: HIDE_LUMISECTION_MODAL });
 
+export const showClassifierVisualizationModal = run => ({
+    type: SHOW_CLASSIFIER_VISUALIZATION_MODAL,
+    payload: run
+});
+
+export const hideClassifierVisualizationModal = () => ({
+    type: HIDE_CLASSIFIER_VISUALIZATION_MODAL
+});
+
 export const toggleTableFilters = () => ({ type: TOGGLE_TABLE_FILTERS });
 
 const INITIAL_STATE = {
@@ -67,7 +80,7 @@ export default function(state = INITIAL_STATE, action) {
         case TOGGLE_SHOW_ALL_RUNS:
             return {
                 ...state,
-                show_all_runs: !state.show_all_runs
+                show_all_runs: payload
             };
         case SHOW_CONFIGURATION_MODAL:
             return {
@@ -100,6 +113,17 @@ export default function(state = INITIAL_STATE, action) {
             };
         case HIDE_LUMISECTION_MODAL:
             return { ...state, lumisection_modal_visible: false };
+        case SHOW_CLASSIFIER_VISUALIZATION_MODAL:
+            return {
+                ...state,
+                classifier_visualization_modal: true,
+                classifier_visualization_modal_run: payload
+            };
+        case HIDE_CLASSIFIER_VISUALIZATION_MODAL:
+            return {
+                ...state,
+                classifier_visualization_modal: false
+            };
         case TOGGLE_TABLE_FILTERS:
             return {
                 ...state,

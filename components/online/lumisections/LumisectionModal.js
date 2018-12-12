@@ -7,7 +7,7 @@ import Lumisections from './lumisections/Lumisections';
 class LumisectionModal extends Component {
     render() {
         const {
-            manage_run_modal_visible,
+            lumisection_modal_visible,
             hideLumisectionModal,
             children,
             run
@@ -17,7 +17,7 @@ class LumisectionModal extends Component {
             <div>
                 <Modal
                     title={`Lumisections of run # ${run.run_number}`}
-                    visible={manage_run_modal_visible}
+                    visible={lumisection_modal_visible}
                     onOk={hideLumisectionModal}
                     onCancel={
                         hideLumisectionModal // confirmLoading={confirmLoading}
@@ -40,7 +40,7 @@ class LumisectionModal extends Component {
 
 const mapStateToProps = state => {
     return {
-        manage_run_modal_visible: state.online.ui.lumisection_modal_visible,
+        lumisection_modal_visible: state.online.ui.lumisection_modal_visible,
         run: state.online.ui.lumisection_modal_run
     };
 };

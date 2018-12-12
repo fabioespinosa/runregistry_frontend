@@ -16,10 +16,12 @@ import {
 import {
     toggleTableFilters,
     showManageRunModal,
-    showLumisectionModal
+    showLumisectionModal,
+    showClassifierVisualizationModal
 } from '../../../ducks/online/ui';
 import ManageRunModal from '../manage_run/ManageRunModal';
 import LumisectionModal from '../lumisections/LumisectionModal';
+import ClassifierVisualizationModal from '../classifier_visualization/ClassifierVisualizationModal';
 
 import ReactTable from 'react-table';
 
@@ -124,7 +126,8 @@ class RunTable extends Component {
             run_table,
             show_all_runs,
             showManageRunModal,
-            showLumisectionModal
+            showLumisectionModal,
+            showClassifierVisualizationModal
         } = this.props;
         const { runs, pages, loading, filter, filters } = run_table;
         let columns = [
@@ -144,7 +147,17 @@ class RunTable extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ original, value }) => (
+                    <div style={{ textAlign: 'center' }}>
+                        <a
+                            onClick={() =>
+                                showClassifierVisualizationModal(original)
+                            }
+                        >
+                            {value ? value.value : ''}
+                        </a>
+                    </div>
+                )
             },
             {
                 Header: 'Manage / LS',
@@ -154,7 +167,6 @@ class RunTable extends Component {
                 maxWidth: 75,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
-                        {/* PENDING MAKE IT SO THAT WHEN A RUN IS ONLY EDITABLE WHEN IN OPEN STATE */}
                         <span>
                             <a onClick={() => showManageRunModal(original)}>
                                 Manage
@@ -442,6 +454,7 @@ class RunTable extends Component {
             <div>
                 <ManageRunModal />
                 <LumisectionModal />
+                <ClassifierVisualizationModal />
                 Hold <i>shift</i> for multiple column sorting
                 {filter && (
                     <div
@@ -468,6 +481,7 @@ class RunTable extends Component {
                 <ReactTable
                     columns={columns}
                     manual
+                    pageSizeOptions={[5, 10, 20, 25, 50, 75, 100]}
                     data={
                         runs // Forces table not to paginate or sort automatically, so we can handle it server-side
                     }
@@ -630,6 +644,7 @@ export default withRouter(
             toggleTableFilters,
             showManageRunModal,
             showLumisectionModal,
+            showClassifierVisualizationModal,
             changeFilters,
             moveRun,
             markSignificant

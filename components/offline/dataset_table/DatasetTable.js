@@ -464,6 +464,7 @@ class DatasetTable extends Component {
                 <ReactTable
                     columns={columns}
                     manual
+                    pageSizeOptions={[5, 10, 20, 25, 50, 75, 100]}
                     data={
                         datasets // Forces table not to paginate or sort automatically, so we can handle it server-side
                     }
@@ -472,6 +473,7 @@ class DatasetTable extends Component {
                         loading // Display the total number of pages
                     }
                     onPageChange={page => {
+                        console.log(page);
                         this.onPageChange(page);
                     }}
                     onPageSizeChange={(pageSize, page) =>
