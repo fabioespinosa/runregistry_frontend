@@ -26,9 +26,7 @@ class ClassifierVisualization extends Component {
             run_data: data.run_data
         });
     };
-    displayRules = rules => {
-        const displayed_rules = [];
-        debugger;
+    displayRules = (rules, parent) => {
         const final_value = rules[rules.length - 1];
         if (final_value.hasOwnProperty('resulted_value')) {
             if (
@@ -37,13 +35,21 @@ class ClassifierVisualization extends Component {
             ) {
                 const children = rules[0][Object.keys(rules[0])];
                 const diplayed_chilren = children.map(child_rule =>
-                    this.displayRules(child_rule)
+                    this.displayRules(child_rule, final_value.resulted_value)
                 );
+                const color = final_value.resulted_value
+                    ? 'rgba(76, 175, 80, 0.5);'
+                    : 'rgba(244, 67, 54, 0.3);';
+                const background =
+                    parent === undefined
+                        ? color
+                        : parent !== final_value.resulted_value
+                        ? color
+                        : 'transparent';
                 return (
                     <li
                         className={final_value.resulted_value ? 'green' : 'red'}
                     >
-                        <strong>{Object.keys(rules[0])[0]} - </strong>
                         <Icon
                             style={{
                                 fontSize: 15,
@@ -58,6 +64,8 @@ class ClassifierVisualization extends Component {
                                     : 'close-circle'
                             }
                         />
+                        {' - '}
+                        <strong>{Object.keys(rules[0])[0]}</strong>
                         <ul>{diplayed_chilren}</ul>
                         <style jsx>{`
                             ul {
@@ -71,29 +79,37 @@ class ClassifierVisualization extends Component {
                             ul:before {
                                 content: '';
                                 height: 100%;
-                                border-left: solid 1px black;
+                                border-left: solid 2px
+                                    ${final_value.resulted_value
+                                        ? 'green'
+                                        : 'red'};
                                 position: absolute;
-                                top: 5;
                                 left: 0;
-                                z-index: 1;
                             }
                             li {
                                 margin: 0;
                                 padding: 0;
                             }
                             .green {
-                                background-color: rgb(76, 175, 80);
-                                filter: opacity(99%);
+                                background-color: ${background};
                             }
                             .red {
-                                background-color: rgb(244, 67, 54);
-                                filter: opacity(99%);
+                                background-color: ${background};
                             }
                         `}</style>
                     </li>
                 );
             } else {
                 // We are in a leaf of a tree (no more children)
+                const color = final_value.resulted_value
+                    ? 'rgba(76, 175, 80, 0.5);'
+                    : 'rgba(244, 67, 54, 0.3);';
+                const background =
+                    parent === undefined
+                        ? color
+                        : parent !== final_value.resulted_value
+                        ? color
+                        : 'transparent';
                 return (
                     <li
                         className={final_value.resulted_value ? 'green' : 'red'}
@@ -115,12 +131,10 @@ class ClassifierVisualization extends Component {
                         />
                         <style jsx>{`
                             .green {
-                                background-color: rgb(76, 175, 80);
-                                filter: opacity(99%);
+                                background-color: ${background};
                             }
                             .red {
-                                background-color: rgb(244, 67, 54);
-                                filter: opacity(99%);
+                                background-color: ${background};
                             }
                         `}</style>
                     </li>
