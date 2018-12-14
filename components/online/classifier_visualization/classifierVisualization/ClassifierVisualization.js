@@ -114,7 +114,6 @@ class ClassifierVisualization extends Component {
                     <li
                         className={final_value.resulted_value ? 'green' : 'red'}
                     >
-                        {JSON.stringify(rules[0])} -{' '}
                         <Icon
                             style={{
                                 fontSize: 15,
@@ -129,6 +128,8 @@ class ClassifierVisualization extends Component {
                                     : 'close-circle'
                             }
                         />
+                        {' - '}
+                        {JSON.stringify(rules[0])}
                         <style jsx>{`
                             .green {
                                 background-color: ${background};

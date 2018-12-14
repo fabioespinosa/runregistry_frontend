@@ -1,9 +1,9 @@
-version: "2"
+version: '2'
 services:
-  app:
-    container_name: app
-    command: npm run start
-    build: .
-    ports:
-      - "443:9500"
-      - "80:9500"
+    app:
+        container_name: app
+        command: npm run dev
+        build: .
+        ports:
+            - '443:7000'
+            - '80:7000'
