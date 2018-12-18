@@ -69,6 +69,8 @@ const INITIAL_STATE = {
     manage_run_modal_run: {},
     lumisection_modal_visible: false,
     lumisection_modal_run: {},
+    classifier_visualization_modal: false,
+    classifier_visualization_modal_run: {},
     table: {
         filterable: false
     }

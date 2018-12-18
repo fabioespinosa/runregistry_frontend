@@ -145,11 +145,11 @@ class ClassifierVisualization extends Component {
     };
 
     render() {
+        const { run } = this.props;
         const { class_classifiers, result, selected_class } = this.state;
-        console.log(result);
         return (
             <div>
-                Why is this run not a:
+                Why is Run {run.run_number} not a:
                 <ul>
                     {class_classifiers.map(current_class => (
                         <li key={current_class.class}>

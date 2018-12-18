@@ -12,11 +12,10 @@ class ClassifierVisualizationModal extends Component {
             children,
             run
         } = this.props;
-
         return (
             <div>
                 <Modal
-                    title={`Classifier Visualization`}
+                    title={`Classifier Visualization for Run ${run.run_number}`}
                     visible={classifier_visualization_modal}
                     onOk={hideClassifierVisualizationModal}
                     onCancel={
