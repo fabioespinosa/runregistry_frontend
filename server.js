@@ -8,7 +8,7 @@ const https = require('https');
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-const port = process.env.PORT || 7001;
+const http_port = process.env.PORT || 7001;
 const https_port = process.env.HTTPS_PORT || 7000;
 
 const privateKey = fs.readFileSync('sslcert/key.pem', 'utf8');
@@ -65,6 +65,11 @@ app.prepare().then(() => {
         console.log(`> HTTPS listening in port ${https_port}`);
     });
 
+    const http_server = http.createServer(server_options, server);
+    http_server.listen(http_port, '0.0.0.0', err => {
+        if (err) throw err;
+        console.log(`> HTTP listening in port ${http_port}`);
+    });
     // server.listen(port, err => {
     //     if (err) throw err;
     //     console.log(`> Ready on http://localhost:${port}`);
