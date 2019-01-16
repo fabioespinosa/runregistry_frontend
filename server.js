@@ -33,9 +33,9 @@ app.prepare().then(() => {
         // There are two `production` scenarios, either real production or staging
         if (process.env.NODE_ENV === 'production') {
             if (process.env.ENV === 'production') {
-                res.redirect('/runtest/online/runs/all');
+                res.redirect('/online/runs/all');
             } else if (process.env.ENV === 'staging') {
-                res.redirect('/rr-dev/online/runs/all');
+                res.redirect('/online/runs/all');
             }
         } else {
             res.redirect('/online/runs/all');
