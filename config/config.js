@@ -23,7 +23,7 @@ const config = {
     production: {
         root_url_prefix: '',
         root_url: '',
-        api_url: 'https://cms-pdmv-dev.cern.ch/runtest_api'
+        api_url: 'https://cmsrunregistry.web.cern.ch/api'
     }
 };
 exports.config = config;
