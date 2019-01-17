@@ -1,7 +1,7 @@
 export default function(getState) {
     const state = getState();
-    let email = state.info.adfs_email;
-    let egroups = state.info.adfs_group;
+    let email = state.info.email;
+    let egroups = state.info.egroups;
     if (
         process.env.NODE_ENV === 'development' ||
         process.env.ENV === 'development'
