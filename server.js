@@ -24,7 +24,8 @@ app.prepare().then(() => {
     // const router = express.Router();
 
     server.get('*', (req, res, next) => {
-        // console.log(req.headers);
+        console.log('req', req);
+        console.log(req.headers);
         next();
     });
 
