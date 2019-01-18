@@ -86,7 +86,7 @@ class TopNav extends Component {
                     {/* <br /> */}
                     <a
                         className="white"
-                        href="https://login.cern.ch/adfs/ls/?wa=wsignout1.0"
+                        href="https://cmsrunregistry.web.cern.ch/logout"
                     >
                         Log out
                     </a>
