@@ -17,7 +17,7 @@ class TopNav extends Component {
             },
             user
         } = this.props;
-        console.log(user.displayName);
+        console.log(user.displayname);
         console.log(user);
         return (
             <Header className="header">
@@ -82,7 +82,7 @@ class TopNav extends Component {
                 </Menu>
                 <div>
                     <h3 className="user_name white">
-                        {user.displayName || 'Fabio Alberto Espinosa Burbano'}
+                        {user.displayname || 'Fabio Alberto Espinosa Burbano'}
                     </h3>
                     {/* <br /> */}
                     <a
