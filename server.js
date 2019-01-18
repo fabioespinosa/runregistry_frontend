@@ -23,11 +23,6 @@ app.prepare().then(() => {
     const server = express();
     // const router = express.Router();
 
-    server.get('*', (req, res, next) => {
-        console.log('headers', req.headers);
-        next();
-    });
-
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
         // There are two `production` scenarios, either real production or staging
