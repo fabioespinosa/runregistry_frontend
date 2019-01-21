@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Layout, Breadcrumb } from 'antd';
 import { initializeFilters } from '../ducks/offline/datasets';
 import { fetchWorkspaces } from '../ducks/offline/workspace';
-import { initializeUser } from '../ducks/info';
+import { initializeUser, initializeEnvironment } from '../ducks/info';
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
@@ -16,7 +16,7 @@ const { Content } = Layout;
 
 class Offline extends Component {
     static getInitialProps({ store, query, isServer }) {
-        // Init auth
+        initializeEnvironment(store);
         initializeUser(store, query);
         initializeFilters(store, query);
         return fetchWorkspaces(store, query, isServer);

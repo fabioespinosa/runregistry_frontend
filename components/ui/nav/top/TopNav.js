@@ -15,11 +15,12 @@ class TopNav extends Component {
             router: {
                 query: { type, section, workspace }
             },
-            user
+            user,
+            env
         } = this.props;
         // Log to see who has used the webpage:
         console.log(user.displayname);
-        const backgroundColor = process.env.ENV === 'staging' ? 'purple' : '';
+        const backgroundColor = env === 'staging' ? 'purple' : '';
         return (
             <Header
                 className="header"
@@ -78,7 +79,7 @@ class TopNav extends Component {
                                 fontSize: '0.9em'
                             }}
                         >
-                            {process.env.ENV === 'staging'
+                            {env === 'staging'
                                 ? 'STAGING ENV (FOR TESTING)'
                                 : 'USE OF BOTH RUN REGISTRIES IS MANDATORY'}
                         </span>
@@ -125,7 +126,8 @@ class TopNav extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.info
+        user: state.info,
+        env: state.environment
     };
 };
 
