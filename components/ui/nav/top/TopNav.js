@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-import { root_url_prefix } from '../../../../config/config';
 import config from '../../../../config/config';
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -38,7 +37,7 @@ class TopNav extends Component {
                     <Menu.Item key="0">
                         <img
                             className="logo"
-                            src={`${root_url_prefix}/static/images/cms_logo.png`}
+                            src={`/static/images/cms_logo.png`}
                         />
                         <h4
                             style={{
@@ -53,7 +52,7 @@ class TopNav extends Component {
                     </Menu.Item>
                     <Menu.Item key="online">
                         <Link
-                            as={`${root_url_prefix}/online/runs/all`}
+                            as={`/online/runs/all`}
                             href="/online?type=online&section=runs&workspace=all"
                         >
                             <a>ONLINE</a>
@@ -61,7 +60,7 @@ class TopNav extends Component {
                     </Menu.Item>
                     <Menu.Item key="offline">
                         <Link
-                            as={`${root_url_prefix}/offline/workspaces/global`}
+                            as={`/offline/workspaces/global`}
                             href="/offline?type=offline&section=workspaces&workspace=global"
                         >
                             <a>OFFLINE</a>

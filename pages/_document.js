@@ -1,5 +1,4 @@
 import Document, { Head, Main, NextScript } from 'next/document';
-import { root_url_prefix } from '../config/config';
 
 export default class MyDocument extends Document {
     static async getInitialProps(ctx) {
@@ -13,24 +12,21 @@ export default class MyDocument extends Document {
         return (
             <html>
                 <Head>
+                    <link rel="stylesheet" href={`/_next/static/style.css`} />
                     <link
                         rel="stylesheet"
-                        href={`${root_url_prefix}/_next/static/style.css`}
+                        type="text/css"
+                        href={`/static/nprogress.css`}
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`${root_url_prefix}/static/nprogress.css`}
+                        href={`/static/ant-modified.min.css`}
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`${root_url_prefix}/static/ant-modified.min.css`}
-                    />
-                    <link
-                        rel="stylesheet"
-                        type="text/css"
-                        href={`${root_url_prefix}/static/react-table.css`}
+                        href={`/static/react-table.css`}
                     />
                     <meta charSet="utf-8" />
                     <meta

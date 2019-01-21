@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
 import { Layout, Menu, Icon } from 'antd';
-import {
-    root_url_prefix,
-    offline_column_structure
-} from '../../../../config/config';
+import { offline_column_structure } from '../../../../config/config';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -24,7 +21,7 @@ class SideNav extends Component {
         } else {
             Router.push(
                 `/offline?type=offline&section=${keyPath[1]}&workspace=${key}`,
-                `${root_url_prefix}/offline/${keyPath[1]}/${key}`
+                `/offline/${keyPath[1]}/${key}`
             );
         }
     }

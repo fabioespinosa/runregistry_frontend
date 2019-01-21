@@ -11,23 +11,19 @@ console.log('Setup: ', NODE_ENV);
 console.log('Environment: ', ENV);
 const config = {
     development: {
-        root_url_prefix: '',
         root_url: '',
         api_url: 'http://localhost:7003'
     },
     staging: {
-        root_url_prefix: '',
         root_url: '',
         api_url: 'https://dev-cmsrunregistry.web.cern.ch/api'
     },
     production: {
-        root_url_prefix: '',
         root_url: '',
         api_url: 'https://cmsrunregistry.web.cern.ch/api'
     }
 };
 exports.config = config;
-exports.root_url_prefix = config[ENV]['root_url_prefix'];
 
 exports.api_url = config[ENV]['api_url'];
 
