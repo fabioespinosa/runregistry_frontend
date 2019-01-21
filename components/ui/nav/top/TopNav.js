@@ -127,7 +127,7 @@ class TopNav extends Component {
 const mapStateToProps = state => {
     return {
         user: state.info,
-        env: state.environment
+        env: state.info.environment
     };
 };
 
