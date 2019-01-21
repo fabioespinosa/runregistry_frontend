@@ -19,8 +19,7 @@ class TopNav extends Component {
         } = this.props;
         // Log to see who has used the webpage:
         console.log(user.displayname);
-        const backgroundColor =
-            process.env.NODE_ENV === 'staging' ? 'purple' : '';
+        const backgroundColor = process.env.ENV === 'staging' ? 'purple' : '';
         return (
             <Header
                 className="header"
@@ -79,7 +78,7 @@ class TopNav extends Component {
                                 fontSize: '0.9em'
                             }}
                         >
-                            {process.env.NODE_ENV === 'staging'
+                            {process.env.ENV === 'staging'
                                 ? 'STAGING ENV (FOR TESTING)'
                                 : 'USE OF BOTH RUN REGISTRIES IS MANDATORY'}
                         </span>
