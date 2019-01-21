@@ -16,13 +16,10 @@ export const initializeEnvironment = store => {
     });
 };
 
-const INITIAL_STATE = {
-    environment: ''
-};
+const INITIAL_STATE = {};
 
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
-    console.log(state);
     switch (type) {
         case INITIAL_INFO:
             const { displayname, email, egroups, id } = payload;

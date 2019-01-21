@@ -21,9 +21,11 @@ const { Content } = Layout;
 
 class Online extends Component {
     static getInitialProps({ store, query, isServer }) {
-        initializeEnvironment(store);
+        if (isServer) {
+            initializeUser(store, query);
+            initializeEnvironment(store);
+        }
         initializeFilters(store, query);
-        initializeUser(store, query, isServer);
         return {};
     }
 

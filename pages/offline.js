@@ -16,8 +16,10 @@ const { Content } = Layout;
 
 class Offline extends Component {
     static getInitialProps({ store, query, isServer }) {
-        initializeEnvironment(store);
-        initializeUser(store, query);
+        if (isServer) {
+            initializeUser(store, query);
+            initializeEnvironment(store);
+        }
         initializeFilters(store, query);
         return fetchWorkspaces(store, query, isServer);
     }
