@@ -22,9 +22,11 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
+    console.log(state);
     switch (type) {
         case INITIAL_INFO:
-            return { ...state, ...payload };
+            const { displayname, email, egroups, id } = payload;
+            return { ...state, displayname, email, egroups, id };
         case INITIALIZE_ENVIRONMENT:
             return { ...state, environment: payload };
         default:

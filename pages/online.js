@@ -24,7 +24,7 @@ class Online extends Component {
         initializeEnvironment(store);
         initializeFilters(store, query);
         initializeUser(store, query, isServer);
-        // return fetchInitialOnlineRuns(store, query, isServer);
+        return {};
     }
 
     render() {
