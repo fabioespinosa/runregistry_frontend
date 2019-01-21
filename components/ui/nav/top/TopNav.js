@@ -17,14 +17,23 @@ class TopNav extends Component {
             },
             user
         } = this.props;
+        // Log to see who has used the webpage:
         console.log(user.displayname);
+        const backgroundColor =
+            process.env.NODE_ENV === 'staging' ? 'purple' : '';
         return (
-            <Header className="header">
+            <Header
+                className="header"
+                style={{ backgroundColor: backgroundColor }}
+            >
                 <Menu
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={[type]}
-                    style={{ lineHeight: '64px' }}
+                    style={{
+                        lineHeight: '64px',
+                        backgroundColor: backgroundColor
+                    }}
                 >
                     <Menu.Item key="0">
                         <img
@@ -70,7 +79,9 @@ class TopNav extends Component {
                                 fontSize: '0.9em'
                             }}
                         >
-                            USE OF BOTH RUN REGISTRIES IS MANDATORY
+                            {process.env.NODE_ENV === 'staging'
+                                ? 'STAGING ENV (FOR TESTING)'
+                                : 'USE OF BOTH RUN REGISTRIES IS MANDATORY'}
                         </span>
                     </Menu.Item>
                     {/* <Menu.Item key="user">
