@@ -53,6 +53,7 @@ class DatasetTable extends Component {
         const { url_filter } = this.props.dataset_table;
         const renamed_filters = rename_triplets(url_filter, true);
         const filters = formatFilters(renamed_filters);
+        console.log(defaultPageSize);
         await this.props.filterDatasets(defaultPageSize, 0, [], filters);
     }
     // When a user filters the table, the filters are persisted in the url string, this method takes care of that:
@@ -77,6 +78,7 @@ class DatasetTable extends Component {
     };
     // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
     filterTable = async (filters, page, pageSize) => {
+        console.log(pageSize);
         this.applyFiltersToUrl(filters);
         const renamed_filters = rename_triplets(filters, true);
         const formated_filters = formatFilters(renamed_filters);
@@ -99,6 +101,7 @@ class DatasetTable extends Component {
 
     // When a user sorts by any field, we want to preserve the filters:
     sortTable = async (sortings, page, pageSize) => {
+        console.log(pageSize);
         let { url_filter } = this.props.dataset_table;
         const renamed_filters = rename_triplets(url_filter, true);
         const formated_filters = formatFilters(renamed_filters);

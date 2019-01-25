@@ -47,7 +47,9 @@ class BreadcrumbCmp extends Component {
             </Menu.Item>
             <SubMenu key="expert_tools" title="DC Expert Tools">
                 <Menu.Item key="component_sync">Component Sync</Menu.Item>
-                <Menu.Item key="ls_exception_sync">LS Exception Sync</Menu.Item>
+                <Menu.Item key="lumisection_exception_sync">
+                    LS Exception Sync
+                </Menu.Item>
                 {/* <Menu.Item key="component_sync">Component Sync</Menu.Item> */}
             </SubMenu>
         </Menu>

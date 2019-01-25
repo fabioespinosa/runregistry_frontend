@@ -7,6 +7,7 @@ import ComponentClassifierConfiguration from './componentClassifierConfiguration
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import ComponentSync from './componentSyncConfiguration/ComponentSyncConfiguration';
+import LumisectionExceptionSync from './lumisectionExceptionSyncConfiguration/LumisectionExceptionSync';
 
 class ConfigurationModal extends Component {
     render() {
@@ -16,7 +17,7 @@ class ConfigurationModal extends Component {
             children,
             configuration_modal_type
         } = this.props;
-        const title_options = {
+        const title_types = {
             dataset_classifiers:
                 'Set automatic classifiers for datasets considered significant',
             component_classifiers:
@@ -24,13 +25,22 @@ class ConfigurationModal extends Component {
             column_configuration: 'Add or remove columns from workspace',
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
-            component_sync: 'Sync component status from all workspaces'
+            component_sync: 'Sync component status from all workspaces',
+            lumisection_exception_sync:
+                'Lumisection Exception Sync - Sync Lumisections across workspaces to the global '
         };
-
+        const modal_types = {
+            dataset_classifiers: <DatasetClassifierConfiguration />,
+            component_classifiers: <ComponentClassifierConfiguration />,
+            column_configuration: <ColumnConfiguration />,
+            datasets_accepted_configuration: <DatasetsAccepted />,
+            component_sync: <ComponentSync />,
+            lumisection_exception_sync: <LumisectionExceptionSync />
+        };
         return (
             <div>
                 <Modal
-                    title={title_options[configuration_modal_type]}
+                    title={title_types[configuration_modal_type]}
                     visible={configuration_modal_visible}
                     onOk={hideConfigurationModal}
                     onCancel={
@@ -45,22 +55,7 @@ class ConfigurationModal extends Component {
                     maskClosable={false}
                     destroyOnClose={true}
                 >
-                    {configuration_modal_type === 'dataset_classifiers' && (
-                        <DatasetClassifierConfiguration />
-                    )}
-                    {configuration_modal_type === 'component_classifiers' && (
-                        <ComponentClassifierConfiguration />
-                    )}
-                    {configuration_modal_type === 'column_configuration' && (
-                        <ColumnConfiguration />
-                    )}
-                    {configuration_modal_type ===
-                        'datasets_accepted_configuration' && (
-                        <DatasetsAccepted />
-                    )}
-                    {configuration_modal_type === 'component_sync' && (
-                        <ComponentSync />
-                    )}
+                    {modal_types[configuration_modal_type]}
                 </Modal>
             </div>
         );

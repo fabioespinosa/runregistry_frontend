@@ -21,10 +21,6 @@ export const fetchWorkspaces = error_handler(
             type: CHANGE_WORKSPACE,
             payload: workspace
         });
-        if (!isServer) {
-            store.dispatch(filterDatasets(10, 0, [], [], 'waiting_list'));
-            store.dispatch(filterDatasets(10, 0, [], [], 'editable'));
-        }
     }
 );
 

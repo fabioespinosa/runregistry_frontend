@@ -66,7 +66,6 @@ class Lumisections extends Component {
                 )
             });
         });
-        console.log(workspace, dataset);
         return (
             <div>
                 {dataset[`${workspace.toLowerCase()}_state`].value ===

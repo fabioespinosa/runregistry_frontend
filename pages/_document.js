@@ -12,21 +12,21 @@ export default class MyDocument extends Document {
         return (
             <html>
                 <Head>
-                    <link rel="stylesheet" href={`/_next/static/style.css`} />
+                    <link rel="stylesheet" href="/_next/static/style.css" />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`/static/nprogress.css`}
+                        href="/static/nprogress.css"
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`/static/ant-modified.min.css`}
+                        href="/static/ant-modified.min.css"
                     />
                     <link
                         rel="stylesheet"
                         type="text/css"
-                        href={`/static/react-table.css`}
+                        href="/static/react-table.css"
                     />
                     <meta charSet="utf-8" />
                     <meta

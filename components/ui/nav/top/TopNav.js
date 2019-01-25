@@ -17,21 +17,18 @@ class TopNav extends Component {
             user,
             env
         } = this.props;
-        // Log to see who has used the webpage:
+        // Log to see who has used the webpage on the server:
         console.log(user.displayname);
         const backgroundColor = env === 'staging' ? 'purple' : '';
         return (
-            <Header
-                className="header"
-                style={{ backgroundColor: backgroundColor }}
-            >
+            <Header className="header" style={{ backgroundColor }}>
                 <Menu
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={[type]}
                     style={{
                         lineHeight: '64px',
-                        backgroundColor: backgroundColor
+                        backgroundColor
                     }}
                 >
                     <Menu.Item key="0">
@@ -83,17 +80,12 @@ class TopNav extends Component {
                                 : 'USE OF BOTH RUN REGISTRIES IS MANDATORY'}
                         </span>
                     </Menu.Item>
-                    {/* <Menu.Item key="user">
-                        <Link href="/user/runs/all">
-                            <a>USER</a>
-                        </Link>
-                    </Menu.Item> */}
                 </Menu>
                 <div>
                     <h3 className="user_name white">
                         {user.displayname || 'Fabio Alberto Espinosa Burbano'}
                     </h3>
-                    {/* <br /> */}
+
                     <a
                         className="white"
                         href="https://cmsrunregistry.web.cern.ch/logout"

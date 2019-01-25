@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import { Formik, Field } from 'formik';
 import { connect } from 'react-redux';
+import { Formik, Field } from 'formik';
 import { Button } from 'antd';
 import Swal from 'sweetalert2';
 import {
     offline_column_structure,
     certifiable_offline_components
 } from '../../../../config/config';
-import { syncWorkspaces } from '../../../../ducks/offline/dc_tools';
-import datasets from '../../../../ducks/offline/datasets';
+import { syncComponents } from '../../../../ducks/offline/dc_tools';
 
 class ComponentSyncConfiguration extends Component {
     constructor(props) {
         super(props);
         const state = {};
         // We put the name of the workspace to the selects on the right
+        // The next forEach puts the default bit of each workspace as selected
         certifiable_offline_components.forEach(
             certifiable_offline_component => {
                 const candidate_option = Object.keys(
@@ -23,10 +23,12 @@ class ComponentSyncConfiguration extends Component {
                     return workspace.startsWith(certifiable_offline_component);
                 });
                 if (typeof candidate_option !== 'undefined') {
+                    // If we find an option that starts with the workspace name, we set it as default:
                     state[
                         `${certifiable_offline_component}_default_workspace`
                     ] = candidate_option;
                 } else {
+                    // If we don't, we put the first one we find:
                     state[
                         `${certifiable_offline_component}_default_workspace`
                     ] = Object.keys(offline_column_structure)[0];
@@ -36,7 +38,7 @@ class ComponentSyncConfiguration extends Component {
         this.state = state;
     }
     render() {
-        const { datasets, syncWorkspaces } = this.props;
+        const { datasets, syncComponents } = this.props;
         return (
             <div>
                 <h3>
@@ -55,6 +57,7 @@ class ComponentSyncConfiguration extends Component {
                             dataset_ids.push(dataset.id);
                         });
                         const components_to_sync = {};
+                        // Remove the _value from the name:
                         for (const [key, val] of Object.entries(values)) {
                             if (key.includes('_value')) {
                                 components_to_sync[
@@ -62,7 +65,7 @@ class ComponentSyncConfiguration extends Component {
                                 ] = val;
                             }
                         }
-                        await syncWorkspaces(components_to_sync, dataset_ids);
+                        await syncComponents(components_to_sync, dataset_ids);
                         await Swal(
                             `Component's synced for ${
                                 datasets.length
@@ -293,5 +296,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { syncWorkspaces }
+    { syncComponents }
 )(ComponentSyncConfiguration);

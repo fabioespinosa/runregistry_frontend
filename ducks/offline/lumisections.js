@@ -13,7 +13,10 @@ export const fetchLumisectionRanges = (id_dataset, workspace) =>
             `${api_url}/dataset_lumisections/${workspace.toLowerCase()}`,
             { id_dataset }
         );
-        dispatch({ type: FETCH_LUMISECTION_RANGES, payload: lumisections });
+        dispatch({
+            type: FETCH_LUMISECTION_RANGES,
+            payload: lumisections
+        });
     });
 
 export const editLumisections = (edited_lumisections, workspace) =>
