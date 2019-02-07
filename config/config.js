@@ -27,6 +27,7 @@ exports.config = config;
 
 exports.api_url = config[ENV]['api_url'];
 
+// If adding a new subsystem (like say adding ECAL), add it in components and in rr_attributes with the ending _triplet
 exports.components = [
     'cms',
     'castor',
@@ -44,6 +45,29 @@ exports.components = [
     'pix',
     'rpc',
     'strip'
+];
+
+exports.rr_attributes = [
+    'class',
+    'state',
+    'significant',
+    'stop_reason',
+    'dt_triplet',
+    'es_triplet',
+    'cms_triplet',
+    'csc_triplet',
+    'hlt_triplet',
+    'l1t_triplet',
+    'pix_triplet',
+    'rpc_triplet',
+    'ecal_triplet',
+    'hcal_triplet',
+    'lumi_triplet',
+    'ctpps_triplet',
+    'l1tmu_triplet',
+    'strip_triplet',
+    'castor_triplet',
+    'l1tcalo_triplet'
 ];
 
 const offline_column_structure =

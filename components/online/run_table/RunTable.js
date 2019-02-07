@@ -4,7 +4,7 @@ import Router, { withRouter } from 'next/router';
 import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import qs from 'qs';
-import { components } from '../../../config/config';
+import { components, rr_attributes } from '../../../config/config';
 import Status from '../../common/CommonTableComponents/Status';
 import CommonValueComponent from '../../common/CommonTableComponents/CommonValueComponent';
 import {
@@ -154,7 +154,7 @@ class RunTable extends Component {
                                 showClassifierVisualizationModal(original)
                             }
                         >
-                            {value ? value.value : ''}
+                            {value}
                         </a>
                     </div>
                 )
@@ -188,7 +188,7 @@ class RunTable extends Component {
                 sortable: show_all_runs,
                 Cell: ({ original, value }) => (
                     <div style={{ textAlign: 'center' }}>
-                        {value.value ? (
+                        {value ? (
                             <Icon type={'check'} />
                         ) : (
                             <a
@@ -228,7 +228,7 @@ class RunTable extends Component {
                 id: 'state',
                 accessor: 'state',
                 Cell: ({ original, value }) => {
-                    if (original.significant.value) {
+                    if (original.significant) {
                         return (
                             <div style={{ textAlign: 'center' }}>
                                 <span
@@ -237,14 +237,12 @@ class RunTable extends Component {
                                         fontSize: '0.95em',
                                         fontWeight: 'bold',
                                         color:
-                                            value.value === 'OPEN'
-                                                ? 'red'
-                                                : 'grey',
+                                            value === 'OPEN' ? 'red' : 'grey',
                                         borderRadius: '1px'
                                     }}
                                 >
                                     <span style={{ padding: '4px' }}>
-                                        {value.value}
+                                        {value}
                                     </span>
                                 </span>
                                 {' / '}
@@ -255,7 +253,7 @@ class RunTable extends Component {
                                             SIGNOFF: 'to SIGNOFF',
                                             COMPLETED: 'to COMPLETED'
                                         };
-                                        delete options[value.value];
+                                        delete options[value];
                                         const { value: to_state } = await Swal({
                                             title: `Move run ${
                                                 original.run_number
@@ -268,7 +266,7 @@ class RunTable extends Component {
                                         if (to_state) {
                                             await this.props.moveRun(
                                                 original,
-                                                original.state.value,
+                                                original.state,
                                                 to_state
                                             );
                                             await Swal(
@@ -335,7 +333,7 @@ class RunTable extends Component {
                 Cell: ({ original, value }) => (
                     <Status
                         triplet={value}
-                        significant={original.significant.value}
+                        significant={original.significant}
                     />
                 )
             };
@@ -535,19 +533,17 @@ const mapStateToProps = state => {
 // filtering is true if the user is trying to filter, not to sort
 const rename_triplets = (original_criteria, filtering) => {
     return original_criteria.map(filter => {
+        // We copy the filter:
         const new_filter = { ...filter };
-        if (
-            filter.id === 'state' ||
-            filter.id === 'significant' ||
-            filter.id === 'class' ||
-            filter.id === 'hlt_key' ||
-            filter.id === 'hlt_physics_counter'
-        ) {
-            new_filter.id = `${filter.id}.value`;
-            // If its just sorting no need for upper case, but if its filtering yes (because in back end they are stored uppercase):
-            if (filtering && filter.id === 'state') {
-                new_filter.value = filter.value.toUpperCase();
-            }
+        // If its just sorting no need for upper case, but if its filtering yes (because in back end they are stored uppercase):
+        if (filtering && filter.id === 'state') {
+            new_filter.value = filter.value.toUpperCase();
+        }
+        if (rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
+            filter.id = `rr_attributes.${filter.id}`;
+        }
+        if (!rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
+            filter.id = `oms_attributes.${filter.id}`;
         }
         if (filter.id.includes('_triplet')) {
             new_filter.id = `${filter.id}.status`;
@@ -624,6 +620,7 @@ const formatFilters = original_filters => {
             Swal('Invalid query', '', 'warning');
             throw 'query invalid';
         }
+
         column_filters[id] = query;
     });
     return column_filters;

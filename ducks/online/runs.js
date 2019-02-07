@@ -134,6 +134,10 @@ export default function(state = INITIAL_STATE, action) {
         case TABLE_LOADING_DONE:
             return { ...state, loading: false };
         case FILTER_RUNS:
+            payload.runs = payload.runs.map(run => ({
+                ...run.oms_attributes,
+                ...run.rr_attributes
+            }));
             return {
                 ...state,
                 runs: payload.runs,
@@ -142,24 +146,25 @@ export default function(state = INITIAL_STATE, action) {
                 filter: action.filter
             };
         case EDIT_RUN:
-            return {
-                ...state,
-                runs: editRunHelper(state.runs, payload)
+            const complete_run = {
+                ...payload.oms_attributes,
+                ...payload.rr_attributes
             };
+            return { ...state, runs: editRunHelper(state.runs, complete_run) };
         default:
             return state;
     }
 }
 
-const findId = (array, id) => {
+const findId = (array, run_number) => {
     for (let i = 0; i < array.length; i++) {
-        if (array[i].id === id) {
+        if (array[i].run_number === run_number) {
             return i;
         }
     }
 };
 
 const editRunHelper = (runs, new_run) => {
-    const index = findId(runs, new_run.id);
+    const index = findId(runs, new_run.run_number);
     return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
 };
