@@ -83,7 +83,7 @@ class TopNav extends Component {
                 </Menu>
                 <div>
                     <h3 className="user_name white">
-                        {user.displayname || 'Fabio Alberto Espinosa Burbano'}
+                        {user.displayname || 'Fabio Espinosa'}
                     </h3>
 
                     <a

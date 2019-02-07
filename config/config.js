@@ -12,7 +12,7 @@ console.log('Environment: ', ENV);
 const config = {
     development: {
         root_url: '',
-        api_url: 'http://localhost:7003'
+        api_url: 'http://localhost:9500'
     },
     staging: {
         root_url: '',

@@ -29,11 +29,11 @@ class ClassClassifierConfiguration extends Component {
         this.props.fetchClassClassifiers();
     }
 
-    getDisplayedClassifier(classifier) {
+    getDisplayedClassifier = classifier => {
         classifier = JSON.parse(classifier);
         const displayed_text = classifier.if[0];
         return stringify(displayed_text);
-    }
+    };
 
     formatClassifierCorrectly = inside_input => {
         const parsed_input = JSON.parse(inside_input);

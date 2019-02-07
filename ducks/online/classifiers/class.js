@@ -5,9 +5,6 @@ import { api_url } from '../../../config/config';
 import auth from '../../../auth/auth';
 import { hideJsonEditor } from '../../classifier_editor';
 const FETCH_CLASS_CLASSIFIERS = 'FETCH_CLASS_CLASSIFIERS';
-const NEW_CLASS_CLASSIFIER = 'NEW_CLASS_CLASSIFIER';
-const EDIT_CLASS_CLASSIFIER = 'EDIT_CLASS_CLASSIFIER';
-const DELETE_CLASS_CLASSIFIER = 'DELETE_CLASS_CLASSIFIER';
 
 export const fetchClassClassifiers = () =>
     error_handler(async dispatch => {
@@ -31,7 +28,7 @@ export const newClassClassifier = (new_classifier, class_selected, priority) =>
             auth(getState)
         );
         classifier.classifier = JSON.stringify(classifier.classifier);
-        dispatch({ type: NEW_CLASS_CLASSIFIER, payload: classifier });
+        dispatch(fetchClassClassifiers());
         dispatch(hideJsonEditor());
     });
 
@@ -41,10 +38,7 @@ export const deleteClassClassifier = classifier_id =>
             `${api_url}/classifiers/class/${classifier_id}`,
             auth(getState)
         );
-        dispatch({
-            type: DELETE_CLASS_CLASSIFIER,
-            payload: classifier.id
-        });
+        dispatch(fetchClassClassifiers());
     });
 
 export const editClassClassifier = (new_classifier, class_selected, priority) =>
@@ -54,7 +48,7 @@ export const editClassClassifier = (new_classifier, class_selected, priority) =>
             { ...new_classifier, class: class_selected, priority },
             auth(getState)
         );
-        dispatch({ type: EDIT_CLASS_CLASSIFIER, payload: classifier });
+        dispatch(fetchClassClassifiers());
         dispatch(hideJsonEditor());
     });
 
@@ -65,35 +59,7 @@ export default function(state = INITIAL_STATE, action) {
     switch (type) {
         case FETCH_CLASS_CLASSIFIERS:
             return payload;
-        case NEW_CLASS_CLASSIFIER:
-            return state.concat(payload);
-        case DELETE_CLASS_CLASSIFIER:
-            return deleteClassClassifierHelper(state, payload);
-        case EDIT_CLASS_CLASSIFIER:
-            return editClassClassifierHelper(state, payload);
         default:
             return state;
     }
 }
-
-const findId = (classifiers, id) => {
-    for (let i = 0; i < classifiers.length; i++) {
-        if (classifiers[i].id === id) {
-            return i;
-        }
-    }
-};
-
-const deleteClassClassifierHelper = (classifiers, classifier_id) => {
-    const index = findId(classifiers, classifier_id);
-    return [...classifiers.slice(0, index), ...classifiers.slice(index + 1)];
-};
-
-const editClassClassifierHelper = (classifiers, classifier) => {
-    const index = findId(classifiers, classifier.id);
-    return [
-        ...classifiers.slice(0, index),
-        classifier,
-        ...classifiers.slice(index + 1)
-    ];
-};
