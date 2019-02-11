@@ -16,10 +16,10 @@ class ManageRun extends Component {
                     <p>Run info</p>
                 </Panel> */}
                 <Panel key="2" header="Run History">
-                    <History run={run} />
+                    <History run_number={run.run_number} />
                 </Panel>
                 <Panel key="3" header="Edit run">
-                    {run.state.value === 'OPEN' ? (
+                    {run.state === 'OPEN' ? (
                         <EditRun run={run} />
                     ) : (
                         <div>Run must be in state OPEN to be edited</div>

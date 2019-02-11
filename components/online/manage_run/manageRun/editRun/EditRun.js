@@ -8,12 +8,13 @@ import { api_url } from '../../../../../config/config';
 import { editRun, refreshRun } from '../../../../../ducks/online/runs';
 import { showManageRunModal } from '../../../../../ducks/online/ui';
 import { components } from '../../../../../config/config';
+import { error_handler } from '../../../../../utils/error_handlers';
 const { TextArea } = Input;
 const { Option, OptGroup } = Select;
 
 class EditRun extends Component {
     state = { classes: [], not_in_the_list: false };
-    async componentDidMount() {
+    componentDidMount = error_handler(async () => {
         const { data: class_classifiers } = await axios.get(
             `${api_url}/classifiers/class`
         );
@@ -21,7 +22,7 @@ class EditRun extends Component {
         this.setState({
             classes
         });
-    }
+    });
     render() {
         const { run, editRun } = this.props;
         const original_class = run.class.value;
@@ -47,7 +48,7 @@ class EditRun extends Component {
         }
         return (
             <div>
-                {run.significant.value ? (
+                {run.significant ? (
                     <div>
                         <Formik
                             initialValues={initialValues}

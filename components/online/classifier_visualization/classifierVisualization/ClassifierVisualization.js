@@ -2,19 +2,20 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Icon } from 'antd';
 import { api_url } from '../../../../config/config';
+import { error_handler } from '../../../../utils/error_handlers';
 
 class ClassifierVisualization extends Component {
     state = { class_classifiers: [], result: [], selected_class: '' };
-    async componentDidMount() {
+    componentDidMount = error_handler(async () => {
         const { data: class_classifiers } = await axios.get(
             `${api_url}/classifiers/class`
         );
         this.setState({
             class_classifiers
         });
-    }
+    });
 
-    testClassifier = async selected_class => {
+    testClassifier = error_handler(async selected_class => {
         const { run } = this.props;
         const { data } = await axios.post(`${api_url}/classifier_playground`, {
             run,
@@ -25,7 +26,7 @@ class ClassifierVisualization extends Component {
             result: data.result[0],
             run_data: data.run_data
         });
-    };
+    });
     displayRules = (rules, parent) => {
         const final_value = rules[rules.length - 1];
         if (final_value.hasOwnProperty('resulted_value')) {

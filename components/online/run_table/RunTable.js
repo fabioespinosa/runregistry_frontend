@@ -536,14 +536,15 @@ const rename_triplets = (original_criteria, filtering) => {
         // We copy the filter:
         const new_filter = { ...filter };
         // If its just sorting no need for upper case, but if its filtering yes (because in back end they are stored uppercase):
-        if (filtering && filter.id === 'state') {
-            new_filter.value = filter.value.toUpperCase();
-        }
         if (rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
-            filter.id = `rr_attributes.${filter.id}`;
+            new_filter.id = `rr_attributes.${filter.id}`;
         }
         if (!rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
-            filter.id = `oms_attributes.${filter.id}`;
+            new_filter.id = `oms_attributes.${filter.id}`;
+        }
+
+        if (filtering && new_filter.id === 'rr_attributes.state') {
+            new_filter.value = filter.value.toUpperCase();
         }
         if (filter.id.includes('_triplet')) {
             new_filter.id = `${filter.id}.status`;

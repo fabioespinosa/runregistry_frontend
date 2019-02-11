@@ -80,14 +80,14 @@ class ComponentClassifierConfiguration extends Component {
                 Header: 'Enabled',
                 accessor: 'enabled',
                 width: 80,
-                Cell: row => (
+                Cell: ({ value }) => (
                     <div style={{ textAlign: 'center' }}>
                         <Icon
                             style={{
                                 margin: '0 auto',
-                                color: row.value ? 'green' : 'red'
+                                color: value ? 'green' : 'red'
                             }}
-                            type={row.value ? 'check-circle' : 'close-circle'}
+                            type={value ? 'check-circle' : 'close-circle'}
                         />
                     </div>
                 )
@@ -96,10 +96,8 @@ class ComponentClassifierConfiguration extends Component {
                 Header: 'JSON string',
                 accessor: 'classifier',
                 width: 250,
-                Cell: row => {
-                    const displayed_text = this.getDisplayedClassifier(
-                        row.value
-                    );
+                Cell: ({ value }) => {
+                    const displayed_text = this.getDisplayedClassifier(value);
                     return <span>{displayed_text}</span>;
                 }
             },

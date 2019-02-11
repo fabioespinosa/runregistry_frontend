@@ -1,54 +1,66 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import ReactTable from 'react-table';
 import { Icon } from 'antd';
+import { api_url } from '../../../../../config/config';
 import { components } from '../../../../../config/config';
+import { error_handler } from '../../../../../utils/error_handlers';
 import Status from '../../../../common/CommonTableComponents/Status';
-import CommonValueComponent from '../../../../common/CommonTableComponents/CommonValueComponent';
 
 class History extends Component {
+    state = { run_history: [] };
+    componentDidMount = error_handler(async () => {
+        const { run_number } = this.props;
+        const { data: run_history } = await axios.get(
+            `${api_url}/run_with_history/${run_number}`
+        );
+        this.setState({ run_history });
+    });
+
     render() {
-        const { run } = this.props;
-        let dates = {};
-        for (const [key, val] of Object.entries(run)) {
-            if (val) {
-                const history = val.history;
-                if (Array.isArray(history)) {
-                    // Add local value
-                    val[key] = { ...val };
-                    const { when } = val;
-                    if (dates[when]) {
-                        dates[when] = dates[when].concat(val);
-                    } else {
-                        dates[when] = [val];
-                    }
-                    // Add historic values:
-                    history.forEach(change => {
-                        change[key] = { ...change };
-                        const { when } = change;
-                        if (dates[when]) {
-                            dates[when] = dates[when].concat(change);
-                        } else {
-                            dates[when] = [change];
-                        }
-                    });
-                }
-            }
-        }
-        let timeline = [];
-        for (const [key, val] of Object.entries(dates)) {
-            const event_in_timeline = {};
-            event_in_timeline.when = key;
-            val.forEach(change => {
-                event_in_timeline = { ...event_in_timeline, ...change };
-            });
-            timeline.push(event_in_timeline);
-        }
-        console.log(timeline);
-        timeline.sort((a, b) => a.when - b.when);
+        const { run_history } = this.state;
+        // const { run } = this.props;
+        // let dates = {};
+        // for (const [key, val] of Object.entries(run)) {
+        //     if (val) {
+        //         const history = val.history;
+        //         if (Array.isArray(history)) {
+        //             // Add local value
+        //             val[key] = { ...val };
+        //             const { when } = val;
+        //             if (dates[when]) {
+        //                 dates[when] = dates[when].concat(val);
+        //             } else {
+        //                 dates[when] = [val];
+        //             }
+        //             // Add historic values:
+        //             history.forEach(change => {
+        //                 change[key] = { ...change };
+        //                 const { when } = change;
+        //                 if (dates[when]) {
+        //                     dates[when] = dates[when].concat(change);
+        //                 } else {
+        //                     dates[when] = [change];
+        //                 }
+        //             });
+        //         }
+        //     }
+        // }
+        // let timeline = [];
+        // for (const [key, val] of Object.entries(dates)) {
+        //     const event_in_timeline = {};
+        //     event_in_timeline.when = key;
+        //     val.forEach(change => {
+        //         event_in_timeline = { ...event_in_timeline, ...change };
+        //     });
+        //     timeline.push(event_in_timeline);
+        // }
+        console.log(run_history);
+        // timeline.sort((a, b) => a.when - b.when);
         let columns = [
             {
                 Header: 'Time',
-                accessor: 'when',
+                accessor: 'createdAt',
                 minWidth: 200,
                 Cell: ({ original, value }) => {
                     const date = new Date(value).toString();
@@ -77,7 +89,9 @@ class History extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value}</div>
+                )
             },
             {
                 Header: 'Significant',
@@ -100,38 +114,40 @@ class History extends Component {
             {
                 Header: 'Stop Reason',
                 accessor: 'stop_reason',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value}</div>
+                )
             },
             {
                 Header: 'State',
                 accessor: 'state',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value}</div>
+                )
             },
             {
                 Header: 'hlt key',
                 accessor: 'hlt_key',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value}</div>
+                )
             },
             {
                 Header: 'hlt Physics Counter',
                 accessor: 'hlt_physics_counter',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => (
+                    <div style={{ textAlign: 'center' }}>{value}</div>
+                )
             }
         ];
-        // {
-        //     Header: 'State',
-        //     accessor: 'state'
-        // }
-        let component_columns = components.map(component => ({
-            Header: component
-        }));
-        component_columns = component_columns.map(column => {
+
+        const component_columns = components.map(component => {
             return {
-                ...column,
+                Header: component,
                 maxWidth: 66,
-                id: `${column['Header']}_triplet`,
+                id: `${component}_triplet`,
                 accessor: data => {
-                    const triplet = data[`${column['Header']}_triplet`];
+                    const triplet = data[`${component}_triplet`];
                     if (typeof triplet === 'object') {
                         return triplet;
                     }
@@ -143,13 +159,14 @@ class History extends Component {
                 )
             };
         });
+
         columns = [...columns, ...component_columns];
         return (
             <div>
                 <h4>History - Changes in the run as time progresses down</h4>
                 <ReactTable
                     columns={columns}
-                    data={timeline}
+                    data={run_history}
                     defaultPageSize={20}
                     className="-striped -highlight"
                 />
