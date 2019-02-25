@@ -130,6 +130,8 @@ class RunTable extends Component {
             showClassifierVisualizationModal
         } = this.props;
         const { runs, pages, loading, filter, filters } = run_table;
+        console.log(run_table);
+
         let columns = [
             {
                 Header: 'Run Number',
@@ -327,12 +329,13 @@ class RunTable extends Component {
                 maxWidth: 66,
                 id: `${column['Header']}_triplet`,
                 accessor: data => {
-                    const triplet = data[`${column['Header']}_triplet`];
+                    const triplet =
+                        data.triplet_summary[`${column['Header']}_triplet`];
                     return triplet;
                 },
                 Cell: ({ original, value }) => (
                     <Status
-                        triplet={value}
+                        triplet_summary={value}
                         significant={original.significant}
                     />
                 )

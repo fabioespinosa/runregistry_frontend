@@ -62,6 +62,7 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
             { page_size, sortings, filter: filtered },
             auth(getState)
         );
+        runs.runs = formatRuns(runs.runs);
         dispatch({
             type: FILTER_RUNS,
             payload: runs,
@@ -71,11 +72,12 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
 
 export const editRun = (run_number, components) =>
     error_handler(async (dispatch, getState) => {
-        const { data: run } = await axios.put(
+        let { data: run } = await axios.put(
             `${api_url}/runs/id_run/${run_number}`,
             components,
             auth(getState)
         );
+        run = formatRuns([run])[0];
         dispatch({ type: EDIT_RUN, payload: run });
         dispatch(hideManageRunModal());
     });
@@ -134,10 +136,6 @@ export default function(state = INITIAL_STATE, action) {
         case TABLE_LOADING_DONE:
             return { ...state, loading: false };
         case FILTER_RUNS:
-            payload.runs = payload.runs.map(run => ({
-                ...run.oms_attributes,
-                ...run.rr_attributes
-            }));
             return {
                 ...state,
                 runs: payload.runs,
@@ -146,10 +144,6 @@ export default function(state = INITIAL_STATE, action) {
                 filter: action.filter
             };
         case EDIT_RUN:
-            const complete_run = {
-                ...payload.oms_attributes,
-                ...payload.rr_attributes
-            };
             return { ...state, runs: editRunHelper(state.runs, complete_run) };
         default:
             return state;
@@ -167,4 +161,13 @@ const findId = (array, run_number) => {
 const editRunHelper = (runs, new_run) => {
     const index = findId(runs, new_run.run_number);
     return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
+};
+
+const formatRuns = runs => {
+    return runs.map(run => ({
+        ...run.oms_attributes,
+        ...run.rr_attributes,
+        triplet_summary: run.DatasetTripletCache.triplet_summary,
+        run_number: run.run_number
+    }));
 };
