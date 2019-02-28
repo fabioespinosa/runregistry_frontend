@@ -291,8 +291,7 @@ class RunTable extends Component {
             { Header: 'Started', accessor: 'start_time' },
             {
                 Header: 'Hlt Key Description',
-                accessor: 'hlt_key',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                accessor: 'hlt_key'
             },
             {
                 Header: 'GUI',
@@ -337,6 +336,9 @@ class RunTable extends Component {
                     <Status
                         triplet_summary={value}
                         significant={original.significant}
+                        run_number={original.run_number}
+                        dataset_name="online"
+                        component={`${column['Header']}_triplet`}
                     />
                 )
             };

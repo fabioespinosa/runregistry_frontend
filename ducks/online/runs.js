@@ -164,6 +164,11 @@ const editRunHelper = (runs, new_run) => {
 };
 
 const formatRuns = runs => {
+    runs.forEach(run => {
+        if (typeof run.DatasetTripletCache === 'undefined') {
+            console.log(run);
+        }
+    });
     return runs.map(run => ({
         ...run.oms_attributes,
         ...run.rr_attributes,

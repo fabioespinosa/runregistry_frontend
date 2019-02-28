@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Tooltip } from 'antd';
+import { Tooltip, Popover } from 'antd';
+import PopoverContent from './PopoverContent';
 
 // This is the order in which the statuses are displayed in the cell:
 const status_order = ['BAD', 'GOOD', 'STANDBY', 'EXCLUDED', 'NOTSET', 'EMPTY'];
@@ -40,9 +41,16 @@ const status_colors_and_text = {
         fontSize: '1em'
     }
 };
+
 class Status extends Component {
     render() {
-        const { triplet_summary, significant } = this.props;
+        const {
+            triplet_summary,
+            significant,
+            run_number,
+            dataset_name,
+            component
+        } = this.props;
         if (triplet_summary) {
             const { comments, causes } = triplet_summary;
             const statuses = { ...triplet_summary };
@@ -64,7 +72,19 @@ class Status extends Component {
                 return status_order.indexOf(a) - status_order.indexOf(b);
             });
             return (
-                <Tooltip placement="top" title={comments.join(' ----- ')}>
+                <Popover
+                    placement="top"
+                    content={
+                        <PopoverContent
+                            run_number={run_number}
+                            dataset_name={dataset_name}
+                            component={component}
+                            triplet_summary={triplet_summary}
+                        />
+                    }
+                    trigger="hover"
+                    title={comments.join(' ----- ')}
+                >
                     <div
                         style={{
                             textAlign: 'center',
@@ -134,12 +154,10 @@ class Status extends Component {
                                                         left: ${index *
                                                             (100 / length) -
                                                             5}%;
-                                                        border-left: 3px solid
-                                                            transparent;
-                                                        border-bottom: 11px
-                                                            solid transparent;
-                                                        border-top: 17px solid
+                                                        border-right: 3px solid
                                                             ${backgroundColor};
+                                                        border-top: 16px solid
+                                                            transparent;
                                                     }
                                                 `}</style>
                                             </div>
@@ -176,7 +194,7 @@ class Status extends Component {
                             </div>
                         )}
                     </div>
-                </Tooltip>
+                </Popover>
             );
         } else {
             return <div>No Lumisection data in this run</div>;

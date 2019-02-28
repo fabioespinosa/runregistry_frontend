@@ -37,10 +37,11 @@ export const newComponentClassifier = (
             auth(getState)
         );
         classifier.classifier = JSON.stringify(classifier.classifier);
-        dispatch({ type: NEW_COMPONENT_CLASSIFIER, payload: classifier });
+        dispatch(fetchComponentClassifiers(component));
         dispatch(hideJsonEditor());
     });
 
+// TODO TO be fixed:
 export const deleteComponentClassifier = classifier_id =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.delete(
@@ -60,7 +61,7 @@ export const editComponentClassifier = new_classifier =>
             new_classifier,
             auth(getState)
         );
-        dispatch({ type: EDIT_COMPONENT_CLASSIFIER, payload: classifier });
+        dispatch(fetchComponentClassifiers(classifier.component));
         dispatch(hideJsonEditor());
     });
 
