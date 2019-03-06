@@ -159,7 +159,7 @@ class DatasetTable extends Component {
                 maxWidth: 90,
                 Cell: ({ original }) => (
                     <div style={{ textAlign: 'center' }}>
-                        {original.run.class.value}
+                        {original.Run.class}
                     </div>
                 )
             },
@@ -197,9 +197,7 @@ class DatasetTable extends Component {
                                 borderRadius: '1px'
                             }}
                         >
-                            <span style={{ padding: '4px' }}>
-                                {value.value}
-                            </span>
+                            <span style={{ padding: '4px' }}>{value}</span>
                         </span>
                     </div>
                 )
@@ -217,13 +215,11 @@ class DatasetTable extends Component {
                                 color: 'white',
                                 fontSize: '0.95em',
                                 fontWeight: 'bold',
-                                color: value.value === 'OPEN' ? 'red' : 'grey',
+                                color: value === 'OPEN' ? 'red' : 'grey',
                                 borderRadius: '1px'
                             }}
                         >
-                            <span style={{ padding: '4px' }}>
-                                {value.value}
-                            </span>
+                            <span style={{ padding: '4px' }}>{value}</span>
                         </span>
                         {' / '}
                         <a
@@ -234,10 +230,10 @@ class DatasetTable extends Component {
                                     COMPLETED: 'to COMPLETED'
                                 };
 
-                                if (value.value === 'waiting dqm gui') {
+                                if (value === 'waiting dqm gui') {
                                     options = { OPEN: 'To OPEN' };
                                 }
-                                delete options[value.value];
+                                delete options[value];
                                 const { value: state } = await Swal({
                                     title: `Move dataset manually ${
                                         original.name
@@ -321,11 +317,17 @@ class DatasetTable extends Component {
                 maxWidth: 66,
                 id: column.accessor,
                 accessor: data => {
-                    const triplet = data[column.accessor];
+                    const triplet = data.triplet_summary[`${column['Header']}`];
                     return triplet;
                 },
-                Cell: ({ value }) => (
-                    <Status triplet={value} significant={true} />
+                Cell: ({ original, value }) => (
+                    <Status
+                        significant={true}
+                        triplet_summary={value}
+                        run_number={original.run_number}
+                        dataset_name={original.name}
+                        component={`${column['Header']}`}
+                    />
                 )
             };
         });

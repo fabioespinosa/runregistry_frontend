@@ -79,8 +79,8 @@ class PopoverContent extends Component {
         return (
             <div>
                 <p>
-                    Run <strong>{run_number}</strong>, from {dataset_name},
-                    component{' '}
+                    Run <strong>{run_number}</strong>, from{' '}
+                    <strong>{dataset_name}</strong>, component{' '}
                     <strong>
                         {component.split('_triplet')[0].toUpperCase()}
                     </strong>

@@ -84,21 +84,23 @@ export const editRun = (run_number, components) =>
 
 export const markSignificant = original_run =>
     error_handler(async (dispatch, getState) => {
-        const { data: run } = await axios.post(
+        let { data: run } = await axios.post(
             `${api_url}/runs/mark_significant`,
             { original_run },
             auth(getState)
         );
+        run = formatRuns([run])[0];
         dispatch({ type: EDIT_RUN, payload: run });
     });
 
 export const moveRun = (original_run, from_state, to_state) =>
     error_handler(async (dispatch, getState) => {
-        const { data: run } = await axios.post(
+        let { data: run } = await axios.post(
             `${api_url}/runs/move_run/${from_state}/${to_state}`,
             { original_run, to_state },
             auth(getState)
         );
+        run = formatRuns([run])[0];
         dispatch({ type: EDIT_RUN, payload: run });
     });
 
@@ -144,7 +146,7 @@ export default function(state = INITIAL_STATE, action) {
                 filter: action.filter
             };
         case EDIT_RUN:
-            return { ...state, runs: editRunHelper(state.runs, complete_run) };
+            return { ...state, runs: editRunHelper(state.runs, payload) };
         default:
             return state;
     }
@@ -164,15 +166,10 @@ const editRunHelper = (runs, new_run) => {
 };
 
 const formatRuns = runs => {
-    runs.forEach(run => {
-        if (typeof run.DatasetTripletCache === 'undefined') {
-            console.log(run);
-        }
-    });
     return runs.map(run => ({
         ...run.oms_attributes,
         ...run.rr_attributes,
-        triplet_summary: run.DatasetTripletCache.triplet_summary,
-        run_number: run.run_number
+        ...run,
+        triplet_summary: run.DatasetTripletCache.triplet_summary
     }));
 };

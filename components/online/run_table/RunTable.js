@@ -130,7 +130,6 @@ class RunTable extends Component {
             showClassifierVisualizationModal
         } = this.props;
         const { runs, pages, loading, filter, filters } = run_table;
-        console.log(run_table);
 
         let columns = [
             {

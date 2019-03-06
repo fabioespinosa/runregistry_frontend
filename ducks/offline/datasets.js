@@ -52,6 +52,7 @@ export const filterDatasets = (page_size, page, sortings, filtered) =>
             { page_size, sortings, filter: filtered },
             auth(getState)
         );
+        datasets.datasets = formatDatasets(datasets.datasets);
         dispatch({
             type: FILTER_DATASETS,
             payload: datasets,
@@ -158,4 +159,13 @@ const findAndReplaceHelper = (datasets, new_datasets) => {
         datasets = editDatasetHelper(datasets, new_dataset);
     });
     return datasets;
+};
+
+const formatDatasets = datasets => {
+    return datasets.map(dataset => ({
+        ...dataset.dataset_attributes,
+        ...dataset,
+        Run: dataset.Run.rr_attributes,
+        triplet_summary: dataset.DatasetTripletCache.triplet_summary
+    }));
 };
