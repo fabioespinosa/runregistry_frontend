@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 
 import dataset from './dataset';
-// import component from './component';
+import component from './component';
 
 const classifierRootReducer = combineReducers({
-    dataset
-    // component
+    dataset,
+    component
 });
 
 export default classifierRootReducer;

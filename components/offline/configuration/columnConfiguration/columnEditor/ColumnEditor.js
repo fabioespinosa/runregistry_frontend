@@ -5,11 +5,11 @@ import { offline_columns } from '../../../../../config/config';
 class ColumnEditor extends Component {
     state = { selected: '' };
     render() {
-        const { pog, columns, addColumn, removeColumn } = this.props;
+        const { workspace, columns, addColumn, removeColumn } = this.props;
         return (
             <div>
                 <h3>
-                    Add/Remove Columns to workspace <strong>{pog}</strong>
+                    Add/Remove Columns to workspace <strong>{workspace}</strong>
                 </h3>
                 <br />
                 <div className="container">
@@ -21,7 +21,7 @@ class ColumnEditor extends Component {
                                     <div className="column_container">
                                         <Button
                                             onClick={() =>
-                                                removeColumn(pog, column)
+                                                removeColumn(workspace, column)
                                             }
                                             type="danger"
                                         >
@@ -56,7 +56,7 @@ class ColumnEditor extends Component {
                             </select>
                             <Button
                                 onClick={() =>
-                                    addColumn(pog, this.state.selected)
+                                    addColumn(workspace, this.state.selected)
                                 }
                             >
                                 Add column

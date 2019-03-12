@@ -57,7 +57,7 @@ export const deleteComponentClassifier = classifier_id =>
 export const editComponentClassifier = new_classifier =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.put(
-            `${api_url}/classifiers/component/${new_classifier.id}`,
+            `${api_url}/classifiers/offline_component/${new_classifier.id}`,
             new_classifier,
             auth(getState)
         );

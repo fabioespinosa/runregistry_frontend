@@ -3,13 +3,16 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import ReactTable from 'react-table';
 import { Select, Icon } from 'antd';
+import Swal from 'sweetalert2';
+import { components } from '../../../../config/config';
 import {
     fetchComponentClassifiers,
     deleteComponentClassifier,
     editComponentClassifier,
     newComponentClassifier
-} from '../../../../ducks/online/classifiers/component';
+} from '../../../../ducks/offline/classifiers/component';
 import {
+    hideJsonEditor,
     editClassifierIntent,
     changeJsonEditorValue
 } from '../../../../ducks/classifier_editor';
@@ -24,7 +27,7 @@ const Editor = dynamic(
 );
 
 class ComponentClassifierConfiguration extends Component {
-    state = { component: 'castor', status_selected: 'GOOD' };
+    state = { component: 'cms', status_selected: 'GOOD', is_editing: false };
     componentDidMount() {
         this.props.fetchComponentClassifiers(this.state.component);
     }
@@ -38,11 +41,14 @@ class ComponentClassifierConfiguration extends Component {
     formatClassifierCorrectly = inside_input => {
         const { status_selected } = this.state;
         const parsed_input = JSON.parse(inside_input);
-        let classifier = { if: [parsed_input, status_selected, 'BAD'] };
+        let classifier = {
+            if: [parsed_input, true, false]
+        };
         return classifier;
     };
 
     changeComponent = component => {
+        this.props.hideJsonEditor();
         this.props.fetchComponentClassifiers(component);
         this.setState({ component });
     };
@@ -80,14 +86,14 @@ class ComponentClassifierConfiguration extends Component {
                 Header: 'Enabled',
                 accessor: 'enabled',
                 width: 80,
-                Cell: ({ value }) => (
+                Cell: row => (
                     <div style={{ textAlign: 'center' }}>
                         <Icon
                             style={{
                                 margin: '0 auto',
-                                color: value ? 'green' : 'red'
+                                color: row.value ? 'green' : 'red'
                             }}
-                            type={value ? 'check-circle' : 'close-circle'}
+                            type={row.value ? 'check-circle' : 'close-circle'}
                         />
                     </div>
                 )
@@ -96,8 +102,10 @@ class ComponentClassifierConfiguration extends Component {
                 Header: 'JSON string',
                 accessor: 'classifier',
                 width: 250,
-                Cell: ({ value }) => {
-                    const displayed_text = this.getDisplayedClassifier(value);
+                Cell: row => {
+                    const displayed_text = this.getDisplayedClassifier(
+                        row.value
+                    );
                     return <span>{displayed_text}</span>;
                 }
             },
@@ -110,6 +118,10 @@ class ComponentClassifierConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
+                                this.setState({
+                                    status_selected: row.original.status,
+                                    is_editing: true
+                                });
                                 const classifier = this.getDisplayedClassifier(
                                     row.original.classifier
                                 );
@@ -128,9 +140,27 @@ class ComponentClassifierConfiguration extends Component {
                 Cell: row => (
                     <div style={{ textAlign: 'center' }}>
                         <a
-                            onClick={() =>
-                                deleteComponentClassifier(row.original.id)
-                            }
+                            onClick={async () => {
+                                const { value } = await Swal({
+                                    type: 'warning',
+                                    title:
+                                        'Are you sure you want to delete this component classifier',
+                                    text: '',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes',
+                                    reverseButtons: true
+                                });
+                                if (value) {
+                                    await deleteComponentClassifier(
+                                        row.original.id
+                                    );
+                                    await Swal(
+                                        `Classifier deleted`,
+                                        '',
+                                        'success'
+                                    );
+                                }
+                            }}
                         >
                             Delete
                         </a>
@@ -138,68 +168,22 @@ class ComponentClassifierConfiguration extends Component {
                 )
             }
         ];
-        const components_options = [
-            <Option key="castor" value="castor">
-                castor
-            </Option>,
-            <Option key="cms" value="cms">
-                cms
-            </Option>,
-            <Option key="csc" value="csc">
-                csc
-            </Option>,
-            <Option key="ctpps" value="ctpps">
-                ctpps
-            </Option>,
-            <Option key="dt" value="dt">
-                dt
-            </Option>,
-            <Option key="ecal" value="ecal">
-                ecal
-            </Option>,
-            <Option key="es" value="es">
-                es
-            </Option>,
-            <Option key="hcal" value="hcal">
-                hcal
-            </Option>,
-            <Option key="hlt" value="hlt">
-                hlt
-            </Option>,
-            <Option key="l1t" value="l1t">
-                l1t
-            </Option>,
-            <Option key="l1tcalo" value="l1tcalo">
-                l1tcalo
-            </Option>,
-            <Option key="l1tmu" value="l1tmu">
-                l1t
-            </Option>,
-            <Option key="lumi" value="lumi">
-                lumi
-            </Option>,
-            <Option key="pix" value="pix">
-                pix
-            </Option>,
-            <Option key="rpc" value="rpc">
-                rpc
-            </Option>,
-            <Option key="strip" value="strip">
-                strip
-            </Option>
-        ];
+        const components_options = components.map(component => (
+            <Option key={component}>{component}</Option>
+        ));
         return (
             <div>
-                <label htmlFor="status_select">Component:</label>
+                <label htmlFor="status_select">Workspace:</label>
                 &nbsp;
                 <Select
-                    name=""
                     id="component_select"
                     defaultValue={component}
                     onChange={this.changeComponent}
                 >
                     {components_options}
                 </Select>
+                <br />
+                <br />
                 <ReactTable
                     columns={columns}
                     data={classifiers}
@@ -217,20 +201,10 @@ class ComponentClassifierConfiguration extends Component {
                             component
                         )
                     }
+                    onCancel={() => this.setState({ is_editing: false })}
                 >
                     <div>
-                        <label htmlFor="component_select_create">
-                            Component:
-                        </label>
-                        &nbsp;
-                        <Select
-                            disabled
-                            name=""
-                            id="component_select_create"
-                            value={component}
-                        >
-                            {components_options}
-                        </Select>
+                        For component: <strong>{component}</strong>.
                         <label>
                             {' '}
                             (To change the component, change it above)
@@ -240,12 +214,12 @@ class ComponentClassifierConfiguration extends Component {
                         <label htmlFor="status_select">Class:</label>
                         &nbsp;
                         <Select
-                            name=""
                             id="status_select"
-                            defaultValue={status_selected}
+                            value={status_selected}
                             onChange={value =>
                                 this.setState({ status_selected: value })
                             }
+                            disabled={this.state.is_editing}
                         >
                             <Option value="GOOD">GOOD</Option>
                             <Option value="BAD">BAD</Option>
@@ -255,19 +229,25 @@ class ComponentClassifierConfiguration extends Component {
                         </Select>
                     </div>
                 </Editor>
+                <style jsx>{`
+                    .status_select {
+                        width: 500px;
+                    }
+                `}</style>
             </div>
         );
     }
 }
 const mapStateToProps = state => {
     return {
-        classifiers: state.online.classifiers.component
+        classifiers: state.offline.classifiers.component
     };
 };
 
 export default connect(
     mapStateToProps,
     {
+        hideJsonEditor,
         fetchComponentClassifiers,
         deleteComponentClassifier,
         editComponentClassifier,

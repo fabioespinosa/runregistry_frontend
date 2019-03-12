@@ -8,10 +8,10 @@ import ColumnEditor from './columnEditor/ColumnEditor';
 class ColumnConfiguration extends Component {
     state = { edit: false };
 
-    addColumn = async (pog, column) => {
+    addColumn = async (workspace, column) => {
         const { value } = await Swal({
             type: 'question',
-            title: `Are you sure you want to add the column ${column} to the ${pog} workspace?`,
+            title: `Are you sure you want to add the column ${column} to the ${workspace} workspace?`,
             text: '',
             showCancelButton: true,
             confirmButtonText: 'Yes',
@@ -19,19 +19,19 @@ class ColumnConfiguration extends Component {
             footer: '<a >What does this mean?</a>'
         });
         if (value) {
-            this.props.addColumn(pog, column);
+            this.props.addColumn(workspace, column);
             await Swal(
-                `Column ${column} added to worskpace ${pog}.`,
+                `Column ${column} added to worskpace ${workspace}.`,
                 '',
                 'success'
             );
         }
     };
 
-    removeColumn = async (pog, column) => {
+    removeColumn = async (workspace, column) => {
         const { value } = await Swal({
             type: 'warning',
-            title: `Are you sure you want to delete the column ${column} from ${pog} workspace?`,
+            title: `Are you sure you want to delete the column ${column} from ${workspace} workspace?`,
             text: '',
             showCancelButton: true,
             confirmButtonText: 'Yes',
@@ -39,9 +39,9 @@ class ColumnConfiguration extends Component {
             footer: '<a >What does this mean?</a>'
         });
         if (value) {
-            await this.props.removeColumn(pog, column);
+            await this.props.removeColumn(workspace, column);
             await Swal(
-                `Column ${column} deleted from worskpace ${pog}.`,
+                `Column ${column} deleted from worskpace ${workspace}.`,
                 '',
                 'success'
             );
@@ -52,8 +52,8 @@ class ColumnConfiguration extends Component {
         const { workspaces } = this.props;
         const columns = [
             {
-                Header: 'DPG/POG',
-                accessor: 'pog',
+                Header: 'Workspace',
+                accessor: 'workspace',
                 width: 80,
                 getProps: () => ({ style: { textAlign: 'center' } })
             },
@@ -71,7 +71,8 @@ class ColumnConfiguration extends Component {
                     );
                 }
             },
-            { Header: 'Updated at', accessor: 'updatedAt', width: 100 },
+            // Since it is version controlled createdAt = updatedAt
+            { Header: 'Updated at', accessor: 'createdAt', width: 100 },
             {
                 Header: 'Edit',
                 width: 100,
@@ -103,7 +104,7 @@ class ColumnConfiguration extends Component {
                 <br />
                 {this.state.edit && (
                     <ColumnEditor
-                        pog={this.state.edit.pog}
+                        workspace={this.state.edit.workspace}
                         columns={this.state.edit.columns}
                         addColumn={this.addColumn}
                         removeColumn={this.removeColumn}

@@ -6,7 +6,6 @@ const SHOW_MANAGE_RUN_MODAL = 'SHOW_MANAGE_RUN_MODAL-ONLINE';
 const HIDE_MANAGE_RUN_MODAL = 'HIDE_MANAGE_RUN_MODAL-ONLINE';
 const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL-ONLINE';
 const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL-ONLINE';
-const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-ONLINE';
 const SHOW_CLASSIFIER_VISUALIZATION_MODAL =
     'SHOW_CLASSIFIER_VISUALIZATION_MODAL-ONLINE';
 const HIDE_CLASSIFIER_VISUALIZATION_MODAL =
@@ -59,8 +58,6 @@ export const hideClassifierVisualizationModal = () => ({
     type: HIDE_CLASSIFIER_VISUALIZATION_MODAL
 });
 
-export const toggleTableFilters = () => ({ type: TOGGLE_TABLE_FILTERS });
-
 const INITIAL_STATE = {
     show_all_runs: false,
     configuration_modal_visible: false,
@@ -70,10 +67,7 @@ const INITIAL_STATE = {
     lumisection_modal_visible: false,
     lumisection_modal_run: {},
     classifier_visualization_modal: false,
-    classifier_visualization_modal_run: {},
-    table: {
-        filterable: false
-    }
+    classifier_visualization_modal_run: {}
 };
 
 export default function(state = INITIAL_STATE, action) {
@@ -125,14 +119,6 @@ export default function(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 classifier_visualization_modal: false
-            };
-        case TOGGLE_TABLE_FILTERS:
-            return {
-                ...state,
-                table: {
-                    ...state.table,
-                    filterable: !state.table.filterable
-                }
             };
         default:
             return state;

@@ -69,28 +69,7 @@ class BreadcrumbCmp extends Component {
                     {children}
                 </Breadcrumb>
                 <div className="show_all">
-                    {online ? (
-                        <RadioGroup
-                            onChange={evt => {
-                                const { value } = evt.target;
-                                if (value === 'show_all_runs') {
-                                    Router.push(`/online/runs/all`);
-                                } else {
-                                    Router.push(`/online/runs/significant`);
-                                }
-                            }}
-                            value={
-                                show_all_runs
-                                    ? 'show_all_runs'
-                                    : 'show_significant_runs'
-                            }
-                        >
-                            <Radio value="show_all_runs">Show all runs</Radio>
-                            <Radio value="show_significant_runs">
-                                Show significant runs
-                            </Radio>
-                        </RadioGroup>
-                    ) : (
+                    {/* {
                         <Menu
                             onClick={evt => toggleWaitingList(evt.key)}
                             selectedKeys={[
@@ -112,7 +91,7 @@ class BreadcrumbCmp extends Component {
                                 <Icon type="copy" /> Show Editable datasets
                             </Menu.Item>
                         </Menu>
-                    )}
+                    } */}
                 </div>
                 <div className="progresscircle_container">
                     <div>

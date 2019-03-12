@@ -24,11 +24,11 @@ export const fetchWorkspaces = error_handler(
     }
 );
 
-export const addColumn = (pog, column) =>
+export const addColumn = (workspace, column) =>
     error_handler(async (dispatch, getState) => {
         const { data: workspaces } = await axios.post(
             `${api_url}/workspaces`,
-            { pog, column },
+            { workspace, column },
             auth(getState)
         );
         dispatch({
@@ -38,7 +38,7 @@ export const addColumn = (pog, column) =>
         // fetch table again
     });
 
-export const removeColumn = (pog, column) =>
+export const removeColumn = (workspace, column) =>
     error_handler(async (dispatch, getState) => {
         const { data: workspaces } = await axios.delete(
             `${api_url}/workspaces`,

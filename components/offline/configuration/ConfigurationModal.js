@@ -20,8 +20,8 @@ class ConfigurationModal extends Component {
         const title_types = {
             dataset_classifiers:
                 'Set automatic classifiers for datasets considered significant',
-            component_classifiers:
-                "Set automatic classifiers for each component's status",
+            dataset_component_classifiers:
+                "Set automatic classifiers for each lumisection component's status",
             column_configuration: 'Add or remove columns from workspace',
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
@@ -31,7 +31,7 @@ class ConfigurationModal extends Component {
         };
         const modal_types = {
             dataset_classifiers: <DatasetClassifierConfiguration />,
-            component_classifiers: <ComponentClassifierConfiguration />,
+            dataset_component_classifiers: <ComponentClassifierConfiguration />,
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
             component_sync: <ComponentSync />,

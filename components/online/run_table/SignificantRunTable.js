@@ -8,7 +8,7 @@ import {
     moveRun,
     markSignificant,
     filterRuns
-} from '../../../ducks/online/runs';
+} from '../../../ducks/online/significant_runs';
 import {
     showManageRunModal,
     showLumisectionModal,
@@ -27,7 +27,7 @@ class RunTable extends Component {
     state = { filterable: false, filters: [], sortings: [], loading: false };
     toggleShowFilters = () =>
         this.setState({ filterable: !this.state.filterable });
-
+    // First time page loads, table grabs filter from query url, then goes and queries them:
     async componentDidMount() {
         this.setState({ loading: true });
         await this.props.filterRuns(this.defaultPageSize, 0, [], {});
@@ -61,13 +61,14 @@ class RunTable extends Component {
 
     // Remove filters
     removeFilters = async () => {
-        this.setState({ filters: [], sortings: [] });
+        this.setState({ filters: [], sortings: [], loading: true });
         await this.props.filterRuns(this.defaultPageSize, 0, [], {});
+        this.setState({ loading: false });
     };
 
     // When a user sorts by any field, we want to preserve the filters:
     sortTable = async (sortings, page, pageSize) => {
-        this.setState({ sortings, loading: true });
+        this.setState({ sortings: sortings });
         const { filters } = this.state;
         const renamed_filters = rename_triplets(filters, true);
         const formated_filters = format_filters(renamed_filters);
@@ -79,7 +80,6 @@ class RunTable extends Component {
             formated_sortings,
             formated_filters
         );
-        this.setState({ loading: false });
     };
     onPageChange = async page => {
         this.sortTable(this.state.sortings, page);
@@ -105,7 +105,7 @@ class RunTable extends Component {
             showManageRunModal,
             showClassifierVisualizationModal,
             showLumisectionModal,
-            significant_runs: false,
+            significant_runs: true,
             toggleShowFilters: this.toggleShowFilters,
             filterable,
             markSignificant,
@@ -115,7 +115,7 @@ class RunTable extends Component {
         const filter = filters.length > 0;
         return (
             <div>
-                All runs:
+                Significant runs:
                 {filter && (
                     <div
                         style={{
@@ -184,7 +184,7 @@ class RunTable extends Component {
 
 const mapStateToProps = state => {
     return {
-        run_table: state.online.runs
+        run_table: state.online.significant_runs
     };
 };
 

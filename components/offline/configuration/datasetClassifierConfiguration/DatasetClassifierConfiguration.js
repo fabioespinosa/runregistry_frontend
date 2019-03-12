@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import Swal from 'sweetalert2';
 import { Select, Icon } from 'antd';
-import { offline_column_structure } from '../../../../config/config';
 import {
     fetchDatasetClassifiers,
     editDatasetClassifier

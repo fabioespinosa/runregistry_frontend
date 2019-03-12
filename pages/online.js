@@ -8,12 +8,15 @@ import dynamic from 'next/dynamic';
 import { Layout, Breadcrumb } from 'antd';
 
 import { initializeUser, initializeEnvironment } from '../ducks/info';
-import { initializeFilters } from '../ducks/online/runs';
 
 import store from '../store/configure-store';
 import Page from '../layout/page';
 import RunTable from '../components/online/run_table/RunTable';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
+import SignificantRunTable from '../components/online/run_table/SignificantRunTable';
+import ManageRunModal from '../components/online/manage_run/ManageRunModal';
+import LumisectionModal from '../components/online/lumisections/LumisectionModal';
+import ClassifierVisualizationModal from '../components/online/classifier_visualization/ClassifierVisualizationModal';
 // const RunTable = dynamic(import('../components/online/run_table/RunTable'), {
 //     ssr: false
 // });
@@ -25,7 +28,6 @@ class Online extends Component {
             initializeUser(store, query);
             initializeEnvironment(store);
         }
-        initializeFilters(store, query);
         return {};
     }
 
@@ -59,7 +61,12 @@ class Online extends Component {
                         minHeight: 280
                     }}
                 >
-                    <RunTable />
+                    <ManageRunModal />
+                    <LumisectionModal />
+                    <ClassifierVisualizationModal />
+
+                    <RunTable defaultPageSize={12} />
+                    <SignificantRunTable defaultPageSize={5} />
                 </Content>
             </Page>
         );
