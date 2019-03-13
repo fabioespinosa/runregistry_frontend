@@ -1,5 +1,3 @@
-import { components, rr_attributes } from '../../../../config/config';
-
 import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
@@ -26,40 +24,35 @@ const column_types = {
 };
 
 const column_generator = ({
-    showManageRunModal,
-    showClassifierVisualizationModal,
-    moveRun,
+    showManageDatasetModal,
+    showLumisectionModal,
+    workspace,
+    workspaces,
+    moveDataset,
     toggleShowFilters,
-    significant_runs,
-    filterable,
-    markSignificant,
     filter_object
 }) => {
     let columns = [
         {
             Header: 'Run Number',
             accessor: 'run_number',
-            maxWidth: 110,
+            maxWidth: 90,
             resizable: false,
             Cell: ({ original, value }) => (
                 <div style={{ textAlign: 'center', width: '100%' }}>
-                    <a onClick={() => showManageRunModal(original)}>{value}</a>
-                </div>
-            )
-        },
-        {
-            Header: 'Class',
-            accessor: 'class',
-            Cell: ({ original, value }) => (
-                <div style={{ textAlign: 'center' }}>
-                    <a
-                        onClick={() =>
-                            showClassifierVisualizationModal(original)
-                        }
-                    >
+                    <a onClick={() => showManageDatasetModal(original)}>
                         {value}
                     </a>
                 </div>
+            )
+        },
+        { Header: 'Dataset Name', accessor: 'name', maxWidth: 250 },
+        {
+            Header: 'Class',
+            accessor: 'class',
+            maxWidth: 90,
+            Cell: ({ original }) => (
+                <div style={{ textAlign: 'center' }}>{original.Run.class}</div>
             )
         },
         {
@@ -71,7 +64,7 @@ const column_generator = ({
             Cell: ({ original }) => (
                 <div style={{ textAlign: 'center' }}>
                     <span>
-                        <a onClick={() => showManageRunModal(original)}>
+                        <a onClick={() => showManageDatasetModal(original)}>
                             Manage
                         </a>
                         {' / '}
@@ -81,163 +74,167 @@ const column_generator = ({
             )
         },
         {
-            Header: 'Significant',
-            id: 'significant',
-            accessor: 'significant',
-            maxWidth: 100,
-            filterable: significant_runs && filterable,
-            sortable: significant_runs,
+            Header: 'Appeared In',
+            id: 'appeared_in',
+            accessor: 'appeared_in',
+            maxWidth: 150,
             Cell: ({ original, value }) => (
                 <div style={{ textAlign: 'center' }}>
-                    {value ? (
-                        <Icon type={'check'} />
-                    ) : (
-                        <a
-                            onClick={async () => {
-                                const { value } = await Swal({
-                                    type: 'warning',
-                                    title:
-                                        'Are you sure you want to make the run Significant',
-                                    text: '',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Yes',
-                                    reverseButtons: true,
-                                    footer: '<a >What does this mean?</a>'
-                                });
-                                if (value) {
-                                    await markSignificant(original);
-                                    await Swal(
-                                        `Run ${
-                                            original.run_number
-                                        } marked significant`,
-                                        '',
-                                        'success'
-                                    );
-                                }
-                            }}
-                        >
-                            Make significant
-                        </a>
-                    )}
+                    <span
+                        style={{
+                            fontSize: '0.95em',
+                            fontWeight: 'bold',
+                            borderRadius: '1px'
+                        }}
+                    >
+                        <span style={{ padding: '4px' }}>{value}</span>
+                    </span>
                 </div>
             )
         },
         {
-            Header: 'State',
-            id: 'state',
-            accessor: 'state',
-            Cell: ({ original, value }) => {
-                if (original.significant) {
-                    return (
-                        <div style={{ textAlign: 'center' }}>
-                            <span
-                                style={{
-                                    color: 'white',
-                                    fontSize: '0.95em',
-                                    fontWeight: 'bold',
-                                    color: value === 'OPEN' ? 'red' : 'grey',
-                                    borderRadius: '1px'
-                                }}
-                            >
-                                <span style={{ padding: '4px' }}>{value}</span>
-                            </span>
-                            {' / '}
-                            <a
-                                onClick={async () => {
-                                    const options = {
-                                        OPEN: 'To OPEN',
-                                        SIGNOFF: 'to SIGNOFF',
-                                        COMPLETED: 'to COMPLETED'
-                                    };
-                                    delete options[value];
-                                    const { value: to_state } = await Swal({
-                                        title: `Move run ${
-                                            original.run_number
-                                        } to...`,
-                                        input: 'select',
-                                        inputOptions: options,
-                                        showCancelButton: true,
-                                        reverseButtons: true
-                                    });
-                                    if (to_state) {
-                                        await moveRun(
-                                            original,
-                                            original.state,
-                                            to_state
-                                        );
-                                        await Swal(
-                                            `Run ${
-                                                original.run_number
-                                            } Moved to ${to_state}`,
-                                            '',
-                                            'success'
-                                        );
-                                    }
-                                }}
-                            >
-                                move
-                            </a>
-                        </div>
-                    );
-                }
-            }
-        },
-        { Header: 'Started', accessor: 'start_time' },
-        {
-            Header: 'Hlt Key Description',
-            accessor: 'hlt_key'
-        },
-        {
-            Header: 'GUI',
-            filterable: false,
-            maxWidth: 40,
-            Cell: ({ original }) => (
+            Header: `${workspace} State`,
+            id: `${workspace.toLowerCase()}_state`,
+            accessor: `${workspace.toLowerCase()}_state`,
+            minWidth: 145,
+            maxWidth: 145,
+            Cell: ({ original, value }) => (
                 <div style={{ textAlign: 'center' }}>
-                    <a
-                        target="_blank"
-                        href={`https://cmsweb.cern.ch/dqm/online/start?runnr=${
-                            original.run_number
-                        };sampletype=online_data;workspace=Summary`}
+                    <span
+                        style={{
+                            color: 'white',
+                            fontSize: '0.95em',
+                            fontWeight: 'bold',
+                            color: value === 'OPEN' ? 'red' : 'grey',
+                            borderRadius: '1px'
+                        }}
                     >
-                        GUI
+                        <span style={{ padding: '4px' }}>{value}</span>
+                    </span>
+                    {' / '}
+                    <a
+                        onClick={async () => {
+                            let options = {
+                                OPEN: 'To OPEN',
+                                SIGNOFF: 'to SIGNOFF',
+                                COMPLETED: 'to COMPLETED'
+                            };
+
+                            if (value === 'waiting dqm gui') {
+                                options = { OPEN: 'To OPEN' };
+                            }
+                            delete options[value];
+                            const { value: state } = await Swal({
+                                title: `Move dataset manually ${
+                                    original.name
+                                } of run ${original.run_number} to...`,
+                                input: 'select',
+                                inputOptions: options,
+                                showCancelButton: true,
+                                reverseButtons: true
+                            });
+                            if (state) {
+                                await moveDataset(
+                                    original.id,
+                                    workspace.toLowerCase(),
+                                    state
+                                );
+                                await Swal(
+                                    `Dataset ${original.name} of run ${
+                                        original.run_number
+                                    } Moved to ${state}`,
+                                    '',
+                                    'success'
+                                );
+                            }
+                        }}
+                    >
+                        move
                     </a>
                 </div>
             )
-        }
+        },
+        { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 }
     ];
+    // {
+    //     Header: 'Hlt Key Description',
+    //     accessor: 'hlt_key'
+    // },
+    // {
+    //     Header: 'GUI',
+    //     filterable: false,
+    //     maxWidth: 50,
+    //     Cell: ({ original }) => (
+    //         <div style={{ textAlign: 'center' }}>
+    //             <a
+    //                 target="_blank"
+    //                 href={`https://cmsweb.cern.ch/dqm/offline/start?runnr=${
+    //                     original.run_number
+    //                 };sampletype=offline_data;workspace=Summary`}
+    //             >
+    //                 GUI
+    //             </a>
+    //         </div>
+    //     )
+    // }
 
-    const other_columns = [
-        { Header: 'LS Duration', accessor: 'ls_duration' },
-        { Header: 'B Field', accessor: 'b_field' },
-        { Header: 'Clock Type', accessor: 'clock_type' }
-    ];
+    // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
+    const all_columns_formatted = [];
+    workspaces.forEach(({ workspace, columns }) => {
+        all_columns_formatted.push(`${workspace}-${workspace}`);
+        columns.forEach(column => {
+            all_columns_formatted.push(`${workspace}-${column}`);
+        });
+    });
+
     // Put components in format Header: component
-    let component_columns = components.map(component => ({
-        Header: component
-    }));
+    let offline_columns_composed = [];
+    if (workspace === 'global') {
+        offline_columns_composed = all_columns_formatted
+            .filter(column => {
+                const split_name = column.split('-');
+                // If the name is workspace-workspace, it will be the official status of the workspace:
+                return split_name[0] === split_name[1];
+            })
+            .map(column => ({
+                accessor: column,
+                Header: column.split('-')[1]
+            }));
+    } else {
+        offline_columns_composed = all_columns_formatted
+            .filter(column => {
+                return (
+                    column.startsWith(workspace.toLowerCase()) &&
+                    column.includes('-')
+                );
+            })
+            .map(column => ({
+                accessor: column,
+                Header: column.split('-')[1]
+            }));
+    }
 
-    component_columns = component_columns.map(column => {
+    offline_columns_composed = offline_columns_composed.map(column => {
         return {
             ...column,
             maxWidth: 66,
-            id: `${column['Header']}_triplet`,
+            id: column.accessor,
             accessor: data => {
-                const triplet =
-                    data.triplet_summary[`${column['Header']}_triplet`];
+                const triplet = data.triplet_summary[column['accessor']];
                 return triplet;
             },
             Cell: ({ original, value }) => (
                 <Status
+                    significant={true}
                     triplet_summary={value}
-                    significant={original.significant}
                     run_number={original.run_number}
-                    dataset_name="online"
-                    component={`${column['Header']}_triplet`}
+                    dataset_name={original.name}
+                    component={`${column['Header']}`}
                 />
             )
         };
     });
-    columns = [...columns, ...component_columns, ...other_columns];
+    columns = [...columns, ...offline_columns_composed];
     // columns = component_columns;
     columns = columns.map(column => {
         return {
@@ -249,11 +246,10 @@ const column_generator = ({
                     <Icon
                         onClick={evt => {
                             toggleShowFilters();
-                            // The following is to stop react-table from performing a sort when a user just clicked on the magnifying glass to filter
                             evt.stopPropagation();
                         }}
                         type="search"
-                        style={{ fontSize: '12px' }}
+                        style={{ fontSize: '10px' }}
                     />
                 </div>
             ),

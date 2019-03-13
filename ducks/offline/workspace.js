@@ -51,7 +51,7 @@ export const removeColumn = (workspace, column) =>
         // fetch table again
     });
 
-const INITIAL_STATE = { workspace: 'global', workspaces: {} };
+const INITIAL_STATE = { workspace: 'global', workspaces: [] };
 
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;

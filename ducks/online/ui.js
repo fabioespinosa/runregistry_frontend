@@ -11,18 +11,18 @@ const SHOW_CLASSIFIER_VISUALIZATION_MODAL =
 const HIDE_CLASSIFIER_VISUALIZATION_MODAL =
     'HIDE_CLASSIFIER_VISUALIZATION_MODAL-ONLINE';
 
-export const toggleShowAllRunsAndFetch = new_value => dispatch => {
-    dispatch({
-        type: TOGGLE_SHOW_ALL_RUNS,
-        payload: new_value === 'show_all_runs'
-    });
-    dispatch(filterRuns(25, 0, [], []));
-};
+// export const toggleShowAllRunsAndFetch = new_value => dispatch => {
+//     dispatch({
+//         type: TOGGLE_SHOW_ALL_RUNS,
+//         payload: new_value === 'show_all_runs'
+//     });
+//     dispatch(filterRuns(25, 0, [], []));
+// };
 
-export const toggleShowAllRuns = new_value => ({
-    type: TOGGLE_SHOW_ALL_RUNS,
-    payload: new_value === 'show_all_runs'
-});
+// export const toggleShowAllRuns = new_value => ({
+//     type: TOGGLE_SHOW_ALL_RUNS,
+//     payload: new_value === 'show_all_runs'
+// });
 
 export const showConfigurationModal = configuration_modal_type => ({
     type: SHOW_CONFIGURATION_MODAL,

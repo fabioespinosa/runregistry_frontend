@@ -4,7 +4,6 @@ import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
 import { error_handler } from '../../utils/error_handlers';
 import { hideManageRunModal } from './ui';
-const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS-ONLINE';
 const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_SIGNIFICANT_RUNS';
 
@@ -18,8 +17,7 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
         runs.runs = formatRuns(runs.runs);
         dispatch({
             type: FILTER_RUNS,
-            payload: runs,
-            filter: sortings.length > 0 || Object.keys(filtered).length > 0
+            payload: runs
         });
     });
 
@@ -69,28 +67,17 @@ export const refreshRun = id_run =>
     });
 
 const INITIAL_STATE = {
-    runs: [],
-    filter: false,
-    filter_array: [],
-    filter_object: {}
+    runs: []
 };
 
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
-        case INITIALIZE_FILTERS:
-            return {
-                ...state,
-                filter: true,
-                filter_array: payload,
-                filter_object: action.filters
-            };
         case FILTER_RUNS:
             return {
                 ...state,
                 runs: payload.runs,
-                pages: payload.pages,
-                filter: action.filter
+                pages: payload.pages
             };
         case EDIT_RUN:
             return { ...state, runs: editRunHelper(state.runs, payload) };

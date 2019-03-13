@@ -17,6 +17,7 @@ class TopNav extends Component {
             user,
             env
         } = this.props;
+        console.log(type);
         // Log to see who has used the webpage on the server:
         console.log(user.displayname);
         const backgroundColor = env === 'staging' ? 'purple' : '';
@@ -31,7 +32,7 @@ class TopNav extends Component {
                         backgroundColor
                     }}
                 >
-                    <Menu.Item key="0">
+                    <Menu.Item key="0" disabled>
                         <img
                             className="logo"
                             src={`/static/images/cms_logo.png`}
@@ -48,10 +49,7 @@ class TopNav extends Component {
                         </h4>
                     </Menu.Item>
                     <Menu.Item key="online">
-                        <Link
-                            as={`/online/runs/all`}
-                            href="/online?type=online&section=runs&workspace=all"
-                        >
+                        <Link as={`/online`} href="/online">
                             <a>ONLINE</a>
                         </Link>
                     </Menu.Item>

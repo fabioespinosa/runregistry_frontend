@@ -1,0 +1,1274 @@
+{
+    "extension": "linecount",
+    "version": "0.1.7",
+    "workspace": "/Users/fabioespinosa/Desktop/runregistry",
+    "linecount": [
+        {
+            "version": "0.1.7",
+            "counttime": "2019-03-13 15:36:20",
+            "filesum": 208,
+            "codesum": 50778,
+            "commentsum": 6225,
+            "blanksum": 5753,
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": ".babelrc"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 5,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": ".next/build-manifest.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 154,
+                    "comment": 0,
+                    "filename": ".next/react-loadable-manifest.json"
+                },
+                {
+                    "blank": 6,
+                    "code": 25,
+                    "comment": 4,
+                    "filename": ".next/server/0.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/0.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/pages-manifest.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 1,
+                    "comment": 1,
+                    "filename": ".next/server/ssr-module-cache.js"
+                },
+                {
+                    "blank": 6,
+                    "code": 73,
+                    "comment": 95,
+                    "filename": ".next/server/static/development/pages/_app.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/static/development/pages/_app.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 73,
+                    "comment": 95,
+                    "filename": ".next/server/static/development/pages/_document.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/static/development/pages/_document.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 73,
+                    "comment": 95,
+                    "filename": ".next/server/static/development/pages/_error.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/static/development/pages/_error.js.map"
+                },
+                {
+                    "blank": 72,
+                    "code": 713,
+                    "comment": 51,
+                    "filename": ".next/server/static/development/pages/offline.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/static/development/pages/offline.js.map"
+                },
+                {
+                    "blank": 82,
+                    "code": 1070,
+                    "comment": 60,
+                    "filename": ".next/server/static/development/pages/online.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/server/static/development/pages/online.js.map"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 1,
+                    "filename": ".next/static/chunks/0.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/chunks/0.js.map"
+                },
+                {
+                    "blank": 720,
+                    "code": 4396,
+                    "comment": 553,
+                    "filename": ".next/static/chunks/1.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/chunks/1.js.map"
+                },
+                {
+                    "blank": 50,
+                    "code": 114,
+                    "comment": 151,
+                    "filename": ".next/static/development/dll/dll_97b3f31055546f578568.js"
+                },
+                {
+                    "blank": 633,
+                    "code": 4117,
+                    "comment": 492,
+                    "filename": ".next/static/development/pages/_app.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/development/pages/_app.js.map"
+                },
+                {
+                    "blank": 20,
+                    "code": 220,
+                    "comment": 25,
+                    "filename": ".next/static/development/pages/_error.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/development/pages/_error.js.map"
+                },
+                {
+                    "blank": 991,
+                    "code": 7464,
+                    "comment": 1289,
+                    "filename": ".next/static/development/pages/offline.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/development/pages/offline.js.map"
+                },
+                {
+                    "blank": 1001,
+                    "code": 7821,
+                    "comment": 1298,
+                    "filename": ".next/static/development/pages/online.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/development/pages/online.js.map"
+                },
+                {
+                    "blank": 906,
+                    "code": 4527,
+                    "comment": 1503,
+                    "filename": ".next/static/runtime/main.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/runtime/main.js.map"
+                },
+                {
+                    "blank": 20,
+                    "code": 116,
+                    "comment": 146,
+                    "filename": ".next/static/runtime/webpack.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/runtime/webpack.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/048909a7d24dc508b593.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/0b4cb2928161eff0cc8e.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/12a8b02110e394b2b3bf.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/25f9dae325ec331d265d.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/2a9284f357393f988f95.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/4e86215641fe7786ff00.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/51f2b2a4f9ba7a94088a.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/68f4a980e81d12a9dbba.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/89022374f71cd173c33c.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/97d702bdf2643f4c0f27.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/ac9980b4b6a70b7daac7.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/c257a3ae68b05bfa079c.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/d28509db8b37dd8ae1bd.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/d5e06e0ef9eba90a8f79.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/df0a59d4e760886cdcfe.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/df4537ead34d7657ecc1.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/ebab5e3cb4f177dd77d0.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/f7fbe65bd8a74bc3fb47.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/f87e359649b8b0bb00e8.hot-update.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/fc6a76a5af016bc1df30.hot-update.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 1,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.048909a7d24dc508b593.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.048909a7d24dc508b593.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.0b4cb2928161eff0cc8e.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.0b4cb2928161eff0cc8e.hot-update.js.map"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 1,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.25f9dae325ec331d265d.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.25f9dae325ec331d265d.hot-update.js.map"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 1,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.89022374f71cd173c33c.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.89022374f71cd173c33c.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.ac9980b4b6a70b7daac7.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.ac9980b4b6a70b7daac7.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.c257a3ae68b05bfa079c.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.c257a3ae68b05bfa079c.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.d28509db8b37dd8ae1bd.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.d28509db8b37dd8ae1bd.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.d5e06e0ef9eba90a8f79.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.d5e06e0ef9eba90a8f79.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.df0a59d4e760886cdcfe.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.df0a59d4e760886cdcfe.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.f87e359649b8b0bb00e8.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/offline.js.f87e359649b8b0bb00e8.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.0b4cb2928161eff0cc8e.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.0b4cb2928161eff0cc8e.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.12a8b02110e394b2b3bf.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.12a8b02110e394b2b3bf.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.51f2b2a4f9ba7a94088a.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.51f2b2a4f9ba7a94088a.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.68f4a980e81d12a9dbba.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.68f4a980e81d12a9dbba.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.97d702bdf2643f4c0f27.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.97d702bdf2643f4c0f27.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.ac9980b4b6a70b7daac7.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.ac9980b4b6a70b7daac7.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.c257a3ae68b05bfa079c.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.c257a3ae68b05bfa079c.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.d28509db8b37dd8ae1bd.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.d28509db8b37dd8ae1bd.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.d5e06e0ef9eba90a8f79.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.d5e06e0ef9eba90a8f79.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.df0a59d4e760886cdcfe.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.df0a59d4e760886cdcfe.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.df4537ead34d7657ecc1.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.df4537ead34d7657ecc1.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.ebab5e3cb4f177dd77d0.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.ebab5e3cb4f177dd77d0.hot-update.js.map"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.f87e359649b8b0bb00e8.hot-update.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".next/static/webpack/static/development/pages/online.js.f87e359649b8b0bb00e8.hot-update.js.map"
+                },
+                {
+                    "filename": "all.css.gz",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 1,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "auth/auth.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 132,
+                    "comment": 1,
+                    "filename": "components/common/ClassifierEditor/ClassifierEditor.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 25,
+                    "comment": 0,
+                    "filename": "components/common/ClassifierEditor/JSONEditor/JSONEditor.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "components/common/CommonTableComponents/CommonValueComponent.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 116,
+                    "comment": 1,
+                    "filename": "components/common/CommonTableComponents/PopoverContent.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 199,
+                    "comment": 2,
+                    "filename": "components/common/CommonTableComponents/Status.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 121,
+                    "comment": 1,
+                    "filename": "components/offline/configuration/columnConfiguration/ColumnConfiguration.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 100,
+                    "comment": 0,
+                    "filename": "components/offline/configuration/columnConfiguration/columnEditor/ColumnEditor.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 250,
+                    "comment": 0,
+                    "filename": "components/offline/configuration/componentClassifierConfiguration/ComponentClassifierConfiguration.js"
+                },
+                {
+                    "blank": 1,
+                    "code": 64,
+                    "comment": 5,
+                    "filename": "components/offline/configuration/componentSyncConfiguration/ComponentSyncConfiguration.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 72,
+                    "comment": 1,
+                    "filename": "components/offline/configuration/ConfigurationModal.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 123,
+                    "comment": 0,
+                    "filename": "components/offline/configuration/datasetClassifierConfiguration/DatasetClassifierConfiguration.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 182,
+                    "comment": 1,
+                    "filename": "components/offline/configuration/datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 121,
+                    "comment": 0,
+                    "filename": "components/offline/configuration/datasetsAcceptedConfiguration/regexpEditor/RegexpEditor.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 209,
+                    "comment": 2,
+                    "filename": "components/offline/configuration/lumisectionExceptionSyncConfiguration/LumisectionExceptionSync.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 312,
+                    "comment": 26,
+                    "filename": "components/offline/dataset_table/columns/columns.js"
+                },
+                {
+                    "blank": 12,
+                    "code": 182,
+                    "comment": 11,
+                    "filename": "components/offline/dataset_table/DatasetTable.js"
+                },
+                {
+                    "blank": 1,
+                    "code": 82,
+                    "comment": 8,
+                    "filename": "components/offline/dataset_table/filters/format_filters.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "components/offline/dataset_table/filters/format_sortings.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 29,
+                    "comment": 6,
+                    "filename": "components/offline/dataset_table/filters/rename_triplets.js"
+                },
+                {
+                    "blank": 13,
+                    "code": 184,
+                    "comment": 11,
+                    "filename": "components/offline/dataset_table/WaitingListDatasetTable.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 50,
+                    "comment": 1,
+                    "filename": "components/offline/lumisections/LumisectionModal.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 99,
+                    "comment": 0,
+                    "filename": "components/offline/lumisections/lumisections/editLumisections/EditLumisections.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 101,
+                    "comment": 1,
+                    "filename": "components/offline/lumisections/lumisections/Lumisections.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 73,
+                    "comment": 0,
+                    "filename": "components/offline/manage_dataset/manageDataset/editDataset/editClass/EditClass.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 120,
+                    "comment": 1,
+                    "filename": "components/offline/manage_dataset/manageDataset/editDataset/EditDataset.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 216,
+                    "comment": 10,
+                    "filename": "components/offline/manage_dataset/manageDataset/history/History.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "components/offline/manage_dataset/manageDataset/history/readme.md"
+                },
+                {
+                    "blank": 5,
+                    "code": 29,
+                    "comment": 2,
+                    "filename": "components/offline/manage_dataset/manageDataset/ManageDataset.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 50,
+                    "comment": 1,
+                    "filename": "components/offline/manage_dataset/ManageDatasetModal.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 185,
+                    "comment": 1,
+                    "filename": "components/online/classifier_visualization/classifierVisualization/ClassifierVisualization.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 51,
+                    "comment": 1,
+                    "filename": "components/online/classifier_visualization/ClassifierVisualizationModal.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 249,
+                    "comment": 0,
+                    "filename": "components/online/configuration/classClassifierConfiguration/ClassClassifierConfiguration.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 250,
+                    "comment": 0,
+                    "filename": "components/online/configuration/componentClassifierConfiguration/ComponentClassifierConfiguration.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 68,
+                    "comment": 1,
+                    "filename": "components/online/configuration/ConfigurationModal.js"
+                },
+                {
+                    "blank": 7,
+                    "code": 213,
+                    "comment": 0,
+                    "filename": "components/online/configuration/datasetClassifierConfiguration/DatasetClassifierConfiguration.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 47,
+                    "comment": 1,
+                    "filename": "components/online/lumisections/LumisectionModal.js"
+                },
+                {
+                    "blank": 6,
+                    "code": 81,
+                    "comment": 1,
+                    "filename": "components/online/lumisections/lumisections/Lumisections.js"
+                },
+                {
+                    "blank": 7,
+                    "code": 232,
+                    "comment": 1,
+                    "filename": "components/online/manage_run/manageRun/editRun/EditRun.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 135,
+                    "comment": 38,
+                    "filename": "components/online/manage_run/manageRun/history/History.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 33,
+                    "comment": 2,
+                    "filename": "components/online/manage_run/manageRun/ManageRun.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 47,
+                    "comment": 1,
+                    "filename": "components/online/manage_run/ManageRunModal.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 338,
+                    "comment": 5,
+                    "filename": "components/online/run_table/columns/columns.js"
+                },
+                {
+                    "blank": 1,
+                    "code": 77,
+                    "comment": 8,
+                    "filename": "components/online/run_table/filters/format_filters.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "components/online/run_table/filters/format_sortings.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 23,
+                    "comment": 4,
+                    "filename": "components/online/run_table/filters/rename_triplets.js"
+                },
+                {
+                    "blank": 9,
+                    "code": 187,
+                    "comment": 11,
+                    "filename": "components/online/run_table/RunTable.js"
+                },
+                {
+                    "blank": 8,
+                    "code": 187,
+                    "comment": 12,
+                    "filename": "components/online/run_table/SignificantRunTable.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 132,
+                    "comment": 22,
+                    "filename": "components/ui/breadcrumb/Breadcrumb.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 24,
+                    "comment": 1,
+                    "filename": "components/ui/nav/Nav.js"
+                },
+                {
+                    "blank": 6,
+                    "code": 73,
+                    "comment": 1,
+                    "filename": "components/ui/nav/side/SideNav.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 117,
+                    "comment": 1,
+                    "filename": "components/ui/nav/top/TopNav.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 37,
+                    "comment": 0,
+                    "filename": "components/ui/theme.js"
+                },
+                {
+                    "blank": 15,
+                    "code": 197,
+                    "comment": 2,
+                    "filename": "config/config.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 9,
+                    "comment": 0,
+                    "filename": "docker-compose.yml"
+                },
+                {
+                    "blank": 3,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "Dockerfile"
+                },
+                {
+                    "filename": "documentation/rr_slides.pptx",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "documentation/tech_proposal.pdf",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "documentation/tech_proposal.pptx",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "documentation/~$tech_proposal.pptx",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 8,
+                    "code": 65,
+                    "comment": 0,
+                    "filename": "ducks/classifier_editor.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 28,
+                    "comment": 0,
+                    "filename": "ducks/info.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 94,
+                    "comment": 2,
+                    "filename": "ducks/offline/classifiers/component.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 38,
+                    "comment": 0,
+                    "filename": "ducks/offline/classifiers/dataset.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "ducks/offline/classifiers/index.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 109,
+                    "comment": 1,
+                    "filename": "ducks/offline/datasets.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 91,
+                    "comment": 0,
+                    "filename": "ducks/offline/datasets_accepted.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 31,
+                    "comment": 0,
+                    "filename": "ducks/offline/dc_tools.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 20,
+                    "comment": 0,
+                    "filename": "ducks/offline/index.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 41,
+                    "comment": 0,
+                    "filename": "ducks/offline/lumisections.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 84,
+                    "comment": 0,
+                    "filename": "ducks/offline/ui.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 106,
+                    "comment": 1,
+                    "filename": "ducks/offline/waiting_datasets.js"
+                },
+                {
+                    "blank": 6,
+                    "code": 62,
+                    "comment": 2,
+                    "filename": "ducks/offline/workspace.js"
+                },
+                {
+                    "blank": 7,
+                    "code": 57,
+                    "comment": 1,
+                    "filename": "ducks/online/classifiers/class.js"
+                },
+                {
+                    "blank": 10,
+                    "code": 94,
+                    "comment": 2,
+                    "filename": "ducks/online/classifiers/component.js"
+                },
+                {
+                    "blank": 9,
+                    "code": 89,
+                    "comment": 1,
+                    "filename": "ducks/online/classifiers/dataset.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 10,
+                    "comment": 0,
+                    "filename": "ducks/online/classifiers/index.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "ducks/online/index.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 24,
+                    "comment": 0,
+                    "filename": "ducks/online/lumisections.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 101,
+                    "comment": 0,
+                    "filename": "ducks/online/runs.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 100,
+                    "comment": 0,
+                    "filename": "ducks/online/significant_runs.js"
+                },
+                {
+                    "blank": 12,
+                    "code": 103,
+                    "comment": 11,
+                    "filename": "ducks/online/ui.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "ducks/rootReducer.js"
+                },
+                {
+                    "blank": 6,
+                    "code": 56,
+                    "comment": 6,
+                    "filename": "layout/page.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 11,
+                    "comment": 2,
+                    "filename": "next.config.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 10209,
+                    "comment": 0,
+                    "filename": "package-lock.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 52,
+                    "comment": 0,
+                    "filename": "package.json"
+                },
+                {
+                    "blank": 2,
+                    "code": 28,
+                    "comment": 1,
+                    "filename": "pages/_app.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 41,
+                    "comment": 0,
+                    "filename": "pages/_document.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 71,
+                    "comment": 3,
+                    "filename": "pages/offline.js"
+                },
+                {
+                    "blank": 9,
+                    "code": 74,
+                    "comment": 4,
+                    "filename": "pages/online.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "pages/run.js"
+                },
+                {
+                    "blank": 9,
+                    "code": 42,
+                    "comment": 5,
+                    "filename": "server.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "services/analytics.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 31,
+                    "comment": 0,
+                    "filename": "sslcert/cert.pem"
+                },
+                {
+                    "blank": 0,
+                    "code": 52,
+                    "comment": 0,
+                    "filename": "sslcert/key.pem"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 9,
+                    "filename": "static/ant-modified.min.css"
+                },
+                {
+                    "filename": "static/fonts/font_148784_v4ggb6wrjmkotj4i.eot",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 603,
+                    "code": 322,
+                    "comment": 0,
+                    "filename": "static/fonts/font_148784_v4ggb6wrjmkotj4i.svg"
+                },
+                {
+                    "filename": "static/fonts/font_148784_v4ggb6wrjmkotj4i.ttf",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "static/fonts/font_148784_v4ggb6wrjmkotj4i.woff",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "static/images/cms_logo.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 12,
+                    "code": 66,
+                    "comment": 4,
+                    "filename": "static/nprogress.css"
+                },
+                {
+                    "blank": 0,
+                    "code": 421,
+                    "comment": 0,
+                    "filename": "static/react-table.css"
+                },
+                {
+                    "blank": 4,
+                    "code": 21,
+                    "comment": 1,
+                    "filename": "store/configure-store.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 24,
+                    "comment": 1,
+                    "filename": "utils/error_handlers.js"
+                }
+            ]
+        }
+    ]
+}

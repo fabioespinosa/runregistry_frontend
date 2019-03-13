@@ -5,27 +5,27 @@ import { hideManageDatasetModal } from './ui';
 import auth from '../../auth/auth';
 
 const EDIT_DATASET = 'EDIT_DATASET';
-const FILTER_DATASETS = 'FILTER_DATASETS';
+const FILTER_DATASETS = 'FILTER_DATASETS-WAITING';
+const TABLE_LOADING = 'TABLE_LOADING-OFFLINE';
+const TABLE_LOADING_DONE = 'TABLE_LOADING_DONE-OFFLINE';
 export const FIND_AND_REPLACE_DATASETS = 'FIND_AND_REPLACE_DATASETS';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
+
+export function fetchInitialOfflineDatasets(store, query, isServer) {}
 
 // endpoint can be either waiting_list or editable
 export const filterDatasets = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();
-        const dataset_endpoint = getState().offline.ui.show_waiting_list
-            ? 'waiting_list'
-            : 'editable';
         const { data: datasets } = await axios.post(
-            `${api_url}/datasets/${workspace}/editable/${page}/`,
+            `${api_url}/datasets/${workspace}/waiting_list/${page}/`,
             { page_size, sortings, filter: filtered },
             auth(getState)
         );
         datasets.datasets = formatDatasets(datasets.datasets);
         dispatch({
             type: FILTER_DATASETS,
-            payload: datasets,
-            filter: sortings.length > 0 || Object.keys(filtered).length > 0
+            payload: datasets
         });
     });
 
@@ -65,9 +65,7 @@ export default function(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 datasets: payload.datasets,
-                pages: payload.pages,
-                loading: false,
-                filter: action.filter
+                pages: payload.pages
             };
         case EDIT_DATASET:
             return {

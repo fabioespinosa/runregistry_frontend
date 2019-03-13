@@ -90,7 +90,7 @@ class RunTable extends Component {
     };
 
     render() {
-        const { filters, filterable } = this.state;
+        const { filters, filterable, loading } = this.state;
         const {
             run_table,
             show_all_runs,
@@ -99,12 +99,13 @@ class RunTable extends Component {
             showClassifierVisualizationModal,
             markSignificant
         } = this.props;
-        const { runs, pages, loading } = run_table;
+        const { runs, pages } = run_table;
         const filter_object = this.convertFiltersToObject(filters);
         const columns = column_generator({
             showManageRunModal,
             showClassifierVisualizationModal,
             showLumisectionModal,
+            moveRun,
             significant_runs: true,
             toggleShowFilters: this.toggleShowFilters,
             filterable,

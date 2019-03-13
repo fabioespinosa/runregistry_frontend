@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import classifiers from './classifiers/index';
 import datasets from './datasets';
+import waiting_datasets from './waiting_datasets';
 import lumisections from './lumisections';
 import workspace from './workspace';
 import datasets_accepted from './datasets_accepted';
@@ -11,6 +12,7 @@ import dc_tools from './dc_tools';
 const offlineRootReducer = combineReducers({
     classifiers,
     datasets,
+    waiting_datasets,
     lumisections,
     workspace,
     datasets_accepted,

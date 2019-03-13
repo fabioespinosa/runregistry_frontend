@@ -14,17 +14,11 @@ class SideNav extends Component {
                 query: { type, section, workspace }
             }
         } = this.props;
-        if (key === 'lumisections') {
-            Router.push(
-                `/offline?type=offline&section=lumisections`,
-                `/offline/lumisections`
-            );
-        } else {
-            Router.push(
-                `/offline?type=offline&section=${keyPath[1]}&workspace=${key}`,
-                `/offline/${keyPath[1]}/${key}`
-            );
-        }
+
+        Router.push(
+            `/offline?type=offline&section=${keyPath[1]}&workspace=${key}`,
+            `/offline/${keyPath[1]}/${key}`
+        );
     }
 
     render() {

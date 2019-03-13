@@ -1,38 +1,37 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
+
+import {
+    moveDataset,
+    filterDatasets
+} from '../../../ducks/offline/waiting_datasets';
+import {
+    showManageDatasetModal,
+    showLumisectionModal
+} from '../../../ducks/offline/ui';
 import format_filters from './filters/format_filters';
 import format_sortings from './filters/format_sortings';
 import rename_triplets from './filters/rename_triplets';
-import {
-    moveRun,
-    markSignificant,
-    filterRuns
-} from '../../../ducks/online/runs';
-import {
-    showManageRunModal,
-    showLumisectionModal,
-    showClassifierVisualizationModal
-} from '../../../ducks/online/ui';
 
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';
 
-class RunTable extends Component {
+class DatasetTable extends Component {
     constructor(props) {
         super(props);
         this.defaultPageSize = props.defaultPageSize;
     }
-
     state = { filterable: false, filters: [], sortings: [], loading: false };
     toggleShowFilters = () =>
         this.setState({ filterable: !this.state.filterable });
 
     async componentDidMount() {
         this.setState({ loading: true });
-        await this.props.filterRuns(this.defaultPageSize, 0, [], {});
+        await this.props.filterDatasets(this.defaultPageSize, 0, [], {});
         this.setState({ loading: false });
     }
+
     // API understands a filter object, not a filter array:
     convertFiltersToObject = filters => {
         const object_filter = {};
@@ -42,6 +41,7 @@ class RunTable extends Component {
         });
         return filters;
     };
+
     // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
     filterTable = async (filters, page, pageSize) => {
         this.setState({ filters, loading: true });
@@ -50,7 +50,7 @@ class RunTable extends Component {
         const formated_filters = format_filters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = format_sortings(renamed_sortings);
-        await this.props.filterRuns(
+        await this.props.filterDatasets(
             pageSize || this.defaultPageSize,
             page,
             formated_sortings,
@@ -59,21 +59,20 @@ class RunTable extends Component {
         this.setState({ loading: false });
     };
 
-    // Remove filters
+    // Navigate entirely to a route without filters (when clicking remove filters)
     removeFilters = async () => {
         this.setState({ filters: [], sortings: [] });
-        await this.props.filterRuns(this.defaultPageSize, 0, [], {});
+        await this.props.filterDatasets(this.defaultPageSize, 0, [], filters);
     };
 
     // When a user sorts by any field, we want to preserve the filters:
     sortTable = async (sortings, page, pageSize) => {
-        this.setState({ sortings, loading: true });
         const { filters } = this.state;
         const renamed_filters = rename_triplets(filters, true);
         const formated_filters = format_filters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = format_sortings(renamed_sortings);
-        await this.props.filterRuns(
+        await this.props.filterDatasets(
             pageSize || this.defaultPageSize,
             page,
             formated_sortings,
@@ -85,39 +84,38 @@ class RunTable extends Component {
         this.sortTable(this.state.sortings, page);
     };
     onPageSizeChange = async (newSize, page) => {
-        this.defaultPageSize = newSize;
         this.sortTable(this.state.sortings, page, newSize);
     };
 
     render() {
         const { filters, filterable, loading } = this.state;
         const {
-            run_table,
-            moveRun,
-            showManageRunModal,
-            showLumisectionModal,
-            showClassifierVisualizationModal,
-            markSignificant
+            workspace,
+            workspaces,
+            dataset_table,
+            moveDataset,
+            showManageDatasetModal,
+            showLumisectionModal
         } = this.props;
-        const { runs, pages } = run_table;
+
+        let { datasets, pages } = dataset_table;
         const filter_object = this.convertFiltersToObject(filters);
+
         const columns = column_generator({
-            showManageRunModal,
-            showClassifierVisualizationModal,
+            showManageDatasetModal,
             showLumisectionModal,
-            moveRun,
-            significant_runs: false,
+            workspaces,
+            workspace,
+            moveDataset,
             toggleShowFilters: this.toggleShowFilters,
-            filterable,
-            markSignificant,
             filter_object
         });
         // Filter is on if the array of filters is greater than 0
         const filter = filters.length > 0;
         return (
             <div>
-                All runs:
-                {filter && (
+                Datasets waiting to appear in DQM GUI
+                {filter ? (
                     <div
                         style={{
                             width: '100%',
@@ -138,13 +136,15 @@ class RunTable extends Component {
                             Click here to remove filters and sortings
                         </a>
                     </div>
+                ) : (
+                    <div style={{ height: '24px' }} />
                 )}
                 <ReactTable
                     columns={columns}
                     manual
-                    pageSizeOptions={[5, 10, 12, 20, 25, 50, 75, 100]}
+                    pageSizeOptions={[5, 10, 20, 25, 50, 75, 100]}
                     data={
-                        runs // Forces table not to paginate or sort automatically, so we can handle it server-side
+                        datasets // Forces table not to paginate or sort automatically, so we can handle it server-side
                     }
                     pages={pages}
                     loading={
@@ -161,6 +161,7 @@ class RunTable extends Component {
                         this.filterTable(filtered, 0);
                     }}
                     onSortedChange={sortings => {
+                        local_sortings = sortings;
                         // 0 is for first page
                         this.sortTable(sortings, 0);
                     }}
@@ -185,7 +186,9 @@ class RunTable extends Component {
 
 const mapStateToProps = state => {
     return {
-        run_table: state.online.runs
+        dataset_table: state.offline.waiting_datasets,
+        workspaces: state.offline.workspace.workspaces,
+        workspace: state.offline.workspace.workspace
     };
 };
 
@@ -193,12 +196,10 @@ export default withRouter(
     connect(
         mapStateToProps,
         {
-            filterRuns,
-            showManageRunModal,
+            filterDatasets,
+            showManageDatasetModal,
             showLumisectionModal,
-            showClassifierVisualizationModal,
-            moveRun,
-            markSignificant
+            moveDataset
         }
-    )(RunTable)
+    )(DatasetTable)
 );
