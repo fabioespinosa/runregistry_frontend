@@ -29,6 +29,7 @@ const column_generator = ({
     showManageRunModal,
     showClassifierVisualizationModal,
     moveRun,
+    showLumisectionModal,
     toggleShowFilters,
     significant_runs,
     filterable,
@@ -76,7 +77,7 @@ const column_generator = ({
                         </a>
                         {' / '}
                     </span>
-                    <a onClick={evt => showLumisectionModal(original)}>LS</a>
+                    <a onClick={() => showLumisectionModal(original)}>LS</a>
                 </div>
             )
         },

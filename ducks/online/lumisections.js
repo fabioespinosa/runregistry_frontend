@@ -4,10 +4,36 @@ import { api_url } from '../../config/config';
 
 const FETCH_LUMISECTION_RANGES = 'FETCH_LUMISECTION_RANGES';
 
-export const fetchLumisectionRanges = id_run =>
+export const fetchJointLumisectionRanges = (run_number, dataset_name) =>
     error_handler(async dispatch => {
-        const { data: lumisections } = await axios.get(
-            `${api_url}/lumisections/id_run/${id_run}`
+        const { data: lumisections } = await axios.post(
+            `${api_url}/lumisections/joint_lumisections`,
+            { run_number, dataset_name }
+        );
+        dispatch({
+            type: FETCH_LUMISECTION_RANGES,
+            payload: lumisections.reverse()
+        });
+    });
+
+export const fetchOMSLumisectionRanges = run_number =>
+    error_handler(async dispatch => {
+        const { data: lumisections } = await axios.post(
+            `${api_url}/lumisections/oms_lumisections`,
+            // OMS is always online:
+            { run_number, dataset_name: 'online' }
+        );
+        dispatch({
+            type: FETCH_LUMISECTION_RANGES,
+            payload: lumisections.reverse()
+        });
+    });
+
+export const fetchRRLumisectionRanges = (run_number, dataset_name) =>
+    error_handler(async dispatch => {
+        const { data: lumisections } = await axios.post(
+            `${api_url}/lumisections/rr_lumisections`,
+            { run_number, dataset_name }
         );
         dispatch({
             type: FETCH_LUMISECTION_RANGES,
