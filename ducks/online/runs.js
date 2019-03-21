@@ -21,11 +21,11 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
         });
     });
 
-export const editRun = (run_number, components) =>
+export const editRun = (run_number, updated_run) =>
     error_handler(async (dispatch, getState) => {
         let { data: run } = await axios.put(
-            `${api_url}/runs/id_run/${run_number}`,
-            components,
+            `${api_url}/manual_run_edit/${run_number}`,
+            updated_run,
             auth(getState)
         );
         run = formatRuns([run])[0];

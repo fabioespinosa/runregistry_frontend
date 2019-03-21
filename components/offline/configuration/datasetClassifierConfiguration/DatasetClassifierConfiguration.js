@@ -48,7 +48,7 @@ class DatasetClassifierConfiguration extends Component {
     formatClassifierCorrectly = inside_input => {
         const parsed_input = JSON.parse(inside_input);
         let classifier = {
-            if: [parsed_input, 'CREATE_DATASET', 'IRRELEVANT']
+            if: [parsed_input, true, false]
         };
         return classifier;
     };

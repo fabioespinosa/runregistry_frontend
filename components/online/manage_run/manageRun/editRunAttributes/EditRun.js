@@ -5,9 +5,8 @@ import { Formik, Field } from 'formik';
 import { Select, Input, Button } from 'antd';
 import axios from 'axios';
 import { api_url } from '../../../../../config/config';
-import { editRun, refreshRun } from '../../../../../ducks/online/runs';
+import { editRun } from '../../../../../ducks/online/runs';
 import { showManageRunModal } from '../../../../../ducks/online/ui';
-import { components } from '../../../../../config/config';
 import { error_handler } from '../../../../../utils/error_handlers';
 const { TextArea } = Input;
 const { Option, OptGroup } = Select;
@@ -25,27 +24,11 @@ class EditRun extends Component {
     });
     render() {
         const { run, editRun } = this.props;
-        const original_class = run.class.value;
-        const initialValues = {};
-        for (const [key, val] of Object.entries(run)) {
-            if (
-                key.indexOf('triplet') > 0 &&
-                val !== null &&
-                typeof val === 'object'
-            ) {
-                // We are dealing now with a triplet:
-                const { status, comment, cause } = val;
-                initialValues[`${key}>status`] = status;
-                initialValues[`${key}>cause`] = cause;
-                initialValues[`${key}>comment`] = comment;
-            }
-            if (key === 'class') {
-                initialValues['class'] = val.value;
-            }
-            if (key === 'stop_reason') {
-                initialValues['stop_reason'] = val.value;
-            }
-        }
+        const original_class = run.class;
+        const initialValues = {
+            class: run.class,
+            stop_reason: run.stop_reason
+        };
         return (
             <div>
                 {run.significant ? (
@@ -53,27 +36,11 @@ class EditRun extends Component {
                         <Formik
                             initialValues={initialValues}
                             enableReinitialize={true}
-                            onSubmit={async values => {
-                                const components_triplets = {};
-                                for (const [key, val] of Object.entries(
-                                    values
-                                )) {
-                                    if (key.includes('_triplet')) {
-                                        const component_key = key.split('>')[0];
-                                        const triplet_key = key.split('>')[1];
-                                        components_triplets[component_key] = {
-                                            ...components_triplets[
-                                                component_key
-                                            ],
-                                            [triplet_key]: val
-                                        };
-                                    }
-                                }
-
-                                await editRun(run.run_number, {
-                                    ...values,
-                                    ...components_triplets
-                                });
+                            onSubmit={async form_values => {
+                                const updated_run = {
+                                    rr_attributes: form_values
+                                };
+                                await editRun(run.run_number, updated_run);
                                 await Swal(
                                     `Run ${
                                         run.run_number
@@ -212,116 +179,6 @@ class EditRun extends Component {
                                             autosize
                                         />
                                     </div>
-                                    <br />
-                                    <div
-                                        style={{
-                                            textAlign: 'center'
-                                        }}
-                                    >
-                                        <Button
-                                            onClick={async evt => {
-                                                const { value } = await Swal({
-                                                    type: 'warning',
-                                                    title: `If a status was previously edited by a shifter, it will not be updated, it will only change those untouched.`,
-                                                    text: '',
-                                                    showCancelButton: true,
-                                                    confirmButtonText: 'Yes',
-                                                    reverseButtons: true
-                                                });
-                                                if (value) {
-                                                    const updated_run = await this.props.refreshRun(
-                                                        run.run_number
-                                                    );
-                                                    await this.props.showManageRunModal(
-                                                        updated_run
-                                                    );
-                                                }
-                                            }}
-                                            type="primary"
-                                        >
-                                            Manually refresh component's
-                                            statuses
-                                        </Button>
-                                    </div>
-                                    <br />
-                                    <table className="edit_run_form">
-                                        <thead>
-                                            <tr className="table_header">
-                                                <td>Component</td>
-                                                <td>Status</td>
-                                                <td>Cause</td>
-                                                <td>Comment</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {components.map(component => (
-                                                <tr key={component}>
-                                                    <td>{component}</td>
-                                                    <td className="status_dropdown">
-                                                        <Field
-                                                            key={component}
-                                                            component="select"
-                                                            name={`${component}_triplet>status`}
-                                                        >
-                                                            <option value="">
-                                                                -----
-                                                            </option>
-                                                            <option value="GOOD">
-                                                                GOOD
-                                                            </option>
-                                                            <option value="BAD">
-                                                                BAD
-                                                            </option>
-                                                            <option value="STANDBY">
-                                                                STANDBY
-                                                            </option>
-                                                            <option value="EXCLUDED">
-                                                                EXCLUDED
-                                                            </option>
-                                                            <option value="NOTSET">
-                                                                NOTSET
-                                                            </option>
-                                                        </Field>
-                                                    </td>
-                                                    <td className="cause_dropdown">
-                                                        <Field
-                                                            key={component}
-                                                            component="select"
-                                                            name={component}
-                                                            disabled
-                                                        >
-                                                            <option value="undef">
-                                                                undef
-                                                            </option>
-                                                            <option value="other">
-                                                                other
-                                                            </option>
-                                                        </Field>
-                                                    </td>
-                                                    <td className="comment">
-                                                        <TextArea
-                                                            value={
-                                                                values[
-                                                                    `${component}_triplet>comment`
-                                                                ]
-                                                            }
-                                                            onChange={evt =>
-                                                                setFieldValue(
-                                                                    `${component}_triplet>comment`,
-                                                                    evt.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            name={`${component}_triplet>comment`}
-                                                            row={1}
-                                                            type="text"
-                                                            autosize
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
                                     <div className="buttons">
                                         <Button
                                             type="primary"
@@ -336,8 +193,8 @@ class EditRun extends Component {
                     </div>
                 ) : (
                     <div>
-                        In order to edit a run's class or change component's
-                        status, the run{' '}
+                        In order to edit a run's class or add a stop reason, the
+                        run{' '}
                         <i style={{ textDecoration: 'underline' }}>
                             must be marked significant first
                         </i>
@@ -349,9 +206,7 @@ class EditRun extends Component {
                         during the run a certain number of events is reached, so
                         it is possible that RR automatically marks this run as
                         significant later on. If you are sure this run is
-                        significant (as in, it appeared significant in the other
-                        RR, or you have reasons to believe it is significant)
-                        please mark it significant.
+                        significant please mark it significant manually.
                     </div>
                 )}
                 <style jsx>{`
@@ -399,5 +254,5 @@ class EditRun extends Component {
 
 export default connect(
     null,
-    { editRun, refreshRun, showManageRunModal }
+    { editRun, showManageRunModal }
 )(EditRun);
