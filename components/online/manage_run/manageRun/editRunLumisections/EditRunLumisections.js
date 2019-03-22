@@ -2,8 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 import { Formik, Field } from 'formik';
-import { Select, Input, Button } from 'antd';
+import { Select, Input, Button, Slider } from 'antd';
 import axios from 'axios';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend
+} from 'recharts';
 import { api_url } from '../../../../../config/config';
 import { editRun, refreshRun } from '../../../../../ducks/online/runs';
 import { showManageRunModal } from '../../../../../ducks/online/ui';
@@ -11,41 +20,35 @@ import { components } from '../../../../../config/config';
 import { error_handler } from '../../../../../utils/error_handlers';
 const { TextArea } = Input;
 const { Option, OptGroup } = Select;
+const formatLegend = (value, entry, summary) => {
+    const count = summary[value] ? summary[value] : 0;
+    const style = {};
+    if (count > 0) {
+        style.fontWeight = 900;
+        style.textDecoration = 'underline';
+    }
+    return (
+        <span style={style}>
+            {value}({count})
+        </span>
+    );
+};
 
 class EditRun extends Component {
-    state = { classes: [], not_in_the_list: false };
+    state = { classes: [], not_in_the_list: false, lumisections: [] };
     componentDidMount = error_handler(async () => {
-        const { data: class_classifiers } = await axios.get(
-            `${api_url}/classifiers/class`
+        const { data: lumisections } = await axios.post(
+            `${api_url}/datasets_get_lumisections`,
+            {
+                name: 'online',
+                run_number: this.props.run.run_number
+            }
         );
-        const classes = class_classifiers.map(classifier => classifier.class);
-        this.setState({
-            classes
-        });
+        this.setState({ lumisections });
     });
     render() {
         const { run, editRun } = this.props;
-        const original_class = run.class.value;
         const initialValues = {};
-        for (const [key, val] of Object.entries(run)) {
-            if (
-                key.indexOf('triplet') > 0 &&
-                val !== null &&
-                typeof val === 'object'
-            ) {
-                // We are dealing now with a triplet:
-                const { status, comment, cause } = val;
-                initialValues[`${key}>status`] = status;
-                initialValues[`${key}>cause`] = cause;
-                initialValues[`${key}>comment`] = comment;
-            }
-            if (key === 'class') {
-                initialValues['class'] = val.value;
-            }
-            if (key === 'stop_reason') {
-                initialValues['stop_reason'] = val.value;
-            }
-        }
         return (
             <div>
                 {run.significant ? (
@@ -93,125 +96,6 @@ class EditRun extends Component {
                                 isSubmitting
                             }) => (
                                 <form onSubmit={handleSubmit}>
-                                    <div
-                                        style={{
-                                            margin: '0 auto',
-                                            width: '50%',
-                                            display: 'flex'
-                                        }}
-                                    >
-                                        <label style={{ width: '154px' }}>
-                                            <strong>Class:</strong>
-                                        </label>
-                                        {this.state.not_in_the_list && (
-                                            <div>
-                                                Please write the class manually
-                                                here:
-                                                <TextArea
-                                                    value={values['class']}
-                                                    onChange={evt =>
-                                                        setFieldValue(
-                                                            'class',
-                                                            evt.target.value
-                                                        )
-                                                    }
-                                                    name="class"
-                                                    type="text"
-                                                    autosize
-                                                />
-                                                <Button
-                                                    onClick={() =>
-                                                        this.setState({
-                                                            not_in_the_list: false
-                                                        })
-                                                    }
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            </div>
-                                        )}
-                                        {!this.state.not_in_the_list && (
-                                            <Select
-                                                value={values['class']}
-                                                onChange={value => {
-                                                    if (
-                                                        value ===
-                                                        'not_in_the_list'
-                                                    ) {
-                                                        this.setState({
-                                                            not_in_the_list: true
-                                                        });
-                                                    } else {
-                                                        setFieldValue(
-                                                            'class',
-                                                            value
-                                                        );
-                                                    }
-                                                }}
-                                            >
-                                                <OptGroup label="Run possible classes:">
-                                                    {this.state.classes.map(
-                                                        current_class => (
-                                                            <Option
-                                                                key={
-                                                                    current_class
-                                                                }
-                                                                value={
-                                                                    current_class
-                                                                }
-                                                            >
-                                                                {current_class}
-                                                            </Option>
-                                                        )
-                                                    )}
-                                                </OptGroup>
-                                                <OptGroup label="Current class:">
-                                                    <Option
-                                                        key="disabled"
-                                                        disabled
-                                                    >
-                                                        {original_class}
-                                                    </Option>
-                                                </OptGroup>
-                                                <OptGroup label="Input another class:">
-                                                    <Option
-                                                        key="other"
-                                                        value="not_in_the_list"
-                                                    >
-                                                        <i>
-                                                            The class is not in
-                                                            the list
-                                                        </i>
-                                                    </Option>
-                                                </OptGroup>
-                                            </Select>
-                                        )}
-                                    </div>
-                                    <br />
-                                    <div
-                                        style={{
-                                            margin: '0 auto',
-                                            width: '50%',
-                                            display: 'flex'
-                                        }}
-                                    >
-                                        <label style={{ width: '154px' }}>
-                                            <strong>Run stop reason:</strong>
-                                        </label>
-                                        <TextArea
-                                            value={values['stop_reason']}
-                                            onChange={evt =>
-                                                setFieldValue(
-                                                    'stop_reason',
-                                                    evt.target.value
-                                                )
-                                            }
-                                            name="stop_reason"
-                                            row={1}
-                                            type="text"
-                                            autosize
-                                        />
-                                    </div>
                                     <br />
                                     <div
                                         style={{
@@ -251,75 +135,245 @@ class EditRun extends Component {
                                                 <td>Status</td>
                                                 <td>Cause</td>
                                                 <td>Comment</td>
+                                                <td>Lumisections</td>
+                                                <td>Modify</td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {components.map(component => (
-                                                <tr key={component}>
-                                                    <td>{component}</td>
-                                                    <td className="status_dropdown">
-                                                        <Field
-                                                            key={component}
-                                                            component="select"
-                                                            name={`${component}_triplet>status`}
-                                                        >
-                                                            <option value="">
-                                                                -----
-                                                            </option>
-                                                            <option value="GOOD">
-                                                                GOOD
-                                                            </option>
-                                                            <option value="BAD">
-                                                                BAD
-                                                            </option>
-                                                            <option value="STANDBY">
-                                                                STANDBY
-                                                            </option>
-                                                            <option value="EXCLUDED">
-                                                                EXCLUDED
-                                                            </option>
-                                                            <option value="NOTSET">
-                                                                NOTSET
-                                                            </option>
-                                                        </Field>
-                                                    </td>
-                                                    <td className="cause_dropdown">
-                                                        <Field
-                                                            key={component}
-                                                            component="select"
-                                                            name={component}
-                                                            disabled
-                                                        >
-                                                            <option value="undef">
-                                                                undef
-                                                            </option>
-                                                            <option value="other">
-                                                                other
-                                                            </option>
-                                                        </Field>
-                                                    </td>
-                                                    <td className="comment">
-                                                        <TextArea
-                                                            value={
-                                                                values[
-                                                                    `${component}_triplet>comment`
-                                                                ]
+                                            {components.map(component => {
+                                                const lumisections = this.state.lumisections.map(
+                                                    (lumisection, index) => {
+                                                        let ls_data;
+                                                        for (const [
+                                                            key,
+                                                            val
+                                                        ] of Object.entries(
+                                                            lumisection
+                                                        )) {
+                                                            const possible_component = key.split(
+                                                                '_'
+                                                            )[0];
+                                                            if (
+                                                                possible_component ===
+                                                                component
+                                                            ) {
+                                                                ls_data = {
+                                                                    name:
+                                                                        index +
+                                                                        1,
+                                                                    [val.status]: 1
+                                                                };
                                                             }
-                                                            onChange={evt =>
-                                                                setFieldValue(
-                                                                    `${component}_triplet>comment`,
-                                                                    evt.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            name={`${component}_triplet>comment`}
-                                                            row={1}
-                                                            type="text"
-                                                            autosize
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                                        }
+                                                        return ls_data;
+                                                    }
+                                                );
+                                                return (
+                                                    <tr key={component}>
+                                                        <td>{component}</td>
+                                                        <td className="status_dropdown">
+                                                            <Field
+                                                                key={component}
+                                                                component="select"
+                                                                name={`${component}_triplet>status`}
+                                                            >
+                                                                <option value="">
+                                                                    -----
+                                                                </option>
+                                                                <option value="GOOD">
+                                                                    GOOD
+                                                                </option>
+                                                                <option value="BAD">
+                                                                    BAD
+                                                                </option>
+                                                                <option value="STANDBY">
+                                                                    STANDBY
+                                                                </option>
+                                                                <option value="EXCLUDED">
+                                                                    EXCLUDED
+                                                                </option>
+                                                                <option value="NOTSET">
+                                                                    NOTSET
+                                                                </option>
+                                                            </Field>
+                                                        </td>
+                                                        <td className="cause_dropdown">
+                                                            <Field
+                                                                key={component}
+                                                                component="select"
+                                                                name={component}
+                                                                disabled
+                                                            >
+                                                                <option value="undef">
+                                                                    undef
+                                                                </option>
+                                                                <option value="other">
+                                                                    other
+                                                                </option>
+                                                            </Field>
+                                                        </td>
+                                                        <td className="comment">
+                                                            {this.state
+                                                                .modifying ===
+                                                            component ? (
+                                                                <TextArea
+                                                                    value={
+                                                                        values[
+                                                                            `${component}_triplet>comment`
+                                                                        ]
+                                                                    }
+                                                                    onChange={evt =>
+                                                                        setFieldValue(
+                                                                            `${component}_triplet>comment`,
+                                                                            evt
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    name={`${component}_triplet>comment`}
+                                                                    row={1}
+                                                                    type="text"
+                                                                    autosize
+                                                                />
+                                                            ) : (
+                                                                <BarChart
+                                                                    barCategoryGap={
+                                                                        -1
+                                                                    }
+                                                                    width={400}
+                                                                    height={80}
+                                                                    data={
+                                                                        lumisections
+                                                                    }
+                                                                    margin={{
+                                                                        top: 10,
+                                                                        right: 30,
+                                                                        left: 20,
+                                                                        bottom: 10
+                                                                    }}
+                                                                >
+                                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                                    <XAxis
+                                                                        dataKey="name"
+                                                                        interval="preserveStartEnd"
+                                                                    />
+                                                                    <Tooltip
+                                                                        separator=""
+                                                                        formatter={(
+                                                                            value,
+                                                                            name
+                                                                        ) => ''}
+                                                                    />
+
+                                                                    <Bar
+                                                                        isAnimationActive={
+                                                                            false
+                                                                        }
+                                                                        dataKey="BAD"
+                                                                        stackId="a"
+                                                                        fill="red"
+                                                                    />
+                                                                    <Bar
+                                                                        isAnimationActive={
+                                                                            false
+                                                                        }
+                                                                        dataKey="GOOD"
+                                                                        stackId="a"
+                                                                        fill="green"
+                                                                    />
+                                                                    <Bar
+                                                                        isAnimationActive={
+                                                                            false
+                                                                        }
+                                                                        dataKey="STANDBY"
+                                                                        stackId="a"
+                                                                        fill="yellow"
+                                                                    />
+                                                                    <Bar
+                                                                        isAnimationActive={
+                                                                            false
+                                                                        }
+                                                                        dataKey="EXCLUDED"
+                                                                        stackId="a"
+                                                                        fill="grey"
+                                                                    />
+                                                                    <Bar
+                                                                        isAnimationActive={
+                                                                            false
+                                                                        }
+                                                                        dataKey="NOTSET"
+                                                                        stackId="a"
+                                                                        fill="black"
+                                                                    />
+                                                                    <Bar
+                                                                        isAnimationActive={
+                                                                            false
+                                                                        }
+                                                                        dataKey="EMPTY"
+                                                                        stackId="a"
+                                                                        fill="silver"
+                                                                    />
+                                                                </BarChart>
+                                                            )}
+                                                        </td>
+                                                        <td className="lumisection_slider">
+                                                            <Slider
+                                                                defaultValue={[
+                                                                    30,
+                                                                    40
+                                                                ]}
+                                                                range
+                                                                tooltipVisible
+                                                            />
+                                                        </td>
+                                                        <td className="modify_toggle">
+                                                            {this.state
+                                                                .modifying ===
+                                                            component ? (
+                                                                <div>
+                                                                    <Button
+                                                                        onClick={() =>
+                                                                            this.setState(
+                                                                                {
+                                                                                    modifying:
+                                                                                        ''
+                                                                                }
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Cancel
+                                                                    </Button>
+                                                                    <Button
+                                                                        type="primary"
+                                                                        onClick={() =>
+                                                                            this.setState(
+                                                                                {
+                                                                                    modifying:
+                                                                                        ''
+                                                                                }
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Modify
+                                                                    </Button>
+                                                                </div>
+                                                            ) : (
+                                                                <Button
+                                                                    onClick={() =>
+                                                                        this.setState(
+                                                                            {
+                                                                                modifying: component
+                                                                            }
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Modify
+                                                                </Button>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
                                         </tbody>
                                     </table>
                                     <div className="buttons">
@@ -381,7 +435,13 @@ class EditRun extends Component {
                         padding-right: 5px;
                     }
                     .comment {
-                        width: 500px;
+                        width: 400px;
+                    }
+                    .lumisection_slider {
+                        width: 200px;
+                    }
+                    .modify_toggle {
+                        width: 180px;
                     }
 
                     .buttons {

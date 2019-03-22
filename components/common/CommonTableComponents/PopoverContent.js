@@ -107,12 +107,42 @@ class PopoverContent extends Component {
                             formatLegend(value, entry, summary)
                         }
                     />
-                    <Bar dataKey="BAD" stackId="a" fill="red" />
-                    <Bar dataKey="GOOD" stackId="a" fill="green" />
-                    <Bar dataKey="STANDBY" stackId="a" fill="yellow" />
-                    <Bar dataKey="EXCLUDED" stackId="a" fill="grey" />
-                    <Bar dataKey="NOTSET" stackId="a" fill="black" />
-                    <Bar dataKey="EMPTY" stackId="a" fill="silver" />
+                    <Bar
+                        isAnimationActive={false}
+                        dataKey="BAD"
+                        stackId="a"
+                        fill="red"
+                    />
+                    <Bar
+                        isAnimationActive={false}
+                        dataKey="GOOD"
+                        stackId="a"
+                        fill="green"
+                    />
+                    <Bar
+                        isAnimationActive={false}
+                        dataKey="STANDBY"
+                        stackId="a"
+                        fill="yellow"
+                    />
+                    <Bar
+                        isAnimationActive={false}
+                        dataKey="EXCLUDED"
+                        stackId="a"
+                        fill="grey"
+                    />
+                    <Bar
+                        isAnimationActive={false}
+                        dataKey="NOTSET"
+                        stackId="a"
+                        fill="black"
+                    />
+                    <Bar
+                        isAnimationActive={false}
+                        dataKey="EMPTY"
+                        stackId="a"
+                        fill="silver"
+                    />
                 </BarChart>
             </div>
         );

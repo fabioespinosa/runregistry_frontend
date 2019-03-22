@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Collapse } from 'antd';
 import EditRun from './editRunAttributes/EditRun';
+import EditRunLumisections from './editRunLumisections/EditRunLumisections';
 import History from './history/History';
 
 const Panel = Collapse.Panel;
@@ -33,7 +34,7 @@ class ManageRun extends Component {
                     header="Edit Run's Lumisections (GOOD/BAD/STANDBY...)"
                 >
                     {run.state === 'OPEN' ? (
-                        <EditRun run={run} />
+                        <EditRunLumisections run={run} />
                     ) : (
                         <div>Run must be in state OPEN to be edited</div>
                     )}
