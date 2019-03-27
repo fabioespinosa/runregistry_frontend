@@ -96,7 +96,10 @@ const findId = (array, run_number) => {
 
 const editRunHelper = (runs, new_run) => {
     const index = findId(runs, new_run.run_number);
-    return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
+    if (typeof index !== 'undefined') {
+        return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
+    }
+    return runs;
 };
 
 const formatRuns = runs => {

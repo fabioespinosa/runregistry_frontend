@@ -93,7 +93,7 @@ class RunTable extends Component {
         const { filters, filterable, loading } = this.state;
         const {
             run_table,
-            show_all_runs,
+            moveRun,
             showManageRunModal,
             showLumisectionModal,
             showClassifierVisualizationModal,

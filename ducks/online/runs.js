@@ -46,7 +46,6 @@ export const markSignificant = original_run =>
 
 export const moveRun = (original_run, from_state, to_state) =>
     error_handler(async (dispatch, getState) => {
-        console.log('llega');
         let { data: run } = await axios.post(
             `${api_url}/runs/move_run/${from_state}/${to_state}`,
             { original_run, to_state },
@@ -97,7 +96,10 @@ const findId = (array, run_number) => {
 
 const editRunHelper = (runs, new_run) => {
     const index = findId(runs, new_run.run_number);
-    return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
+    if (typeof index !== 'undefined') {
+        return [...runs.slice(0, index), new_run, ...runs.slice(index + 1)];
+    }
+    return runs;
 };
 
 const formatRuns = runs => {

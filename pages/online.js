@@ -46,12 +46,6 @@ class Online extends Component {
             <Page router={router} show_sidebar={false} user={user}>
                 <BreadcrumbCmp router={router} online={true}>
                     <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
-                    <Breadcrumb.Item>
-                        {section || breadcrumbs[1]}
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Item>
-                        {run_filter || breadcrumbs[2]}
-                    </Breadcrumb.Item>
                 </BreadcrumbCmp>
                 <Content
                     style={{

@@ -84,6 +84,7 @@ class DatasetTable extends Component {
         this.sortTable(this.state.sortings, page);
     };
     onPageSizeChange = async (newSize, page) => {
+        this.defaultPageSize = newSize;
         this.sortTable(this.state.sortings, page, newSize);
     };
 
@@ -161,7 +162,6 @@ class DatasetTable extends Component {
                         this.filterTable(filtered, 0);
                     }}
                     onSortedChange={sortings => {
-                        local_sortings = sortings;
                         // 0 is for first page
                         this.sortTable(sortings, 0);
                     }}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Badge } from 'antd';
 import { offline_column_structure } from '../../../../config/config';
 
 const { Sider } = Layout;
@@ -14,10 +14,9 @@ class SideNav extends Component {
                 query: { type, section, workspace }
             }
         } = this.props;
-
         Router.push(
-            `/offline?type=offline&section=${keyPath[1]}&workspace=${key}`,
-            `/offline/${keyPath[1]}/${key}`
+            `/offline?type=offline&section=${section}&workspace=${key}`,
+            `/offline/${section}/${key}`
         );
     }
 
@@ -39,7 +38,7 @@ class SideNav extends Component {
                         <Menu
                             mode="inline"
                             onClick={this.onRouteChangeHandler.bind(this)}
-                            defaultOpenKeys={[section]}
+                            defaultOpenKeys={['workspaces']}
                             defaultSelectedKeys={[workspace]}
                             style={{ height: '100%', borderRight: 0 }}
                         >
@@ -55,7 +54,17 @@ class SideNav extends Component {
                                 <Menu.Item key="global">GLOBAL</Menu.Item>
                                 {workspaces.map(({ workspace }) => (
                                     <Menu.Item key={workspace.toUpperCase()}>
-                                        {workspace.toUpperCase()}
+                                        <div>
+                                            {workspace.toUpperCase()}
+                                            <Badge
+                                                showZero
+                                                style={{
+                                                    backgroundColor: '#52c41a'
+                                                }}
+                                                count={0}
+                                                offset={[10, 0]}
+                                            />
+                                        </div>
                                     </Menu.Item>
                                 ))}
                             </SubMenu>

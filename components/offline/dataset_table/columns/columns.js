@@ -114,6 +114,7 @@ const column_generator = ({
                     {' / '}
                     <a
                         onClick={async () => {
+                            const { run_number, name } = original;
                             let options = {
                                 OPEN: 'To OPEN',
                                 SIGNOFF: 'to SIGNOFF',
@@ -124,25 +125,24 @@ const column_generator = ({
                                 options = { OPEN: 'To OPEN' };
                             }
                             delete options[value];
-                            const { value: state } = await Swal({
-                                title: `Move dataset manually ${
-                                    original.name
-                                } of run ${original.run_number} to...`,
+                            const { value: to_state } = await Swal({
+                                title: `Move dataset manually ${name} of run ${run_number} to...`,
                                 input: 'select',
                                 inputOptions: options,
                                 showCancelButton: true,
                                 reverseButtons: true
                             });
-                            if (state) {
+                            if (to_state) {
                                 await moveDataset(
-                                    original.id,
+                                    {
+                                        run_number,
+                                        dataset_name: name
+                                    },
                                     workspace.toLowerCase(),
-                                    state
+                                    to_state
                                 );
                                 await Swal(
-                                    `Dataset ${original.name} of run ${
-                                        original.run_number
-                                    } Moved to ${state}`,
+                                    `Dataset ${name} of run ${run_number} Moved to ${to_state}`,
                                     '',
                                     'success'
                                 );
@@ -229,7 +229,7 @@ const column_generator = ({
                     triplet_summary={value}
                     run_number={original.run_number}
                     dataset_name={original.name}
-                    component={`${column['Header']}`}
+                    component={`${column['accessor']}`}
                 />
             )
         };

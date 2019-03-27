@@ -15,34 +15,25 @@ app.prepare().then(() => {
     // const router = express.Router();
 
     // Redirects primary url to runs/all
+    server.get('/', (req, res) => {
+        res.redirect('/online');
+    });
     server.get('/offline', (req, res) => {
-        // There are two `production` scenarios, either real production or staging
-        if (process.env.NODE_ENV === 'production') {
-            if (process.env.ENV === 'production') {
-                res.redirect('/offline/workspaces/global');
-            } else if (process.env.ENV === 'staging') {
-                res.redirect('/offline/workspaces/global');
-            }
-        } else {
-            res.redirect('/offline/workspaces/global');
-        }
+        res.redirect('/offline/workspaces/global');
     });
 
     //online:
-    server.get('/:type', (req, res) => {
+    server.get('/online', (req, res) => {
+        req.params.type = 'online';
         const params = { ...req.headers, ...req.params, filters: req.query };
-        app.render(req, res, `/${req.params.type}`, params);
+        app.render(req, res, `/online`, params);
     });
 
     // offline:
-    server.get('/:type/:section/:workspace', (req, res) => {
+    server.get('/offline/:section/:workspace', (req, res) => {
+        req.params.type = 'offline';
         const params = { ...req.headers, ...req.params, filters: req.query };
-        app.render(req, res, `/${req.params.type}`, params);
-    });
-
-    server.get('/:type/:section', (req, res) => {
-        const params = { ...req.headers, ...req.params, filters: req.query };
-        app.render(req, res, `/${req.params.type}`, params);
+        app.render(req, res, `/offline`, params);
     });
 
     server.get('*', (req, res) => {

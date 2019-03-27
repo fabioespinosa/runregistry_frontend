@@ -20,10 +20,7 @@ const rename_triplets = (original_criteria, filtering) => {
         }
         // make a separate case for class, since its a join from run
         // '-' is an indication of a status component
-        if (
-            filter.id.includes('-') ||
-            certifiable_offline_components.includes(filter.id)
-        ) {
+        if (filter.id.includes('-')) {
             new_filter.id = `${filter.id}.status`;
             if (filtering) {
                 new_filter.value = filter.value.toUpperCase();

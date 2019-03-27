@@ -7,6 +7,8 @@ const SHOW_MANAGE_DATASET_MODAL = 'SHOW_MANAGE_DATASET_MODAL-OFFLINE';
 const HIDE_MANAGE_DATASET_MODAL = 'HIDE_MANAGE_DATASET_MODAL-OFFLINE';
 const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL-OFFLINE';
 const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL-OFFLINE';
+const SHOW_CREATE_CYCLE_MODAL = 'SHOW_CREATE_CYCLE_MODAL-OFFLINE';
+const HIDE_CREATE_CYCLE_MODAL = 'HIDE_CREATE_CYCLE_MODAL-OFFLINE';
 
 export const toggleWaitingList = new_value => dispatch => {
     dispatch({
@@ -39,6 +41,14 @@ export const showLumisectionModal = dataset => ({
     payload: dataset
 });
 
+export const showCreateCycleModal = () => ({
+    type: SHOW_CREATE_CYCLE_MODAL
+});
+
+export const hideCreateCycleModal = () => ({
+    type: HIDE_CREATE_CYCLE_MODAL
+});
+
 export const hideLumisectionModal = () => ({ type: HIDE_LUMISECTION_MODAL });
 
 const INITIAL_STATE = {
@@ -48,7 +58,8 @@ const INITIAL_STATE = {
     manage_dataset_modal_visible: false,
     manage_dataset_modal_dataset: {},
     lumisection_modal_visible: false,
-    lumisection_modal_dataset: {}
+    lumisection_modal_dataset: {},
+    create_cycle_modal_visible: false
 };
 
 export default function(state = INITIAL_STATE, action) {
@@ -87,7 +98,10 @@ export default function(state = INITIAL_STATE, action) {
             };
         case HIDE_LUMISECTION_MODAL:
             return { ...state, lumisection_modal_visible: false };
-
+        case SHOW_CREATE_CYCLE_MODAL:
+            return { ...state, create_cycle_modal_visible: true };
+        case HIDE_CREATE_CYCLE_MODAL:
+            return { ...state, create_cycle_modal_visible: false };
         default:
             return state;
     }

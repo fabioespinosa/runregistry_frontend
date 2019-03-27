@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
+import Link from 'next/link';
 import { connect } from 'react-redux';
 import {
     Breadcrumb,
@@ -61,6 +62,9 @@ class BreadcrumbCmp extends Component {
             show_all_runs,
             show_waiting_list,
             toggleWaitingList,
+            router: {
+                query: { type, section, workspace }
+            },
             online
         } = this.props;
         return (
@@ -92,6 +96,34 @@ class BreadcrumbCmp extends Component {
                             </Menu.Item>
                         </Menu>
                     } */}
+                    {section === 'cycles' && (
+                        <Link
+                            href={`/offline?type=offline&section=datasets&workspace=${workspace}`}
+                            as={`/offline/datasets/${workspace}`}
+                        >
+                            <a>
+                                <Button type="primary" size="large" icon="copy">
+                                    Show All Datasets
+                                </Button>
+                            </a>
+                        </Link>
+                    )}
+                    {section === 'datasets' && (
+                        <Link
+                            href={`/offline?type=offline&section=cycles&workspace=${workspace}`}
+                            as={`/offline/cycles/${workspace}`}
+                        >
+                            <a>
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    icon="retweet"
+                                >
+                                    Show Cycles
+                                </Button>
+                            </a>
+                        </Link>
+                    )}
                 </div>
                 <div className="progresscircle_container">
                     <div>

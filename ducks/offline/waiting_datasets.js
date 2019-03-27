@@ -6,8 +6,6 @@ import auth from '../../auth/auth';
 
 const EDIT_DATASET = 'EDIT_DATASET';
 const FILTER_DATASETS = 'FILTER_DATASETS-WAITING';
-const TABLE_LOADING = 'TABLE_LOADING-OFFLINE';
-const TABLE_LOADING_DONE = 'TABLE_LOADING_DONE-OFFLINE';
 export const FIND_AND_REPLACE_DATASETS = 'FIND_AND_REPLACE_DATASETS';
 const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
 
@@ -29,27 +27,38 @@ export const filterDatasets = (page_size, page, sortings, filtered) =>
         });
     });
 
-export const moveDataset = (id_dataset, workspace, state) =>
+export const moveDataset = (
+    { run_number, dataset_name },
+    workspace,
+    to_state
+) =>
     error_handler(async (dispatch, getState) => {
-        const { data: dataset } = await axios.post(
+        let { data: dataset } = await axios.post(
             `${api_url}/datasets/${workspace}/move_dataset`,
             {
-                id_dataset,
+                run_number,
+                dataset_name,
                 workspace,
-                state
+                to_state
             },
             auth(getState)
         );
+        dataset = formatDatasets([dataset])[0];
         dispatch({ type: EDIT_DATASET, payload: dataset });
     });
 
-export const editDataset = (id_dataset, workspace, components) =>
+export const editDataset = (
+    { run_number, dataset_name },
+    workspace,
+    components
+) =>
     error_handler(async (dispatch, getState) => {
-        const { data: dataset } = await axios.put(
+        let { data: dataset } = await axios.put(
             `${api_url}/datasets/${workspace}`,
-            { ...components, id_dataset },
+            { ...components, run_number, dataset_name },
             auth(getState)
         );
+        dataset = formatDatasets([dataset])[0];
         dispatch({ type: EDIT_DATASET, payload: dataset });
         dispatch(hideManageDatasetModal());
     });
@@ -84,21 +93,27 @@ export default function(state = INITIAL_STATE, action) {
     }
 }
 
-const findId = (array, id) => {
+const findId = (array, run_number, dataset_name) => {
     for (let i = 0; i < array.length; i++) {
-        if (array[i].id === id) {
+        if (
+            array[i].run_number === run_number &&
+            array[i].name === dataset_name
+        ) {
             return i;
         }
     }
 };
 
 const editDatasetHelper = (datasets, new_dataset) => {
-    const index = findId(datasets, new_dataset.id);
-    return [
-        ...datasets.slice(0, index),
-        new_dataset,
-        ...datasets.slice(index + 1)
-    ];
+    const index = findId(datasets, new_dataset.run_number, new_dataset.name);
+    if (typeof index !== 'undefined') {
+        return [
+            ...datasets.slice(0, index),
+            new_dataset,
+            ...datasets.slice(index + 1)
+        ];
+    }
+    return datasets;
 };
 
 const findAndReplaceHelper = (datasets, new_datasets) => {
