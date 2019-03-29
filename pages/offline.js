@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import Link from 'next/link';
-import { Layout, Breadcrumb } from 'antd';
+import { Layout, Breadcrumb, Button } from 'antd';
+import moment from 'moment';
 import { fetchWorkspaces } from '../ducks/offline/workspace';
 import { initializeUser, initializeEnvironment } from '../ducks/info';
 import store from '../store/configure-store';
@@ -13,6 +14,7 @@ import Cycles from '../components/offline/cycles/Cycles';
 import WaitingListDatasetTable from '../components/offline/dataset_table/WaitingListDatasetTable';
 import ManageDatasetModal from '../components/offline/manage_dataset/ManageDatasetModal';
 import LumisectionModal from '../components/offline/lumisections/LumisectionModal';
+import CycleInfo from '../components/offline/cycles/cycleInfo/CycleInfo';
 const { Content } = Layout;
 
 class Offline extends Component {
@@ -29,7 +31,8 @@ class Offline extends Component {
             router: {
                 asPath,
                 query: { type, section, workspace }
-            }
+            },
+            selected_cycle
         } = this.props;
         const breadcrumbs = asPath.split('/');
         return (
@@ -54,6 +57,12 @@ class Offline extends Component {
                     <div style={{ display: 'flex' }}>
                         {section === 'cycles' && <Cycles />}
                         <div>
+                            {selected_cycle && section === 'cycles' && (
+                                <CycleInfo
+                                    selected_cycle={selected_cycle}
+                                    workspace={workspace}
+                                />
+                            )}
                             <ManageDatasetModal />
                             <LumisectionModal />
                             {/* Hold <i>shift</i> for multiple column sorting. <br />A
@@ -71,7 +80,8 @@ class Offline extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.info
+        user: state.info,
+        selected_cycle: state.offline.cycles.selected_cycle
     };
 };
 

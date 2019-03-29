@@ -6,7 +6,7 @@ import DatasetClassifierConfiguration from './datasetClassifierConfiguration/Dat
 import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
-import ComponentSync from './componentSyncConfiguration/ComponentSyncConfiguration';
+import DatasetCopy from './datasetCopy/DatasetCopy';
 import LumisectionExceptionSync from './lumisectionExceptionSyncConfiguration/LumisectionExceptionSync';
 
 class ConfigurationModal extends Component {
@@ -25,7 +25,7 @@ class ConfigurationModal extends Component {
             column_configuration: 'Add or remove columns from workspace',
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
-            component_sync: 'Sync component status from all workspaces',
+            dataset_copy: 'Copy datasets',
             lumisection_exception_sync:
                 'Lumisection Exception Sync - Sync Lumisections across workspaces to the global '
         };
@@ -34,7 +34,7 @@ class ConfigurationModal extends Component {
             dataset_component_classifiers: <ComponentClassifierConfiguration />,
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
-            component_sync: <ComponentSync />,
+            dataset_copy: <DatasetCopy />,
             lumisection_exception_sync: <LumisectionExceptionSync />
         };
         return (

@@ -11,7 +11,6 @@ const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
 
 export function fetchInitialOfflineDatasets(store, query, isServer) {}
 
-// endpoint can be either waiting_list or editable
 export const filterDatasets = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();

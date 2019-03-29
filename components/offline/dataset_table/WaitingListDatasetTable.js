@@ -44,19 +44,23 @@ class DatasetTable extends Component {
 
     // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
     filterTable = async (filters, page, pageSize) => {
-        this.setState({ filters, loading: true });
-        const { sortings } = this.state;
-        const renamed_filters = rename_triplets(filters, true);
-        const formated_filters = format_filters(renamed_filters);
-        const renamed_sortings = rename_triplets(sortings, false);
-        const formated_sortings = format_sortings(renamed_sortings);
-        await this.props.filterDatasets(
-            pageSize || this.defaultPageSize,
-            page,
-            formated_sortings,
-            formated_filters
-        );
-        this.setState({ loading: false });
+        try {
+            this.setState({ filters, loading: true });
+            const { sortings } = this.state;
+            const renamed_filters = rename_triplets(filters, true);
+            const formated_filters = format_filters(renamed_filters);
+            const renamed_sortings = rename_triplets(sortings, false);
+            const formated_sortings = format_sortings(renamed_sortings);
+            await this.props.filterDatasets(
+                pageSize || this.defaultPageSize,
+                page,
+                formated_sortings,
+                formated_filters
+            );
+            this.setState({ loading: false });
+        } catch (e) {
+            this.setState({ loading: false });
+        }
     };
 
     // Navigate entirely to a route without filters (when clicking remove filters)

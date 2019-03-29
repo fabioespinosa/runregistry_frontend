@@ -20,10 +20,50 @@ class SideNav extends Component {
         );
     }
 
+    displayWorkspace = workspace => {
+        const {
+            router: {
+                query: { section }
+            },
+            cycles
+        } = this.props;
+        let workspace_status = 0;
+        cycles.forEach(cycle => {
+            for (const [key, val] of Object.entries(cycle.cycle_attributes)) {
+                if (key.includes('_state')) {
+                    const workspace_name = key.split('_state')[0];
+                    if (workspace_name === workspace && val === 'pending') {
+                        workspace_status += 1;
+                    }
+                }
+            }
+        });
+        const backgroundColor = workspace_status === 0 ? '#52c41a' : '';
+        return (
+            <Menu.Item key={workspace.toUpperCase()}>
+                <div>
+                    {workspace.toUpperCase()}
+                    {section === 'cycles' && (
+                        <Badge
+                            showZero
+                            style={{
+                                backgroundColor
+                            }}
+                            count={workspace_status}
+                            offset={[10, 0]}
+                        />
+                    )}
+                </div>
+            </Menu.Item>
+        );
+    };
+
     render() {
         const {
             show_sidebar,
             workspaces,
+            cycles,
+            selected_cycle,
             router: {
                 query: { type, section, workspace }
             }
@@ -52,21 +92,9 @@ class SideNav extends Component {
                                 }
                             >
                                 <Menu.Item key="global">GLOBAL</Menu.Item>
-                                {workspaces.map(({ workspace }) => (
-                                    <Menu.Item key={workspace.toUpperCase()}>
-                                        <div>
-                                            {workspace.toUpperCase()}
-                                            <Badge
-                                                showZero
-                                                style={{
-                                                    backgroundColor: '#52c41a'
-                                                }}
-                                                count={0}
-                                                offset={[10, 0]}
-                                            />
-                                        </div>
-                                    </Menu.Item>
-                                ))}
+                                {workspaces.map(({ workspace }) =>
+                                    this.displayWorkspace(workspace)
+                                )}
                             </SubMenu>
                         </Menu>
                     </Sider>
@@ -81,7 +109,9 @@ class SideNav extends Component {
 
 const mapStateToProps = state => {
     return {
-        workspaces: state.offline.workspace.workspaces
+        workspaces: state.offline.workspace.workspaces,
+        cycles: state.offline.cycles.cycles,
+        selected_cycle: state.offline.cycles.selected_cycle
     };
 };
 
