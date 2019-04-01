@@ -1,30 +1,63 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
-import { Button } from 'antd';
+import { Button, Select, Input, Checkbox } from 'antd';
 import Swal from 'sweetalert2';
-import { datasetCopy } from '../../../../ducks/offline/dc_tools';
+import { api_url } from '../../../../config/config';
+import { error_handler } from '../../../../utils/error_handlers';
+const { Option } = Select;
 
-class DatasetCopy extends Component {
-    constructor(props) {
-        super(props);
-        const state = {};
-    }
+import { duplicateDatasets } from '../../../../ducks/offline/dc_tools';
+
+class DuplicateDatasets extends Component {
+    state = { unique_dataset_names: [] };
+    componentDidMount = error_handler(async () => {
+        const { filter } = this.props;
+        const { data: unique_dataset_names } = await axios.post(
+            `${api_url}/dc_tools/unique_dataset_names`,
+            {
+                filter
+            }
+        );
+        this.setState({ unique_dataset_names });
+    });
     render() {
-        const { datasets, syncComponents } = this.props;
+        const { datasets, count, filter, workspaces } = this.props;
+        const { unique_dataset_names } = this.state;
+        const initialValues = {};
+        // By default all workspaces start being true:
+        workspaces.forEach(({ workspace }) => {
+            initialValues[`workspaces-${workspace}`] = true;
+        });
         return (
             <div>
                 <h3>
-                    This tool will allow the DC Expert to copy datasets into
-                    other
+                    This tool will allow the DC Expert to duplicate datasets
                 </h3>
                 <h5 style={{ textAlign: 'center', color: 'red' }}>
-                    {datasets.length} Datasets Selected
+                    {count} Datasets Selected
+                </h5>
+                <h5>
+                    {Object.keys(filter).length === 0
+                        ? `WARNING: NO FILTER, APPLYING TO ALL DATASETS (${count}). To make a filter, do it in the lower table (Editable datasets)`
+                        : `With filter: ${JSON.stringify(filter)}`}
                 </h5>
                 <br />
                 <Formik
+                    initialValues={initialValues}
                     onSubmit={async values => {
-                        // await datasetCopy(,);
+                        // TODO: validation (empty fields, ...)
+                        values.workspaces = [];
+                        for (const [key, val] of Object.entries(values)) {
+                            if (key.includes('workspaces-')) {
+                                const workspace = key.split('workspaces-')[1];
+                                if (val) {
+                                    values.workspaces.push(workspace);
+                                }
+                            }
+                        }
+                        await this.props.duplicateDatasets(values);
                         await Swal(
                             `Component's synced for ${
                                 datasets.length
@@ -34,9 +67,75 @@ class DatasetCopy extends Component {
                         );
                     }}
                     render={({ values, setFieldValue, handleSubmit }) => {
+                        console.log(values);
                         return (
-                            <form onSubmit={handleSubmit}>
-                                <Field />
+                            <form
+                                onSubmit={handleSubmit}
+                                className="dataset_copy_form"
+                            >
+                                <div className="form_container">
+                                    Tip:Selecting 'online' will duplicate the
+                                    original dataset as it came from P5, without
+                                    any LS alteration afterwards.
+                                    <br />
+                                    <br />
+                                    Source dataset name:
+                                    <Select
+                                        placeholder="Source dataset name"
+                                        value={values['source_dataset_name']}
+                                        onChange={value =>
+                                            setFieldValue(
+                                                'source_dataset_name',
+                                                value
+                                            )
+                                        }
+                                    >
+                                        {unique_dataset_names.map(
+                                            dataset_name => (
+                                                <Option value={dataset_name}>
+                                                    {dataset_name}
+                                                </Option>
+                                            )
+                                        )}
+                                    </Select>
+                                    <br />
+                                    <br />
+                                    Target dataset name:
+                                    <Input
+                                        value={values['target_dataset_name']}
+                                        onChange={evt =>
+                                            setFieldValue(
+                                                'target_dataset_name',
+                                                evt.target.value
+                                            )
+                                        }
+                                        type="text"
+                                    />
+                                    <br />
+                                    <br />
+                                    Workspaces to copy dataset into:
+                                    <ul>
+                                        {workspaces.map(({ workspace }) => (
+                                            <li key={workspace}>
+                                                <Checkbox
+                                                    checked={
+                                                        values[
+                                                            `workspaces-${workspace}`
+                                                        ]
+                                                    }
+                                                    onChange={({ target }) =>
+                                                        setFieldValue(
+                                                            `workspaces-${workspace}`,
+                                                            target.checked
+                                                        )
+                                                    }
+                                                >
+                                                    {workspace}
+                                                </Checkbox>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                                 <div className="buttons">
                                     <Button type="primary" htmlType="submit">
                                         Save
@@ -47,36 +146,14 @@ class DatasetCopy extends Component {
                     }}
                 />
                 <style jsx>{`
-                    .dataset_copy_form {
+                    .form_container {
                         margin: 0 auto;
-                        border: 1px solid grey;
-                    }
-                    thead {
-                        border-bottom: 3px solid grey;
-                        text-align: center;
-                    }
-                    tr > td {
-                        padding: 8px 5px;
-                    }
-                    tr:not(:last-child) {
-                        border-bottom: 1px solid grey;
+                        width: 400px;
                     }
 
-                    tr > td :not(:last-child) {
-                        text-align: left;
-                        border-right: 0.5px solid grey;
-                    }
-
-                    th {
-                        text-align: center;
-                    }
-
-                    th > td:not(:last-child) {
-                        border-right: 0.5px solid grey;
-                        padding-right: 5px;
-                    }
-                    .comment {
-                        width: 500px;
+                    ul {
+                        list-style: none;
+                        margin-left: 20px;
                     }
 
                     .buttons {
@@ -90,12 +167,16 @@ class DatasetCopy extends Component {
 }
 
 const mapStateToProps = state => {
+    const { datasets, count, filter } = state.offline.editable_datasets;
     return {
-        datasets: state.offline.datasets.datasets
+        datasets,
+        count,
+        filter,
+        workspaces: state.offline.workspace.workspaces
     };
 };
 
 export default connect(
     mapStateToProps,
-    {}
-)(DatasetCopy);
+    { duplicateDatasets }
+)(DuplicateDatasets);

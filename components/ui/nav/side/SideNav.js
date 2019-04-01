@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
 import { Layout, Menu, Icon, Badge } from 'antd';
-import { offline_column_structure } from '../../../../config/config';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -71,7 +70,8 @@ class SideNav extends Component {
         return (
             <Layout hasSider={true}>
                 {show_sidebar && (
-                    <Sider // collapsible
+                    <Sider
+                        collapsible
                         width={200}
                         style={{ background: '#fff' }}
                     >

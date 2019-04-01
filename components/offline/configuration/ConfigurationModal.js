@@ -7,7 +7,6 @@ import ComponentClassifierConfiguration from './componentClassifierConfiguration
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import DatasetCopy from './datasetCopy/DatasetCopy';
-import LumisectionExceptionSync from './lumisectionExceptionSyncConfiguration/LumisectionExceptionSync';
 
 class ConfigurationModal extends Component {
     render() {
@@ -25,17 +24,14 @@ class ConfigurationModal extends Component {
             column_configuration: 'Add or remove columns from workspace',
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
-            dataset_copy: 'Copy datasets',
-            lumisection_exception_sync:
-                'Lumisection Exception Sync - Sync Lumisections across workspaces to the global '
+            dataset_copy: 'Copy datasets'
         };
         const modal_types = {
             dataset_classifiers: <DatasetClassifierConfiguration />,
             dataset_component_classifiers: <ComponentClassifierConfiguration />,
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
-            dataset_copy: <DatasetCopy />,
-            lumisection_exception_sync: <LumisectionExceptionSync />
+            dataset_copy: <DatasetCopy />
         };
         return (
             <div>

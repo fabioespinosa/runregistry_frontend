@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { List, Button } from 'antd';
 import moment from 'moment';
 import { getCycles, selectCycle } from '../../../ducks/offline/cycles';
-import { filterDatasets } from '../../../ducks/offline/datasets';
-import { filterDatasets as filterWaitingDatasets } from '../../../ducks/offline/waiting_datasets';
+import {
+    filterEditableDatasets,
+    filterWaitingDatasets
+} from '../../../ducks/offline/datasets';
 import { showCreateCycleModal } from '../../../ducks/offline/ui';
 import CreateCycleModal from './createCycle/CreateCycleModal';
 
@@ -23,7 +25,7 @@ class Cycles extends Component {
             }
         };
         this.props.filterWaitingDatasets(5, 0, [], filter);
-        this.props.filterDatasets(20, 0, [], filter);
+        this.props.filterEditableDatasets(20, 0, [], filter);
     };
     render() {
         const { cycles, selected_cycle, workspace } = this.props;
@@ -78,7 +80,7 @@ class Cycles extends Component {
                                                         : {}
                                                 }
                                             >
-                                                Cycle {cycle.id_cycle}, Due:{' '}
+                                                {cycle.id_cycle} - Due:{' '}
                                                 {moment(cycle.deadline).format(
                                                     'dddd, MMMM Do YYYY'
                                                 )}
@@ -129,7 +131,7 @@ export default connect(
         getCycles,
         showCreateCycleModal,
         selectCycle,
-        filterDatasets,
+        filterEditableDatasets,
         filterWaitingDatasets
     }
 )(Cycles);

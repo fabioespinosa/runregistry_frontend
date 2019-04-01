@@ -17,7 +17,6 @@ import { showConfigurationModal as showOnlineConfigurationModal } from '../../..
 
 import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
 
-import { toggleWaitingList } from '../../../ducks/offline/ui';
 const SubMenu = Menu.SubMenu;
 const RadioGroup = Radio.Group;
 
@@ -55,9 +54,6 @@ class BreadcrumbCmp extends Component {
     render() {
         const {
             children,
-            show_all_runs,
-            show_waiting_list,
-            toggleWaitingList,
             router: {
                 query: { type, section, workspace }
             },
@@ -69,29 +65,6 @@ class BreadcrumbCmp extends Component {
                     {children}
                 </Breadcrumb>
                 <div className="show_all">
-                    {/* {
-                        <Menu
-                            onClick={evt => toggleWaitingList(evt.key)}
-                            selectedKeys={[
-                                show_waiting_list
-                                    ? 'show_waiting_list'
-                                    : 'show_datasets'
-                            ]}
-                            mode="horizontal"
-                            style={{
-                                background: '#f0f2f5',
-                                marginRight: '60px'
-                            }}
-                        >
-                            <Menu.Item key="show_waiting_list">
-                                <Icon type="clock-circle" />
-                                Show waiting list
-                            </Menu.Item>
-                            <Menu.Item key="show_datasets">
-                                <Icon type="copy" /> Show Editable datasets
-                            </Menu.Item>
-                        </Menu>
-                    } */}
                     {section === 'cycles' && (
                         <Link
                             href={`/offline?type=offline&section=datasets&workspace=${workspace}`}
@@ -175,18 +148,10 @@ class BreadcrumbCmp extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        show_all_runs: state.online.ui.show_all_runs,
-        show_waiting_list: state.offline.ui.show_waiting_list
-    };
-};
-
 export default connect(
-    mapStateToProps,
+    null,
     {
         showOnlineConfigurationModal,
-        showOfflineConfigurationModal,
-        toggleWaitingList
+        showOfflineConfigurationModal
     }
 )(BreadcrumbCmp);

@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 
-import { moveDataset, filterDatasets } from '../../../ducks/offline/datasets';
+import {
+    moveDataset,
+    filterEditableDatasets
+} from '../../../ducks/offline/datasets';
 import {
     showManageDatasetModal,
     showLumisectionModal
@@ -25,11 +28,15 @@ class DatasetTable extends Component {
 
     async componentDidMount() {
         this.setState({ loading: true });
-        await this.props.filterDatasets(this.defaultPageSize, 0, [], {});
+        await this.props.filterEditableDatasets(
+            this.defaultPageSize,
+            0,
+            [],
+            {}
+        );
         this.setState({ loading: false });
     }
 
-    // API understands a filter object, not a filter array:
     convertFiltersToObject = filters => {
         const object_filter = {};
         // Turn array filter into object:
@@ -47,7 +54,7 @@ class DatasetTable extends Component {
         const formated_filters = format_filters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = format_sortings(renamed_sortings);
-        await this.props.filterDatasets(
+        await this.props.filterEditableDatasets(
             pageSize || this.defaultPageSize,
             page,
             formated_sortings,
@@ -59,7 +66,12 @@ class DatasetTable extends Component {
     // Navigate entirely to a route without filters (when clicking remove filters)
     removeFilters = async () => {
         this.setState({ filters: [], sortings: [] });
-        await this.props.filterDatasets(this.defaultPageSize, 0, [], filters);
+        await this.props.filterEditableDatasets(
+            this.defaultPageSize,
+            0,
+            [],
+            filters
+        );
     };
 
     // When a user sorts by any field, we want to preserve the filters:
@@ -69,7 +81,7 @@ class DatasetTable extends Component {
         const formated_filters = format_filters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = format_sortings(renamed_sortings);
-        await this.props.filterDatasets(
+        await this.props.filterEditableDatasets(
             pageSize || this.defaultPageSize,
             page,
             formated_sortings,
@@ -183,7 +195,7 @@ class DatasetTable extends Component {
 
 const mapStateToProps = state => {
     return {
-        dataset_table: state.offline.datasets,
+        dataset_table: state.offline.editable_datasets,
         workspaces: state.offline.workspace.workspaces,
         workspace: state.offline.workspace.workspace
     };
@@ -193,7 +205,7 @@ export default withRouter(
     connect(
         mapStateToProps,
         {
-            filterDatasets,
+            filterEditableDatasets,
             showManageDatasetModal,
             showLumisectionModal,
             moveDataset

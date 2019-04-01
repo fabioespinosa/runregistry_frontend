@@ -1,6 +1,4 @@
 import { filterDatasets } from './datasets';
-const TOGGLE_SHOW_WAITING_LIST = 'TOGGLE_SHOW_WAITING_LIST-OFFLINE';
-const TOGGLE_SHOW_ALL_RUNS = 'TOGGLE_SHOW_ALL_RUNS-OFFLINE';
 const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL-OFFLINE';
 export const HIDE_CONFIGURATION_MODAL = 'HIDE_CONFIGURATION_MODAL-OFFLINE';
 const SHOW_MANAGE_DATASET_MODAL = 'SHOW_MANAGE_DATASET_MODAL-OFFLINE';
@@ -9,14 +7,6 @@ const SHOW_LUMISECTION_MODAL = 'SHOW_LUMISECTION_MODAL-OFFLINE';
 const HIDE_LUMISECTION_MODAL = 'HIDE_LUMISECTION_MODAL-OFFLINE';
 const SHOW_CREATE_CYCLE_MODAL = 'SHOW_CREATE_CYCLE_MODAL-OFFLINE';
 const HIDE_CREATE_CYCLE_MODAL = 'HIDE_CREATE_CYCLE_MODAL-OFFLINE';
-
-export const toggleWaitingList = new_value => dispatch => {
-    dispatch({
-        type: TOGGLE_SHOW_WAITING_LIST,
-        payload: new_value === 'show_waiting_list'
-    });
-    dispatch(filterDatasets(25, 0, [], []));
-};
 
 export const showConfigurationModal = configuration_modal_type => ({
     type: SHOW_CONFIGURATION_MODAL,
@@ -52,7 +42,6 @@ export const hideCreateCycleModal = () => ({
 export const hideLumisectionModal = () => ({ type: HIDE_LUMISECTION_MODAL });
 
 const INITIAL_STATE = {
-    show_waiting_list: false,
     configuration_modal_visible: false,
     configuration_modal_type: '',
     manage_dataset_modal_visible: false,
@@ -65,8 +54,6 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
-        case TOGGLE_SHOW_WAITING_LIST:
-            return { ...state, show_waiting_list: payload };
         case SHOW_CONFIGURATION_MODAL:
             return {
                 ...state,

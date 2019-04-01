@@ -1,22 +1,25 @@
 import {
-    FILTER_WAITING_DATASETS,
+    FILTER_EDITABLE_DATASETS,
     EDIT_DATASET,
     FIND_AND_REPLACE_DATASETS,
     TOGGLE_TABLE_FILTERS
 } from './datasets';
 
+// Actions of both (editable_datasets and waiting_datasets) are found in their respective file
 const INITIAL_STATE = {
     datasets: []
 };
-
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
-        case FILTER_WAITING_DATASETS:
+        case FILTER_EDITABLE_DATASETS:
             return {
                 ...state,
                 datasets: payload.datasets,
-                pages: payload.pages
+                pages: payload.pages,
+                count: payload.count,
+                loading: false,
+                filter: action.filter
             };
         case EDIT_DATASET:
             return {
@@ -63,13 +66,4 @@ const findAndReplaceHelper = (datasets, new_datasets) => {
         datasets = editDatasetHelper(datasets, new_dataset);
     });
     return datasets;
-};
-
-const formatDatasets = datasets => {
-    return datasets.map(dataset => ({
-        ...dataset.dataset_attributes,
-        ...dataset,
-        Run: dataset.Run.rr_attributes,
-        triplet_summary: dataset.DatasetTripletCache.triplet_summary
-    }));
 };

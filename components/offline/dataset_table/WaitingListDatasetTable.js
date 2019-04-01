@@ -4,8 +4,8 @@ import { withRouter } from 'next/router';
 
 import {
     moveDataset,
-    filterDatasets
-} from '../../../ducks/offline/waiting_datasets';
+    filterWaitingDatasets
+} from '../../../ducks/offline/datasets';
 import {
     showManageDatasetModal,
     showLumisectionModal
@@ -28,7 +28,7 @@ class DatasetTable extends Component {
 
     async componentDidMount() {
         this.setState({ loading: true });
-        await this.props.filterDatasets(this.defaultPageSize, 0, [], {});
+        await this.props.filterWaitingDatasets(this.defaultPageSize, 0, [], {});
         this.setState({ loading: false });
     }
 
@@ -51,7 +51,7 @@ class DatasetTable extends Component {
             const formated_filters = format_filters(renamed_filters);
             const renamed_sortings = rename_triplets(sortings, false);
             const formated_sortings = format_sortings(renamed_sortings);
-            await this.props.filterDatasets(
+            await this.props.filterWaitingDatasets(
                 pageSize || this.defaultPageSize,
                 page,
                 formated_sortings,
@@ -66,7 +66,12 @@ class DatasetTable extends Component {
     // Navigate entirely to a route without filters (when clicking remove filters)
     removeFilters = async () => {
         this.setState({ filters: [], sortings: [] });
-        await this.props.filterDatasets(this.defaultPageSize, 0, [], filters);
+        await this.props.filterWaitingDatasets(
+            this.defaultPageSize,
+            0,
+            [],
+            filters
+        );
     };
 
     // When a user sorts by any field, we want to preserve the filters:
@@ -76,7 +81,7 @@ class DatasetTable extends Component {
         const formated_filters = format_filters(renamed_filters);
         const renamed_sortings = rename_triplets(sortings, false);
         const formated_sortings = format_sortings(renamed_sortings);
-        await this.props.filterDatasets(
+        await this.props.filterWaitingDatasets(
             pageSize || this.defaultPageSize,
             page,
             formated_sortings,
@@ -200,7 +205,7 @@ export default withRouter(
     connect(
         mapStateToProps,
         {
-            filterDatasets,
+            filterWaitingDatasets,
             showManageDatasetModal,
             showLumisectionModal,
             moveDataset
