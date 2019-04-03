@@ -6,10 +6,8 @@ import {
     moveDataset,
     filterEditableDatasets
 } from '../../../ducks/offline/datasets';
-import {
-    showManageDatasetModal,
-    showLumisectionModal
-} from '../../../ducks/offline/ui';
+import { showManageDatasetModal } from '../../../ducks/offline/ui';
+import { showLumisectionModal } from '../../../ducks/global_ui';
 import format_filters from './filters/format_filters';
 import format_sortings from './filters/format_sortings';
 import rename_triplets from './filters/rename_triplets';

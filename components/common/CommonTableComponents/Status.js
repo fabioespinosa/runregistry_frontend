@@ -31,7 +31,7 @@ const status_colors_and_text = {
         fontSize: '1em'
     },
     EMPTY: {
-        backgroundColor: 'white',
+        backgroundColor: 'black',
         text: 'black',
         fontSize: '1em'
     },
@@ -83,7 +83,9 @@ class Status extends Component {
                         />
                     }
                     trigger="hover"
-                    title={comments.join(' ----- ')}
+                    title={`Comments in this component: ${comments.join(
+                        ' , '
+                    )}`}
                 >
                     <div
                         style={{

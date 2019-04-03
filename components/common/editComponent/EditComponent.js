@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
 import { Select, Input, Button, InputNumber } from 'antd';
 import Swal from 'sweetalert2';
-import { addLumisectionRange } from '../../../../../ducks/online/lumisections';
+import { addLumisectionRange } from '../../../ducks/online/lumisections';
 import BarPlot from './BarPlot';
 const { TextArea } = Input;
 const { Option, OptGroup } = Select;
@@ -11,11 +11,10 @@ const { Option, OptGroup } = Select;
 class EditComponent extends Component {
     constructor(props) {
         super(props);
-        const { lumisection_ranges, component } = this.props;
+        let { lumisection_ranges, component } = this.props;
         // Filter the lumisections corresponding to this component:
-
+        lumisection_ranges = lumisection_ranges || [];
         const ls_ranges_lengths = { title: 'LS' };
-
         lumisection_ranges.forEach(range => {
             const { start, end, status } = range;
             ls_ranges_lengths[`${start} - ${end}`] = end - start + 1;
@@ -28,29 +27,54 @@ class EditComponent extends Component {
         };
     }
     render() {
-        const { component } = this.props;
+        const { component, state, component_name } = this.props;
         const { modifying, lumisection_ranges, ls_ranges_lengths } = this.state;
-        const number_of_lumisections =
-            lumisection_ranges[lumisection_ranges.length - 1].end;
+        const number_of_lumisections = lumisection_ranges[
+            lumisection_ranges.length - 1
+        ]
+            ? lumisection_ranges[lumisection_ranges.length - 1].end
+            : 0;
         const initialValues = {
-            start: 1,
+            start: number_of_lumisections === 0 ? 0 : 1,
             end: number_of_lumisections
         };
+        const lumisections_with_comments = lumisection_ranges.filter(
+            ({ comment }) =>
+                typeof comment !== 'undefined' && comment.length > 0
+        );
         return (
-            <tr key={component}>
-                <td>{component}</td>
+            <tr>
+                <td>{component_name ? component_name : component}</td>
                 <td className="comment">
                     <BarPlot
                         ls_ranges_lengths={ls_ranges_lengths}
                         lumisection_ranges={lumisection_ranges}
                     />
+                    {lumisections_with_comments.length > 0 && (
+                        <div>
+                            <h4>Comments:</h4>
+                            {lumisections_with_comments.map(
+                                ({ status, start, end, comment }) => (
+                                    <div>
+                                        Status: {status}, From LS:
+                                        {start} To LS: {end}, Comment:{' '}
+                                        <strong>{comment}</strong>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    )}
                     {modifying && (
                         <Formik
                             initialValues={initialValues}
                             enableReinitialize={true}
                             onSubmit={async form_values => {
                                 const { run_number, dataset_name } = this.props;
-                                const component_triplet_name = `${component}_triplet`;
+                                let component_triplet_name = component;
+                                if (dataset_name === 'online') {
+                                    // If we are in online, they end with string _triplet:
+                                    component_triplet_name = `${component}_triplet`;
+                                }
                                 console.log(form_values);
                                 await this.props.addLumisectionRange(
                                     form_values,
@@ -60,7 +84,7 @@ class EditComponent extends Component {
                                 );
                                 await this.props.refreshLumisections();
                                 await Swal(
-                                    `Run ${run_number} component's edited successfully`,
+                                    `Component's edited successfully`,
                                     '',
                                     'success'
                                 );
@@ -78,12 +102,9 @@ class EditComponent extends Component {
                                 const { status, start, end } = values;
                                 return (
                                     <form>
+                                        <h3>Edit Lumisections:</h3>
                                         Change status to:{' '}
-                                        <Field
-                                            key={component}
-                                            component="select"
-                                            name="status"
-                                        >
+                                        <Field component="select" name="status">
                                             <option value="">-----</option>
                                             <option value="GOOD">GOOD</option>
                                             <option value="BAD">BAD</option>
@@ -97,7 +118,8 @@ class EditComponent extends Component {
                                                 NOTSET
                                             </option>
                                         </Field>
-                                        Cause:
+                                        <br />
+                                        Cause:{' '}
                                         <Field
                                             key={component}
                                             component="select"
@@ -105,7 +127,7 @@ class EditComponent extends Component {
                                             disabled
                                         />
                                         <br />
-                                        From Lumisection:
+                                        From Lumisection:{' '}
                                         <InputNumber
                                             name="end"
                                             value={start}
@@ -116,7 +138,7 @@ class EditComponent extends Component {
                                                 setFieldValue('start', value)
                                             }
                                         />
-                                        To Lumisection:
+                                        To Lumisection:{' '}
                                         <InputNumber
                                             name="start"
                                             value={end}
@@ -130,19 +152,29 @@ class EditComponent extends Component {
                                             }
                                         />
                                         <br />
-                                        Comment:
-                                        <TextArea name="comment" />
-                                        <Button
-                                            type="primary"
-                                            onClick={() => {
-                                                handleSubmit();
-                                                // this.setState({
-                                                //     modifying: false
-                                                // });
-                                            }}
-                                        >
-                                            Modify
-                                        </Button>
+                                        Comment:{' '}
+                                        <TextArea
+                                            name="comment"
+                                            onChange={value =>
+                                                setFieldValue(
+                                                    'comment',
+                                                    value.target.value
+                                                )
+                                            }
+                                        />
+                                        <div className="submit">
+                                            <Button
+                                                type="primary"
+                                                onClick={() => {
+                                                    handleSubmit();
+                                                    // this.setState({
+                                                    //     modifying: false
+                                                    // });
+                                                }}
+                                            >
+                                                Modify
+                                            </Button>
+                                        </div>
                                     </form>
                                 );
                             }}
@@ -169,12 +201,18 @@ class EditComponent extends Component {
                                     modifying: true
                                 })
                             }
+                            disabled={state !== 'OPEN'}
                         >
-                            Modify
+                            {state === 'OPEN'
+                                ? 'Modify'
+                                : 'State should be OPEN to modify components'}
                         </Button>
                     )}
                 </td>
                 <style jsx>{`
+                    form {
+                        text-align: left;
+                    }
                     tr > td {
                         padding: 8px 5px;
                     }
@@ -207,6 +245,9 @@ class EditComponent extends Component {
                     .buttons {
                         display: flex;
                         justify-content: flex-end;
+                    }
+                    .submit {
+                        text-align: center;
                     }
                 `}</style>
             </tr>

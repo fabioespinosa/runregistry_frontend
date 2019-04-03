@@ -59,6 +59,9 @@ class Page extends Component {
                     .properly_capitalized {
                         text-transform: capitalize;
                     }
+                    .recharts-tooltip-wrapper {
+                        z-index: 3000;
+                    }
                 `}</style>
             </div>
         );

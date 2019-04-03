@@ -7,7 +7,6 @@ import {
     certifiable_offline_components
 } from '../../../../../config/config';
 import Status from '../../../../common/CommonTableComponents/Status';
-import CommonValueComponent from '../../../../common/CommonTableComponents/CommonValueComponent';
 
 class History extends Component {
     render() {
@@ -111,7 +110,7 @@ class History extends Component {
             {
                 Header: 'Class',
                 accessor: 'class',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => <div>{value}</div>
             },
             {
                 Header: 'Significant',
@@ -134,22 +133,22 @@ class History extends Component {
             {
                 Header: 'Online State',
                 accessor: 'online_state',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => <div>{value}</div>
             },
             {
                 Header: `${workspace} State`,
                 accessor: `${workspace.toLowerCase()}_state`,
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => <div>{value}</div>
             },
             {
                 Header: 'Stop Reason',
                 accessor: 'stop_reason',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => <div>{value}</div>
             },
             {
                 Header: 'Appeared in',
                 accessor: 'appeared_in',
-                Cell: ({ value }) => <CommonValueComponent value={value} />
+                Cell: ({ value }) => <div>{value}</div>
             }
         ];
 

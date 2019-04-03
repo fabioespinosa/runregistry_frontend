@@ -13,7 +13,7 @@ import DatasetTable from '../components/offline/dataset_table/DatasetTable';
 import Cycles from '../components/offline/cycles/Cycles';
 import WaitingListDatasetTable from '../components/offline/dataset_table/WaitingListDatasetTable';
 import ManageDatasetModal from '../components/offline/manage_dataset/ManageDatasetModal';
-import LumisectionModal from '../components/offline/lumisections/LumisectionModal';
+import LumisectionModal from '../components/common/CommonTableComponents/lumisectionModal/LumisectionModal';
 import CycleInfo from '../components/offline/cycles/cycleInfo/CycleInfo';
 const { Content } = Layout;
 
@@ -48,7 +48,6 @@ class Offline extends Component {
                 </BreadcrumbCmp>
                 <Content
                     style={{
-                        // background: '#fff',
                         padding: 0,
                         margin: 0,
                         minHeight: 280
@@ -65,9 +64,6 @@ class Offline extends Component {
                             )}
                             <ManageDatasetModal />
                             <LumisectionModal />
-                            {/* Hold <i>shift</i> for multiple column sorting. <br />A
-                    dataset must appear in DQM GUI for it to be editable
-                    (although it can be moved manually by clicking 'move'). */}
                             <WaitingListDatasetTable defaultPageSize={5} />
                             <DatasetTable defaultPageSize={20} />
                         </div>

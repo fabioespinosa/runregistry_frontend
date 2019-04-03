@@ -15,7 +15,7 @@ import RunTable from '../components/online/run_table/RunTable';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
 import SignificantRunTable from '../components/online/run_table/SignificantRunTable';
 import ManageRunModal from '../components/online/manage_run/ManageRunModal';
-import LumisectionModal from '../components/online/lumisections/LumisectionModal';
+import LumisectionModal from '../components/common/CommonTableComponents/lumisectionModal/LumisectionModal';
 import ClassifierVisualizationModal from '../components/online/classifier_visualization/ClassifierVisualizationModal';
 // const RunTable = dynamic(import('../components/online/run_table/RunTable'), {
 //     ssr: false

@@ -1,210 +1,145 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
-import { Formik, Field } from 'formik';
-import { Input, Button } from 'antd';
+import { Select, Input, Button, Spin } from 'antd';
+import axios from 'axios';
+
+import EditComponent from '../../../../common/editComponent/EditComponent';
 import {
-    offline_columns,
+    api_url,
     certifiable_offline_components
 } from '../../../../../config/config';
+import { error_handler } from '../../../../../utils/error_handlers';
 
-import { editDataset } from '../../../../../ducks/offline/datasets';
-import { components } from '../../../../../config/config';
-const { TextArea } = Input;
-import EditClass from './editClass/EditClass';
+class EditRunLumisections extends Component {
+    state = {
+        lumisections: {},
+        loading: true
+    };
+    componentDidMount() {
+        this.fetchLumisections();
+    }
 
-class EditDataset extends Component {
+    fetchLumisections = error_handler(async () => {
+        this.setState({ lumisections: {}, loading: true });
+        const { data: lumisections } = await axios.post(
+            `${api_url}/lumisections/rr_lumisection_ranges_by_component`,
+            {
+                dataset_name: this.props.dataset.name,
+                run_number: this.props.dataset.run_number
+            }
+        );
+        this.setState({ lumisections, loading: false });
+    });
     render() {
-        const { dataset, workspace, editDataset } = this.props;
-
-        const initialValues = {};
-        let offline_columns_composed = [];
-        if (workspace === 'global') {
-            offline_columns_composed = certifiable_offline_components;
+        const { dataset, workspaces } = this.props;
+        const current_workspace = this.props.workspace;
+        let components = [];
+        if (current_workspace === 'global') {
+            for (const [key, val] of Object.entries(
+                certifiable_offline_components
+            )) {
+                val.forEach(sub_name => {
+                    components.push(`${key}-${sub_name}`);
+                });
+            }
         } else {
-            offline_columns_composed = offline_columns.filter(column => {
-                return column.startsWith(workspace.toLowerCase());
+            workspaces.forEach(({ workspace, columns }) => {
+                if (workspace === current_workspace) {
+                    columns.forEach(column => {
+                        components.push(`${workspace}-${column}`);
+                    });
+                }
             });
         }
-
-        offline_columns_composed.forEach(column => {
-            if (
-                column !== 'run_number' ||
-                column !== 'name' ||
-                column !== 'state' ||
-                column !== 'createdAt'
-            ) {
-                const { status, comment, cause } = dataset[column];
-                initialValues[`${column}>status`] = status;
-                initialValues[`${column}>cause`] = cause;
-                initialValues[`${column}>comment`] = comment;
-            }
-        });
+        console.log(components);
         return (
             <div>
-                {dataset[`${workspace.toLowerCase()}_state`]['value'] ===
-                'OPEN' ? (
+                {dataset[`${current_workspace}_state`] !== 'waiting dqm gui' ? (
                     <div>
-                        <Formik
-                            initialValues={initialValues}
-                            onSubmit={async values => {
-                                const components_triplets = {};
-                                for (const [key, val] of Object.entries(
-                                    values
-                                )) {
-                                    const component_key = key.split('>')[0];
-                                    const triplet_key = key.split('>')[1];
-                                    // Put it again in format component:triplet
-                                    components_triplets[component_key] = {
-                                        ...components_triplets[component_key],
-                                        [triplet_key]: val
-                                    };
-                                }
-                                const { run_number, name } = dataset;
-                                await editDataset(
-                                    `${run_number}_${name}`,
-                                    workspace,
-                                    components_triplets
-                                );
-                                await Swal(
-                                    `Dataset ${`${run_number}_${name}`} component's edited successfully`,
-                                    '',
-                                    'success'
-                                );
-                            }}
-                            render={({
-                                values,
-                                setFieldValue,
-                                errors,
-                                touched,
-                                handleChange,
-                                handleBlur,
-                                handleSubmit,
-                                isSubmitting
-                            }) => (
-                                <form onSubmit={handleSubmit}>
-                                    <table className="edit_dataset_form">
-                                        <thead>
-                                            <tr className="table_header">
-                                                <td>Component</td>
-                                                <td>Status</td>
-                                                <td>Cause</td>
-                                                <td>Comment</td>
+                        <br />
+                        <table className="edit_run_form">
+                            <thead>
+                                <tr className="table_header">
+                                    <td>Component</td>
+                                    <td>Comment</td>
+                                    <td>Modify</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {components.map(component => {
+                                    const component_name = component.split(
+                                        '-'
+                                    )[1];
+
+                                    if (this.state.loading) {
+                                        return (
+                                            <tr key={component}>
+                                                <td>{component_name}</td>
+                                                <td className="comment">
+                                                    <Spin size="large" />
+                                                </td>
+                                                <td className="modify_toggle" />
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {offline_columns_composed.map(
-                                                component => (
-                                                    <tr key={component}>
-                                                        <td>
-                                                            {workspace ===
-                                                            'global'
-                                                                ? component
-                                                                : component.split(
-                                                                      '-'
-                                                                  )[1]}
-                                                        </td>
-                                                        <td className="status_dropdown">
-                                                            <Field
-                                                                key={component}
-                                                                component="select"
-                                                                name={`${component}>status`}
-                                                            >
-                                                                <option value="">
-                                                                    -----
-                                                                </option>
-                                                                <option value="GOOD">
-                                                                    GOOD
-                                                                </option>
-                                                                <option value="BAD">
-                                                                    BAD
-                                                                </option>
-                                                                <option value="STANDBY">
-                                                                    STANDBY
-                                                                </option>
-                                                                <option value="EXCLUDED">
-                                                                    EXCLUDED
-                                                                </option>
-                                                                <option value="NOTSET">
-                                                                    NOTSET
-                                                                </option>
-                                                            </Field>
-                                                        </td>
-                                                        <td className="cause_dropdown">
-                                                            <Field
-                                                                key={component}
-                                                                component="select"
-                                                                name={component}
-                                                                disabled
-                                                            >
-                                                                <option value="undef">
-                                                                    undef
-                                                                </option>
-                                                                <option value="other">
-                                                                    other
-                                                                </option>
-                                                            </Field>
-                                                        </td>
-                                                        <td className="comment">
-                                                            <TextArea
-                                                                value={
-                                                                    values[
-                                                                        `${component}>comment`
-                                                                    ]
-                                                                }
-                                                                onChange={evt =>
-                                                                    setFieldValue(
-                                                                        `${component}>comment`,
-                                                                        evt
-                                                                            .target
-                                                                            .value
-                                                                    )
-                                                                }
-                                                                name={`${component}>comment`}
-                                                                row={1}
-                                                                type="text"
-                                                                autosize
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    <div className="buttons">
-                                        <Button
-                                            type="primary"
-                                            htmlType="submit"
-                                        >
-                                            Save
-                                        </Button>
-                                    </div>
-                                </form>
-                            )}
-                        />
+                                        );
+                                    } else if (
+                                        Object.keys(this.state.lumisections)
+                                            .length > 0
+                                    ) {
+                                        return (
+                                            <EditComponent
+                                                component_name={component_name}
+                                                key={component}
+                                                state={
+                                                    dataset[
+                                                        `${current_workspace}_state`
+                                                    ]
+                                                }
+                                                run_number={dataset.run_number}
+                                                dataset_name={dataset.name}
+                                                refreshLumisections={
+                                                    this.fetchLumisections
+                                                }
+                                                component={component}
+                                                lumisection_ranges={
+                                                    this.state.lumisections[
+                                                        component
+                                                    ]
+                                                }
+                                            />
+                                        );
+                                    } else {
+                                        return (
+                                            <tr key={component}>
+                                                <td>{component_name}</td>
+                                                <td className="comment">
+                                                    No lumisection data
+                                                </td>
+                                                <td className="modify_toggle" />
+                                            </tr>
+                                        );
+                                    }
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 ) : (
                     <div>
-                        In order to edit a dataset, the dataset's state{' '}
+                        In order to edit a dataset's lumisections the dataset{' '}
                         <i style={{ textDecoration: 'underline' }}>
-                            must be moved to OPEN
+                            must appear in DQM GUI first
                         </i>
                         . <br /> <br />
-                        You can mark a dataset's state OPEN by clicking 'move'
-                        in the table (Although this process is automatic)
+                        You can mark overwrite this by clicking 'move' (directly
+                        in the table)
                         <br />
-                        <br />A dataset is marked as OPEN and shown in the
-                        EDITABLE datasets automatically as soon as it appears in
-                        DQM GUI (and passess the dataset classifier test, see
-                        configuration -> dataset classifier) If you are sure
-                        this run has already appeared in DQM GUI, or you have
-                        reasons to edit it's status now) please change the
-                        status .
+                        <br />
+                        This is an automatic process and every 5 minutes, DQM
+                        GUI is checked to see if the dataset is already there.
                     </div>
                 )}
-
                 <style jsx>{`
-                    .edit_dataset_form {
+                    .edit_run_form {
                         margin: 0 auto;
                         text-align: center;
                         border: 1px solid grey;
@@ -233,7 +168,13 @@ class EditDataset extends Component {
                         padding-right: 5px;
                     }
                     .comment {
-                        width: 500px;
+                        width: 400px;
+                    }
+                    .lumisection_slider {
+                        width: 200px;
+                    }
+                    .modify_toggle {
+                        width: 180px;
                     }
 
                     .buttons {
@@ -245,6 +186,7 @@ class EditDataset extends Component {
         );
     }
 }
+
 const mapStateToProps = state => {
     return {
         workspace: state.offline.workspace.workspace
@@ -253,5 +195,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { editDataset }
-)(EditDataset);
+    {}
+)(EditRunLumisections);

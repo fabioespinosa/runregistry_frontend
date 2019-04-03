@@ -4,22 +4,24 @@ import Swal from 'sweetalert2';
 import { Select, Input, Button, Spin } from 'antd';
 import axios from 'axios';
 
-import EditComponent from './EditComponent';
+import EditComponent from '../../../../../components/common/editComponent/EditComponent';
 import { api_url } from '../../../../../config/config';
-import { editRun, refreshRun } from '../../../../../ducks/online/runs';
+import { refreshRun } from '../../../../../ducks/online/runs';
 import { showManageRunModal } from '../../../../../ducks/online/ui';
 import { components } from '../../../../../config/config';
 import { error_handler } from '../../../../../utils/error_handlers';
-const { TextArea } = Input;
-const { Option, OptGroup } = Select;
 
-class EditRun extends Component {
-    state = { classes: [], not_in_the_list: false, lumisections: {} };
+class EditRunLumisections extends Component {
+    state = {
+        lumisections: {},
+        loading: true
+    };
     componentDidMount() {
         this.fetchLumisections();
     }
 
     fetchLumisections = error_handler(async () => {
+        this.setState({ lumisections: {}, loading: true });
         const { data: lumisections } = await axios.post(
             `${api_url}/lumisections/rr_lumisection_ranges_by_component`,
             {
@@ -27,11 +29,10 @@ class EditRun extends Component {
                 run_number: this.props.run.run_number
             }
         );
-        this.setState({ lumisections });
+        this.setState({ lumisections, loading: false });
     });
     render() {
-        console.log(this.state.lumisections);
-        const { run, editRun } = this.props;
+        const { run } = this.props;
         return (
             <div>
                 {run.significant ? (
@@ -77,18 +78,29 @@ class EditRun extends Component {
                             </thead>
                             <tbody>
                                 {components.map(component => {
-                                    if (
+                                    if (this.state.loading) {
+                                        return (
+                                            <tr key={component}>
+                                                <td>{component}</td>
+                                                <td className="comment">
+                                                    <Spin size="large" />
+                                                </td>
+                                                <td className="modify_toggle" />
+                                            </tr>
+                                        );
+                                    } else if (
                                         Object.keys(this.state.lumisections)
                                             .length > 0
                                     ) {
                                         return (
                                             <EditComponent
+                                                key={component}
+                                                state={run.state}
                                                 run_number={run.run_number}
                                                 dataset_name="online"
                                                 refreshLumisections={
                                                     this.fetchLumisections
                                                 }
-                                                key={component}
                                                 component={component}
                                                 lumisection_ranges={
                                                     this.state.lumisections[
@@ -99,10 +111,10 @@ class EditRun extends Component {
                                         );
                                     } else {
                                         return (
-                                            <tr>
+                                            <tr key={component}>
                                                 <td>{component}</td>
                                                 <td className="comment">
-                                                    <Spin size="large" />
+                                                    No lumisection data
                                                 </td>
                                                 <td className="modify_toggle" />
                                             </tr>
@@ -180,5 +192,5 @@ class EditRun extends Component {
 
 export default connect(
     null,
-    { editRun, refreshRun, showManageRunModal }
-)(EditRun);
+    { refreshRun, showManageRunModal }
+)(EditRunLumisections);

@@ -71,7 +71,7 @@ exports.rr_attributes = [
 ];
 
 const offline_column_structure =
-    // Non of the offline_column_structure can contain "-" character, only "_".
+    // None of the offline_column_structure can contain "-" character, only "_".
     {
         btag: ['btag'],
         castor: ['castor'],
@@ -150,31 +150,52 @@ for (const [key, val] of Object.entries(offline_column_structure)) {
 exports.offline_column_structure = offline_column_structure;
 exports.offline_columns = columns;
 
-exports.certifiable_offline_components = [
-    'btag',
-    'castor',
-    'cms',
-    'csc',
-    'ctpps',
-    'dt',
-    'ecal',
-    'egamma',
-    'es',
-    'hcal',
-    'hlt',
-    'jetmet',
-    'l1t',
-    'l1tcalo',
-    'l1tmu',
-    'lowLumi',
-    'lumi',
-    'muon',
-    'pix',
-    'rpc',
-    'strip',
-    'tau',
-    'track'
-];
+// MISING LOWLUMI:
+exports.certifiable_offline_components = {
+    btag: ['btag'],
+    castor: ['castor'],
+    cms: ['cms'],
+    csc: ['csc'],
+    ctpps: ['ctpps'],
+    dt: ['dt'],
+    ecal: ['ecal', 'es'],
+    egamma: ['egamma'],
+    hcal: ['hcal'],
+    hlt: ['hlt'],
+    jetmet: ['jetmet'],
+    l1t: ['l1tmu', 'l1tcalo'],
+    lumi: ['lumi'],
+    muon: ['muon'],
+    rpc: ['rpc'],
+    tau: ['tau'],
+    tracker: ['track', 'pix', 'strip']
+};
+
+// exports.certifiable_offline_components = [
+//     'btag',
+//     'castor',
+//     'cms',
+//     'csc',
+//     'ctpps',
+//     'dt',
+//     'ecal',
+//     'egamma',
+//     'es',
+//     'hcal',
+//     'hlt',
+//     'jetmet',
+//     'l1t',
+//     'l1tcalo',
+//     'l1tmu',
+//     'lowLumi',
+//     'lumi',
+//     'muon',
+//     'pix',
+//     'rpc',
+//     'strip',
+//     'tau',
+//     'track'
+// ];
 
 exports.lumisection_attributes = [
     'beam1_present',

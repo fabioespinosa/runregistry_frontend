@@ -14,7 +14,7 @@ class Status extends Component {
                             position: 'relative'
                         }}
                     >
-                        {comment.length > 0 && (
+                        {comment && comment.length > 0 && (
                             <span>
                                 <span
                                     style={{
@@ -117,6 +117,22 @@ class Status extends Component {
                                         }}
                                     >
                                         NOTSET
+                                    </span>
+                                </div>
+                            )}
+                            {status === 'NO VALUE FOUND' && (
+                                <div
+                                    style={{
+                                        backgroundColor: 'white',
+                                        borderRadius: '1px'
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            color: 'black'
+                                        }}
+                                    >
+                                        NO VALUE FOUND
                                     </span>
                                 </div>
                             )}

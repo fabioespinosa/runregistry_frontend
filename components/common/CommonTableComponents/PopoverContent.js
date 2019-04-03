@@ -135,13 +135,13 @@ class PopoverContent extends Component {
                         isAnimationActive={false}
                         dataKey="NOTSET"
                         stackId="a"
-                        fill="black"
+                        fill="white"
                     />
                     <Bar
                         isAnimationActive={false}
                         dataKey="EMPTY"
                         stackId="a"
-                        fill="silver"
+                        fill="black"
                     />
                 </BarChart>
             </div>

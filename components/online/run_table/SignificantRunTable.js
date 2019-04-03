@@ -11,9 +11,10 @@ import {
 } from '../../../ducks/online/significant_runs';
 import {
     showManageRunModal,
-    showLumisectionModal,
     showClassifierVisualizationModal
 } from '../../../ducks/online/ui';
+
+import { showLumisectionModal } from '../../../ducks/global_ui';
 
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';

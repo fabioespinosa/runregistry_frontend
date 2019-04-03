@@ -10,7 +10,6 @@ const Panel = Collapse.Panel;
 class ManageRun extends Component {
     render() {
         const { run } = this.props;
-        console.log(run);
         return (
             <Collapse defaultActiveKey={['4']}>
                 {/* <Panel key="1" header="Run info">
@@ -33,11 +32,7 @@ class ManageRun extends Component {
                     key="4"
                     header="Edit Run's Lumisections (GOOD/BAD/STANDBY...)"
                 >
-                    {run.state === 'OPEN' ? (
-                        <EditRunLumisections run={run} />
-                    ) : (
-                        <div>Run must be in state OPEN to be edited</div>
-                    )}
+                    <EditRunLumisections run={run} />
                 </Panel>
             </Collapse>
         );

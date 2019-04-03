@@ -1,6 +1,7 @@
 import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
+import { certifiable_offline_components } from '../../../../config/config';
 
 const column_filter_description = {
     string: '=, like, notlike, <>',
@@ -178,28 +179,29 @@ const column_generator = ({
     //     )
     // }
 
+    // Now add the ones in global:
+    const global_columns = [];
+    for (const [key, val] of Object.entries(certifiable_offline_components)) {
+        val.forEach(sub_name => {
+            global_columns.push(`${key}-${sub_name}`);
+        });
+    }
     // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
-    const all_columns_formatted = [];
+    let all_columns_formatted = [];
     workspaces.forEach(({ workspace, columns }) => {
-        all_columns_formatted.push(`${workspace}-${workspace}`);
         columns.forEach(column => {
             all_columns_formatted.push(`${workspace}-${column}`);
         });
     });
 
+    all_columns_formatted = global_columns.concat(all_columns_formatted);
     // Put components in format Header: component
     let offline_columns_composed = [];
     if (workspace === 'global') {
-        offline_columns_composed = all_columns_formatted
-            .filter(column => {
-                const split_name = column.split('-');
-                // If the name is workspace-workspace, it will be the official status of the workspace:
-                return split_name[0] === split_name[1];
-            })
-            .map(column => ({
-                accessor: column,
-                Header: column.split('-')[1]
-            }));
+        offline_columns_composed = global_columns.map(column => ({
+            accessor: column,
+            Header: column.split('-')[1]
+        }));
     } else {
         offline_columns_composed = all_columns_formatted
             .filter(column => {
