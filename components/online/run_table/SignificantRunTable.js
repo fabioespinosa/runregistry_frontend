@@ -4,11 +4,8 @@ import { withRouter } from 'next/router';
 import format_filters from './filters/format_filters';
 import format_sortings from './filters/format_sortings';
 import rename_triplets from './filters/rename_triplets';
-import {
-    moveRun,
-    markSignificant,
-    filterRuns
-} from '../../../ducks/online/significant_runs';
+import { filterRuns } from '../../../ducks/online/significant_runs';
+import { moveRun, markSignificant } from '../../../ducks/online/runs';
 import {
     showManageRunModal,
     showClassifierVisualizationModal

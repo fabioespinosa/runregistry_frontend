@@ -80,6 +80,22 @@ export const editDataset = (
         dispatch(hideManageDatasetModal());
     });
 
+export const reFetchDataset = (run_number, dataset_name) =>
+    error_handler(async dispatch => {
+        let { data: dataset } = await axios.post(
+            `${api_url}/datasets/get_dataset`,
+            {
+                run_number,
+                dataset_name
+            }
+        );
+        dataset = formatDatasets([dataset])[0];
+        dispatch({
+            type: FIND_AND_REPLACE_DATASETS,
+            payload: [dataset]
+        });
+    });
+
 const formatDatasets = datasets => {
     return datasets.map(dataset => ({
         ...dataset.dataset_attributes,

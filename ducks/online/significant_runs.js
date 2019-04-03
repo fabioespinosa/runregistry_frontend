@@ -4,7 +4,7 @@ import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
 import { error_handler } from '../../utils/error_handlers';
 import { hideManageRunModal } from './ui';
-const EDIT_RUN = 'EDIT_RUN';
+import { EDIT_RUN } from './runs';
 const FILTER_RUNS = 'FILTER_SIGNIFICANT_RUNS';
 
 export const filterRuns = (page_size, page, sortings, filtered) =>
@@ -19,51 +19,6 @@ export const filterRuns = (page_size, page, sortings, filtered) =>
             type: FILTER_RUNS,
             payload: runs
         });
-    });
-
-export const editRun = (run_number, components) =>
-    error_handler(async (dispatch, getState) => {
-        let { data: run } = await axios.put(
-            `${api_url}/runs/id_run/${run_number}`,
-            components,
-            auth(getState)
-        );
-        run = formatRuns([run])[0];
-        dispatch({ type: EDIT_RUN, payload: run });
-        dispatch(hideManageRunModal());
-    });
-
-export const markSignificant = original_run =>
-    error_handler(async (dispatch, getState) => {
-        let { data: run } = await axios.post(
-            `${api_url}/runs/mark_significant`,
-            { original_run },
-            auth(getState)
-        );
-        run = formatRuns([run])[0];
-        dispatch({ type: EDIT_RUN, payload: run });
-    });
-
-export const moveRun = (original_run, from_state, to_state) =>
-    error_handler(async (dispatch, getState) => {
-        let { data: run } = await axios.post(
-            `${api_url}/runs/move_run/${from_state}/${to_state}`,
-            { original_run, to_state },
-            auth(getState)
-        );
-        run = formatRuns([run])[0];
-        dispatch({ type: EDIT_RUN, payload: run });
-    });
-
-export const refreshRun = id_run =>
-    error_handler(async (dispatch, getState) => {
-        const { data: run } = await axios.post(
-            `${api_url}/runs/refresh_run/${id_run}`,
-            {},
-            auth(getState)
-        );
-        dispatch({ type: EDIT_RUN, payload: run });
-        return run;
     });
 
 const INITIAL_STATE = {

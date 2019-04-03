@@ -64,12 +64,3 @@ const findAndReplaceHelper = (datasets, new_datasets) => {
     });
     return datasets;
 };
-
-const formatDatasets = datasets => {
-    return datasets.map(dataset => ({
-        ...dataset.dataset_attributes,
-        ...dataset,
-        Run: dataset.Run.rr_attributes,
-        triplet_summary: dataset.DatasetTripletCache.triplet_summary
-    }));
-};

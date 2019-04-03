@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
-import { Select, Input, Button, InputNumber } from 'antd';
+import { Input, Button, InputNumber } from 'antd';
 import Swal from 'sweetalert2';
+import { reFetchDataset } from '../../../ducks/offline/datasets';
+import { reFetchRun } from '../../../ducks/online/runs';
 import { addLumisectionRange } from '../../../ducks/online/lumisections';
 import BarPlot from './BarPlot';
 const { TextArea } = Input;
-const { Option, OptGroup } = Select;
 
 class EditComponent extends Component {
     constructor(props) {
         super(props);
-        let { lumisection_ranges, component } = this.props;
-        // Filter the lumisections corresponding to this component:
+        let { lumisection_ranges } = this.props;
         lumisection_ranges = lumisection_ranges || [];
         const ls_ranges_lengths = { title: 'LS' };
         lumisection_ranges.forEach(range => {
@@ -88,6 +88,14 @@ class EditComponent extends Component {
                                     '',
                                     'success'
                                 );
+                                if (dataset_name === 'online') {
+                                    await this.props.reFetchRun(run_number);
+                                } else {
+                                    await this.props.reFetchDataset(
+                                        run_number,
+                                        dataset_name
+                                    );
+                                }
                             }}
                             render={({
                                 values,
@@ -257,5 +265,5 @@ class EditComponent extends Component {
 
 export default connect(
     null,
-    { addLumisectionRange }
+    { addLumisectionRange, reFetchDataset, reFetchRun }
 )(EditComponent);

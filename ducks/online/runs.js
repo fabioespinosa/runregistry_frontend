@@ -4,8 +4,9 @@ import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
 import { error_handler } from '../../utils/error_handlers';
 import { hideManageRunModal } from './ui';
-const EDIT_RUN = 'EDIT_RUN';
+export const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
+const FIND_AND_REPLACE_RUN = 'FIND_AND_REPLACE_RUN';
 
 export const filterRuns = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
@@ -55,13 +56,28 @@ export const moveRun = (original_run, from_state, to_state) =>
         dispatch({ type: EDIT_RUN, payload: run });
     });
 
-export const refreshRun = id_run =>
+// refreshRun will refresh the lumisections inside the run from OMS
+export const refreshRun = run_number =>
     error_handler(async (dispatch, getState) => {
-        const { data: run } = await axios.post(
-            `${api_url}/runs/refresh_run/${id_run}`,
+        let { data: run } = await axios.post(
+            `${api_url}/runs/refresh_run/${run_number}`,
             {},
             auth(getState)
         );
+        run = formatRuns([run])[0];
+        dispatch({ type: EDIT_RUN, payload: run });
+        return run;
+    });
+
+// reFetch run will just refetch a run
+export const reFetchRun = run_number =>
+    error_handler(async (dispatch, getState) => {
+        let { data: run } = await axios.get(
+            `${api_url}/runs/${run_number}`,
+            {},
+            auth(getState)
+        );
+        run = formatRuns([run])[0];
         dispatch({ type: EDIT_RUN, payload: run });
         return run;
     });
