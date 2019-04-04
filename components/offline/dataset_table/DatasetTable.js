@@ -25,14 +25,44 @@ class DatasetTable extends Component {
         this.setState({ filterable: !this.state.filterable });
 
     async componentDidMount() {
-        this.setState({ loading: true });
-        await this.props.filterEditableDatasets(
-            this.defaultPageSize,
-            0,
-            [],
-            {}
-        );
-        this.setState({ loading: false });
+        // If we are in the 'cycles', we rather let the Cycles.js component handle the filtering:
+        const {
+            router: {
+                query: { section }
+            }
+        } = this.props;
+        if (section !== 'cycles') {
+            this.setState({ loading: true });
+            await this.props.filterEditableDatasets(
+                this.defaultPageSize,
+                0,
+                [],
+                {}
+            );
+            this.setState({ loading: false });
+        }
+    }
+    async componentDidUpdate(prevProps) {
+        const {
+            router: {
+                query: { section, workspace }
+            }
+        } = this.props;
+        const previous_query = prevProps.router.query;
+        if (
+            section !== 'cycles' &&
+            (previous_query.section !== section ||
+                previous_query.workspace !== workspace)
+        ) {
+            this.setState({ loading: true });
+            await this.props.filterEditableDatasets(
+                this.defaultPageSize,
+                0,
+                [],
+                {}
+            );
+            this.setState({ loading: false });
+        }
     }
 
     convertFiltersToObject = filters => {
@@ -70,6 +100,7 @@ class DatasetTable extends Component {
             [],
             {}
         );
+        this.setState({ loading: false });
     };
 
     // When a user sorts by any field, we want to preserve the filters:

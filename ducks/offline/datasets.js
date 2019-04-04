@@ -9,6 +9,7 @@ export const FILTER_EDITABLE_DATASETS = 'FILTER_EDITABLE_DATASETS';
 export const FILTER_WAITING_DATASETS = 'FILTER_WAITING_DATASETS';
 export const FIND_AND_REPLACE_DATASETS = 'FIND_AND_REPLACE_DATASETS';
 export const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
+export const CLEAR_DATASETS = 'CLEAR_DATASETS';
 
 // endpoint can be either waiting_list or editable
 export const filterEditableDatasets = (page_size, page, sortings, filter) =>
@@ -95,6 +96,10 @@ export const reFetchDataset = (run_number, dataset_name) =>
             payload: dataset
         });
     });
+
+export const clearDatasets = () => ({
+    type: CLEAR_DATASETS
+});
 
 export const formatDatasets = datasets => {
     return datasets.map(dataset => ({

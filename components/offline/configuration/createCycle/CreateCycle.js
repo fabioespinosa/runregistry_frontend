@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import moment from 'moment';
 import { api_url } from '../../../../config/config';
 import { createCycle } from '../../../../ducks/offline/cycles';
-import { hideCreateCycleModal } from '../../../../ducks/offline/ui';
+import { hideConfigurationModal } from '../../../../ducks/offline/ui';
 
 class CreateCycle extends Component {
     state = {
@@ -38,7 +38,7 @@ class CreateCycle extends Component {
     }
 
     createNewCycle = async () => {
-        const { workspaces, createCycle, hideCreateCycleModal } = this.props;
+        const { workspaces, createCycle, hideConfigurationModal } = this.props;
         const { deadline } = this.state;
         const selected_run_numbers = this.getSelectedRunNumbers().map(
             run_number => ({
@@ -55,7 +55,7 @@ class CreateCycle extends Component {
             deadline,
             cycle_attributes
         });
-        hideCreateCycleModal();
+        hideConfigurationModal();
         await Swal(`Cycle created`, '', 'success');
     };
 
@@ -152,5 +152,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { createCycle, hideCreateCycleModal }
+    { createCycle, hideConfigurationModal }
 )(CreateCycle);

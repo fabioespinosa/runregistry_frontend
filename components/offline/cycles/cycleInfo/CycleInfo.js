@@ -40,10 +40,13 @@ class CycleInfo extends Component {
                     </strong>
                     <br />
                     <br />
-                    {selected_cycle.Runs.length} run(s) in the cycle:{' '}
-                    {selected_cycle.Runs.map(
-                        ({ run_number }) => run_number
-                    ).toString()}
+                    {selected_cycle.datasets.length} dataset(s) in the cycle:{' '}
+                    {selected_cycle.datasets
+                        .map(
+                            ({ run_number, name }) =>
+                                `(run: ${run_number}, name: ${name}) `
+                        )
+                        .toString()}
                     <br />
                     {selected_cycle.cycle_attributes[
                         `${workspace.toLowerCase()}_state`

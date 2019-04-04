@@ -7,6 +7,7 @@ import ComponentClassifierConfiguration from './componentClassifierConfiguration
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import DatasetCopy from './datasetCopy/DatasetCopy';
+import CreateCycle from './createCycle/CreateCycle';
 
 class ConfigurationModal extends Component {
     render() {
@@ -24,14 +25,16 @@ class ConfigurationModal extends Component {
             column_configuration: 'Add or remove columns from workspace',
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
-            dataset_copy: 'Copy datasets'
+            dataset_copy: 'Copy datasets',
+            create_cycle: 'Create cycle'
         };
         const modal_types = {
             dataset_classifiers: <DatasetClassifierConfiguration />,
             dataset_component_classifiers: <ComponentClassifierConfiguration />,
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
-            dataset_copy: <DatasetCopy />
+            dataset_copy: <DatasetCopy />,
+            create_cycle: <CreateCycle />
         };
         return (
             <div>

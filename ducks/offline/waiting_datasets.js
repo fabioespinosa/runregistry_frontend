@@ -2,7 +2,8 @@ import {
     FILTER_WAITING_DATASETS,
     EDIT_DATASET,
     FIND_AND_REPLACE_DATASETS,
-    TOGGLE_TABLE_FILTERS
+    TOGGLE_TABLE_FILTERS,
+    CLEAR_DATASETS
 } from './datasets';
 
 const INITIAL_STATE = {
@@ -30,6 +31,8 @@ export default function(state = INITIAL_STATE, action) {
             };
         case TOGGLE_TABLE_FILTERS:
             return { ...state, filterable: !state.filterable };
+        case CLEAR_DATASETS:
+            return INITIAL_STATE;
         default:
             return state;
     }
