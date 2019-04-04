@@ -64,12 +64,7 @@ class DatasetTable extends Component {
     // Navigate entirely to a route without filters (when clicking remove filters)
     removeFilters = async () => {
         this.setState({ filters: [], sortings: [] });
-        await this.props.filterWaitingDatasets(
-            this.defaultPageSize,
-            0,
-            [],
-            filters
-        );
+        await this.props.filterWaitingDatasets(this.defaultPageSize, 0, [], {});
     };
 
     // When a user sorts by any field, we want to preserve the filters:

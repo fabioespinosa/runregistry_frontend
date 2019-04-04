@@ -130,8 +130,8 @@ class EditRunLumisections extends Component {
                             must appear in DQM GUI first
                         </i>
                         . <br /> <br />
-                        You can mark overwrite this by clicking 'move' (directly
-                        in the table)
+                        You can overwrite this by clicking 'move' (directly in
+                        the table)
                         <br />
                         <br />
                         This is an automatic process and every 5 minutes, DQM

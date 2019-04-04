@@ -91,17 +91,19 @@ export const reFetchDataset = (run_number, dataset_name) =>
         );
         dataset = formatDatasets([dataset])[0];
         dispatch({
-            type: FIND_AND_REPLACE_DATASETS,
-            payload: [dataset]
+            type: EDIT_DATASET,
+            payload: dataset
         });
     });
 
-const formatDatasets = datasets => {
+export const formatDatasets = datasets => {
     return datasets.map(dataset => ({
         ...dataset.dataset_attributes,
         ...dataset,
         Run: dataset.Run.rr_attributes,
-        triplet_summary: dataset.DatasetTripletCache.triplet_summary
+        triplet_summary: dataset.DatasetTripletCache
+            ? dataset.DatasetTripletCache.triplet_summary
+            : {}
     }));
 };
 

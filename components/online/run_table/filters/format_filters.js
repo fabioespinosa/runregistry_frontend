@@ -14,7 +14,25 @@ const column_types = {
 const format_filters = original_filters => {
     const column_filters = {};
     original_filters.forEach(({ id, value }) => {
-        value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
+        if (
+            id.includes('_triplet') &&
+            [
+                'GOOD',
+                'STANDBY',
+                'BAD',
+                'NOTSET',
+                'NO VALUE FOUND',
+                'EMPTY'
+            ].includes(value)
+        ) {
+            column_filters[`triplet_summary.${id}.${value}`] = { '>': 0 };
+        }
+    });
+    original_filters = original_filters.filter(
+        ({ id }) => !id.includes('_triplet')
+    );
+    original_filters.forEach(({ id, value }) => {
+        value = value.replace(/,/g, ' '); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
         const criteria = value.split(' ').filter(arg => arg !== '');
         let query = {};
@@ -33,7 +51,7 @@ const format_filters = original_filters => {
                 criteria.unshift('=');
             }
         }
-        let multiple_ids = false;
+        let multiple_runnumbers = false;
         // Special case if its for id runs  separated by commas: 325334, 234563
         if (criteria.length > 1) {
             if (!isNaN(criteria[0]) && !isNaN(criteria[1])) {
@@ -43,14 +61,14 @@ const format_filters = original_filters => {
                     };
                 });
                 query = { or };
-                multiple_ids = true;
+                multiple_runnumbers = true;
             }
         }
         // Format And/Or up to three levels:
-        if (criteria.length === 2 && !multiple_ids) {
+        if (criteria.length === 2 && !multiple_runnumbers) {
             query = { [criteria[0]]: criteria[1] };
         }
-        if (criteria.length === 5 && !multiple_ids) {
+        if (criteria.length === 5 && !multiple_runnumbers) {
             query = {
                 [criteria[2]]: [
                     { [criteria[0]]: criteria[1] },
@@ -58,7 +76,7 @@ const format_filters = original_filters => {
                 ]
             };
         }
-        if (criteria.length === 8 && !multiple_ids) {
+        if (criteria.length === 8 && !multiple_runnumbers) {
             query = {
                 [criteria[5]]: [
                     { [criteria[6]]: criteria[7] },

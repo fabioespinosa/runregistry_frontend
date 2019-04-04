@@ -68,7 +68,7 @@ class DatasetTable extends Component {
             this.defaultPageSize,
             0,
             [],
-            filters
+            {}
         );
     };
 

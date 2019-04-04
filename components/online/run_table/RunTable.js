@@ -63,6 +63,7 @@ class RunTable extends Component {
     removeFilters = async () => {
         this.setState({ filters: [], sortings: [] });
         await this.props.filterRuns(this.defaultPageSize, 0, [], {});
+        this.setState({ loading: false });
     };
 
     // When a user sorts by any field, we want to preserve the filters:

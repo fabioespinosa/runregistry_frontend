@@ -2,7 +2,7 @@ import axios from 'axios';
 import { api_url } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 import auth from '../../auth/auth';
-import { FIND_AND_REPLACE_DATASETS } from './datasets';
+import { FIND_AND_REPLACE_DATASETS, formatDatasets } from './datasets';
 
 export const duplicateDatasets = ({
     target_dataset_name,
@@ -11,7 +11,7 @@ export const duplicateDatasets = ({
 }) =>
     error_handler(async (dispatch, getState) => {
         const current_filter = getState().offline.editable_datasets.filter;
-        const { data: datasets } = await axios.post(
+        let { data: datasets } = await axios.post(
             `${api_url}/dc_tools/duplicate_datasets`,
             {
                 filter: current_filter,
@@ -21,6 +21,7 @@ export const duplicateDatasets = ({
             },
             auth(getState)
         );
+        datasets = formatDatasets(datasets);
         dispatch({
             type: FIND_AND_REPLACE_DATASETS,
             payload: datasets

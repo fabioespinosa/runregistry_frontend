@@ -13,6 +13,25 @@ const column_types = {
 };
 const format_filters = original_filters => {
     const column_filters = {};
+    // '-' is an indication of a status component
+    original_filters.forEach(({ id, value }) => {
+        if (
+            id.includes('-') &&
+            [
+                'GOOD',
+                'STANDBY',
+                'BAD',
+                'NOTSET',
+                'NO VALUE FOUND',
+                'EMPTY'
+            ].includes(value)
+        ) {
+            column_filters[`triplet_summary.${id}.${value}`] = {
+                '>': 0
+            };
+        }
+    });
+    original_filters = original_filters.filter(({ id }) => !id.includes('-'));
     original_filters.forEach(({ id, value }) => {
         value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
@@ -43,7 +62,9 @@ const format_filters = original_filters => {
         if (criteria.length > 1) {
             if (!isNaN(criteria[0]) && !isNaN(criteria[1])) {
                 const or = criteria.map(run_number => {
-                    return { '=': run_number };
+                    return {
+                        '=': run_number
+                    };
                 });
                 query = {
                     or
@@ -53,24 +74,36 @@ const format_filters = original_filters => {
         }
         // Format And/Or up to three levels:
         if (criteria.length === 2 && !multiple_ids) {
-            query = { [criteria[0]]: criteria[1] };
+            query = {
+                [criteria[0]]: criteria[1]
+            };
         }
         if (criteria.length === 5 && !multiple_ids) {
             query = {
                 [criteria[2]]: [
-                    { [criteria[0]]: criteria[1] },
-                    { [criteria[3]]: criteria[4] }
+                    {
+                        [criteria[0]]: criteria[1]
+                    },
+                    {
+                        [criteria[3]]: criteria[4]
+                    }
                 ]
             };
         }
         if (criteria.length === 8 && !multiple_ids) {
             query = {
                 [criteria[5]]: [
-                    { [criteria[6]]: criteria[7] },
+                    {
+                        [criteria[6]]: criteria[7]
+                    },
                     {
                         [criteria[2]]: [
-                            { [criteria[0]]: criteria[1] },
-                            { [criteria[3]]: criteria[4] }
+                            {
+                                [criteria[0]]: criteria[1]
+                            },
+                            {
+                                [criteria[3]]: criteria[4]
+                            }
                         ]
                     }
                 ]

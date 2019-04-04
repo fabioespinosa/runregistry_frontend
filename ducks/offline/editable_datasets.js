@@ -47,18 +47,20 @@ const findId = (array, run_number, dataset_name) => {
             return i;
         }
     }
+    return null;
 };
 
 const editDatasetHelper = (datasets, new_dataset) => {
     const index = findId(datasets, new_dataset.run_number, new_dataset.name);
-    if (typeof index !== 'undefined') {
+    if (index !== null) {
         return [
             ...datasets.slice(0, index),
             new_dataset,
             ...datasets.slice(index + 1)
         ];
     }
-    return datasets;
+    // If it didn't find it, it means it was just created:
+    return [new_dataset, ...datasets];
 };
 
 const findAndReplaceHelper = (datasets, new_datasets) => {

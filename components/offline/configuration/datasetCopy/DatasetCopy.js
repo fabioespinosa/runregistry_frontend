@@ -59,9 +59,7 @@ class DuplicateDatasets extends Component {
                         }
                         await this.props.duplicateDatasets(values);
                         await Swal(
-                            `Component's synced for ${
-                                datasets.length
-                            } datasets`,
+                            `Datasets duplicated in the selected workspaces`,
                             '',
                             'success'
                         );

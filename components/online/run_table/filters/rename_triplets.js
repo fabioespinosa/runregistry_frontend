@@ -10,7 +10,11 @@ const rename_triplets = (original_criteria, filtering) => {
         if (rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
             new_filter.id = `rr_attributes.${filter.id}`;
         }
-        if (!rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
+        if (
+            !rr_attributes.includes(filter.id) &&
+            !filter.id.includes('.') &&
+            !filter.id.includes('_triplet')
+        ) {
             new_filter.id = `oms_attributes.${filter.id}`;
         }
 
@@ -18,7 +22,6 @@ const rename_triplets = (original_criteria, filtering) => {
             new_filter.value = filter.value.toUpperCase();
         }
         if (filter.id.includes('_triplet')) {
-            new_filter.id = `${filter.id}.status`;
             if (filtering) {
                 new_filter.value = filter.value.toUpperCase();
             }
