@@ -88,7 +88,9 @@ class Cycles extends Component {
                                     style={{
                                         backgroundColor: isSelected
                                             ? 'rgba(9,30,66,0.08)'
-                                            : ''
+                                            : '',
+                                        paddingLeft: '15px',
+                                        paddingRight: '5px'
                                         // backgroundColor:
                                         //     workspace_status === 'pending'
                                         //         ? 'rgba(200,90,50,0.1)'
@@ -137,7 +139,7 @@ class Cycles extends Component {
                 <style jsx>{`
                     .cycles {
                         margin-right: 20px;
-                        min-width: 110px;
+                        min-width: 115px;
                     }
                     .cycle_list {
                         height: 80vh;
