@@ -27,7 +27,7 @@ class CycleInfo extends Component {
                     <h3>
                         Showing Datasets from Cycle {selected_cycle.id_cycle}{' '}
                     </h3>
-                    Cycle created in:{' '}
+                    Cycle created on:{' '}
                     {moment(selected_cycle.createdAt).format(
                         'dddd, MMMM Do YYYY'
                     )}
@@ -40,13 +40,7 @@ class CycleInfo extends Component {
                     </strong>
                     <br />
                     <br />
-                    {selected_cycle.datasets.length} dataset(s) in the cycle:{' '}
-                    {selected_cycle.datasets
-                        .map(
-                            ({ run_number, name }) =>
-                                `(run: ${run_number}, name: ${name}) `
-                        )
-                        .toString()}
+                    {selected_cycle.datasets.length} dataset(s) in the cycle
                     <br />
                     {selected_cycle.cycle_attributes[
                         `${workspace.toLowerCase()}_state`

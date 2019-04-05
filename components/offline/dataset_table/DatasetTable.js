@@ -49,12 +49,13 @@ class DatasetTable extends Component {
             }
         } = this.props;
         const previous_query = prevProps.router.query;
+        // Navigates between workspaces, we refetch and remove filters
         if (
             section !== 'cycles' &&
             (previous_query.section !== section ||
                 previous_query.workspace !== workspace)
         ) {
-            this.setState({ loading: true });
+            this.setState({ loading: true, filters: [], sortings: [] });
             await this.props.filterEditableDatasets(
                 this.defaultPageSize,
                 0,
@@ -62,6 +63,10 @@ class DatasetTable extends Component {
                 {}
             );
             this.setState({ loading: false });
+        }
+        // Navigates to cycles, we remove the previous filters:
+        if (previous_query.section !== 'cycles' && section === 'cycles') {
+            this.setState({ filters: [], sortings: [] });
         }
     }
 
@@ -127,6 +132,9 @@ class DatasetTable extends Component {
     };
 
     render() {
+        const {
+            query: { section }
+        } = this.props.router;
         const { filters, filterable, loading } = this.state;
         const {
             workspace,
@@ -152,8 +160,9 @@ class DatasetTable extends Component {
         const filter = filters.length > 0;
         return (
             <div>
-                Editable datasets (already appeared in DQM GUI, or forcefully
-                moved down):
+                {section === 'cycles'
+                    ? 'Datasets in cycle:'
+                    : 'Editable datasets (already appeared in DQM GUI, or forcefully moved down):'}
                 {filter ? (
                     <div
                         style={{

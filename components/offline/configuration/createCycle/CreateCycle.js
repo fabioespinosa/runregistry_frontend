@@ -11,47 +11,19 @@ import { hideConfigurationModal } from '../../../../ducks/offline/ui';
 
 class CreateCycle extends Component {
     state = {
-        run_numbers: [],
-        selected_run_numbers: {},
         deadline: moment()
     };
-    async componentDidMount() {
-        const { data: run_numbers } = await axios.get(
-            `${api_url}/cycles/signed_off_run_numbers`
-        );
-        this.setState({
-            run_numbers
-        });
-    }
-
-    toggleRun(run_number) {
-        const newSelectedRuns = Object.assign(
-            {},
-            this.state.selected_run_numbers
-        );
-        newSelectedRuns[run_number] = !this.state.selected_run_numbers[
-            run_number
-        ];
-        this.setState({
-            selected_run_numbers: newSelectedRuns
-        });
-    }
 
     createNewCycle = async () => {
         const { workspaces, createCycle, hideConfigurationModal } = this.props;
         const { deadline } = this.state;
-        const selected_run_numbers = this.getSelectedRunNumbers().map(
-            run_number => ({
-                run_number
-            })
-        );
+
         const cycle_attributes = { global_state: 'pending' };
         workspaces.forEach(({ workspace }) => {
             cycle_attributes[`${workspace}_state`] = 'pending';
         });
 
         await createCycle({
-            runs: selected_run_numbers,
             deadline,
             cycle_attributes
         });
@@ -59,63 +31,38 @@ class CreateCycle extends Component {
         await Swal(`Cycle created`, '', 'success');
     };
 
-    getSelectedRunNumbers() {
-        const run_numbers = [];
-        for (const [key, val] of Object.entries(
-            this.state.selected_run_numbers
-        )) {
-            if (val) {
-                run_numbers.push(key);
-            }
-        }
-        return run_numbers;
-    }
     render() {
-        const { run_numbers } = this.state;
-        const columns = [
-            {
-                Header: 'Run Number',
-                accessor: 'run_number'
-            },
-            {
-                Header: 'Selected',
-                id: 'selected',
-                accessor: '',
-                Cell: ({ original }) => {
-                    return (
-                        <input
-                            type="checkbox"
-                            className="checkbox"
-                            checked={
-                                this.state.selected_run_numbers[
-                                    original.run_number
-                                ] === true
-                            }
-                            onChange={() => this.toggleRun(original.run_number)}
-                        />
-                    );
-                }
-            }
-        ];
+        const { datasets, count, filter, workspaces } = this.props;
+
         return (
             <div>
                 <h3>Add datasets to cycle</h3>
                 <br />
                 <div style={{ display: 'flex' }}>
-                    <ReactTable
-                        style={{
-                            width: 300
-                        }}
-                        columns={columns}
-                        data={run_numbers}
-                    />
                     <div style={{ marginLeft: '10px' }}>
-                        <div>
-                            Selected Runs:{' '}
-                            {this.getSelectedRunNumbers()
-                                .reverse()
-                                .toString() || <i>No run numbers selected</i>}
-                        </div>
+                        <h5
+                            style={{
+                                textAlign: 'center',
+                                color: 'red'
+                            }}
+                        >
+                            {count} Datasets Selected
+                        </h5>
+                        <h5>
+                            {Object.keys(filter).length === 0
+                                ? `WARNING: NO FILTER, APPLYING TO ALL DATASETS (${count}). To make a filter, do it in the lower table (Editable datasets)`
+                                : `With filter: ${JSON.stringify(filter)}`}
+                        </h5>
+                        <br />
+                        Datasets Selected:
+                        <ul>
+                            {datasets.map(({ name, run_number }) => (
+                                <li>
+                                    Name: <strong>{name}</strong>, Run number:{' '}
+                                    <strong>{run_number}</strong>
+                                </li>
+                            ))}
+                        </ul>
                         <br />
                         <div>
                             Deadline of cycle:{' '}
@@ -145,7 +92,11 @@ class CreateCycle extends Component {
 }
 
 const mapStateToProps = state => {
+    const { datasets, count, filter } = state.offline.editable_datasets;
     return {
+        datasets,
+        count,
+        filter,
         workspaces: state.offline.workspace.workspaces
     };
 };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { List, Button } from 'antd';
+import { List, Badge } from 'antd';
 import moment from 'moment';
 import { getCycles, selectCycle } from '../../../ducks/offline/cycles';
 import {
@@ -11,7 +11,8 @@ import {
 
 class Cycles extends Component {
     async componentDidMount() {
-        await this.props.getCycles();
+        const { workspace } = this.props;
+        await this.props.getCycles(workspace);
         const { cycles } = this.props;
         if (cycles.length > 0) {
             this.displayCycle(cycles[0]);
@@ -42,11 +43,26 @@ class Cycles extends Component {
         this.props.filterWaitingDatasets(5, 0, [], filter);
         this.props.filterEditableDatasets(20, 0, [], filter);
     };
+    componentDidUpdate(prevProps) {
+        const { selected_cycle } = this.props;
+        if (prevProps.selected_cycle === null && selected_cycle) {
+            this.displayCycle(selected_cycle);
+        }
+        if (
+            selected_cycle !== null &&
+            prevProps.selected_cycle &&
+            selected_cycle.cycle_id !== prevProps.selected_cycle.cycle_id
+        ) {
+            this.displayCycle(selected_cycle);
+        }
+    }
     render() {
         const { cycles, selected_cycle, workspace } = this.props;
         return (
             <div className="cycles">
-                <h3>Certification Cycles</h3>
+                <center>
+                    <h3>Certif. Cycles</h3>
+                </center>
                 <div className="cycle_list">
                     <List
                         itemLayout="horizontal"
@@ -70,39 +86,48 @@ class Cycles extends Component {
                                         cycle
                                     )}
                                     style={{
-                                        backgroundColor:
-                                            workspace_status === 'pending'
-                                                ? 'rgba(200,90,50,0.1)'
-                                                : '',
-                                        border: isSelected
-                                            ? '0.5px solid black'
-                                            : '',
-                                        borderRadius: '5px'
+                                        backgroundColor: isSelected
+                                            ? 'rgba(9,30,66,0.08)'
+                                            : ''
+                                        // backgroundColor:
+                                        //     workspace_status === 'pending'
+                                        //         ? 'rgba(200,90,50,0.1)'
+                                        //         : '',
+                                        // border: isSelected
+                                        //     ? '0.5px solid black'
+                                        //     : '0.5px solid silver',
+                                        // borderRadius: '5px'
                                     }}
                                 >
                                     <List.Item.Meta
                                         title={
-                                            <a
-                                                style={
-                                                    isSelected
-                                                        ? {
-                                                              color: '#1890ff',
-                                                              textDecoration:
-                                                                  'underline',
-                                                              fontSize: 'bold'
-                                                          }
-                                                        : {}
-                                                }
-                                            >
-                                                {cycle.id_cycle} - Due:{' '}
-                                                {moment(cycle.deadline).format(
-                                                    'dddd, MMMM Do YYYY'
-                                                )}
-                                            </a>
+                                            <div>
+                                                <Badge
+                                                    status={
+                                                        workspace_status ===
+                                                        'completed'
+                                                            ? 'success'
+                                                            : 'error'
+                                                    }
+                                                />{' '}
+                                                <a
+                                                    className="underline"
+                                                    style={
+                                                        isSelected
+                                                            ? {
+                                                                  color:
+                                                                      '#1890ff',
+                                                                  fontSize:
+                                                                      'bold'
+                                                              }
+                                                            : {}
+                                                    }
+                                                >
+                                                    Cycle {cycle.id_cycle}{' '}
+                                                </a>
+                                            </div>
                                         }
-                                        description={`Status: ${workspace_status}, Contains ${
-                                            cycle.datasets.length
-                                        } Dataset(s)`}
+                                        description=""
                                     />
                                 </List.Item>
                             );
@@ -111,10 +136,11 @@ class Cycles extends Component {
                 </div>
                 <style jsx>{`
                     .cycles {
-                        margin-right: 30px;
+                        margin-right: 20px;
+                        min-width: 110px;
                     }
                     .cycle_list {
-                        height: 500px;
+                        height: 80vh;
                         overflow-y: scroll;
                     }
                     .create_cycle {

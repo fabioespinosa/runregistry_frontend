@@ -62,6 +62,9 @@ class Page extends Component {
                     .recharts-tooltip-wrapper {
                         z-index: 3000;
                     }
+                    .underline:hover {
+                        text-decoration: underline;
+                    }
                 `}</style>
             </div>
         );

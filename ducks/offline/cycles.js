@@ -6,17 +6,20 @@ import auth from '../../auth/auth';
 const FETCH_CYCLES = 'FETCH_CYCLES';
 const SELECT_CYCLE = 'SELECT_CYCLE';
 
-export const getCycles = () =>
+export const getCycles = workspace =>
     error_handler(async dispatch => {
-        const { data: cycles } = await axios.get(`${api_url}/cycles`);
+        const { data: cycles } = await axios.get(
+            `${api_url}/cycles/${workspace}`
+        );
         dispatch({ type: FETCH_CYCLES, payload: cycles });
     });
 
-export const createCycle = new_cycle =>
+export const createCycle = ({ deadline, cycle_attributes }) =>
     error_handler(async (dispatch, getState) => {
+        const current_filter = getState().offline.editable_datasets.filter;
         const { data: cycle } = await axios.post(
             `${api_url}/cycles`,
-            new_cycle,
+            { deadline, cycle_attributes, filter: current_filter },
             auth(getState)
         );
         dispatch(getCycles());

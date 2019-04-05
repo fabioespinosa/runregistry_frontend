@@ -19,7 +19,6 @@ export default function(state = INITIAL_STATE, action) {
                 datasets: payload.datasets,
                 pages: payload.pages,
                 count: payload.count,
-                loading: false,
                 filter: action.filter
             };
         case EDIT_DATASET:

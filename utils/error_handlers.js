@@ -21,6 +21,6 @@ export const error_handler = (fn, error_message) => (...params) =>
                 swal_message.html = data.message;
             }
         }
-        console.log(err);
         Swal(swal_message);
+        throw 'Error';
     });

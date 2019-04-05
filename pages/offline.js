@@ -55,7 +55,7 @@ class Offline extends Component {
                 >
                     <div style={{ display: 'flex' }}>
                         {section === 'cycles' && <Cycles />}
-                        <div>
+                        <div style={{ overflowX: 'scroll' }}>
                             {selected_cycle && section === 'cycles' && (
                                 <CycleInfo
                                     selected_cycle={selected_cycle}
@@ -64,7 +64,9 @@ class Offline extends Component {
                             )}
                             <ManageDatasetModal />
                             <LumisectionModal />
-                            <WaitingListDatasetTable defaultPageSize={5} />
+                            {section !== 'cycles' && (
+                                <WaitingListDatasetTable defaultPageSize={5} />
+                            )}
                             <DatasetTable defaultPageSize={20} />
                         </div>
                     </div>
