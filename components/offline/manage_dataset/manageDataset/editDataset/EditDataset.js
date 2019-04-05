@@ -33,7 +33,7 @@ class EditRunLumisections extends Component {
     });
     render() {
         const { dataset, workspaces } = this.props;
-        const current_workspace = this.props.workspace;
+        const current_workspace = this.props.workspace.toLowerCase();
         let components = [];
         if (current_workspace === 'global') {
             for (const [key, val] of Object.entries(
@@ -44,6 +44,11 @@ class EditRunLumisections extends Component {
                 });
             }
         } else {
+            certifiable_offline_components[current_workspace].forEach(
+                sub_name => {
+                    components.push(`${current_workspace}-${sub_name}`);
+                }
+            );
             workspaces.forEach(({ workspace, columns }) => {
                 if (workspace === current_workspace) {
                     columns.forEach(column => {
@@ -52,7 +57,6 @@ class EditRunLumisections extends Component {
                 }
             });
         }
-        console.log(components);
         return (
             <div>
                 {dataset[`${current_workspace}_state`] !== 'waiting dqm gui' ? (
@@ -189,7 +193,8 @@ class EditRunLumisections extends Component {
 
 const mapStateToProps = state => {
     return {
-        workspace: state.offline.workspace.workspace
+        workspace: state.offline.workspace.workspace,
+        workspaces: state.offline.workspace.workspaces
     };
 };
 
