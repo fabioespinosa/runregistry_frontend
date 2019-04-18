@@ -99,14 +99,6 @@ class Lumisections extends Component {
                 });
                 columns = [...columns, ...component_columns];
             } else {
-                // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
-                let all_columns_formatted = [];
-                workspaces.forEach(({ workspace, columns }) => {
-                    columns.forEach(column => {
-                        all_columns_formatted.push(`${workspace}-${column}`);
-                    });
-                });
-
                 // Now add the ones in global:
                 const global_columns = [];
                 for (const [key, val] of Object.entries(
@@ -116,6 +108,16 @@ class Lumisections extends Component {
                         global_columns.push(`${key}-${sub_name}`);
                     });
                 }
+                // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
+                let all_columns_formatted = [];
+                workspaces.forEach(({ workspace, columns }) => {
+                    columns.forEach(column => {
+                        const column_name = `${workspace}-${column}`;
+                        if (!global_columns.includes(column_name)) {
+                            all_columns_formatted.push(column_name);
+                        }
+                    });
+                });
 
                 all_columns_formatted = all_columns_formatted.concat(
                     global_columns

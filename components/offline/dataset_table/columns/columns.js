@@ -190,7 +190,10 @@ const column_generator = ({
     let all_columns_formatted = [];
     workspaces.forEach(({ workspace, columns }) => {
         columns.forEach(column => {
-            all_columns_formatted.push(`${workspace}-${column}`);
+            const column_name = `${workspace}-${column}`;
+            if (!global_columns.includes(column_name)) {
+                all_columns_formatted.push(column_name);
+            }
         });
     });
 

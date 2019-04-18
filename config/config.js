@@ -147,7 +147,6 @@ for (const [key, val] of Object.entries(offline_column_structure)) {
         columns.push(`${key}-${sub_column}`);
     });
 }
-exports.offline_column_structure = offline_column_structure;
 exports.offline_columns = columns;
 
 // MISING LOWLUMI:
@@ -163,7 +162,7 @@ exports.certifiable_offline_components = {
     hcal: ['hcal'],
     hlt: ['hlt'],
     jetmet: ['jetmet'],
-    l1t: ['l1tmu', 'l1tcalo'],
+    l1t: ['l1t', 'l1tmu', 'l1tcalo'],
     lumi: ['lumi'],
     muon: ['muon'],
     rpc: ['rpc'],

@@ -82,7 +82,7 @@ class Status extends Component {
                             triplet_summary={triplet_summary}
                         />
                     }
-                    trigger="hover"
+                    trigger="click"
                     title={`Comments in this component: ${comments.join(
                         ' , '
                     )}`}

@@ -9,10 +9,10 @@ const NEW_COMPONENT_CLASSIFIER = 'NEW_COMPONENT_CLASSIFIER';
 const EDIT_COMPONENT_CLASSIFIER = 'EDIT_COMPONENT_CLASSIFIER';
 const DELETE_COMPONENT_CLASSIFIER = 'DELETE_COMPONENT_CLASSIFIER';
 
-export const fetchComponentClassifiers = component =>
+export const fetchComponentClassifiers = component_id =>
     error_handler(async dispatch => {
         const { data: classifiers } = await axios.get(
-            `${api_url}/classifiers/offline_component/filter_by_component/${component}`
+            `${api_url}/classifiers/offline_component/filter_by_component/${component_id}`
         );
         dispatch({ type: FETCH_COMPONENT_CLASSIFIERS, payload: classifiers });
     });
@@ -31,8 +31,7 @@ export const newComponentClassifier = (
                 component,
                 // This are for testing:
                 priority: 1,
-                enabled: true,
-                category: 'class'
+                enabled: true
             },
             auth(getState)
         );

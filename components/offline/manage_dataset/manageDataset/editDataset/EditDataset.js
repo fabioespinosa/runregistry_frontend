@@ -44,11 +44,11 @@ class EditRunLumisections extends Component {
                 });
             }
         } else {
-            certifiable_offline_components[current_workspace].forEach(
-                sub_name => {
-                    components.push(`${current_workspace}-${sub_name}`);
-                }
-            );
+            // certifiable_offline_components[current_workspace].forEach(
+            //     sub_name => {
+            //         components.push(`${current_workspace}-${sub_name}`);
+            //     }
+            // );
             workspaces.forEach(({ workspace, columns }) => {
                 if (workspace === current_workspace) {
                     columns.forEach(column => {

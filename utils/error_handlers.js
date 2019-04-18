@@ -4,7 +4,7 @@ export const error_handler = (fn, error_message) => (...params) =>
     fn(...params).catch(err => {
         let swal_message = {
             type: 'error',
-            title: 'Something went wrong:',
+            title: 'Error:',
 
             text: error_message || err ? err.message : ''
         };
