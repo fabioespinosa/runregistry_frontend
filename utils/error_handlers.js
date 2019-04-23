@@ -2,6 +2,7 @@ import Swal from 'sweetalert2';
 
 export const error_handler = (fn, error_message) => (...params) =>
     fn(...params).catch(err => {
+        console.log(err);
         let swal_message = {
             type: 'error',
             title: 'Error:',

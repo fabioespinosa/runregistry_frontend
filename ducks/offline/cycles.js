@@ -8,6 +8,7 @@ const SELECT_CYCLE = 'SELECT_CYCLE';
 
 export const getCycles = workspace =>
     error_handler(async dispatch => {
+        console.log('get cycles');
         workspace = workspace.toLowerCase();
         const { data: cycles } = await axios.get(
             `${api_url}/cycles/${workspace}`
@@ -23,7 +24,8 @@ export const createCycle = ({ deadline, cycle_attributes }) =>
             { deadline, cycle_attributes, filter: current_filter },
             auth(getState)
         );
-        dispatch(getCycles());
+        const current_workspace = getState().offline.workspace.workspace;
+        dispatch(getCycles(current_workspace));
     });
 
 export const markCycleComplete = (id_cycle, workspace) =>
@@ -33,7 +35,8 @@ export const markCycleComplete = (id_cycle, workspace) =>
             { id_cycle },
             auth(getState)
         );
-        dispatch(getCycles());
+        const current_workspace = getState().offline.workspace.workspace;
+        dispatch(getCycles(current_workspace));
     });
 
 export const selectCycle = selected_cycle => ({
