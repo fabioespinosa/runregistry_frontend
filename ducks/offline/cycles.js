@@ -8,7 +8,6 @@ const SELECT_CYCLE = 'SELECT_CYCLE';
 
 export const getCycles = workspace =>
     error_handler(async dispatch => {
-        console.log('get cycles');
         workspace = workspace.toLowerCase();
         const { data: cycles } = await axios.get(
             `${api_url}/cycles/${workspace}`

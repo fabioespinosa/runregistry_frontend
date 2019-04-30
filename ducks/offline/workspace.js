@@ -10,19 +10,18 @@ const CHANGE_WORKSPACE = 'CHANGE_WORKSPACE';
 const ADD_COLUMN = 'ADD_COLUMN';
 const REMOVE_COLUMN = 'REMOVE_COLUMN';
 
-export const fetchWorkspaces = error_handler(
-    async (store, { workspace }, isServer) => {
+export const fetchWorkspaces = ({ workspace }) =>
+    error_handler(async (dispatch, getState) => {
         const { data: workspaces } = await axios.get(`${api_url}/workspaces`);
-        store.dispatch({
+        dispatch({
             type: FETCH_WORKSPACES,
             payload: workspaces
         });
-        store.dispatch({
+        dispatch({
             type: CHANGE_WORKSPACE,
             payload: workspace
         });
-    }
-);
+    });
 
 export const addColumn = (workspace, column) =>
     error_handler(async (dispatch, getState) => {

@@ -22,8 +22,16 @@ export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
         case INITIAL_INFO:
-            const { displayname, email, egroups, id } = payload;
-            return { ...state, displayname, email, egroups, id };
+            const { displayname, email, egroups, id, cookie } = payload;
+            return {
+                ...state,
+                displayname,
+                email,
+                egroups,
+                id,
+                // For use with OAUTH middleware:
+                cookie
+            };
         case INITIALIZE_ENVIRONMENT:
             return { ...state, environment: payload };
         default:

@@ -23,7 +23,12 @@ class Offline extends Component {
             initializeUser(store, query);
             initializeEnvironment(store);
         }
-        return fetchWorkspaces(store, query, isServer);
+    }
+    async componentDidMount() {
+        const {
+            router: { query }
+        } = this.props;
+        await this.props.fetchWorkspaces(query);
     }
     render() {
         const { router } = this.props;
@@ -86,6 +91,6 @@ const mapStateToProps = state => {
 export default withRouter(
     connect(
         mapStateToProps,
-        null
+        { fetchWorkspaces }
     )(Offline)
 );
