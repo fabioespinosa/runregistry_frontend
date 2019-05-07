@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { api_url } from '../../config/config';
+import { api_url, WAITING_DQM_GUI_CONSTANT } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 import { hideManageDatasetModal } from './ui';
 import auth from '../../auth/auth';
@@ -16,8 +16,27 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();
         const { data: datasets } = await axios.post(
-            `${api_url}/datasets/${workspace}/editable/${page}/`,
-            { page_size, sortings, filter },
+            `${api_url}/datasets_filtered_ordered`,
+            {
+                workspace,
+                page,
+                page_size,
+                sortings,
+                filter: {
+                    ...filter,
+                    // Online is the dataset we show in Online RR, we don't want to show it here:
+                    name: { '<>': 'online' },
+                    // For a dataset to be editable it must be either OPEN, SIGNOFF, or COMPLETED (ALL but waiting dqm gui)
+                    // ONLY THOSE OPEN SIGNOFF OR COMPLETED ARE SHOWN IN EDITABLE
+                    [`dataset_attributes.${workspace}_state`]: {
+                        or: [
+                            { '=': 'OPEN' },
+                            { '=': 'SIGNOFF' },
+                            { '=': 'COMPLETED' }
+                        ]
+                    }
+                }
+            },
             auth(getState)
         );
         datasets.datasets = formatDatasets(datasets.datasets);
@@ -33,8 +52,20 @@ export const filterWaitingDatasets = (page_size, page, sortings, filter) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();
         const { data: datasets } = await axios.post(
-            `${api_url}/datasets/${workspace}/waiting_list/${page}/`,
-            { page_size, sortings, filter },
+            `${api_url}/datasets_filtered_ordered`,
+            {
+                workspace,
+                page,
+                page_size,
+                sortings,
+                filter: {
+                    ...filter,
+                    // Online is the dataset we show in Online RR, we don't want to show it here:
+                    name: { '<>': 'online' },
+                    // For a dataset to be considered waiting, its state must be 'waiting dqm gui'
+                    [`dataset_attributes.${workspace}_state`]: WAITING_DQM_GUI_CONSTANT
+                }
+            },
             auth(getState)
         );
         datasets.datasets = formatDatasets(datasets.datasets);

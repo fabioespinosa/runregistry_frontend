@@ -86,8 +86,8 @@ const column_generator = ({
             id: 'significant',
             accessor: 'significant',
             maxWidth: 100,
-            filterable: significant_runs && filterable,
-            sortable: significant_runs,
+            filterable: !significant_runs && filterable,
+            sortable: !significant_runs,
             Cell: ({ original, value }) => (
                 <div style={{ textAlign: 'center' }}>
                     {value ? (

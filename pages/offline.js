@@ -4,7 +4,7 @@ import { withRouter } from 'next/router';
 import Link from 'next/link';
 import { Layout, Breadcrumb, Button } from 'antd';
 import moment from 'moment';
-import { fetchWorkspaces } from '../ducks/offline/workspace';
+import { CHANGE_WORKSPACE, fetchWorkspaces } from '../ducks/offline/workspace';
 import { initializeUser, initializeEnvironment } from '../ducks/info';
 import store from '../store/configure-store';
 import Page from '../layout/page';
@@ -18,10 +18,16 @@ import CycleInfo from '../components/offline/cycles/cycleInfo/CycleInfo';
 const { Content } = Layout;
 
 class Offline extends Component {
-    static getInitialProps({ store, query, isServer }) {
+    static async getInitialProps({ store, query, isServer }) {
         if (isServer) {
             initializeUser(store, query);
             initializeEnvironment(store);
+        }
+        if (!isServer) {
+            store.dispatch({
+                type: CHANGE_WORKSPACE,
+                payload: query.workspace
+            });
         }
     }
     async componentDidMount() {
@@ -30,6 +36,7 @@ class Offline extends Component {
         } = this.props;
         await this.props.fetchWorkspaces(query);
     }
+
     render() {
         const { router } = this.props;
         const {

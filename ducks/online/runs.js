@@ -6,13 +6,12 @@ import { error_handler } from '../../utils/error_handlers';
 import { hideManageRunModal } from './ui';
 export const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
-const FIND_AND_REPLACE_RUN = 'FIND_AND_REPLACE_RUN';
 
 export const filterRuns = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
         const { data: runs } = await axios.post(
-            `${api_url}/runs_filtered_ordered/${page}`,
-            { page_size, sortings, filter: filtered },
+            `${api_url}/runs_filtered_ordered`,
+            { page, page_size, sortings, filter: filtered },
             auth(getState)
         );
         runs.runs = formatRuns(runs.runs);

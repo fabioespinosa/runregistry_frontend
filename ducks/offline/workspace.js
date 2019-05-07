@@ -6,7 +6,7 @@ import { error_handler } from '../../utils/error_handlers';
 import auth from '../../auth/auth';
 
 const FETCH_WORKSPACES = 'FETCH_WORKSPACES';
-const CHANGE_WORKSPACE = 'CHANGE_WORKSPACE';
+export const CHANGE_WORKSPACE = 'CHANGE_WORKSPACE';
 const ADD_COLUMN = 'ADD_COLUMN';
 const REMOVE_COLUMN = 'REMOVE_COLUMN';
 

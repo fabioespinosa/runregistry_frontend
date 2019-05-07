@@ -10,8 +10,13 @@ const FILTER_RUNS = 'FILTER_SIGNIFICANT_RUNS';
 export const filterRuns = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
         const { data: runs } = await axios.post(
-            `${api_url}/significant_runs_filtered_ordered/${page}`,
-            { page_size, sortings, filter: filtered },
+            `${api_url}/runs_filtered_ordered`,
+            {
+                page,
+                page_size,
+                sortings,
+                filter: { ...filtered, 'rr_attributes.significant': true }
+            },
             auth(getState)
         );
         runs.runs = formatRuns(runs.runs);

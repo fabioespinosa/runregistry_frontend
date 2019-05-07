@@ -16,15 +16,15 @@ import { error_handler } from '../../../../../utils/error_handlers';
 
 class Lumisections extends Component {
     // shown_lumisections can be 'oms', 'run_registry', 'both'
-    state = { shown_lumisections: 'oms_lumisections', lumisections: [] };
+    state = { shown_lumisections: 'oms_lumisection', lumisections: [] };
     componentDidMount() {
-        this.fetchLumisections('oms_lumisections');
+        this.fetchLumisections('oms_lumisection');
     }
 
     fetchLumisections = error_handler(async endpoint => {
         const { run_number, dataset_name } = this.props;
         const { data: lumisections } = await axios.post(
-            `${api_url}/lumisections/${endpoint}`,
+            `${api_url}/lumisections/${endpoint}_ranges`,
             { run_number, dataset_name }
         );
         this.setState({
@@ -76,8 +76,8 @@ class Lumisections extends Component {
             }
         ];
         if (
-            shown_lumisections === 'rr_lumisections' ||
-            shown_lumisections === 'joint_lumisections'
+            shown_lumisections === 'rr_lumisection' ||
+            shown_lumisections === 'joint_lumisection'
         ) {
             if (dataset_name === 'online') {
                 let component_columns = components.map(component => ({
@@ -159,8 +159,8 @@ class Lumisections extends Component {
             }
         }
         if (
-            shown_lumisections === 'oms_lumisections' ||
-            shown_lumisections === 'joint_lumisections'
+            shown_lumisections === 'oms_lumisection' ||
+            shown_lumisections === 'joint_lumisection'
         ) {
             lumisection_attributes.forEach(attribute => {
                 columns.push({
@@ -192,13 +192,13 @@ class Lumisections extends Component {
                         value={this.state.shown_lumisections}
                         onChange={this.handleLumisectionsDisplayedChange}
                     >
-                        <Radio.Button value="oms_lumisections">
+                        <Radio.Button value="oms_lumisection">
                             OMS LUMISECTIONS
                         </Radio.Button>
-                        <Radio.Button value="rr_lumisections">
+                        <Radio.Button value="rr_lumisection">
                             RR LUMISECTIONS
                         </Radio.Button>
-                        <Radio.Button value="joint_lumisections">
+                        <Radio.Button value="joint_lumisection">
                             BOTH
                         </Radio.Button>
                     </Radio.Group>

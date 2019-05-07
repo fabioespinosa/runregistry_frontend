@@ -26,6 +26,7 @@ const config = {
 exports.config = config;
 
 exports.api_url = config[ENV]['api_url'];
+exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
 // If adding a new subsystem (like say adding ECAL), add it in components and in rr_attributes with the ending _triplet
 exports.components = [

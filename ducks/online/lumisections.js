@@ -9,7 +9,7 @@ const EDIT_LUMISECTIONS = 'EDIT_LUMISECTIONS';
 export const fetchJointLumisectionRanges = (run_number, dataset_name) =>
     error_handler(async dispatch => {
         const { data: lumisections } = await axios.post(
-            `${api_url}/lumisections/joint_lumisections`,
+            `${api_url}/lumisections/joint_lumisection_ranges`,
             { run_number, dataset_name }
         );
         dispatch({
@@ -21,7 +21,7 @@ export const fetchJointLumisectionRanges = (run_number, dataset_name) =>
 export const fetchOMSLumisectionRanges = run_number =>
     error_handler(async dispatch => {
         const { data: lumisections } = await axios.post(
-            `${api_url}/lumisections/oms_lumisections`,
+            `${api_url}/lumisections/oms_lumisection_ranges`,
             // OMS is always online:
             { run_number, dataset_name: 'online' }
         );
@@ -33,8 +33,9 @@ export const fetchOMSLumisectionRanges = run_number =>
 
 export const fetchRRLumisectionRanges = (run_number, dataset_name) =>
     error_handler(async dispatch => {
+        console.log('here');
         const { data: lumisections } = await axios.post(
-            `${api_url}/lumisections/rr_lumisections`,
+            `${api_url}/lumisections/rr_lumisection_ranges`,
             { run_number, dataset_name }
         );
         dispatch({
