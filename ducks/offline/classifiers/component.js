@@ -12,7 +12,7 @@ const DELETE_COMPONENT_CLASSIFIER = 'DELETE_COMPONENT_CLASSIFIER';
 export const fetchComponentClassifiers = component_id =>
     error_handler(async dispatch => {
         const { data: classifiers } = await axios.get(
-            `${api_url}/classifiers/offline_component/filter_by_component/${component_id}`
+            `${api_url}/classifiers/component/filter_by_component/${component_id}`
         );
         dispatch({ type: FETCH_COMPONENT_CLASSIFIERS, payload: classifiers });
     });
@@ -24,7 +24,7 @@ export const newComponentClassifier = (
 ) =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.post(
-            `${api_url}/classifiers/offline_component`,
+            `${api_url}/classifiers/component`,
             {
                 classifier: new_classifier,
                 status: status_selected,
@@ -44,7 +44,7 @@ export const newComponentClassifier = (
 export const deleteComponentClassifier = classifier_id =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.delete(
-            `${api_url}/classifiers/offline_component/${classifier_id}`,
+            `${api_url}/classifiers/component/${classifier_id}`,
             auth(getState)
         );
         dispatch({
@@ -56,7 +56,7 @@ export const deleteComponentClassifier = classifier_id =>
 export const editComponentClassifier = new_classifier =>
     error_handler(async (dispatch, getState) => {
         const { data: classifier } = await axios.put(
-            `${api_url}/classifiers/offline_component/${new_classifier.id}`,
+            `${api_url}/classifiers/component/${new_classifier.id}`,
             new_classifier,
             auth(getState)
         );

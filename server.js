@@ -16,20 +16,24 @@ app.prepare().then(() => {
 
     // Redirects primary url to runs/all
     server.get('/', (req, res) => {
-        res.redirect('/online');
+        res.redirect('/online/global');
+    });
+    server.get('/online', (req, res) => {
+        res.redirect('/online/global');
     });
     server.get('/offline', (req, res) => {
         res.redirect('/offline/workspaces/global');
     });
 
     //online:
-    server.get('/online', (req, res) => {
+    server.get('/online/:workspace', (req, res) => {
         req.params.type = 'online';
         const params = { ...req.headers, ...req.params, filters: req.query };
         app.render(req, res, `/online`, params);
     });
 
     // offline:
+    // section can be either datasets or cycles
     server.get('/offline/:section/:workspace', (req, res) => {
         req.params.type = 'offline';
         const params = { ...req.headers, ...req.params, filters: req.query };

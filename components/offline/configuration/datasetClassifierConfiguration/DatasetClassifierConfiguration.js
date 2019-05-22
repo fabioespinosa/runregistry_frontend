@@ -26,7 +26,6 @@ class DatasetClassifierConfiguration extends Component {
     async componentDidMount() {
         const { fetchDatasetClassifiers, editClassifierIntent } = this.props;
         const classifiers = await fetchDatasetClassifiers();
-        console.log(classifiers);
         const classifiers_object = {};
         classifiers.forEach(classifier => {
             classifiers_object[classifier.workspace] = classifier;
@@ -40,7 +39,9 @@ class DatasetClassifierConfiguration extends Component {
     }
 
     getDisplayedClassifier = classifier => {
-        classifier = JSON.parse(classifier);
+        if (typeof classifier === 'string') {
+            classifier = JSON.parse(classifier);
+        }
         const displayed_text = classifier.if[0];
         return stringify(displayed_text);
     };

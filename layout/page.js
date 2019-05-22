@@ -24,18 +24,14 @@ class Page extends Component {
         }
     }
     render() {
+        const { router, children } = this.props;
         return (
             <div>
                 <Head>
                     <meta charSet="utf-8" />
                     <title>*TRIAL* CMS Run Registry</title>
                 </Head>
-                <Nav
-                    router={this.props.router}
-                    show_sidebar={this.props.show_sidebar}
-                >
-                    {this.props.children}
-                </Nav>
+                <Nav router={router}>{children}</Nav>
                 <style jsx global>{`
                     * {
                         margin: 0;

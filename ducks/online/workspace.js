@@ -4,15 +4,15 @@ import { api_url } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 import auth from '../../auth/auth';
 
-const FETCH_WORKSPACES = 'FETCH_WORKSPACES-OFFLINE';
-export const CHANGE_WORKSPACE = 'CHANGE_WORKSPACE-OFFLINE';
-const ADD_COLUMN = 'ADD_COLUMN-OFFLINE';
-const REMOVE_COLUMN = 'REMOVE_COLUMN-OFFLINE';
+const FETCH_WORKSPACES = 'FETCH_WORKSPACES-ONLINE';
+export const CHANGE_WORKSPACE = 'CHANGE_WORKSPACE-ONLINE';
+const ADD_COLUMN = 'ADD_COLUMN-ONLINE';
+const REMOVE_COLUMN = 'REMOVE_COLUMN-ONLINE';
 
 export const fetchWorkspaces = ({ workspace }) =>
     error_handler(async (dispatch, getState) => {
         const { data: workspaces } = await axios.get(
-            `${api_url}/workspaces/offline`
+            `${api_url}/workspaces/online`
         );
         dispatch({
             type: FETCH_WORKSPACES,
@@ -27,7 +27,7 @@ export const fetchWorkspaces = ({ workspace }) =>
 export const addColumn = (workspace, column) =>
     error_handler(async (dispatch, getState) => {
         const { data: workspaces } = await axios.post(
-            `${api_url}/workspaces/offline`,
+            `${api_url}/workspaces/online`,
             { workspace, column },
             auth(getState)
         );
@@ -41,7 +41,7 @@ export const addColumn = (workspace, column) =>
 export const removeColumn = (workspace, column) =>
     error_handler(async (dispatch, getState) => {
         const { data: workspaces } = await axios.delete(
-            `${api_url}/workspaces/offline`,
+            `${api_url}/workspaces/online`,
             auth(getState)
         );
         dispatch({

@@ -13,10 +13,17 @@ class SideNav extends Component {
                 query: { type, section, workspace }
             }
         } = this.props;
-        Router.push(
-            `/offline?type=offline&section=${section}&workspace=${key}`,
-            `/offline/${section}/${key}`
-        );
+        if (type === 'online') {
+            Router.push(
+                `/online?type=${type}&workspace=${key}`,
+                `/${type}/${key}`
+            );
+        } else {
+            Router.push(
+                `/offline?type=${type}&section=${section}&workspace=${key}`,
+                `/offline/${section}/${key}`
+            );
+        }
     }
 
     displayWorkspace = workspace => {
@@ -59,7 +66,6 @@ class SideNav extends Component {
 
     render() {
         const {
-            show_sidebar,
             workspaces,
             cycles,
             selected_cycle,
@@ -69,36 +75,30 @@ class SideNav extends Component {
         } = this.props;
         return (
             <Layout hasSider={true}>
-                {show_sidebar && (
-                    <Sider
-                        collapsible
-                        width={200}
-                        style={{ background: '#fff' }}
+                <Sider collapsible width={200} style={{ background: '#fff' }}>
+                    <Menu
+                        mode="inline"
+                        onClick={this.onRouteChangeHandler.bind(this)}
+                        defaultOpenKeys={['workspaces']}
+                        defaultSelectedKeys={[workspace]}
+                        style={{ height: '100%', borderRight: 0 }}
                     >
-                        <Menu
-                            mode="inline"
-                            onClick={this.onRouteChangeHandler.bind(this)}
-                            defaultOpenKeys={['workspaces']}
-                            defaultSelectedKeys={[workspace]}
-                            style={{ height: '100%', borderRight: 0 }}
+                        <SubMenu
+                            key="workspaces"
+                            title={
+                                <span>
+                                    <Icon type="laptop" />
+                                    <span>WORKSPACES</span>
+                                </span>
+                            }
                         >
-                            <SubMenu
-                                key="workspaces"
-                                title={
-                                    <span>
-                                        <Icon type="laptop" />
-                                        <span>WORKSPACES</span>
-                                    </span>
-                                }
-                            >
-                                <Menu.Item key="global">GLOBAL</Menu.Item>
-                                {workspaces.map(({ workspace }) =>
-                                    this.displayWorkspace(workspace)
-                                )}
-                            </SubMenu>
-                        </Menu>
-                    </Sider>
-                )}
+                            <Menu.Item key="global">GLOBAL</Menu.Item>
+                            {workspaces.map(({ workspace }) =>
+                                this.displayWorkspace(workspace)
+                            )}
+                        </SubMenu>
+                    </Menu>
+                </Sider>
                 <Layout style={{ padding: '0 24px 24px' }}>
                     {this.props.children}
                 </Layout>
@@ -107,9 +107,13 @@ class SideNav extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+    const {
+        router: { query }
+    } = ownProps;
+    const { type } = query;
     return {
-        workspaces: state.offline.workspace.workspaces,
+        workspaces: state[type].workspace.workspaces,
         cycles: state.offline.cycles.cycles,
         selected_cycle: state.offline.cycles.selected_cycle
     };

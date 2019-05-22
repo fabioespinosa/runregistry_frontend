@@ -183,8 +183,6 @@ class Lumisections extends Component {
                 });
             });
         }
-        console.log(columns);
-        console.log(lumisections);
         return (
             <div>
                 <center>

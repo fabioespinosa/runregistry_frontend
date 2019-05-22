@@ -150,7 +150,6 @@ for (const [key, val] of Object.entries(offline_column_structure)) {
 }
 exports.offline_columns = columns;
 
-// MISING LOWLUMI:
 exports.certifiable_offline_components = {
     btag: ['btag'],
     castor: ['castor'],
@@ -171,31 +170,20 @@ exports.certifiable_offline_components = {
     tracker: ['track', 'pix', 'strip']
 };
 
-// exports.certifiable_offline_components = [
-//     'btag',
-//     'castor',
-//     'cms',
-//     'csc',
-//     'ctpps',
-//     'dt',
-//     'ecal',
-//     'egamma',
-//     'es',
-//     'hcal',
-//     'hlt',
-//     'jetmet',
-//     'l1t',
-//     'l1tcalo',
-//     'l1tmu',
-//     'lowLumi',
-//     'lumi',
-//     'muon',
-//     'pix',
-//     'rpc',
-//     'strip',
-//     'tau',
-//     'track'
-// ];
+exports.certifiable_online_components = {
+    castor: ['castor'],
+    cms: ['cms'],
+    csc: ['csc'],
+    ctpps: ['ctpps'],
+    dt: ['dt'],
+    ecal: ['ecal', 'es'],
+    hcal: ['hcal'],
+    hlt: ['hlt'],
+    l1t: ['l1t', 'l1tcalo', 'l1tmu'],
+    lumi: ['lumi'],
+    rpc: ['rpc'],
+    tracker: ['pix', 'strip']
+};
 
 exports.lumisection_attributes = [
     'beam1_present',

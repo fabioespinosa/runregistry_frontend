@@ -9,21 +9,19 @@ import {
     deleteComponentClassifier,
     editComponentClassifier,
     newComponentClassifier
-} from '../../../../ducks/offline/classifiers/component';
+} from '../../../ducks/offline/classifiers/component';
 import {
     hideJsonEditor,
     editClassifierIntent,
     changeJsonEditorValue
-} from '../../../../ducks/classifier_editor';
+} from '../../../ducks/classifier_editor';
+
 import stringify from 'json-stringify-pretty-compact';
 const { Option } = Select;
 
-const Editor = dynamic(
-    import('../../../common/ClassifierEditor/ClassifierEditor'),
-    {
-        ssr: false
-    }
-);
+const Editor = dynamic(import('../ClassifierEditor/ClassifierEditor'), {
+    ssr: false
+});
 
 class ComponentClassifierConfiguration extends Component {
     constructor(props) {
@@ -278,9 +276,12 @@ class ComponentClassifierConfiguration extends Component {
         );
     }
 }
-const mapStateToProps = state => {
-    const workspaces = state.offline.workspace.workspaces;
-    const current_workspace = state.offline.workspace.workspace.toLowerCase();
+const mapStateToProps = (state, ownProps) => {
+    const { online_or_offline } = ownProps;
+    const workspaces = state[online_or_offline].workspace.workspaces;
+    const current_workspace = state[
+        online_or_offline
+    ].workspace.workspace.toLowerCase();
     // We find the columns of the current workspace:
 
     const current_workspace_info = workspaces.find(
@@ -292,7 +293,7 @@ const mapStateToProps = state => {
     }
 
     return {
-        classifiers: state.offline.classifiers.component,
+        classifiers: state[online_or_offline].classifiers.component,
         current_workspace,
         columns_of_workspace,
         workspaces

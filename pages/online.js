@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import Router from 'next/router';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
+import { CHANGE_WORKSPACE, fetchWorkspaces } from '../ducks/online/workspace';
 import { Layout, Breadcrumb } from 'antd';
-
 import { initializeUser, initializeEnvironment } from '../ducks/info';
 
-import store from '../store/configure-store';
 import Page from '../layout/page';
 import RunTable from '../components/online/run_table/RunTable';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
@@ -17,9 +12,6 @@ import SignificantRunTable from '../components/online/run_table/SignificantRunTa
 import ManageRunModal from '../components/online/manage_run/ManageRunModal';
 import LumisectionModal from '../components/common/CommonTableComponents/lumisectionModal/LumisectionModal';
 import ClassifierVisualizationModal from '../components/online/classifier_visualization/ClassifierVisualizationModal';
-// const RunTable = dynamic(import('../components/online/run_table/RunTable'), {
-//     ssr: false
-// });
 const { Content } = Layout;
 
 class Online extends Component {
@@ -28,7 +20,19 @@ class Online extends Component {
             initializeUser(store, query);
             initializeEnvironment(store);
         }
-        return {};
+        if (!isServer) {
+            store.dispatch({
+                type: CHANGE_WORKSPACE,
+                payload: query.workspace
+            });
+        }
+    }
+
+    async componentDidMount() {
+        const {
+            router: { query }
+        } = this.props;
+        await this.props.fetchWorkspaces(query);
     }
 
     render() {
@@ -36,14 +40,14 @@ class Online extends Component {
         const {
             router: {
                 asPath,
-                query: { type, section, run_filter }
+                query: { type, section, workspace, run_filter }
             },
             user
         } = this.props;
 
         const breadcrumbs = asPath.split('/');
         return (
-            <Page router={router} show_sidebar={false} user={user}>
+            <Page router={router} user={user}>
                 <BreadcrumbCmp router={router} online={true}>
                     <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
                 </BreadcrumbCmp>
@@ -60,7 +64,7 @@ class Online extends Component {
                     <ClassifierVisualizationModal />
 
                     <RunTable defaultPageSize={12} />
-                    <SignificantRunTable defaultPageSize={5} />
+                    {/* <SignificantRunTable defaultPageSize={5} /> */}
                 </Content>
             </Page>
         );
@@ -76,6 +80,6 @@ const mapStateToProps = state => {
 export default withRouter(
     connect(
         mapStateToProps,
-        null
+        { fetchWorkspaces }
     )(Online)
 );

@@ -1,5 +1,6 @@
 import { components, rr_attributes } from '../../../../config/config';
 
+import { certifiable_online_components } from '../../../../config/config';
 import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
@@ -34,7 +35,9 @@ const column_generator = ({
     significant_runs,
     filterable,
     markSignificant,
-    filter_object
+    filter_object,
+    workspace,
+    workspaces
 }) => {
     let columns = [
         {
@@ -212,33 +215,69 @@ const column_generator = ({
         { Header: 'B Field', accessor: 'b_field' },
         { Header: 'Clock Type', accessor: 'clock_type' }
     ];
-    // Put components in format Header: component
-    let component_columns = components.map(component => ({
-        Header: component
-    }));
+    // Now add the ones in global:
+    const global_columns = [];
+    for (const [key, val] of Object.entries(certifiable_online_components)) {
+        val.forEach(sub_name => {
+            global_columns.push(`${key}-${sub_name}`);
+        });
+    }
+    // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
+    let all_columns_formatted = [];
+    console.log(workspaces);
+    workspaces.forEach(({ workspace, columns }) => {
+        columns.forEach(column => {
+            const column_name = `${workspace}-${column}`;
+            if (!global_columns.includes(column_name)) {
+                all_columns_formatted.push(column_name);
+            }
+        });
+    });
 
-    component_columns = component_columns.map(column => {
+    all_columns_formatted = global_columns.concat(all_columns_formatted);
+    // Put components in format Header: component
+    let online_columns_composed = [];
+    if (workspace === 'global') {
+        online_columns_composed = global_columns.map(column => ({
+            accessor: column,
+            Header: column.split('-')[1]
+        }));
+    } else {
+        online_columns_composed = all_columns_formatted
+            .filter(column => {
+                return (
+                    column.startsWith(workspace.toLowerCase()) &&
+                    column.includes('-')
+                );
+            })
+            .map(column => ({
+                accessor: column,
+                Header: column.split('-')[1]
+            }));
+    }
+
+    online_columns_composed = online_columns_composed.map(column => {
         return {
             ...column,
             maxWidth: 66,
-            id: `${column['Header']}_triplet`,
+            id: column.accessor,
             accessor: data => {
-                const triplet =
-                    data.triplet_summary[`${column['Header']}_triplet`];
+                const triplet = data.triplet_summary[column['accessor']];
                 return triplet;
             },
             Cell: ({ original, value }) => (
                 <Status
-                    triplet_summary={value}
                     significant={original.significant}
+                    triplet_summary={value}
                     run_number={original.run_number}
                     dataset_name="online"
-                    component={`${column['Header']}_triplet`}
+                    component={column['accessor']}
                 />
             )
         };
     });
-    columns = [...columns, ...component_columns, ...other_columns];
+    // console.log(online_columns_composed);
+    columns = [...columns, ...online_columns_composed, ...other_columns];
     // columns = component_columns;
     columns = columns.map(column => {
         return {

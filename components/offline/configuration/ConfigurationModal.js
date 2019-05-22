@@ -4,11 +4,19 @@ import { Modal, Button } from 'antd';
 import { hideConfigurationModal } from '../../../ducks/offline/ui';
 import { hideJsonEditor } from '../../../ducks/classifier_editor';
 import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
-import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
+import ComponentClassifierConfiguration from '../../common/componentClassifierConfiguration/ComponentClassifierConfiguration';
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import DatasetCopy from './datasetCopy/DatasetCopy';
 import CreateCycle from './createCycle/CreateCycle';
+
+// For component classifier:
+import {
+    fetchComponentClassifiers,
+    deleteComponentClassifier,
+    editComponentClassifier,
+    newComponentClassifier
+} from '../../../ducks/offline/classifiers/component';
 
 class ConfigurationModal extends Component {
     render() {
@@ -18,6 +26,12 @@ class ConfigurationModal extends Component {
             hideJsonEditor,
             children,
             configuration_modal_type
+        } = this.props;
+        const {
+            fetchComponentClassifiers,
+            deleteComponentClassifier,
+            editComponentClassifier,
+            newComponentClassifier
         } = this.props;
         const title_types = {
             dataset_classifiers:
@@ -32,7 +46,15 @@ class ConfigurationModal extends Component {
         };
         const modal_types = {
             dataset_classifiers: <DatasetClassifierConfiguration />,
-            dataset_component_classifiers: <ComponentClassifierConfiguration />,
+            dataset_component_classifiers: (
+                <ComponentClassifierConfiguration
+                    online_or_offline="offline"
+                    fetchComponentClassifiers={fetchComponentClassifiers}
+                    deleteComponentClassifier={deleteComponentClassifier}
+                    editComponentClassifier={editComponentClassifier}
+                    newComponentClassifier={newComponentClassifier}
+                />
+            ),
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
             dataset_copy: <DatasetCopy />,
@@ -73,5 +95,12 @@ const mapStateToProps = state => {
 };
 export default connect(
     mapStateToProps,
-    { hideConfigurationModal, hideJsonEditor }
+    {
+        hideConfigurationModal,
+        hideJsonEditor,
+        fetchComponentClassifiers,
+        deleteComponentClassifier,
+        editComponentClassifier,
+        newComponentClassifier
+    }
 )(ConfigurationModal);

@@ -9,7 +9,6 @@ const Panel = Collapse.Panel;
 class ManageDataset extends Component {
     render() {
         const { dataset } = this.props;
-        console.log(dataset);
         return (
             <Collapse defaultActiveKey={['3']}>
                 {/* <Panel key="1" header="Run info">

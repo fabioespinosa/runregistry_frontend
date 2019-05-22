@@ -33,7 +33,9 @@ class ComponentClassifierConfiguration extends Component {
     }
 
     getDisplayedClassifier(classifier) {
-        classifier = JSON.parse(classifier);
+        if (typeof classifier === 'string') {
+            classifier = JSON.parse(classifier);
+        }
         const displayed_text = classifier.if[0];
         return stringify(displayed_text);
     }

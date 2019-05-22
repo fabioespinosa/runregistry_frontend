@@ -80,7 +80,6 @@ class ColumnConfiguration extends Component {
                     <div style={{ textAlign: 'center' }}>
                         <a
                             onClick={() => {
-                                console.log(row.original);
                                 this.setState({ edit: row.original });
                             }}
                         >

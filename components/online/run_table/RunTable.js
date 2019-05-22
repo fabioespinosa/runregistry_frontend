@@ -98,7 +98,9 @@ class RunTable extends Component {
             showManageRunModal,
             showLumisectionModal,
             showClassifierVisualizationModal,
-            markSignificant
+            markSignificant,
+            workspace,
+            workspaces
         } = this.props;
         const { runs, pages } = run_table;
         const filter_object = this.convertFiltersToObject(filters);
@@ -111,7 +113,9 @@ class RunTable extends Component {
             toggleShowFilters: this.toggleShowFilters,
             filterable,
             markSignificant,
-            filter_object
+            filter_object,
+            workspace,
+            workspaces
         });
         // Filter is on if the array of filters is greater than 0
         const filter = filters.length > 0;
@@ -186,7 +190,9 @@ class RunTable extends Component {
 
 const mapStateToProps = state => {
     return {
-        run_table: state.online.runs
+        run_table: state.online.runs,
+        workspaces: state.online.workspace.workspaces,
+        workspace: state.online.workspace.workspace
     };
 };
 

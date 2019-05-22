@@ -5,8 +5,15 @@ import { hideConfigurationModal } from '../../../ducks/online/ui';
 import { hideJsonEditor } from '../../../ducks/classifier_editor';
 import ClassClassifierConfiguration from './classClassifierConfiguration/ClassClassifierConfiguration';
 import DatasetClassifierConfiguration from './datasetClassifierConfiguration/DatasetClassifierConfiguration';
-import ComponentClassifierConfiguration from './componentClassifierConfiguration/ComponentClassifierConfiguration';
+import ComponentClassifierConfiguration from '../../common/componentClassifierConfiguration/ComponentClassifierConfiguration';
 
+// For component classifier:
+import {
+    fetchComponentClassifiers,
+    deleteComponentClassifier,
+    editComponentClassifier,
+    newComponentClassifier
+} from '../../../ducks/online/classifiers/component';
 class ConfigurationModal extends Component {
     render() {
         const {
@@ -15,6 +22,12 @@ class ConfigurationModal extends Component {
             hideJsonEditor,
             children,
             configuration_modal_type
+        } = this.props;
+        const {
+            fetchComponentClassifiers,
+            deleteComponentClassifier,
+            editComponentClassifier,
+            newComponentClassifier
         } = this.props;
         const title_options = {
             class_classifiers:
@@ -51,7 +64,17 @@ class ConfigurationModal extends Component {
                         <DatasetClassifierConfiguration />
                     )}
                     {configuration_modal_type === 'component_classifiers' && (
-                        <ComponentClassifierConfiguration />
+                        <ComponentClassifierConfiguration
+                            online_or_offline="online"
+                            fetchComponentClassifiers={
+                                fetchComponentClassifiers
+                            }
+                            deleteComponentClassifier={
+                                deleteComponentClassifier
+                            }
+                            editComponentClassifier={editComponentClassifier}
+                            newComponentClassifier={newComponentClassifier}
+                        />
                     )}
                 </Modal>
             </div>
@@ -68,5 +91,12 @@ const mapStateToProps = state => {
 };
 export default connect(
     mapStateToProps,
-    { hideConfigurationModal, hideJsonEditor }
+    {
+        hideConfigurationModal,
+        hideJsonEditor,
+        fetchComponentClassifiers,
+        deleteComponentClassifier,
+        editComponentClassifier,
+        newComponentClassifier
+    }
 )(ConfigurationModal);
