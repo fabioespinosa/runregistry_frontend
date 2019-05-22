@@ -48,7 +48,10 @@ class TopNav extends Component {
                         </h4>
                     </Menu.Item>
                     <Menu.Item key="online">
-                        <Link as={`/online`} href="/online?type=online">
+                        <Link
+                            as={`/online`}
+                            href="/online/global?type=online&workspace=global"
+                        >
                             <a>ONLINE</a>
                         </Link>
                     </Menu.Item>
