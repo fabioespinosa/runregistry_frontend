@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import format_filters from './filters/format_filters';
-import format_sortings from './filters/format_sortings';
-import rename_triplets from './filters/rename_triplets';
+import format_filters from '../../common/CommonTableComponents/FilteringAndSorting/format_filters';
+import format_sortings from '../../common/CommonTableComponents/FilteringAndSorting/format_sortings';
+import rename_triplets from '../../common/CommonTableComponents/FilteringAndSorting/rename_triplets';
 import {
     moveRun,
     markSignificant,
@@ -33,6 +33,25 @@ class RunTable extends Component {
         await this.props.filterRuns(this.defaultPageSize, 0, [], {});
         this.setState({ loading: false });
     }
+
+    async componentDidUpdate(prevProps) {
+        const {
+            router: {
+                query: { section, workspace }
+            }
+        } = this.props;
+        const previous_query = prevProps.router.query;
+        // Navigates between workspaces, we refetch and remove filters
+        if (
+            previous_query.section !== section ||
+            previous_query.workspace !== workspace
+        ) {
+            this.setState({ loading: true, filters: [], sortings: [] });
+            await this.props.filterRuns(this.defaultPageSize, 0, [], {});
+            this.setState({ loading: false });
+        }
+    }
+
     // API understands a filter object, not a filter array:
     convertFiltersToObject = filters => {
         const object_filter = {};

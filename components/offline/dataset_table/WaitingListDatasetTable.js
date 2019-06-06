@@ -8,9 +8,9 @@ import {
 } from '../../../ducks/offline/datasets';
 import { showManageDatasetModal } from '../../../ducks/offline/ui';
 import { showLumisectionModal } from '../../../ducks/global_ui';
-import format_filters from './filters/format_filters';
-import format_sortings from './filters/format_sortings';
-import rename_triplets from './filters/rename_triplets';
+import format_filters from '../../common/CommonTableComponents/FilteringAndSorting/format_filters';
+import format_sortings from '../../common/CommonTableComponents/FilteringAndSorting/format_sortings';
+import rename_triplets from '../../common/CommonTableComponents/FilteringAndSorting/rename_triplets';
 
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';

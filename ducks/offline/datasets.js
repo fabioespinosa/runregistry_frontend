@@ -15,6 +15,20 @@ export const CLEAR_DATASETS = 'CLEAR_DATASETS';
 export const filterEditableDatasets = (page_size, page, sortings, filter) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();
+        const name_filter = [{ '<>': 'online' }];
+        const state_filter = [
+            {
+                or: [{ '=': 'OPEN' }, { '=': 'SIGNOFF' }, { '=': 'COMPLETED' }]
+            }
+        ];
+        if (filter.name) {
+            name_filter.unshift(filter.name);
+        }
+        if (filter[`${workspace}_state`]) {
+            state_filter.unshift(filter[`${workspace}_state`]);
+            delete filter[`${workspace}_state`];
+        }
+
         const { data: datasets } = await axios.post(
             `${api_url}/datasets_filtered_ordered`,
             {
@@ -25,15 +39,11 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
                 filter: {
                     ...filter,
                     // Online is the dataset we show in Online RR, we don't want to show it here:
-                    name: { '<>': 'online' },
+                    name: { and: name_filter },
                     // For a dataset to be editable it must be either OPEN, SIGNOFF, or COMPLETED (ALL but waiting dqm gui)
                     // ONLY THOSE OPEN SIGNOFF OR COMPLETED ARE SHOWN IN EDITABLE
                     [`dataset_attributes.${workspace}_state`]: {
-                        or: [
-                            { '=': 'OPEN' },
-                            { '=': 'SIGNOFF' },
-                            { '=': 'COMPLETED' }
-                        ]
+                        and: state_filter
                     }
                 }
             },

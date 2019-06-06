@@ -64,7 +64,7 @@ class Online extends Component {
                     <ClassifierVisualizationModal />
 
                     <RunTable defaultPageSize={12} />
-                    {/* <SignificantRunTable defaultPageSize={5} /> */}
+                    <SignificantRunTable defaultPageSize={5} />
                 </Content>
             </Page>
         );

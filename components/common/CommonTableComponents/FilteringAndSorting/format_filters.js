@@ -23,7 +23,8 @@ const format_filters = original_filters => {
                 'BAD',
                 'NOTSET',
                 'NO VALUE FOUND',
-                'EMPTY'
+                'EMPTY',
+                'EXCLUDED'
             ].includes(value)
         ) {
             column_filters[`triplet_summary.${id}.${value}`] = {
@@ -47,7 +48,8 @@ const format_filters = original_filters => {
                 column_types[id] === 'string' ||
                 id.includes('-') ||
                 id.includes('state') ||
-                id.includes('appeared_in')
+                id.includes('appeared_in') ||
+                id.includes('name')
             ) {
                 // If it is a string, default is like:
                 criteria[0] = `%${criteria[0]}%`;

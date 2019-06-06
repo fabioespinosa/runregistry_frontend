@@ -9,11 +9,13 @@ const rename_triplets = (original_criteria, filtering) => {
         // If its just sorting no need for upper case, but if its filtering yes (because in back end they are stored uppercase):
         if (rr_attributes.includes(filter.id) && !filter.id.includes('.')) {
             new_filter.id = `rr_attributes.${filter.id}`;
-        }
-        if (
+        } else if (filter.id === 'name') {
+            new_filter.id = 'name';
+        } else if (
             !rr_attributes.includes(filter.id) &&
             !filter.id.includes('.') &&
-            !filter.id.includes('_triplet')
+            !filter.id.includes('-') &&
+            !filter.id.includes('_state')
         ) {
             new_filter.id = `oms_attributes.${filter.id}`;
         }
@@ -21,7 +23,8 @@ const rename_triplets = (original_criteria, filtering) => {
         if (filtering && new_filter.id === 'rr_attributes.state') {
             new_filter.value = filter.value.toUpperCase();
         }
-        if (filter.id.includes('_triplet')) {
+        if (filter.id.includes('-')) {
+            // If it includes '-' it is a triplet like tracker-pixel, all tripelts have a workspace and a column: {workspace}-{column}
             if (filtering) {
                 new_filter.value = filter.value.toUpperCase();
             }
