@@ -15,7 +15,8 @@ const rename_triplets = (original_criteria, filtering) => {
             !rr_attributes.includes(filter.id) &&
             !filter.id.includes('.') &&
             !filter.id.includes('-') &&
-            !filter.id.includes('_state')
+            !filter.id.includes('_state') &&
+            !filter.id.includes('run_number')
         ) {
             new_filter.id = `oms_attributes.${filter.id}`;
         }

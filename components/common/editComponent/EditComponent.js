@@ -71,10 +71,6 @@ class EditComponent extends Component {
                             onSubmit={async form_values => {
                                 const { run_number, dataset_name } = this.props;
                                 let component_triplet_name = component;
-                                if (dataset_name === 'online') {
-                                    // If we are in online, they end with string _triplet:
-                                    component_triplet_name = `${component}_triplet`;
-                                }
                                 console.log(form_values);
                                 await this.props.addLumisectionRange(
                                     form_values,

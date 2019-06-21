@@ -8,7 +8,7 @@ import EditComponent from '../../../../../components/common/editComponent/EditCo
 import { api_url } from '../../../../../config/config';
 import { refreshRun } from '../../../../../ducks/online/runs';
 import { showManageRunModal } from '../../../../../ducks/online/ui';
-import { components } from '../../../../../config/config';
+import { certifiable_online_components } from '../../../../../config/config';
 import { error_handler } from '../../../../../utils/error_handlers';
 
 class EditRunLumisections extends Component {
@@ -32,7 +32,31 @@ class EditRunLumisections extends Component {
         this.setState({ lumisections, loading: false });
     });
     render() {
-        const { run } = this.props;
+        const { run, workspaces } = this.props;
+        const current_workspace = this.props.workspace.toLowerCase();
+        let components = [];
+        if (current_workspace === 'global') {
+            for (const [key, val] of Object.entries(
+                certifiable_online_components
+            )) {
+                val.forEach(sub_name => {
+                    components.push(`${key}-${sub_name}`);
+                });
+            }
+        } else {
+            // certifiable_offline_components[current_workspace].forEach(
+            //     sub_name => {
+            //         components.push(`${current_workspace}-${sub_name}`);
+            //     }
+            // );
+            workspaces.forEach(({ workspace, columns }) => {
+                if (workspace === current_workspace) {
+                    columns.forEach(column => {
+                        components.push(`${workspace}-${column}`);
+                    });
+                }
+            });
+        }
         return (
             <div>
                 {run.significant ? (
@@ -78,10 +102,13 @@ class EditRunLumisections extends Component {
                             </thead>
                             <tbody>
                                 {components.map(component => {
+                                    const component_name = component.split(
+                                        '-'
+                                    )[1];
                                     if (this.state.loading) {
                                         return (
                                             <tr key={component}>
-                                                <td>{component}</td>
+                                                <td>{component_name}</td>
                                                 <td className="comment">
                                                     <Spin size="large" />
                                                 </td>
@@ -94,6 +121,7 @@ class EditRunLumisections extends Component {
                                     ) {
                                         return (
                                             <EditComponent
+                                                component_name={component_name}
                                                 key={component}
                                                 state={run.state}
                                                 run_number={run.run_number}
@@ -104,7 +132,7 @@ class EditRunLumisections extends Component {
                                                 component={component}
                                                 lumisection_ranges={
                                                     this.state.lumisections[
-                                                        `${component}_triplet`
+                                                        component
                                                     ]
                                                 }
                                             />
@@ -112,7 +140,7 @@ class EditRunLumisections extends Component {
                                     } else {
                                         return (
                                             <tr key={component}>
-                                                <td>{component}</td>
+                                                <td>{component_name}</td>
                                                 <td className="comment">
                                                     No lumisection data
                                                 </td>
@@ -190,7 +218,14 @@ class EditRunLumisections extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        workspace: state.online.workspace.workspace,
+        workspaces: state.online.workspace.workspaces
+    };
+};
+
 export default connect(
-    null,
+    mapStateToProps,
     { refreshRun, showManageRunModal }
 )(EditRunLumisections);
