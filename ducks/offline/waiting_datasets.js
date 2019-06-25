@@ -7,7 +7,9 @@ import {
 } from './datasets';
 
 const INITIAL_STATE = {
-    datasets: []
+    datasets: [],
+    pages: 0,
+    filterable: false
 };
 
 export default function(state = INITIAL_STATE, action) {

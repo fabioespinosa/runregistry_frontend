@@ -54,10 +54,10 @@ class CreateCycle extends Component {
                                 : `With filter: ${JSON.stringify(filter)}`}
                         </h5>
                         <br />
-                        Datasets Selected:
+                        Datasets Selected (showing a sample):
                         <ul>
-                            {datasets.map(({ name, run_number }) => (
-                                <li>
+                            {datasets.map(({ run_number, name }) => (
+                                <li key={`${run_number}-${name}`}>
                                     Name: <strong>{name}</strong>, Run number:{' '}
                                     <strong>{run_number}</strong>
                                 </li>

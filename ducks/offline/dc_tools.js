@@ -14,6 +14,7 @@ export const duplicateDatasets = ({
         let { data: datasets } = await axios.post(
             `${api_url}/dc_tools/duplicate_datasets`,
             {
+                // The filter comes from the editable_datasets filter, which already guarantees we are dealing with a filter that does not include 'waiting dqm gui' datasets
                 filter: current_filter,
                 target_dataset_name,
                 source_dataset_name,

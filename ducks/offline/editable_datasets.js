@@ -8,7 +8,11 @@ import {
 
 // Actions of both (editable_datasets and waiting_datasets) are found in their respective file
 const INITIAL_STATE = {
-    datasets: []
+    datasets: [],
+    pages: 0,
+    count: 0,
+    filter: {},
+    filterable: false
 };
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
