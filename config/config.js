@@ -28,7 +28,6 @@ exports.config = config;
 exports.api_url = config[ENV]['api_url'];
 exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
-// If adding a new subsystem (like say adding ECAL), add it in components and in rr_attributes with the ending _triplet
 exports.components = [
     'cms',
     'castor',
@@ -43,7 +42,7 @@ exports.components = [
     'l1tcalo',
     'l1tmu',
     'lumi',
-    'pix',
+    'pixel',
     'rpc',
     'strip'
 ];
@@ -124,7 +123,7 @@ const offline_column_structure =
         muon: ['muon'],
         rpc: ['rpc', 'hv', 'lv', 'feb', 'noise', 'elog'],
         tau: ['tau'],
-        tracker: ['track', 'pix', 'strip']
+        tracker: ['track', 'pixel', 'strip']
     };
 
 const columns = [];
@@ -152,7 +151,7 @@ exports.certifiable_offline_components = {
     muon: ['muon'],
     rpc: ['rpc'],
     tau: ['tau'],
-    tracker: ['track', 'pix', 'strip']
+    tracker: ['track', 'pixel', 'strip']
 };
 
 exports.certifiable_online_components = {
@@ -167,7 +166,7 @@ exports.certifiable_online_components = {
     l1t: ['l1t', 'l1tcalo', 'l1tmu'],
     lumi: ['lumi'],
     rpc: ['rpc'],
-    tracker: ['pix', 'strip']
+    tracker: ['pixel', 'strip']
 };
 
 exports.lumisection_attributes = [

@@ -31,7 +31,7 @@ class ComponentClassifierConfiguration extends Component {
         const { columns_of_workspace, current_workspace } = props;
         if (current_workspace !== 'global') {
             this.state = {
-                // A Workspace MUST have at least 1 column (global workspace is the only one that is allowed to have no columns because it is just a view inside the selected workspace columns (i.e. csc-csc, or tracker-strips, tracker-pix) )
+                // A Workspace MUST have at least 1 column (global workspace is the only one that is allowed to have no columns because it is just a view inside the selected workspace columns (i.e. csc-csc, or tracker-strips, tracker-pixel) )
                 selected_component: columns_of_workspace[0],
                 status_selected: 'GOOD',
                 is_editing: false
@@ -79,7 +79,7 @@ class ComponentClassifierConfiguration extends Component {
                 <div>
                     Global workspace has no component classifiers. The global
                     workspace is just a view inside the selected columns of each
-                    workspace, like csc inside csc, or pix inside tracker.
+                    workspace, like csc inside csc, or pixel inside tracker.
                     <br />
                     If you want to edit the component classifier of a column
                     inside the global workspace you should go to the respective

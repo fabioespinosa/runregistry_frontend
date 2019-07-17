@@ -68,6 +68,15 @@ class DatasetTable extends Component {
         if (previous_query.section !== 'cycles' && section === 'cycles') {
             this.setState({ filters: [], sortings: [] });
         }
+
+        // navigates between workspaces in cycles:
+        if (
+            section === 'cycles' &&
+            (previous_query.section !== section ||
+                previous_query.workspace !== workspace)
+        ) {
+            // fetch datasets for different workspaces
+        }
     }
 
     convertFiltersToObject = filters => {
