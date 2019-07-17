@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import Progress from 'nprogress';
+import { connect } from 'react-redux';
 import { hotjar } from 'react-hotjar';
 // import stylesheet from 'antd/dist/antd.min.css';
 // import sweet from 'sweetalert2/dist/sweetalert2.min.css';
@@ -24,11 +25,9 @@ class Page extends Component {
         }
     }
     render() {
-        const { router, children } = this.props;
+        const { router, children, env } = this.props;
         const title =
-            process.env.ENV === 'production'
-                ? 'CMS Run Registry'
-                : 'NON PRODUCTION RR';
+            env === 'production' ? 'CMS Run Registry' : 'NON PRODUCTION RR';
         return (
             <div>
                 <Head>
@@ -71,4 +70,9 @@ class Page extends Component {
     }
 }
 
-export default Page;
+const mapStatetoProps = state => {
+    return {
+        env: state.info.environment
+    };
+};
+export default connect(mapStatetoProps)(Page);
