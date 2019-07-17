@@ -77,7 +77,7 @@ class TopNav extends Component {
                         >
                             {env === 'staging'
                                 ? 'STAGING ENV (FOR TESTING)'
-                                : 'USE OF BOTH RUN REGISTRIES IS MANDATORY'}
+                                : 'OFFICIAL RUN REGISTRY'}
                         </span>
                     </Menu.Item>
                 </Menu>

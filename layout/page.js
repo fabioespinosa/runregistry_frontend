@@ -20,16 +20,20 @@ Router.onRouteChangeError = () => Progress.done();
 class Page extends Component {
     componentDidMount() {
         if (process.env.ENV === 'production') {
-            hotjar.initialize(1018467, 6);
+            // hotjar.initialize(1018467, 6);
         }
     }
     render() {
         const { router, children } = this.props;
+        const title =
+            process.env.ENV === 'production'
+                ? 'CMS Run Registry'
+                : 'NON PRODUCTION RR';
         return (
             <div>
                 <Head>
                     <meta charSet="utf-8" />
-                    <title>*TRIAL* CMS Run Registry</title>
+                    <title>{title}</title>
                 </Head>
                 <Nav router={router}>{children}</Nav>
                 <style jsx global>{`
