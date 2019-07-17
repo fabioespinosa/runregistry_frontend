@@ -81,9 +81,15 @@ class EditRunLumisections extends Component {
                                         const updated_run = await this.props.refreshRun(
                                             run.run_number
                                         );
+                                        await Swal(
+                                            `Run updated`,
+                                            '',
+                                            'success'
+                                        );
                                         await this.props.showManageRunModal(
                                             updated_run
                                         );
+                                        this.fetchLumisections();
                                     }
                                 }}
                                 type="primary"

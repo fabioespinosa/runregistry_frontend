@@ -224,7 +224,7 @@ const column_generator = ({
     }
     // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
     let all_columns_formatted = [];
-    console.log(workspaces);
+
     workspaces.forEach(({ workspace, columns }) => {
         columns.forEach(column => {
             const column_name = `${workspace}-${column}`;
