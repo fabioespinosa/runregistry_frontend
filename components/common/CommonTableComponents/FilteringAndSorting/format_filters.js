@@ -1,3 +1,5 @@
+import Swal from 'sweetalert2';
+
 const column_types = {
     hlt_key: 'string',
     'rr_attributes.class': 'string',
@@ -9,6 +11,7 @@ const column_types = {
     'oms_attributes.hlt_key': 'string',
     'oms_attributes.duration': 'integer',
     'oms_attributes.clock_type': 'string',
+    'oms_attributes.ls_duration': 'integer',
     component: 'component'
 };
 const format_filters = original_filters => {
@@ -36,13 +39,13 @@ const format_filters = original_filters => {
     original_filters.forEach(({ id, value }) => {
         value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
         value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
-        const criteria = value.split(' ').filter(arg => arg !== '');
+        const criteria = value.split(' ').filter(arg => arg !== ''); // Split per space
         let query = {};
         if (criteria.length === 1) {
-            // If user types '=' or '<' alike operator, do not perform default 'like' or '=':
+            // If user types '=' or '<' alike operator, do not perform default 'like' or '=': (criteria[0][0] is the first character in the first string)
             if (['=', '<', '>', '<=', '>='].includes(criteria[0][0])) {
                 const operator = criteria[0][0];
-                criteria[0] = criteria[0].substring(1);
+                criteria[0] = +criteria[0].substring(1);
                 criteria.unshift(operator);
             } else if (
                 column_types[id] === 'string' ||

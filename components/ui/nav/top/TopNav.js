@@ -19,6 +19,7 @@ class TopNav extends Component {
         } = this.props;
         // Log to see who has used the webpage on the server:
         console.log('user:', user.displayname);
+        console.log(type);
         const backgroundColor = env === 'staging' ? 'purple' : '';
         return (
             <Header className="header" style={{ backgroundColor }}>
@@ -61,6 +62,11 @@ class TopNav extends Component {
                             href="/offline?type=offline&section=datasets&workspace=global"
                         >
                             <a>OFFLINE</a>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="json">
+                        <Link as={`/json`} href="/json">
+                            <a>JSON CREATION</a>
                         </Link>
                     </Menu.Item>
                     <Menu.Item

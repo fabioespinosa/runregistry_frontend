@@ -140,6 +140,7 @@ exports.certifiable_offline_components = {
     cms: ['cms'],
     csc: ['csc'],
     ctpps: ['ctpps'],
+    dc: ['lowlumi'],
     dt: ['dt'],
     ecal: ['ecal', 'es'],
     egamma: ['egamma'],

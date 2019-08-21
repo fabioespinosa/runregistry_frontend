@@ -47,7 +47,7 @@ class Online extends Component {
 
         const breadcrumbs = asPath.split('/');
         return (
-            <Page router={router} user={user}>
+            <Page router={router} user={user} side_nav={true}>
                 <BreadcrumbCmp router={router} online={true}>
                     <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
                 </BreadcrumbCmp>

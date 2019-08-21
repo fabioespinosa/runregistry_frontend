@@ -80,26 +80,27 @@ class Lumisections extends Component {
             shown_lumisections === 'joint_lumisection'
         ) {
             if (dataset_name === 'online') {
-                let component_columns = components.map(component => ({
-                    Header: component
-                }));
-                component_columns = component_columns.map(column => {
-                    return {
-                        ...column,
-                        maxWidth: 66,
-                        id: `${column['Header']}_triplet`,
-                        accessor: data => {
-                            const triplet = data[`${column['Header']}_triplet`];
-                            return triplet;
-                        },
-                        Cell: ({ original, value }) => (
-                            <LumisectionStatus triplet={value} />
-                        )
-                    };
-                });
+                // let component_columns = components.map(component => ({
+                //     Header: component
+                // }));
+                // component_columns = component_columns.map(column => {
+                //     return {
+                //         ...column,
+                //         maxWidth: 66,
+                //         id: `${column['Header']}`,
+                //         accessor: data => {
+                //             const triplet = data[`${column['Header']}`];
+                //             return triplet;
+                //         },
+                //         Cell: ({ original, value }) => (
+                //             <LumisectionStatus triplet={value} />
+                //         )
+                //     };
+                // });
+
                 columns = [...columns, ...component_columns];
             } else {
-                // Now add the ones in global:
+                // Add global columns
                 const global_columns = [];
                 for (const [key, val] of Object.entries(
                     certifiable_offline_components

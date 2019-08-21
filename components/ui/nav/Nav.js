@@ -10,13 +10,17 @@ const SubMenu = Menu.SubMenu;
 
 class Nav extends Component {
     render() {
-        const { router, children } = this.props;
+        const { router, children, side_nav } = this.props;
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <OnlineConfigurationModal />
                 <OfflineConfigurationModal />
                 <TopNav router={router} />
-                <SideNav router={router}>{children}</SideNav>
+                {side_nav ? (
+                    <SideNav router={router}>{children}</SideNav>
+                ) : (
+                    children
+                )}
             </Layout>
         );
     }

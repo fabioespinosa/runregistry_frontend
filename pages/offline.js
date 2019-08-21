@@ -46,7 +46,7 @@ class Offline extends Component {
         } = this.props;
         const breadcrumbs = asPath.split('/');
         return (
-            <Page router={router}>
+            <Page router={router} side_nav={true}>
                 <BreadcrumbCmp router={router} online={false}>
                     <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
                     <Breadcrumb.Item>

@@ -25,7 +25,7 @@ class Page extends Component {
         }
     }
     render() {
-        const { router, children, env } = this.props;
+        const { router, children, env, side_nav } = this.props;
         const title =
             env === 'production' ? 'CMS Run Registry' : 'NON PRODUCTION RR';
         return (
@@ -34,7 +34,9 @@ class Page extends Component {
                     <meta charSet="utf-8" />
                     <title>{title}</title>
                 </Head>
-                <Nav router={router}>{children}</Nav>
+                <Nav router={router} side_nav={side_nav}>
+                    {children}
+                </Nav>
                 <style jsx global>{`
                     * {
                         margin: 0;

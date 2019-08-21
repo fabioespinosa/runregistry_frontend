@@ -40,6 +40,12 @@ app.prepare().then(() => {
         app.render(req, res, `/offline`, params);
     });
 
+    // json:
+    server.get('/json', (req, res) => {
+        req.params.type = 'json';
+        const params = { ...req.headers, ...req.params, filters: req.query };
+        app.render(req, res, `/json`, params);
+    });
     server.get('*', (req, res) => {
         return handle(req, res);
     });
