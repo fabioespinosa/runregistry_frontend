@@ -82,12 +82,16 @@ export const formatDatasets = datasets => {
 };
 
 export const formatForJsonDatasets = (datasets, dataset_in_run_in_json) => {
-    return datasets.map(dataset => ({
-        ...dataset,
-        included_in_json: dataset_in_run_in_json[dataset.run_number]
-            ? true
-            : false
-    }));
+    return datasets.map(dataset => {
+        let included_in_json = false;
+        if (dataset_in_run_in_json[dataset.run_number] === dataset.name) {
+            included_in_json = true;
+        }
+        return {
+            ...dataset,
+            included_in_json
+        };
+    });
 };
 
 // Actions of both (editable_datasets and waiting_datasets) are found in their respective file

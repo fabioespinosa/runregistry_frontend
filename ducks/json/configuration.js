@@ -41,8 +41,8 @@ const INITIAL_STATE = {
         { ">=": [{ "var": "run.oms.energy" }, 6000] },
         { "<=": [{ "var": "run.oms.energy" }, 7000] },
         { ">=": [{ "var": "run.oms.b_field" }, 3.7] },
-        { "in": [{ "var": "run.oms.injection_scheme" }, "25ns"] },
-        { "==": [{ "in": [{ "var": "run.oms.hlt_key" }, "WMass"] }, false] },
+        { "in": [ "25ns", { "var": "run.oms.injection_scheme" }] },
+        { "==": [{ "in": [ "WMass", { "var": "run.oms.hlt_key" }] }, false] },
 
         { "==": [{ "var": "lumisection.rr.dt-dt" }, "GOOD"] },
         { "==": [{ "var": "lumisection.rr.csc-csc" }, "GOOD"] },
