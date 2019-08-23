@@ -5,7 +5,15 @@ import 'brace/theme/github';
 import 'brace/theme/xcode';
 import AceEditor from 'react-ace';
 
-const JSONEditor = ({ children, lan, theme, onChange, value }) => (
+const JSONEditor = ({
+    children,
+    lan,
+    theme,
+    onChange,
+    value,
+    readOnly,
+    height
+}) => (
     <div>
         {children}
         <AceEditor
@@ -18,8 +26,9 @@ const JSONEditor = ({ children, lan, theme, onChange, value }) => (
                 $blockScrolling: true
             }}
             fontSize={15}
-            height="50vh"
+            height={height || '50vh'}
             width="100%"
+            readOnly={readOnly}
         />
     </div>
 );

@@ -1,5 +1,4 @@
 import { filterRuns, filterSignificantRuns } from './runs';
-const TOGGLE_SHOW_ALL_RUNS = 'TOGGLE_SHOW_ALL_RUNS-ONLINE';
 const SHOW_CONFIGURATION_MODAL = 'SHOW_CONFIGURATION_MODAL-ONLINE';
 export const HIDE_CONFIGURATION_MODAL = 'HIDE_CONFIGURATION_MODAL-ONLINE';
 const SHOW_MANAGE_RUN_MODAL = 'SHOW_MANAGE_RUN_MODAL-ONLINE';
@@ -50,7 +49,6 @@ export const hideClassifierVisualizationModal = () => ({
 });
 
 const INITIAL_STATE = {
-    show_all_runs: false,
     configuration_modal_visible: false,
     configuration_modal_type: '',
     manage_run_modal_visible: false,
@@ -62,11 +60,6 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;
     switch (type) {
-        case TOGGLE_SHOW_ALL_RUNS:
-            return {
-                ...state,
-                show_all_runs: payload
-            };
         case SHOW_CONFIGURATION_MODAL:
             return {
                 ...state,
