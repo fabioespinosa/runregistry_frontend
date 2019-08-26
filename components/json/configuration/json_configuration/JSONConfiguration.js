@@ -26,6 +26,10 @@ class Configuration extends Component {
 
     render() {
         const { generateJson, current_json, json_logic } = this.props;
+        const download_string =
+            'data:text/json;charset=utf-8,' +
+            encodeURIComponent(this.getDisplayedJSON(current_json));
+
         return (
             <div className="configuration">
                 <div className="editor">
@@ -60,7 +64,12 @@ class Configuration extends Component {
                             disabled={current_json === '{}'}
                             onClick={() => generateJson(json_logic)}
                         >
-                            Show Visualization of golden JSON
+                            <a
+                                href={download_string}
+                                download="custom_json.json"
+                            >
+                                Download JSON file
+                            </a>
                         </Button>
                     </div>
                 </div>

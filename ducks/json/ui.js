@@ -25,8 +25,12 @@ export const visualizeDataset = dataset =>
                 oms: dataset.Run.oms_attributes
             },
             lumisection: {
-                oms: {},
-                rr: {}
+                oms: transformTripletCacheToBoolean(
+                    dataset.DatasetTripletCache.dcs_summary
+                ),
+                rr: transformTripletCacheToBoolean(
+                    dataset.DatasetTripletCache.triplet_summary
+                )
             }
         };
         dispatch({
@@ -35,6 +39,21 @@ export const visualizeDataset = dataset =>
         });
         dispatch(showModal('visualize_json'));
     });
+
+const transformTripletCacheToBoolean = contained_summary => {
+    const boolean_summary = {};
+    for (const [column, summary] of Object.entries(contained_summary)) {
+        boolean_summary[column] = {};
+        for (const [value, count] of Object.entries(summary)) {
+            if (count > 0) {
+                boolean_summary[column][value] = true;
+            } else {
+                boolean_summary[column][value] = false;
+            }
+        }
+    }
+    return boolean_summary;
+};
 
 const INITIAL_STATE = {
     modal_visible: false,

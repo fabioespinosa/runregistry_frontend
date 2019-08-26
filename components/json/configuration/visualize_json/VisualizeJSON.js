@@ -15,6 +15,8 @@ class ClassifierVisualization extends Component {
 
     testClassifier = error_handler(
         async (selected_dataset_to_visualize, json_logic) => {
+            for (const [key, val] of Object.entries(json_logic)) {
+            }
             const { data } = await axios.post(
                 `${api_url}/classifier_playground_arbitrary`,
                 {
@@ -27,6 +29,12 @@ class ClassifierVisualization extends Component {
             });
         }
     );
+
+    transformJSONLumisectionVars = json_logic => {
+        // for(const[key, val] of Object.entries(json_logic) ) {
+        //     if( )
+        // }
+    };
 
     displayRules = (rules, parent) => {
         const final_value = rules[rules.length - 1];
