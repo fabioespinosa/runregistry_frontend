@@ -15,13 +15,19 @@ class ClassifierVisualization extends Component {
 
     testClassifier = error_handler(
         async (selected_dataset_to_visualize, json_logic) => {
-            for (const [key, val] of Object.entries(json_logic)) {
-            }
+            const parsed_logic = JSON.parse(json_logic);
+            debugger;
+            const ready_to_compare_logic = this.transformJSONLumisectionVars(
+                parsed_logic
+            );
+            const stringified_ready_to_compare_logic = JSON.stringify(
+                ready_to_compare_logic
+            );
             const { data } = await axios.post(
                 `${api_url}/classifier_playground_arbitrary`,
                 {
                     data: selected_dataset_to_visualize,
-                    json_logic
+                    json_logic: stringified_ready_to_compare_logic
                 }
             );
             this.setState({
@@ -30,10 +36,67 @@ class ClassifierVisualization extends Component {
         }
     );
 
+    // In the database the cache is stored as "triplet_summary"."dt-dt".GOOD: 51
+    // In JSON logic they are stored as {"==": [{"var": "lumisection.rr.dt-dt"}, "GOOD"]}
+    // So we want a logic that works like this: {">": [{"var": "lumisection.rr.dt-dt.GOOD"}, 0]}
+    // This converst the latter to the first.
     transformJSONLumisectionVars = json_logic => {
-        // for(const[key, val] of Object.entries(json_logic) ) {
-        //     if( )
-        // }
+        for (const [key, val] of Object.entries(json_logic)) {
+            // The only possible comparison with lumisections is the comparators, the rest are ands, ins or  ors:
+            if (['==', '>=', '<=', '>', '<'].includes(key)) {
+                return this.parse_operator(val, key);
+            } else if (key === 'in') {
+                return {
+                    [key]: val
+                };
+            } else {
+                return {
+                    [key]: this.parse_and_or(val)
+                };
+            }
+        }
+    };
+    parse_and_or = (array_of_expressions, operator) => {
+        return array_of_expressions.map(expression => {
+            return this.transformJSONLumisectionVars(expression);
+        });
+    };
+    parse_operator = (operation, operator) => {
+        const [lhs, rhs] = operation;
+        if (typeof lhs['var'] !== 'undefined') {
+            const variable = lhs['var'];
+            const [level1, level2, level3] = variable.split('.');
+
+            if (operator === '==' && level1 === 'lumisection') {
+                if (level2 === 'rr') {
+                    const new_path = `${level1}.${level2}.${level3}.${rhs}`;
+                    return { '>': [{ var: new_path }, 0] };
+                }
+                if (level2 === 'oms') {
+                    const upper_case_rhs = String(rhs).toUpperCase();
+                    const new_path = `${level1}.${level2}.${level3}.${upper_case_rhs}`;
+                    return { '>': [{ var: new_path }, 0] };
+                }
+            } else {
+                return { [operator]: operation };
+            }
+        } else {
+            if (typeof rhs !== 'object') {
+                // Case where argumetns are (expr, value);
+                return {
+                    [operator]: [this.transformJSONLumisectionVars(lhs), rhs]
+                };
+            }
+            if (typeof rhs === 'object') {
+                // Comparing expression, to expression is only valid for equality comparison (==):
+                return {
+                    [operator]: [
+                        this.transformJSONLumisectionVars(lhs),
+                        this.transformJSONLumisectionVars(rhs)
+                    ]
+                };
+            }
+        }
     };
 
     displayRules = (rules, parent) => {
