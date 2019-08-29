@@ -46,7 +46,9 @@ const column_generator = ({
                         height: '100%'
                     }}
                 >
-                    <a onClick={() => visualizeDataset(original)}>Visualize</a>
+                    <a onClick={() => visualizeDataset(original, value)}>
+                        Visualize
+                    </a>
                 </div>
             )
         },

@@ -13,7 +13,7 @@ export const hideModal = () => ({
     type: HIDE_MODAL
 });
 
-export const visualizeDataset = dataset =>
+export const visualizeDataset = (dataset, included_in_json) =>
     error_handler(async dispatch => {
         dataset = {
             dataset: {
@@ -35,7 +35,7 @@ export const visualizeDataset = dataset =>
         };
         dispatch({
             type: SELECT_DATASET_TO_VISUALIZE,
-            payload: dataset
+            payload: { dataset, included_in_json }
         });
         dispatch(showModal('visualize_json'));
     });
@@ -58,7 +58,8 @@ const transformTripletCacheToBoolean = contained_summary => {
 const INITIAL_STATE = {
     modal_visible: false,
     modal_type: '',
-    selected_dataset_to_visualize: {}
+    selected_dataset_to_visualize: {},
+    dataset_included_in_json: false
 };
 
 export default function(state = INITIAL_STATE, action) {
@@ -79,7 +80,8 @@ export default function(state = INITIAL_STATE, action) {
         case SELECT_DATASET_TO_VISUALIZE:
             return {
                 ...state,
-                selected_dataset_to_visualize: payload
+                selected_dataset_to_visualize: payload.dataset,
+                dataset_included_in_json: payload.included_in_json
             };
         default:
             return state;

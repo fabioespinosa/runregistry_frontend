@@ -15,6 +15,17 @@ const TextEditor = dynamic(
     }
 );
 
+const calculate_number_of_lumisections_from_json = json => {
+    let number_of_lumisections = 0;
+    for (const [run, ranges] of Object.entries(json)) {
+        for (const [range_start, range_end] of ranges) {
+            const lumisections_in_range = range_end - range_start + 1;
+            number_of_lumisections += lumisections_in_range;
+        }
+    }
+    return number_of_lumisections;
+};
+
 class Configuration extends Component {
     changeValue = new_configuration => {
         this.props.changeJsonLogic(new_configuration);
@@ -29,7 +40,22 @@ class Configuration extends Component {
         const download_string =
             'data:text/json;charset=utf-8,' +
             encodeURIComponent(this.getDisplayedJSON(current_json));
-
+        console.log(current_json);
+        let number_of_runs;
+        let number_of_lumisections = 0;
+        if (typeof current_json !== 'undefined') {
+            if (typeof current_json === 'string') {
+                number_of_runs = Object.keys(JSON.parse(current_json)).length;
+                number_of_lumisections = calculate_number_of_lumisections_from_json(
+                    JSON.parse(current_json)
+                );
+            } else {
+                number_of_runs = Object.keys(current_json).length;
+                number_of_lumisections = calculate_number_of_lumisections_from_json(
+                    current_json
+                );
+            }
+        }
         return (
             <div className="configuration">
                 <div className="editor">
@@ -58,6 +84,8 @@ class Configuration extends Component {
                         theme="github"
                         readOnly={true}
                     />
+                    The number of runs in this json are: {number_of_runs} and
+                    number of lumisections: {number_of_lumisections}
                     <div className="generate_button">
                         <Button
                             type="primary"

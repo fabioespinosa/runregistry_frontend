@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Icon, Button } from 'antd';
 import { api_url } from '../../../../config/config';
 import { error_handler } from '../../../../utils/error_handlers';
+import LumisectionVisualization from './lumisectionVisualization/LumisectionVisualization';
 import stringify from 'json-stringify-pretty-compact';
 
 class ClassifierVisualization extends Component {
@@ -16,7 +17,6 @@ class ClassifierVisualization extends Component {
     testClassifier = error_handler(
         async (selected_dataset_to_visualize, json_logic) => {
             const parsed_logic = JSON.parse(json_logic);
-            debugger;
             const ready_to_compare_logic = this.transformJSONLumisectionVars(
                 parsed_logic
             );
@@ -218,14 +218,39 @@ class ClassifierVisualization extends Component {
     };
 
     render() {
-        const { selected_dataset_to_visualize } = this.props;
+        const {
+            selected_dataset_to_visualize,
+            included_in_json,
+            current_json
+        } = this.props;
         const { result } = this.state;
+        const { name } = selected_dataset_to_visualize.dataset;
+        const { run_number } = selected_dataset_to_visualize.run;
         return (
             <div>
                 {result.length > 0 && (
                     <div>
-                        Visualization:
+                        Dataset <strong>{name}</strong> of run{' '}
+                        <strong>{run_number}</strong>{' '}
+                        <strong>
+                            {included_in_json ? (
+                                <span style={{ color: 'green' }}>
+                                    IS Included in json
+                                </span>
+                            ) : (
+                                <span style={{ color: 'red' }}>
+                                    is NOT included in json
+                                </span>
+                            )}
+                        </strong>
                         <ul>{this.displayRules(result)}</ul>
+                        <LumisectionVisualization
+                            selected_dataset_to_visualize={
+                                selected_dataset_to_visualize
+                            }
+                            included_in_json={included_in_json}
+                            current_json={current_json}
+                        />
                     </div>
                 )}
 
@@ -247,7 +272,9 @@ const mapStateToProps = state => {
     return {
         json_logic: state.json.configuration.json_logic,
         selected_dataset_to_visualize:
-            state.json.ui.selected_dataset_to_visualize
+            state.json.ui.selected_dataset_to_visualize,
+        included_in_json: state.json.ui.dataset_included_in_json,
+        current_json: state.json.configuration.current_json
     };
 };
 export default connect(

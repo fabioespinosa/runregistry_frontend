@@ -12,7 +12,7 @@ class ConfigurationModal extends Component {
         const title_types = {
             create_json: "Create new 'golden' JSON",
             visualize_json:
-                "Why is this run included (or not) in current 'golden' json"
+                'Why is this run (and lumisections) included (or not) in current json configuration?'
         };
         const modal_types = {
             create_json: <JSONConfiguration />,
