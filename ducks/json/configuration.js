@@ -35,7 +35,9 @@ const INITIAL_STATE = {
                 {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018D/DQM"]},
                 {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018E/DQM"]},
                 {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018F/DQM"]},
-                {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018G/DQM"]}
+                {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018G/DQM"]},
+                {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018H/DQM"]},
+                {"==": [{"var": "dataset.name"}, "/PromptReco/Collisions2018I/DQM"]}
             ]
         },
         { ">=": [{ "var": "run.oms.energy" }, 6000] },
@@ -47,6 +49,7 @@ const INITIAL_STATE = {
         { "==": [{ "var": "lumisection.rr.dt-dt" }, "GOOD"] },
         { "==": [{ "var": "lumisection.rr.csc-csc" }, "GOOD"] },
         { "==": [{ "var": "lumisection.rr.l1t-l1tmu" }, "GOOD"] },
+        { "==": [{ "var": "lumisection.rr.l1t-l1tcalo" }, "GOOD"] },
         { "==": [{ "var": "lumisection.rr.hlt-hlt" }, "GOOD"] },
         { "==": [{ "var": "lumisection.rr.tracker-pixel" }, "GOOD"] },
         { "==": [{ "var": "lumisection.rr.tracker-strip" }, "GOOD"] },
@@ -65,7 +68,6 @@ const INITIAL_STATE = {
         { "==": [{ "var": "lumisection.oms.tibtid_ready" }, true] },
         { "==": [{ "var": "lumisection.oms.tecm_ready" }, true] },
         { "==": [{ "var": "lumisection.oms.tecp_ready" }, true] },
-        { "==": [{ "var": "lumisection.oms.castor_ready" }, true] },
         { "==": [{ "var": "lumisection.oms.tob_ready" }, true] },
         { "==": [{ "var": "lumisection.oms.ebm_ready" }, true] },
         { "==": [{ "var": "lumisection.oms.ebp_ready" }, true] },
