@@ -41,11 +41,16 @@ class LumisectionVisualization extends Component {
         return is_lumisection_included;
     };
 
-    inspectLumisection = ({ name: lumisection_index }) => {
-        const { selected_dataset_to_visualize } = this.props;
+    inspectLumisection = ({ name: lumisection_number }) => {
+        const { selected_dataset_to_visualize, json_logic } = this.props;
         const { run_number } = selected_dataset_to_visualize.run;
-        const dataset_name = selected_dataset_to_visualize.dataset.name;
-        console.log(lumisection_index);
+        const { name } = selected_dataset_to_visualize.dataset;
+        this.props.test_lumisection({
+            run_number,
+            name,
+            lumisection_number,
+            json_logic
+        });
     };
 
     render() {

@@ -8,7 +8,7 @@ import LumisectionVisualization from './lumisectionVisualization/LumisectionVisu
 import stringify from 'json-stringify-pretty-compact';
 
 class ClassifierVisualization extends Component {
-    state = { result: [] };
+    state = { result: [], lumisection_result: [], lumisection_number: null };
     componentDidMount = error_handler(async () => {
         const { selected_dataset_to_visualize, json_logic } = this.props;
         this.testClassifier(selected_dataset_to_visualize, json_logic);
@@ -32,6 +32,24 @@ class ClassifierVisualization extends Component {
             );
             this.setState({
                 result: data.result[0]
+            });
+        }
+    );
+
+    testLumisectionClassifier = error_handler(
+        async ({ run_number, name, lumisection_number, json_logic }) => {
+            const { data } = await axios.post(
+                `${api_url}/classifier_playground/test_lumisection`,
+                {
+                    run_number,
+                    name,
+                    lumisection_number,
+                    json_logic
+                }
+            );
+            this.setState({
+                lumisection_result: data.result[0],
+                lumisection_number
             });
         }
     );
@@ -221,9 +239,10 @@ class ClassifierVisualization extends Component {
         const {
             selected_dataset_to_visualize,
             included_in_json,
-            current_json
+            current_json,
+            json_logic
         } = this.props;
-        const { result } = this.state;
+        const { result, lumisection_result, lumisection_number } = this.state;
         const { name } = selected_dataset_to_visualize.dataset;
         const { run_number } = selected_dataset_to_visualize.run;
         return (
@@ -250,7 +269,16 @@ class ClassifierVisualization extends Component {
                             }
                             included_in_json={included_in_json}
                             current_json={current_json}
+                            json_logic={json_logic}
+                            test_lumisection={this.testLumisectionClassifier}
                         />
+                        {lumisection_result.length > 0 && (
+                            <div>
+                                Currently visualizing lumisection number:{' '}
+                                <strong>{lumisection_number}</strong>
+                                <ul>{this.displayRules(lumisection_result)}</ul>
+                            </div>
+                        )}
                     </div>
                 )}
 

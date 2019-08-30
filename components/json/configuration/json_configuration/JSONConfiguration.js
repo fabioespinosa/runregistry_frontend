@@ -40,7 +40,6 @@ class Configuration extends Component {
         const download_string =
             'data:text/json;charset=utf-8,' +
             encodeURIComponent(this.getDisplayedJSON(current_json));
-        console.log(current_json);
         let number_of_runs;
         let number_of_lumisections = 0;
         if (typeof current_json !== 'undefined') {

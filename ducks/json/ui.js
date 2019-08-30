@@ -18,6 +18,7 @@ export const visualizeDataset = (dataset, included_in_json) =>
         dataset = {
             dataset: {
                 name: dataset.name
+                // missing dataset_attributes
             },
             run: {
                 run_number: dataset.run_number,
