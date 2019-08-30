@@ -47,7 +47,7 @@ class Json extends Component {
                     <div className="show_json_configuration_button">
                         <JSONModal />
                         <Button onClick={() => showModal('create_json')}>
-                            Create 'golden' JSON
+                            Create JSON
                         </Button>
                     </div>
                     <div style={{ display: 'flex' }}>

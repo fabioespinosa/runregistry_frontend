@@ -10,7 +10,7 @@ class ConfigurationModal extends Component {
         const { modal_visible, modal_type, hideModal } = this.props;
 
         const title_types = {
-            create_json: "Create new 'golden' JSON",
+            create_json: 'Create new JSON',
             visualize_json:
                 'Why is this run (and lumisections) included (or not) in current json configuration?'
         };
