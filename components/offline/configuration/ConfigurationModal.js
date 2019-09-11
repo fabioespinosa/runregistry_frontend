@@ -8,6 +8,7 @@ import ComponentClassifierConfiguration from '../../common/componentClassifierCo
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import DatasetCopy from './datasetCopy/DatasetCopy';
+import DatasetUpdate from './datasetUpdate/DatasetUpdate';
 import CreateCycle from './createCycle/CreateCycle';
 
 // For component classifier:
@@ -42,7 +43,8 @@ class ConfigurationModal extends Component {
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
             dataset_copy: 'Copy datasets',
-            create_cycle: 'Create cycle'
+            create_cycle: 'Create cycle',
+            dataset_update: 'Dataset Update'
         };
         const modal_types = {
             dataset_classifiers: <DatasetClassifierConfiguration />,
@@ -58,7 +60,8 @@ class ConfigurationModal extends Component {
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
             dataset_copy: <DatasetCopy />,
-            create_cycle: <CreateCycle />
+            create_cycle: <CreateCycle />,
+            dataset_update: <DatasetUpdate />
         };
         return (
             <div>

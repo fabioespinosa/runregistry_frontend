@@ -11,16 +11,45 @@ export const duplicateDatasets = ({
 }) =>
     error_handler(async (dispatch, getState) => {
         const current_filter = getState().offline.editable_datasets.filter;
+
+        const filter_with_source_dataset_name = {
+            ...current_filter,
+            name: { '=': source_dataset_name }
+        };
         let { data: datasets } = await axios.post(
             `${api_url}/dc_tools/duplicate_datasets`,
             {
-                // The filter comes from the editable_datasets filter, which already guarantees we are dealing with a filter that does not include 'waiting dqm gui' datasets
-                filter: current_filter,
                 target_dataset_name,
                 source_dataset_name,
-                workspaces_to_duplicate_into: workspaces
+                workspaces_to_duplicate_into: workspaces,
+                // The filter comes from the editable_datasets filter, which already guarantees we are dealing with a filter that does not include 'waiting dqm gui' datasets
+                filter: filter_with_source_dataset_name
             },
-            auth(getState)
+            auth(getState, 'Dataset duplication')
+        );
+        datasets = formatDatasets(datasets);
+        dispatch({
+            type: FIND_AND_REPLACE_DATASETS,
+            payload: datasets
+        });
+    });
+
+export const datasetUpdate = ({ source_dataset_name, new_state }) =>
+    error_handler(async (dispatch, getState) => {
+        const current_filter = getState().offline.editable_datasets.filter;
+        const workspace = getState().offline.workspace.workspace.toLowerCase();
+        const filter_with_source_dataset_name = {
+            ...current_filter,
+            name: { '=': source_dataset_name }
+        };
+        let { data: datasets } = await axios.post(
+            `${api_url}/dc_tools/dataset_update`,
+            {
+                filter: filter_with_source_dataset_name,
+                workspace_to_change_state_in: workspace,
+                new_state
+            },
+            auth(getState, 'Change dataset state')
         );
         datasets = formatDatasets(datasets);
         dispatch({

@@ -1,4 +1,4 @@
-export default function(getState) {
+export default function(getState, comment) {
     const state = getState();
     let email = state.info.email;
     let egroups = state.info.egroups;
@@ -13,7 +13,8 @@ export default function(getState) {
     return {
         headers: {
             egroups,
-            email
+            email,
+            comment
         }
     };
 }

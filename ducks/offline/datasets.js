@@ -15,20 +15,31 @@ export const CLEAR_DATASETS = 'CLEAR_DATASETS';
 export const filterEditableDatasets = (page_size, page, sortings, filter) =>
     error_handler(async (dispatch, getState) => {
         const workspace = getState().offline.workspace.workspace.toLowerCase();
+        // Online is the dataset we show in Online RR, we don't want to show it here:
         const name_filter = [{ '<>': 'online' }];
+        // ONLY THOSE OPEN SIGNOFF OR COMPLETED ARE SHOWN IN EDITABLE
         const state_filter = [
             {
                 or: [{ '=': 'OPEN' }, { '=': 'SIGNOFF' }, { '=': 'COMPLETED' }]
             }
         ];
+        // If user was filtering on name (we also want to add that to the no-online name)
         if (filter.name) {
             name_filter.unshift(filter.name);
         }
+        // If user was filtering by state, we also want to include that
         if (filter[`${workspace}_state`]) {
             state_filter.unshift(filter[`${workspace}_state`]);
             delete filter[`${workspace}_state`];
         }
-
+        const filter_with_state_and_name = {
+            ...filter,
+            name: { and: name_filter },
+            // For a dataset to be editable it must be either OPEN, SIGNOFF, or COMPLETED (ALL but waiting dqm gui)
+            [`dataset_attributes.${workspace}_state`]: {
+                and: state_filter
+            }
+        };
         const { data: datasets } = await axios.post(
             `${api_url}/datasets_filtered_ordered`,
             {
@@ -36,16 +47,7 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
                 page,
                 page_size,
                 sortings,
-                filter: {
-                    ...filter,
-                    // Online is the dataset we show in Online RR, we don't want to show it here:
-                    name: { and: name_filter },
-                    // For a dataset to be editable it must be either OPEN, SIGNOFF, or COMPLETED (ALL but waiting dqm gui)
-                    // ONLY THOSE OPEN SIGNOFF OR COMPLETED ARE SHOWN IN EDITABLE
-                    [`dataset_attributes.${workspace}_state`]: {
-                        and: state_filter
-                    }
-                }
+                filter: filter_with_state_and_name
             },
             auth(getState)
         );
@@ -54,7 +56,7 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
             type: FILTER_EDITABLE_DATASETS,
             payload: datasets,
             // We include the filter because we will need it for DC tools:
-            filter
+            filter: filter_with_state_and_name
         });
     });
 
