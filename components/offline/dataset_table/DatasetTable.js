@@ -153,7 +153,7 @@ class DatasetTable extends Component {
             showManageDatasetModal,
             showLumisectionModal
         } = this.props;
-        let { datasets, pages } = dataset_table;
+        let { datasets, pages, count } = dataset_table;
         const filter_object = this.convertFiltersToObject(filters);
 
         const columns = column_generator({
@@ -186,7 +186,7 @@ class DatasetTable extends Component {
                                 marginBottom: 0
                             }}
                         >
-                            Filter/Sorting are ON
+                            Filter/Sorting are ON (total datasets: {count})
                         </h3>
                         {'    -    '}
                         <a onClick={this.removeFilters}>

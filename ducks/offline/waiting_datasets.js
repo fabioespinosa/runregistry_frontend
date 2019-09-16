@@ -9,6 +9,7 @@ import {
 const INITIAL_STATE = {
     datasets: [],
     pages: 0,
+    count: 0,
     filterable: false
 };
 
@@ -19,7 +20,8 @@ export default function(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 datasets: payload.datasets,
-                pages: payload.pages
+                pages: payload.pages,
+                count: payload.count
             };
         case EDIT_DATASET:
             return {

@@ -6,6 +6,25 @@ import { error_handler } from '../../utils/error_handlers';
 import { hideManageRunModal } from './ui';
 export const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
+const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS';
+
+export const initializeFiltersFromUrl = ({ store, query }) => {
+    const { filters } = query;
+    if (filters) {
+        if (Object.keys(filters).length > 0) {
+            store.dispatch({
+                type: INITIALIZE_FILTERS,
+                payload: Object.keys(filters).map(key => ({
+                    id: key,
+                    value: filters[key]
+                })),
+                filters,
+                from_url: true
+            });
+            store.dispatch(toggleTableFilters());
+        }
+    }
+};
 
 export const filterRuns = (page_size, page, sortings, filtered) =>
     error_handler(async (dispatch, getState) => {
@@ -92,7 +111,8 @@ export default function(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 runs: payload.runs,
-                pages: payload.pages
+                pages: payload.pages,
+                count: payload.count
             };
         case EDIT_RUN:
             return { ...state, runs: editRunHelper(state.runs, payload) };

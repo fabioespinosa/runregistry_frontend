@@ -117,7 +117,7 @@ class RunTable extends Component {
             workspace,
             workspaces
         } = this.props;
-        const { runs, pages } = run_table;
+        const { runs, pages, count } = run_table;
         const filter_object = this.convertFiltersToObject(filters);
         const columns = column_generator({
             showManageRunModal,
@@ -136,7 +136,7 @@ class RunTable extends Component {
         const filter = filters.length > 0;
         return (
             <div>
-                Significant runs:
+                Significant runs ({filter && 'with filter:'} {count}):
                 {filter && (
                     <div
                         style={{
@@ -151,7 +151,7 @@ class RunTable extends Component {
                                 marginBottom: 0
                             }}
                         >
-                            Filter/Sorting are ON
+                            Filter/Sorting are ON (total runs: {count})
                         </h3>
                         {'    -    '}
                         <a onClick={this.removeFilters}>

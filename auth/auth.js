@@ -9,12 +9,11 @@ export default function(getState, comment) {
         email = 'fespinos@cern.ch';
         egroups = 'cms-dqm-runregistry-experts';
     }
-
-    return {
-        headers: {
-            egroups,
-            email,
-            comment
-        }
+    const options = {
+        headers: { egroups, email }
     };
+    if (comment) {
+        options.headers.comment = comment;
+    }
+    return options;
 }

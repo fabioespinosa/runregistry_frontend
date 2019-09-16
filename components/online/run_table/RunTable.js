@@ -18,6 +18,9 @@ import { showLumisectionModal } from '../../../ducks/global_ui';
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';
 
+// When user enters URL with filter, we only show one table (the one which contains all runs)
+// If a user filters with the SignificantRunTable then the url will also include the filter of significance
+
 class RunTable extends Component {
     constructor(props) {
         super(props);
@@ -29,6 +32,8 @@ class RunTable extends Component {
         this.setState({ filterable: !this.state.filterable });
 
     async componentDidMount() {
+        // TODO:  Check for filters in URL
+
         this.setState({ loading: true });
         await this.props.filterRuns(this.defaultPageSize, 0, [], {});
         this.setState({ loading: false });
@@ -76,6 +81,8 @@ class RunTable extends Component {
             formated_filters
         );
         this.setState({ loading: false });
+
+        // TODO:  Add filters to URL
     };
 
     // Remove filters
@@ -121,7 +128,7 @@ class RunTable extends Component {
             workspace,
             workspaces
         } = this.props;
-        const { runs, pages } = run_table;
+        const { runs, pages, count } = run_table;
         const filter_object = this.convertFiltersToObject(filters);
         const columns = column_generator({
             showManageRunModal,
@@ -140,7 +147,8 @@ class RunTable extends Component {
         const filter = filters.length > 0;
         return (
             <div>
-                All runs:
+                All runs ({filter && 'with filter:'}
+                {count}):
                 {filter && (
                     <div
                         style={{
@@ -155,7 +163,7 @@ class RunTable extends Component {
                                 marginBottom: 0
                             }}
                         >
-                            Filter/Sorting are ON
+                            Filter/Sorting are ON (total runs: {count})
                         </h3>
                         {'    -    '}
                         <a onClick={this.removeFilters}>

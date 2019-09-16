@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { CHANGE_WORKSPACE, fetchWorkspaces } from '../ducks/online/workspace';
 import { Layout, Breadcrumb } from 'antd';
+import { initializeFiltersFromUrl } from '../ducks/online/runs';
 import { initializeUser, initializeEnvironment } from '../ducks/info';
 
 import Page from '../layout/page';
@@ -20,6 +21,8 @@ class Online extends Component {
             initializeUser(store, query);
             initializeEnvironment(store);
         }
+        // We put the filters from URL in the redux store:
+        initializeFiltersFromUrl({ store, query });
         if (!isServer) {
             store.dispatch({
                 type: CHANGE_WORKSPACE,
@@ -80,6 +83,6 @@ const mapStateToProps = state => {
 export default withRouter(
     connect(
         mapStateToProps,
-        { fetchWorkspaces }
+        { fetchWorkspaces, initializeFiltersFromUrl }
     )(Online)
 );

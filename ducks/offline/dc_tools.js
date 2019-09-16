@@ -25,7 +25,7 @@ export const duplicateDatasets = ({
                 // The filter comes from the editable_datasets filter, which already guarantees we are dealing with a filter that does not include 'waiting dqm gui' datasets
                 filter: filter_with_source_dataset_name
             },
-            auth(getState, 'Dataset duplication')
+            auth(getState, 'Dataset duplication in batch')
         );
         datasets = formatDatasets(datasets);
         dispatch({
@@ -49,7 +49,7 @@ export const datasetUpdate = ({ source_dataset_name, new_state }) =>
                 workspace_to_change_state_in: workspace,
                 new_state
             },
-            auth(getState, 'Change dataset state')
+            auth(getState, 'Change dataset state in batch')
         );
         datasets = formatDatasets(datasets);
         dispatch({

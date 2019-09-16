@@ -37,7 +37,8 @@ export default function(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 runs: payload.runs,
-                pages: payload.pages
+                pages: payload.pages,
+                count: payload.count
             };
         case EDIT_RUN:
             return { ...state, runs: editRunHelper(state.runs, payload) };
