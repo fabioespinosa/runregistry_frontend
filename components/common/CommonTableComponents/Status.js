@@ -90,7 +90,8 @@ class Status extends Component {
                     <div
                         style={{
                             textAlign: 'center',
-                            position: 'relative'
+                            position: 'relative',
+                            cursor: 'pointer'
                         }}
                     >
                         {comments.length > 0 && (
