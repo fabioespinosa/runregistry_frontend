@@ -87,116 +87,134 @@ class Status extends Component {
                         ' , '
                     )}`}
                 >
-                    <div
-                        style={{
-                            textAlign: 'center',
-                            position: 'relative',
-                            cursor: 'pointer'
-                        }}
+                    <Popover
+                        placement="top"
+                        content={comments.join(' , ')}
+                        // We use the length as conditional, because if there are no comments, we want no automatica popover on hover
+                        trigger={comments.length ? 'hover' : ''}
                     >
-                        {comments.length > 0 && (
-                            <span>
-                                <span
-                                    style={{
-                                        position: 'absolute',
-                                        borderLeft: '16px solid darkred',
-                                        borderBottom: '16px solid transparent',
-                                        zIndex: '100',
-                                        left: '0',
-                                        top: '0'
-                                    }}
-                                />
-                                <span
-                                    style={{
-                                        position: 'absolute',
-                                        borderLeft: '16px solid transparent',
-                                        borderBottom: '16px solid darkred',
-                                        zIndex: '100',
-                                        right: '0',
-                                        bottom: '0'
-                                    }}
-                                />
-                            </span>
-                        )}
-                        {significant ? (
-                            <div style={{ position: 'relative' }}>
-                                {statuses_present.map((status, index) => {
-                                    const length = statuses_present.length;
-                                    if (status_colors_and_text[status]) {
-                                        const {
-                                            backgroundColor,
-                                            text,
-                                            fontSize
-                                        } = status_colors_and_text[status];
+                        <div
+                            style={{
+                                textAlign: 'center',
+                                position: 'relative',
+                                cursor: 'pointer'
+                            }}
+                            title={comments.join(',')}
+                        >
+                            {comments.length > 0 && (
+                                <span>
+                                    <span
+                                        style={{
+                                            position: 'absolute',
+                                            borderLeft: '16px solid darkred',
+                                            borderBottom:
+                                                '16px solid transparent',
+                                            zIndex: '100',
+                                            left: '0',
+                                            top: '0'
+                                        }}
+                                    />
+                                    <span
+                                        style={{
+                                            position: 'absolute',
+                                            borderLeft:
+                                                '16px solid transparent',
+                                            borderBottom: '16px solid darkred',
+                                            zIndex: '100',
+                                            right: '0',
+                                            bottom: '0'
+                                        }}
+                                    />
+                                </span>
+                            )}
+                            {significant ? (
+                                <div style={{ position: 'relative' }}>
+                                    {statuses_present.map((status, index) => {
+                                        const length = statuses_present.length;
+                                        if (status_colors_and_text[status]) {
+                                            const {
+                                                backgroundColor,
+                                                text,
+                                                fontSize
+                                            } = status_colors_and_text[status];
+                                            return (
+                                                <div
+                                                    className={`${index > 0 &&
+                                                        'status_container'}`}
+                                                    key={status}
+                                                    style={{
+                                                        display: 'inline-block',
+                                                        backgroundColor,
+                                                        width: `${100 /
+                                                            length}%`
+                                                    }}
+                                                >
+                                                    <span
+                                                        className="status"
+                                                        style={{
+                                                            color: text,
+                                                            fontSize
+                                                        }}
+                                                    >
+                                                        {length === 1
+                                                            ? status
+                                                            : status[0]}
+                                                    </span>
+                                                    <style jsx>{`
+                                                        .status_container:before {
+                                                            content: '';
+                                                            position: absolute;
+                                                            left: ${index *
+                                                                (100 / length) -
+                                                                5}%;
+                                                            border-right: 3px
+                                                                solid
+                                                                ${backgroundColor};
+                                                            border-top: 16px
+                                                                solid
+                                                                transparent;
+                                                        }
+                                                    `}</style>
+                                                </div>
+                                            );
+                                        }
                                         return (
-                                            <div
-                                                className={`${index > 0 &&
-                                                    'status_container'}`}
+                                            <span
                                                 key={status}
                                                 style={{
-                                                    display: 'inline-block',
-                                                    backgroundColor,
-                                                    width: `${100 / length}%`
+                                                    backgroundColor: 'white'
                                                 }}
                                             >
                                                 <span
-                                                    className="status"
-                                                    style={{
-                                                        color: text,
-                                                        fontSize
-                                                    }}
+                                                    style={{ color: 'black' }}
                                                 >
-                                                    {length === 1
-                                                        ? status
-                                                        : status[0]}
+                                                    {status}
                                                 </span>
-                                                <style jsx>{`
-                                                    .status_container:before {
-                                                        content: '';
-                                                        position: absolute;
-                                                        left: ${index *
-                                                            (100 / length) -
-                                                            5}%;
-                                                        border-right: 3px solid
-                                                            ${backgroundColor};
-                                                        border-top: 16px solid
-                                                            transparent;
-                                                    }
-                                                `}</style>
-                                            </div>
-                                        );
-                                    }
-                                    return (
-                                        <span
-                                            key={status}
-                                            style={{ backgroundColor: 'white' }}
-                                        >
-                                            <span style={{ color: 'black' }}>
-                                                {status}
                                             </span>
-                                        </span>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    backgroundColor:
-                                        status_colors_and_text['INSIG']
-                                            .backgroundColor
-                                }}
-                            >
-                                <span
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div
                                     style={{
-                                        color:
-                                            status_colors_and_text['INSIG'].text
+                                        backgroundColor:
+                                            status_colors_and_text['INSIG']
+                                                .backgroundColor
                                     }}
                                 >
-                                    INSIG.
-                                </span>
-                            </div>
-                        )}
-                    </div>
+                                    <span
+                                        style={{
+                                            color:
+                                                status_colors_and_text['INSIG']
+                                                    .text
+                                        }}
+                                    >
+                                        INSIG.
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    </Popover>
                 </Popover>
             );
         }
