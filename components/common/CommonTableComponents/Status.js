@@ -45,15 +45,24 @@ const status_colors_and_text = {
 class Status extends Component {
     render() {
         const {
+            run,
             triplet_summary,
             significant,
             run_number,
             dataset_name,
             component
         } = this.props;
+        let run_stop_reason = '';
         if (triplet_summary) {
             const { comments, causes } = triplet_summary;
             const statuses = { ...triplet_summary };
+            if (
+                run &&
+                component === 'cms-cms' &&
+                run.rr_attributes.stop_reason
+            ) {
+                run_stop_reason = `Stop reason: ${run.rr_attributes.stop_reason} -- `;
+            }
             const statuses_present = [];
             delete statuses.comments;
             delete statuses.causes;
@@ -89,9 +98,11 @@ class Status extends Component {
                 >
                     <Popover
                         placement="top"
-                        content={comments.join(' , ')}
+                        content={`${run_stop_reason}   ${comments.join(' , ')}`}
                         // We use the length as conditional, because if there are no comments, we want no automatica popover on hover
-                        trigger={comments.length ? 'hover' : ''}
+                        trigger={
+                            comments.length || run_stop_reason ? 'hover' : ''
+                        }
                     >
                         <div
                             style={{

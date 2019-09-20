@@ -111,9 +111,7 @@ const column_generator = ({
                                 if (value) {
                                     await markSignificant(original);
                                     await Swal(
-                                        `Run ${
-                                            original.run_number
-                                        } marked significant`,
+                                        `Run ${original.run_number} marked significant`,
                                         '',
                                         'success'
                                     );
@@ -155,9 +153,7 @@ const column_generator = ({
                                     };
                                     delete options[value];
                                     const { value: to_state } = await Swal({
-                                        title: `Move run ${
-                                            original.run_number
-                                        } to...`,
+                                        title: `Move run ${original.run_number} to...`,
                                         input: 'select',
                                         inputOptions: options,
                                         showCancelButton: true,
@@ -170,9 +166,7 @@ const column_generator = ({
                                             to_state
                                         );
                                         await Swal(
-                                            `Run ${
-                                                original.run_number
-                                            } Moved to ${to_state}`,
+                                            `Run ${original.run_number} Moved to ${to_state}`,
                                             '',
                                             'success'
                                         );
@@ -199,9 +193,7 @@ const column_generator = ({
                 <div style={{ textAlign: 'center' }}>
                     <a
                         target="_blank"
-                        href={`https://cmsweb.cern.ch/dqm/online/start?runnr=${
-                            original.run_number
-                        };sampletype=online_data;workspace=Summary`}
+                        href={`https://cmsweb.cern.ch/dqm/online/start?runnr=${original.run_number};sampletype=online_data;workspace=Summary`}
                     >
                         GUI
                     </a>
@@ -267,6 +259,7 @@ const column_generator = ({
             },
             Cell: ({ original, value }) => (
                 <Status
+                    run={original}
                     significant={original.significant}
                     triplet_summary={value}
                     run_number={original.run_number}
