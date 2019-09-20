@@ -42,9 +42,7 @@ class EditRun extends Component {
                                 };
                                 await editRun(run.run_number, updated_run);
                                 await Swal(
-                                    `Run ${
-                                        run.run_number
-                                    } component's edited successfully`,
+                                    `Run ${run.run_number} component's edited successfully`,
                                     '',
                                     'success'
                                 );
@@ -183,10 +181,19 @@ class EditRun extends Component {
                                         <Button
                                             type="primary"
                                             htmlType="submit"
+                                            disabled={run.state !== 'OPEN'}
                                         >
                                             Save
                                         </Button>
                                     </div>
+                                    {run.state !== 'OPEN' && (
+                                        <center>
+                                            <strong>
+                                                Run must be in state OPEN to be
+                                                edited
+                                            </strong>
+                                        </center>
+                                    )}
                                 </form>
                             )}
                         />

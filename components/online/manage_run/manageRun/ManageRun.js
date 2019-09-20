@@ -22,11 +22,7 @@ class ManageRun extends Component {
                     key="3"
                     header="Edit Run Attributes (Run Class, Run Stop Reason)"
                 >
-                    {run.state === 'OPEN' ? (
-                        <EditRun run={run} />
-                    ) : (
-                        <div>Run must be in state OPEN to be edited</div>
-                    )}
+                    <EditRun run={run} />
                 </Panel>
                 <Panel
                     key="4"
