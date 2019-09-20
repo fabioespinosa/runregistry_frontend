@@ -73,6 +73,9 @@ class EditRun extends Component {
                                                 Please write the class manually
                                                 here:
                                                 <TextArea
+                                                    disabled={
+                                                        run.state !== 'OPEN'
+                                                    }
                                                     value={values['class']}
                                                     onChange={evt =>
                                                         setFieldValue(
@@ -97,6 +100,7 @@ class EditRun extends Component {
                                         )}
                                         {!this.state.not_in_the_list && (
                                             <Select
+                                                disabled={run.state !== 'OPEN'}
                                                 value={values['class']}
                                                 onChange={value => {
                                                     if (
