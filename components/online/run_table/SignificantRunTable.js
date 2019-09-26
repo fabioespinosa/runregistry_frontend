@@ -22,7 +22,7 @@ class RunTable extends Component {
         this.defaultPageSize = props.defaultPageSize;
     }
 
-    state = { filterable: false, filters: [], sortings: [], loading: false };
+    state = { filterable: true, filters: [], sortings: [], loading: false };
     toggleShowFilters = () =>
         this.setState({ filterable: !this.state.filterable });
     // First time page loads, table grabs filter from query url, then goes and queries them:

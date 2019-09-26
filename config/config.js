@@ -28,6 +28,77 @@ exports.config = config;
 exports.api_url = config[ENV]['api_url'];
 exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
+const offline_column_structure = {
+    // None of the offline_column_structure can contain "-" character, only "_".
+
+    btag: ['btag'],
+    castor: ['castor'],
+    csc: [
+        'csc',
+        'occupancy',
+        'integrity',
+        'strips',
+        'timing',
+        'efficiency',
+        'gasgains',
+        'pedestals',
+        'resolution',
+        'segments',
+        'tf',
+        'triggergpe'
+    ],
+    ctpps: [
+        'ctpps',
+        'rp45_210',
+        'rp45_220',
+        'rp45_cyl',
+        'rp56_210',
+        'rp56_220',
+        'rp56_cyl',
+        'trk45_210',
+        'time45',
+        'trk56_220',
+        'time56',
+        'time_global'
+    ],
+    dt: ['dt'],
+    ecal: [
+        'ecal',
+        'ebp',
+        'ebm',
+        'eep',
+        'eem',
+        'es',
+        'esp',
+        'esm',
+        'analysis',
+        'collisions',
+        'laser',
+        'tpg',
+        'noise',
+        'preshower',
+        'timing'
+    ],
+    egamma: ['egamma'],
+    hcal: ['hb', 'he', 'hf', 'ho0', 'ho12'],
+    hlt: [
+        'muons',
+        'electrons',
+        'photons',
+        'jetmet',
+        'tau',
+        'bjets',
+        'technical'
+    ],
+    jetmet: ['jetmet'],
+    l1t: ['l1tmu', 'l1tcalo', 'software'],
+    lumi: ['lumi'],
+    muon: ['muon'],
+    rpc: ['rpc', 'hv', 'lv', 'feb', 'noise', 'elog'],
+    tau: ['tau'],
+    tracker: ['track', 'pixel', 'strip']
+};
+
 exports.components = [
     'cms',
     'castor',
@@ -55,76 +126,15 @@ exports.rr_attributes = [
     'stop_reason'
 ];
 
-const offline_column_structure =
-    // None of the offline_column_structure can contain "-" character, only "_".
-    {
-        btag: ['btag'],
-        castor: ['castor'],
-        csc: [
-            'csc',
-            'occupancy',
-            'integrity',
-            'strips',
-            'timing',
-            'efficiency',
-            'gasgains',
-            'pedestals',
-            'resolution',
-            'segments',
-            'tf',
-            'triggergpe'
-        ],
-        ctpps: [
-            'ctpps',
-            'rp45_210',
-            'rp45_220',
-            'rp45_cyl',
-            'rp56_210',
-            'rp56_220',
-            'rp56_cyl',
-            'trk45_210',
-            'time45',
-            'trk56_220',
-            'time56',
-            'time_global'
-        ],
-        dt: ['dt'],
-        ecal: [
-            'ecal',
-            'ebp',
-            'ebm',
-            'eep',
-            'eem',
-            'es',
-            'esp',
-            'esm',
-            'analysis',
-            'collisions',
-            'laser',
-            'tpg',
-            'noise',
-            'preshower',
-            'timing'
-        ],
-        egamma: ['egamma'],
-        hcal: ['hb', 'he', 'hf', 'ho0', 'ho12'],
-        hlt: [
-            'muons',
-            'electrons',
-            'photons',
-            'jetmet',
-            'tau',
-            'bjets',
-            'technical'
-        ],
-        jetmet: ['jetmet'],
-        l1t: ['l1tmu', 'l1tcalo', 'software'],
-        lumi: ['lumi'],
-        muon: ['muon'],
-        rpc: ['rpc', 'hv', 'lv', 'feb', 'noise', 'elog'],
-        tau: ['tau'],
-        tracker: ['track', 'pixel', 'strip']
-    };
+exports.dataset_attributes = [
+    // Run attributes:
+    'appeared_in',
+    'global_state',
+    // All the state tracker_state, csc_state, ... :
+    ...Object.keys(offline_column_structure).map(
+        workspace => `${workspace}_state`
+    )
+];
 
 const columns = [];
 for (const [key, val] of Object.entries(offline_column_structure)) {

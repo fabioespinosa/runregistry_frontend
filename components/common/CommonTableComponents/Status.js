@@ -56,6 +56,7 @@ class Status extends Component {
         if (triplet_summary) {
             const { comments, causes } = triplet_summary;
             const statuses = { ...triplet_summary };
+            // Stop reason is displayed on hover in CMS component
             if (
                 run &&
                 component === 'cms-cms' &&

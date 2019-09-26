@@ -20,7 +20,7 @@ class DatasetTable extends Component {
         super(props);
         this.defaultPageSize = props.defaultPageSize;
     }
-    state = { filterable: false, filters: [], sortings: [], loading: false };
+    state = { filterable: true, filters: [], sortings: [], loading: false };
     toggleShowFilters = () =>
         this.setState({ filterable: !this.state.filterable });
 

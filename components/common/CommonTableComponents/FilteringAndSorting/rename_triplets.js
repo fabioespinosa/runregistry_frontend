@@ -1,4 +1,4 @@
-import { rr_attributes } from '../../../../config/config';
+import { rr_attributes, dataset_attributes } from '../../../../config/config';
 
 // SQL Understands a dot syntax for JSONB values (in this case triplets), they are transformed to this syntax in this function
 // filtering is true if the user is trying to filter, not to sort
@@ -11,6 +11,8 @@ const rename_triplets = (original_criteria, filtering) => {
             new_filter.id = `rr_attributes.${filter.id}`;
         } else if (filter.id === 'name') {
             new_filter.id = 'name';
+        } else if (dataset_attributes.includes(filter.id)) {
+            new_filter.id = `dataset_attributes.${filter.id}`;
         } else if (
             !rr_attributes.includes(filter.id) &&
             !filter.id.includes('.') &&

@@ -6,7 +6,6 @@ import { Radio, Icon } from 'antd';
 
 import {
     api_url,
-    components,
     lumisection_attributes,
     certifiable_offline_components
 } from '../../../../../config/config';
