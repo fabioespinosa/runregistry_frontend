@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
 import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import { Menu, Button, Icon, Input } from 'antd';
+import Swal from 'sweetalert2';
 import {
     generateJson,
-    changeJsonLogic
+    changeJsonLogic,
+    getJsonConfigurations,
+    resetJson,
+    addConfiguration,
+    editConfiguration,
+    deleteJsonConfiguration
 } from '../../../../ducks/json/configuration';
 import stringify from 'json-stringify-pretty-compact';
+import swal from 'sweetalert2';
+
+const { SubMenu } = Menu;
 
 const TextEditor = dynamic(
     import('../../../common/ClassifierEditor/JSONEditor/JSONEditor'),
@@ -15,18 +24,52 @@ const TextEditor = dynamic(
     }
 );
 
-const calculate_number_of_lumisections_from_json = json => {
-    let number_of_lumisections = 0;
-    for (const [run, ranges] of Object.entries(json)) {
-        for (const [range_start, range_end] of ranges) {
-            const lumisections_in_range = range_end - range_start + 1;
-            number_of_lumisections += lumisections_in_range;
-        }
-    }
-    return number_of_lumisections;
-};
-
 class Configuration extends Component {
+    state = {
+        menu_selection: 'golden',
+        editing: false,
+        creating: false,
+        new_name: ''
+    };
+
+    async componentDidMount() {
+        await this.props.getJsonConfigurations();
+        const default_selection = this.state.menu_selection;
+        this.handleMenuChange(default_selection);
+    }
+    handleMenuChange = new_menu_selection => {
+        this.props.resetJson();
+        this.setState({ menu_selection: new_menu_selection });
+        const json_logic = this.props.json_configurations[new_menu_selection];
+        const formatted = stringify(json_logic);
+        this.changeValue(formatted);
+    };
+
+    createNewConfiguration = async new_configuration => {
+        new_configuration = JSON.parse(new_configuration);
+        const { new_name } = this.state;
+        await this.props.addConfiguration(new_configuration, new_name);
+        await this.props.getJsonConfigurations();
+        this.setState({ creating: false });
+        this.handleMenuChange(new_name);
+        await Swal(`New Configuration ${new_name} added`, '', 'success');
+    };
+
+    editConfiguration = async new_configuration => {
+        new_configuration = JSON.parse(new_configuration);
+        const { menu_selection } = this.state;
+        const { json_configurations_array } = this.props;
+        const selected = json_configurations_array.find(
+            ({ name }) => name === menu_selection
+        );
+        selected.classifier = new_configuration;
+        await this.props.editConfiguration(selected, menu_selection);
+        await this.props.getJsonConfigurations();
+        this.setState({ editing: false });
+        this.handleMenuChange(menu_selection);
+        await Swal(`Configuration ${menu_selection} edited`, '', 'success');
+    };
+
     changeValue = new_configuration => {
         this.props.changeJsonLogic(new_configuration);
     };
@@ -35,30 +78,123 @@ class Configuration extends Component {
         return stringify(json);
     }
 
+    toggleCreationMode = () => {
+        this.props.resetJson();
+        this.setState({ creating: !this.state.creating });
+    };
+
+    toggleEditionMode = () => {
+        this.props.resetJson();
+        this.setState({ editing: !this.state.editing });
+    };
+
+    addNewConfigurationInput = () => (
+        <div className="creating_menu">
+            <Input
+                onChange={({ target }) =>
+                    this.setState({
+                        new_name: target.value
+                    })
+                }
+                placeholder="Enter the name of the new configuration"
+            />
+            <Button onClick={this.toggleCreationMode}>
+                <Icon type="close-circle" />
+            </Button>
+            <style jsx>{`
+                .creating_menu > :global(.ant-input) {
+                    width: 80%;
+                }
+            `}</style>
+        </div>
+    );
+
     render() {
-        const { generateJson, current_json, json_logic } = this.props;
+        const {
+            json_configurations,
+            json_configurations_array,
+            generateJson,
+            current_json,
+            json_logic,
+            number_of_runs,
+            number_of_lumisections
+        } = this.props;
+        const { creating, menu_selection, editing } = this.state;
         const download_string =
             'data:text/json;charset=utf-8,' +
             encodeURIComponent(this.getDisplayedJSON(current_json));
-        let number_of_runs;
-        let number_of_lumisections = 0;
-        if (typeof current_json !== 'undefined') {
-            if (typeof current_json === 'string') {
-                number_of_runs = Object.keys(JSON.parse(current_json)).length;
-                number_of_lumisections = calculate_number_of_lumisections_from_json(
-                    JSON.parse(current_json)
-                );
-            } else {
-                number_of_runs = Object.keys(current_json).length;
-                number_of_lumisections = calculate_number_of_lumisections_from_json(
-                    current_json
-                );
-            }
-        }
         return (
             <div className="configuration">
                 <div className="editor">
-                    <h3>Insert JSON-logic to generate the json:</h3>
+                    {creating ? (
+                        this.addNewConfigurationInput()
+                    ) : (
+                        <Menu
+                            onClick={({ key }) => this.handleMenuChange(key)}
+                            selectedKeys={[menu_selection]}
+                            mode="horizontal"
+                        >
+                            {json_configurations_array.map(({ name }) => (
+                                <Menu.Item key={name}>{name}</Menu.Item>
+                            ))}
+                            <Menu.Item key="arbitrary">
+                                arbitrary configuration
+                            </Menu.Item>
+                            <Button
+                                type="link"
+                                onClick={this.toggleCreationMode}
+                            >
+                                <Icon type="plus-circle" />
+                            </Button>
+                        </Menu>
+                    )}
+                    {menu_selection !== 'arbitrary' && !creating && !editing && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                marginTop: '10px'
+                            }}
+                        >
+                            <Button
+                                type="link"
+                                onClick={this.toggleEditionMode}
+                            >
+                                <Icon type="edit" />
+                            </Button>
+                            &nbsp;
+                            <Button
+                                type="link"
+                                onClick={this.toggleCreationMode}
+                            >
+                                <Icon type="delete" />
+                            </Button>
+                        </div>
+                    )}
+                    {editing && (
+                        <div>
+                            <span>
+                                You are now editing the{' '}
+                                <strong>{menu_selection}</strong> JSON
+                                configuration, edit below and then click 'Edit
+                                configuration' (below)
+                            </span>{' '}
+                            &nbsp;
+                            <Button onClick={this.toggleEditionMode}>
+                                <Icon type="close-circle" />
+                            </Button>
+                        </div>
+                    )}
+                    {menu_selection === 'arbitrary' && (
+                        <h3>Insert JSON-logic to generate arbitrary json:</h3>
+                    )}
+                    {creating && (
+                        <p>
+                            Enter name of new configuration and enter JSON logic
+                            below, then click save (below)
+                        </p>
+                    )}
+                    <br />
                     <TextEditor
                         onChange={this.changeValue}
                         value={json_logic}
@@ -66,12 +202,32 @@ class Configuration extends Component {
                         theme="github"
                     />
                     <div className="generate_button">
-                        <Button
-                            type="primary"
-                            onClick={() => generateJson(json_logic)}
-                        >
-                            Generate JSON
-                        </Button>
+                        {creating ? (
+                            <Button
+                                type="primary"
+                                onClick={() =>
+                                    this.createNewConfiguration(json_logic)
+                                }
+                            >
+                                Save new configuration
+                            </Button>
+                        ) : editing ? (
+                            <Button
+                                type="dashed"
+                                onClick={() =>
+                                    this.editConfiguration(json_logic)
+                                }
+                            >
+                                Edit configuration
+                            </Button>
+                        ) : (
+                            <Button
+                                type="primary"
+                                onClick={() => generateJson(json_logic)}
+                            >
+                                Generate JSON
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <div className="produced_json">
@@ -123,12 +279,25 @@ class Configuration extends Component {
 
 function mapStateToProps(state) {
     return {
+        json_configurations: state.json.configuration.json_configurations,
+        json_configurations_array:
+            state.json.configuration.json_configurations_array,
         current_json: state.json.configuration.current_json,
-        json_logic: state.json.configuration.json_logic
+        json_logic: state.json.configuration.json_logic,
+        number_of_runs: state.json.configuration.number_of_runs,
+        number_of_lumisections: state.json.configuration.number_of_lumisections
     };
 }
 
 export default connect(
     mapStateToProps,
-    { generateJson, changeJsonLogic }
+    {
+        generateJson,
+        changeJsonLogic,
+        getJsonConfigurations,
+        resetJson,
+        addConfiguration,
+        editConfiguration,
+        deleteJsonConfiguration
+    }
 )(Configuration);

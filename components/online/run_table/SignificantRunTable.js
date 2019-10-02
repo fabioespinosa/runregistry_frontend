@@ -23,6 +23,7 @@ class RunTable extends Component {
     }
 
     state = { filterable: true, filters: [], sortings: [], loading: false };
+
     toggleShowFilters = () =>
         this.setState({ filterable: !this.state.filterable });
     // First time page loads, table grabs filter from query url, then goes and queries them:
@@ -44,9 +45,12 @@ class RunTable extends Component {
             previous_query.section !== section ||
             previous_query.workspace !== workspace
         ) {
+            console.log(this.state);
+            console.log('navigates');
             this.setState({ loading: true, filters: [], sortings: [] });
             await this.props.filterRuns(this.defaultPageSize, 0, [], {});
             this.setState({ loading: false });
+            console.log(this.state);
         }
     }
     // API understands a filter object, not a filter array:
