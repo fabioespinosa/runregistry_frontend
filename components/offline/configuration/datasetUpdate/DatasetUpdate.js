@@ -84,8 +84,8 @@ class DatasetUpdate extends Component {
                                             setFieldValue('new_state', value)
                                         }
                                     >
-                                        <Option value="COMPLETE">
-                                            COMPLETE
+                                        <Option value="COMPLETED">
+                                            COMPLETED
                                         </Option>
                                         <Option value="OPEN">OPEN</Option>
                                         <Option value="SIGNOFF">SIGNOFF</Option>

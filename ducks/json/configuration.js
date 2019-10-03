@@ -45,7 +45,6 @@ export const editConfiguration = selected_classifier =>
             { ...selected_classifier },
             auth(getState)
         );
-        dispatch(getJsonConfigurations());
     });
 
 export const deleteJsonConfiguration = configuration_id =>
@@ -54,7 +53,6 @@ export const deleteJsonConfiguration = configuration_id =>
             `${api_url}/classifiers/json_classifier/${configuration_id}`,
             auth(getState)
         );
-        dispatch(getJsonConfigurations());
     });
 
 export const generateJson = json_logic =>

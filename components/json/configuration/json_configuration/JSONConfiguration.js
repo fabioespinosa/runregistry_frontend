@@ -38,6 +38,9 @@ class Configuration extends Component {
         this.handleMenuChange(default_selection);
     }
     handleMenuChange = new_menu_selection => {
+        if (!new_menu_selection) {
+            new_menu_selection = 'golden';
+        }
         this.props.resetJson();
         this.setState({ menu_selection: new_menu_selection });
         const json_logic = this.props.json_configurations[new_menu_selection];
@@ -68,6 +71,35 @@ class Configuration extends Component {
         this.setState({ editing: false });
         this.handleMenuChange(menu_selection);
         await Swal(`Configuration ${menu_selection} edited`, '', 'success');
+    };
+
+    deleteConfiguration = async () => {
+        const { menu_selection } = this.state;
+        if (menu_selection === 'golden') {
+            return await Swal(
+                'Cannot delete golden configuration',
+                '',
+                'warning'
+            );
+        }
+        const { json_configurations_array } = this.props;
+        const selected = json_configurations_array.find(
+            ({ name }) => name === menu_selection
+        );
+        const { value } = await Swal({
+            type: 'warning',
+            title: `Are you sure you want to delete ${menu_selection} JSON configuration`,
+            text: '',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            reverseButtons: true
+        });
+        if (value) {
+            await this.props.deleteJsonConfiguration(selected.id);
+            await Swal(`Configuration deleted`, '', 'success');
+            await this.props.getJsonConfigurations();
+            this.handleMenuChange(); // It will select golden by default
+        }
     };
 
     changeValue = new_configuration => {
@@ -165,7 +197,7 @@ class Configuration extends Component {
                             &nbsp;
                             <Button
                                 type="link"
-                                onClick={this.toggleCreationMode}
+                                onClick={this.deleteConfiguration}
                             >
                                 <Icon type="delete" />
                             </Button>
