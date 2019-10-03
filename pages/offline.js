@@ -17,15 +17,13 @@ const { Content } = Layout;
 
 class Offline extends Component {
     static async getInitialProps({ store, query, isServer }) {
+        store.dispatch({
+            type: CHANGE_WORKSPACE,
+            payload: query.workspace
+        });
         if (isServer) {
             initializeUser(store, query);
             initializeEnvironment(store);
-        }
-        if (!isServer) {
-            store.dispatch({
-                type: CHANGE_WORKSPACE,
-                payload: query.workspace
-            });
         }
     }
     async componentDidMount() {

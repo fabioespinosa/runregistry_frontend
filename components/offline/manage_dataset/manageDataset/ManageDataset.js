@@ -15,7 +15,12 @@ class ManageDataset extends Component {
                     <p>Run info</p>
                 </Panel> */}
                 <Panel key="2" header="Dataset History">
-                    <History dataset={dataset} />
+                    <div>
+                        This feature is still in development, history is being
+                        saved but the interface to show it is currently being
+                        built
+                    </div>
+                    {/* <History dataset={dataset} /> */}
                 </Panel>
                 <Panel key="3" header="Edit dataset">
                     <EditDataset dataset={dataset} />
