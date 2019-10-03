@@ -27,10 +27,13 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
         if (filter.name) {
             name_filter.unshift(filter.name);
         }
+        // debugger;
         // If user was filtering by state, we also want to include that
-        if (filter[`${workspace}_state`]) {
-            state_filter.unshift(filter[`${workspace}_state`]);
-            delete filter[`${workspace}_state`];
+        if (filter[`dataset_attributes.${workspace}_state`]) {
+            state_filter.unshift(
+                filter[`dataset_attributes.${workspace}_state`]
+            );
+            delete filter[`dataset_attributes.${workspace}_state`];
         }
         const filter_with_state_and_name = {
             ...filter,
