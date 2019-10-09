@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
+import { Button } from 'antd';
+import { certifiable_offline_components } from '../../../config/config';
 
 import {
     moveDataset,
@@ -15,12 +17,46 @@ import rename_triplets from '../../common/CommonTableComponents/FilteringAndSort
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';
 
+const generate_state_columns = () => {
+    const columns = [];
+    for (const [key, val] of Object.entries(certifiable_offline_components)) {
+        columns.push({
+            Header: `${key} state`,
+            accessor: `${key}_state`,
+            minWidth: 90,
+            maxWidth: 90,
+            Cell: ({ original, value }) => (
+                <div style={{ textAlign: 'center' }}>
+                    <span
+                        style={{
+                            color: 'white',
+                            fontSize: '0.95em',
+                            fontWeight: 'bold',
+                            color: value === 'OPEN' ? 'red' : 'grey',
+                            borderRadius: '1px'
+                        }}
+                    >
+                        <span style={{ padding: '4px' }}>{value}</span>
+                    </span>
+                </div>
+            )
+        });
+    }
+    return columns;
+};
+
 class DatasetTable extends Component {
     constructor(props) {
         super(props);
         this.defaultPageSize = props.defaultPageSize;
     }
-    state = { filterable: true, filters: [], sortings: [], loading: false };
+    state = {
+        filterable: true,
+        filters: [],
+        sortings: [],
+        loading: false,
+        show_state_columsn: false
+    };
     toggleShowFilters = () =>
         this.setState({ filterable: !this.state.filterable });
 
@@ -144,7 +180,7 @@ class DatasetTable extends Component {
         const {
             query: { section }
         } = this.props.router;
-        const { filters, filterable, loading } = this.state;
+        const { filters, filterable, loading, show_state_columns } = this.state;
         const {
             workspace,
             workspaces,
@@ -156,7 +192,7 @@ class DatasetTable extends Component {
         let { datasets, pages, count } = dataset_table;
         const filter_object = this.convertFiltersToObject(filters);
 
-        const columns = column_generator({
+        let columns = column_generator({
             showManageDatasetModal,
             showLumisectionModal,
             workspace,
@@ -165,6 +201,16 @@ class DatasetTable extends Component {
             toggleShowFilters: this.toggleShowFilters,
             filter_object
         });
+
+        if (show_state_columns) {
+            columns = [
+                columns[0],
+                columns[1],
+                columns[2],
+                ...generate_state_columns(),
+                ...columns.slice(3)
+            ];
+        }
         // Filter is on if the array of filters is greater than 0
         const filter = filters.length > 0;
         return (
@@ -196,6 +242,7 @@ class DatasetTable extends Component {
                 ) : (
                     <div style={{ height: '24px' }} />
                 )}
+
                 <ReactTable
                     columns={columns}
                     manual
@@ -228,6 +275,17 @@ class DatasetTable extends Component {
                     className="-striped -highlight"
                 />
                 <br />
+                <Button
+                    onClick={() =>
+                        this.setState({
+                            show_state_columns: !show_state_columns
+                        })
+                    }
+                >
+                    {show_state_columns
+                        ? 'Hide workspace state columns'
+                        : 'Show workspace state columns'}
+                </Button>
                 <style jsx global>{`
                     .ReactTable .rt-th,
                     .ReactTable .rt-td {
