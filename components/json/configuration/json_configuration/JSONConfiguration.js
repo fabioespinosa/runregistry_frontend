@@ -13,6 +13,7 @@ import {
     deleteJsonConfiguration
 } from '../../../../ducks/json/configuration';
 import stringify from 'json-stringify-pretty-compact';
+import JSONDenominator from './json_denominator/JSONDenominator';
 import swal from 'sweetalert2';
 
 const { SubMenu } = Menu;
@@ -29,7 +30,8 @@ class Configuration extends Component {
         menu_selection: 'golden',
         editing: false,
         creating: false,
-        new_name: ''
+        new_name: '',
+        show_denominator: false
     };
 
     async componentDidMount() {
@@ -151,7 +153,12 @@ class Configuration extends Component {
             number_of_runs,
             number_of_lumisections
         } = this.props;
-        const { creating, menu_selection, editing } = this.state;
+        const {
+            creating,
+            menu_selection,
+            editing,
+            show_denominator
+        } = this.state;
         const download_string =
             'data:text/json;charset=utf-8,' +
             encodeURIComponent(this.getDisplayedJSON(current_json));
@@ -227,6 +234,17 @@ class Configuration extends Component {
                         </p>
                     )}
                     <br />
+                    {show_denominator && (
+                        <div>
+                            <p>You are in visualization Mode. </p>
+                            <p>
+                                You must provide a denominator configuration as
+                                to evaluate over which range you want to
+                                visualize the luminosity that didn't make it to
+                                the golden json.
+                            </p>
+                        </div>
+                    )}
                     <TextEditor
                         onChange={this.changeValue}
                         value={json_logic}
@@ -252,42 +270,67 @@ class Configuration extends Component {
                             >
                                 Edit configuration
                             </Button>
+                        ) : show_denominator ? (
+                            <div></div>
                         ) : (
-                            <Button
-                                type="primary"
-                                onClick={() => generateJson(json_logic)}
-                            >
-                                Generate JSON
-                            </Button>
+                            <div>
+                                <Button
+                                    type="primary"
+                                    onClick={() => generateJson(json_logic)}
+                                >
+                                    Generate JSON
+                                </Button>
+                            </div>
                         )}
                     </div>
+                    {show_denominator && (
+                        <JSONDenominator golden_logic={json_logic} />
+                    )}
+                    <br />
+                    <br />
+
+                    <Button
+                        onClick={() =>
+                            this.setState({
+                                show_denominator: !this.state.show_denominator
+                            })
+                        }
+                    >
+                        {show_denominator
+                            ? 'Hide Visualization mode'
+                            : 'Visualize'}
+                    </Button>
                 </div>
-                <div className="produced_json">
-                    <h3>Generated JSON:</h3>
-                    <TextEditor
-                        onChange={() => {}}
-                        value={this.getDisplayedJSON(current_json)}
-                        lan="javascript"
-                        theme="github"
-                        readOnly={true}
-                    />
-                    The number of runs in this json are: {number_of_runs} and
-                    number of lumisections: {number_of_lumisections}
-                    <div className="generate_button">
-                        <Button
-                            type="primary"
-                            disabled={current_json === '{}'}
-                            onClick={() => generateJson(json_logic)}
-                        >
-                            <a
-                                href={download_string}
-                                download="custom_json.json"
+                {show_denominator ? (
+                    <div>Visualization Mode</div>
+                ) : (
+                    <div className="produced_json">
+                        <h3>Generated JSON:</h3>
+                        <TextEditor
+                            onChange={() => {}}
+                            value={this.getDisplayedJSON(current_json)}
+                            lan="javascript"
+                            theme="github"
+                            readOnly={true}
+                        />
+                        The number of runs in this json are: {number_of_runs}{' '}
+                        and number of lumisections: {number_of_lumisections}
+                        <div className="generate_button">
+                            <Button
+                                type="primary"
+                                disabled={current_json === '{}'}
+                                onClick={() => generateJson(json_logic)}
                             >
-                                Download JSON file
-                            </a>
-                        </Button>
+                                <a
+                                    href={download_string}
+                                    download="custom_json.json"
+                                >
+                                    Download JSON file
+                                </a>
+                            </Button>
+                        </div>
                     </div>
-                </div>
+                )}
                 <style jsx>{`
                     .configuration {
                         display: flex;

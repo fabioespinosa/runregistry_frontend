@@ -27,7 +27,6 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
         if (filter.name) {
             name_filter.unshift(filter.name);
         }
-        // debugger;
         // If user was filtering by state, we also want to include that
         if (filter[`dataset_attributes.${workspace}_state`]) {
             state_filter.unshift(

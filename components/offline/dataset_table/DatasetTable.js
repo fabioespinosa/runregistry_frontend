@@ -207,8 +207,9 @@ class DatasetTable extends Component {
                 columns[0],
                 columns[1],
                 columns[2],
+                columns[3],
                 ...generate_state_columns(),
-                ...columns.slice(3)
+                ...columns.slice(4)
             ];
         }
         // Filter is on if the array of filters is greater than 0
