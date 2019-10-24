@@ -7,6 +7,7 @@ import { reFetchDataset } from '../../../ducks/offline/datasets';
 import { reFetchRun } from '../../../ducks/online/runs';
 import { addLumisectionRange } from '../../../ducks/online/lumisections';
 import BarPlot from './BarPlot';
+import History from './History';
 const { TextArea } = Input;
 
 class EditComponent extends Component {
@@ -22,13 +23,25 @@ class EditComponent extends Component {
 
         this.state = {
             modifying: false,
+            show_history: false,
             ls_ranges_lengths: [ls_ranges_lengths],
             lumisection_ranges
         };
     }
     render() {
-        const { component, state, component_name } = this.props;
-        const { modifying, lumisection_ranges, ls_ranges_lengths } = this.state;
+        const {
+            run_number,
+            dataset_name,
+            component,
+            state,
+            component_name
+        } = this.props;
+        const {
+            modifying,
+            show_history,
+            lumisection_ranges,
+            ls_ranges_lengths
+        } = this.state;
         const number_of_lumisections = lumisection_ranges[
             lumisection_ranges.length - 1
         ]
@@ -46,21 +59,36 @@ class EditComponent extends Component {
             <tr>
                 <td>{component_name ? component_name : component}</td>
                 <td className="comment">
-                    <BarPlot
-                        ls_ranges_lengths={ls_ranges_lengths}
-                        lumisection_ranges={lumisection_ranges}
-                    />
-                    {lumisections_with_comments.length > 0 && (
+                    {show_history ? (
+                        <History
+                            run_number={run_number}
+                            dataset_name={dataset_name}
+                            component={component}
+                            number_of_lumisections={number_of_lumisections}
+                        />
+                    ) : (
                         <div>
-                            <h4>Comments:</h4>
-                            {lumisections_with_comments.map(
-                                ({ status, start, end, comment }) => (
-                                    <div>
-                                        Status: {status}, From LS:
-                                        {start} To LS: {end}, Comment:{' '}
-                                        <strong>{comment}</strong>
-                                    </div>
-                                )
+                            <BarPlot
+                                ls_ranges_lengths={ls_ranges_lengths}
+                                lumisection_ranges={lumisection_ranges}
+                            />
+                            {lumisections_with_comments.length > 0 && (
+                                <div>
+                                    <h4>Comments:</h4>
+                                    {lumisections_with_comments.map(
+                                        ({ status, start, end, comment }) => (
+                                            <div>
+                                                Status:{' '}
+                                                <strong>{status}</strong>
+                                                {' - '}From LS:{' '}
+                                                <strong>{start}</strong> to LS:{' '}
+                                                <strong>{end}</strong>
+                                                {' - '}Comment:{' '}
+                                                <strong>{comment}</strong>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
                             )}
                         </div>
                     )}
@@ -106,79 +134,98 @@ class EditComponent extends Component {
                                 const { status, start, end } = values;
                                 return (
                                     <form>
-                                        <h3>Edit Lumisections:</h3>
-                                        Change status to:{' '}
-                                        <Field component="select" name="status">
-                                            <option value="">-----</option>
-                                            <option value="GOOD">GOOD</option>
-                                            <option value="BAD">BAD</option>
-                                            <option value="STANDBY">
-                                                STANDBY
-                                            </option>
-                                            <option value="EXCLUDED">
-                                                EXCLUDED
-                                            </option>
-                                            <option value="NOTSET">
-                                                NOTSET
-                                            </option>
-                                        </Field>
+                                        <hr />
                                         <br />
-                                        Cause:{' '}
-                                        <Field
-                                            key={component}
-                                            component="select"
-                                            name="cause"
-                                            disabled
-                                        />
+                                        <h3>Edit Lumisections</h3>
                                         <br />
-                                        From Lumisection:{' '}
-                                        <InputNumber
-                                            name="end"
-                                            value={start}
-                                            min={1}
-                                            max={number_of_lumisections}
-                                            defaultValue={1}
-                                            onChange={value =>
-                                                setFieldValue('start', value)
-                                            }
-                                        />
-                                        To Lumisection:{' '}
-                                        <InputNumber
-                                            name="start"
-                                            value={end}
-                                            min={1}
-                                            max={number_of_lumisections}
-                                            defaultValue={
-                                                number_of_lumisections
-                                            }
-                                            onChange={value =>
-                                                setFieldValue('end', value)
-                                            }
-                                        />
-                                        <br />
-                                        Comment:{' '}
-                                        <TextArea
-                                            name="comment"
-                                            onChange={value =>
-                                                setFieldValue(
-                                                    'comment',
-                                                    value.target.value
-                                                )
-                                            }
-                                        />
-                                        <div className="submit">
-                                            <Button
-                                                type="primary"
-                                                onClick={() => {
-                                                    handleSubmit();
-                                                    // this.setState({
-                                                    //     modifying: false
-                                                    // });
-                                                }}
+                                        <center>
+                                            <i>Change status to: </i>
+                                            <Field
+                                                component="select"
+                                                name="status"
                                             >
-                                                Modify
-                                            </Button>
-                                        </div>
+                                                <option value="">-----</option>
+                                                <option value="GOOD">
+                                                    GOOD
+                                                </option>
+                                                <option value="BAD">BAD</option>
+                                                <option value="STANDBY">
+                                                    STANDBY
+                                                </option>
+                                                <option value="EXCLUDED">
+                                                    EXCLUDED
+                                                </option>
+                                                <option value="NOTSET">
+                                                    NOTSET
+                                                </option>
+                                            </Field>
+                                            <br />
+                                            <br />
+                                            <i>Cause: </i>
+                                            <Field
+                                                key={component}
+                                                component="select"
+                                                name="cause"
+                                                disabled
+                                            />
+                                            <br />
+                                            <br />
+                                            <i>From Lumisection: </i>
+                                            <InputNumber
+                                                name="end"
+                                                value={start}
+                                                min={1}
+                                                max={number_of_lumisections}
+                                                defaultValue={1}
+                                                onChange={value =>
+                                                    setFieldValue(
+                                                        'start',
+                                                        value
+                                                    )
+                                                }
+                                            />{' '}
+                                            &nbsp; <i>To Lumisection: </i>
+                                            <InputNumber
+                                                name="start"
+                                                value={end}
+                                                min={1}
+                                                max={number_of_lumisections}
+                                                defaultValue={
+                                                    number_of_lumisections
+                                                }
+                                                onChange={value =>
+                                                    setFieldValue('end', value)
+                                                }
+                                            />
+                                            <br />
+                                            <br />
+                                            <i>Comment: </i>
+                                            <div className="text_area">
+                                                <TextArea
+                                                    name="comment"
+                                                    onChange={value =>
+                                                        setFieldValue(
+                                                            'comment',
+                                                            value.target.value
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                            <br />
+                                            <div className="submit">
+                                                <Button
+                                                    type="primary"
+                                                    onClick={() => {
+                                                        handleSubmit();
+                                                        // this.setState({
+                                                        //     modifying: false
+                                                        // });
+                                                    }}
+                                                >
+                                                    Modify
+                                                </Button>
+                                            </div>
+                                        </center>
                                     </form>
                                 );
                             }}
@@ -213,9 +260,33 @@ class EditComponent extends Component {
                         </Button>
                     )}
                 </td>
+                <td className="history_toggle">
+                    {show_history ? (
+                        <div>
+                            <Button
+                                onClick={() =>
+                                    this.setState({ show_history: false })
+                                }
+                            >
+                                Hide history
+                            </Button>
+                        </div>
+                    ) : (
+                        <Button
+                            onClick={() =>
+                                this.setState({ show_history: true })
+                            }
+                        >
+                            Show History
+                        </Button>
+                    )}
+                </td>
                 <style jsx>{`
+                    h3 {
+                        text-decoration: underline;
+                    }
                     form {
-                        text-align: left;
+                        margin-top: 10px;
                     }
                     tr > td {
                         padding: 8px 5px;
@@ -252,6 +323,10 @@ class EditComponent extends Component {
                     }
                     .submit {
                         text-align: center;
+                    }
+
+                    .text_area {
+                        width: 80%;
                     }
                 `}</style>
             </tr>

@@ -69,6 +69,11 @@ class TopNav extends Component {
                             <a>JSON CREATION</a>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="log">
+                        <Link as={`/log`} href="/log">
+                            <a>LOG</a>
+                        </Link>
+                    </Menu.Item>
                     <Menu.Item
                         disabled
                         key="warning"

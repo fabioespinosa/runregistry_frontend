@@ -44,11 +44,6 @@ class EditRunLumisections extends Component {
                 });
             }
         } else {
-            // certifiable_offline_components[current_workspace].forEach(
-            //     sub_name => {
-            //         components.push(`${current_workspace}-${sub_name}`);
-            //     }
-            // );
             workspaces.forEach(({ workspace, columns }) => {
                 if (workspace === current_workspace) {
                     columns.forEach(column => {
@@ -104,6 +99,7 @@ class EditRunLumisections extends Component {
                                     <td>Component</td>
                                     <td>Comment</td>
                                     <td>Modify</td>
+                                    <td>History</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -119,6 +115,7 @@ class EditRunLumisections extends Component {
                                                     <Spin size="large" />
                                                 </td>
                                                 <td className="modify_toggle" />
+                                                <td></td>
                                             </tr>
                                         );
                                     } else if (
@@ -151,6 +148,7 @@ class EditRunLumisections extends Component {
                                                     No lumisection data
                                                 </td>
                                                 <td className="modify_toggle" />
+                                                <td>No History</td>
                                             </tr>
                                         );
                                     }

@@ -16,7 +16,8 @@ const color_coding = {
     STANDBY: 'yellow',
     EXCLUDED: 'grey',
     NOTSET: 'white',
-    EMPTY: 'black'
+    EMPTY: 'black',
+    ARTIFICIALLY_EMPTY: 'transparent'
 };
 
 // const CustomTooltip = props => {
@@ -37,21 +38,28 @@ const color_coding = {
 
 class BarPlot extends Component {
     render() {
-        const { ls_ranges_lengths, lumisection_ranges } = this.props;
+        const {
+            ls_ranges_lengths,
+            lumisection_ranges,
+            height,
+            margin
+        } = this.props;
         console.log(ls_ranges_lengths, lumisection_ranges);
         return (
             <ResponsiveContainer width="100%" aspect={30.0 / 3.0}>
                 <BarChart
                     barCategoryGap={-1}
                     layout="vertical"
-                    height={10}
+                    height={height || 10}
                     data={ls_ranges_lengths}
-                    margin={{
-                        top: 10,
-                        right: 30,
-                        left: 20,
-                        bottom: 10
-                    }}
+                    margin={
+                        margin || {
+                            top: 10,
+                            right: 30,
+                            left: 20,
+                            bottom: 10
+                        }
+                    }
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis

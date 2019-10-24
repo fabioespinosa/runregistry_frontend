@@ -46,6 +46,13 @@ app.prepare().then(() => {
         const params = { ...req.headers, ...req.params, filters: req.query };
         app.render(req, res, `/json`, params);
     });
+
+    // log:
+    server.get('/log', (req, res) => {
+        req.params.type = 'log';
+        const params = { ...req.headers, ...req.params, filters: req.query };
+        app.render(req, res, `/log`, params);
+    });
     server.get('*', (req, res) => {
         return handle(req, res);
     });

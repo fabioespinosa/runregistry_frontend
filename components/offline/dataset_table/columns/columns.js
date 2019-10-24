@@ -31,7 +31,8 @@ const column_generator = ({
     workspaces,
     moveDataset,
     toggleShowFilters,
-    filter_object
+    filter_object,
+    reGenerateCache
 }) => {
     let columns = [
         {
@@ -240,6 +241,31 @@ const column_generator = ({
         };
     });
     columns = [...columns, ...offline_columns_composed];
+    columns.push({
+        Header: 'Cache',
+        id: 'cache',
+        filterable: false,
+        sortable: false,
+        Cell: ({ original }) => {
+            const { run_number, name } = original;
+            return (
+                <div>
+                    <span>
+                        <a
+                            onClick={() =>
+                                reGenerateCache({
+                                    run_number,
+                                    dataset_name: name
+                                })
+                            }
+                        >
+                            Re-create cache
+                        </a>
+                    </span>
+                </div>
+            );
+        }
+    });
     // columns = component_columns;
     columns = columns.map(column => {
         return {

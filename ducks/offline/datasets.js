@@ -89,6 +89,19 @@ export const filterWaitingDatasets = (page_size, page, sortings, filter) =>
         });
     });
 
+export const reGenerateCache = ({ run_number, dataset_name }) =>
+    error_handler(async (dispatch, getState) => {
+        let { data: dataset } = await axios.put(
+            `${api_url}/recalculate_cache_for_specific_dataset`,
+            {
+                run_number,
+                dataset_name
+            }
+        );
+        dataset = formatDatasets([dataset])[0];
+        dispatch({ type: EDIT_DATASET, payload: dataset });
+    });
+
 export const moveDataset = (
     { run_number, dataset_name },
     workspace,

@@ -6,7 +6,8 @@ import { certifiable_offline_components } from '../../../config/config';
 
 import {
     moveDataset,
-    filterEditableDatasets
+    filterEditableDatasets,
+    reGenerateCache
 } from '../../../ducks/offline/datasets';
 import { showManageDatasetModal } from '../../../ducks/offline/ui';
 import { showLumisectionModal } from '../../../ducks/global_ui';
@@ -186,6 +187,7 @@ class DatasetTable extends Component {
             workspaces,
             dataset_table,
             moveDataset,
+            reGenerateCache,
             showManageDatasetModal,
             showLumisectionModal
         } = this.props;
@@ -199,7 +201,8 @@ class DatasetTable extends Component {
             workspaces,
             moveDataset,
             toggleShowFilters: this.toggleShowFilters,
-            filter_object
+            filter_object,
+            reGenerateCache
         });
 
         if (show_state_columns) {
@@ -314,7 +317,8 @@ export default withRouter(
             filterEditableDatasets,
             showManageDatasetModal,
             showLumisectionModal,
-            moveDataset
+            moveDataset,
+            reGenerateCache
         }
     )(DatasetTable)
 );
