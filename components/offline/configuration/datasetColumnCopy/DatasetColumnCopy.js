@@ -8,9 +8,9 @@ import { api_url } from '../../../../config/config';
 import { error_handler } from '../../../../utils/error_handlers';
 const { Option } = Select;
 
-import { duplicateDatasets } from '../../../../ducks/offline/dc_tools';
+import { copyDatasetColumn } from '../../../../ducks/offline/dc_tools';
 
-class DuplicateDatasets extends Component {
+class CopyDatasetColumn extends Component {
     state = { unique_dataset_names: [] };
     componentDidMount = error_handler(async () => {
         const { filter, workspace } = this.props;
@@ -24,13 +24,23 @@ class DuplicateDatasets extends Component {
         this.setState({ unique_dataset_names });
     });
     render() {
-        const { datasets, count, filter, workspaces } = this.props;
+        const { datasets, count, filter, workspaces, workspace } = this.props;
         const { unique_dataset_names } = this.state;
         const initialValues = {};
-        // By default all workspaces start being true:
-        workspaces.forEach(({ workspace }) => {
-            initialValues[`workspaces-${workspace}`] = true;
-        });
+
+        let columns = [];
+        workspaces.forEach(
+            ({ workspace: iterator_workspace, columns: iterator_columns }) => {
+                if (
+                    workspace.toLowerCase() === iterator_workspace.toLowerCase()
+                ) {
+                    columns = iterator_columns.map(
+                        column => `${workspace.toLowerCase()}-${column}`
+                    );
+                }
+            }
+        );
+
         return (
             <div>
                 <h3>
@@ -45,20 +55,26 @@ class DuplicateDatasets extends Component {
                         : `With filter: ${JSON.stringify(filter)}`}
                 </h5>
                 <br />
+                {workspace === 'global' && (
+                    <h1>
+                        This action cannot be performed in GLOBAL workspace, it
+                        must be done individually on each workspace
+                    </h1>
+                )}
                 <Formik
                     initialValues={initialValues}
                     onSubmit={async values => {
-                        // TODO: validation (empty fields, ...)
-                        values.workspaces = [];
+                        // TODO: validation (all empty fields, ...)
+                        values.columns_to_copy = [];
                         for (const [key, val] of Object.entries(values)) {
-                            if (key.includes('workspaces-')) {
-                                const workspace = key.split('workspaces-')[1];
+                            if (key.includes('columns*')) {
+                                const column = key.split('columns*')[1];
                                 if (val) {
-                                    values.workspaces.push(workspace);
+                                    values.columns_to_copy.push(column);
                                 }
                             }
                         }
-                        await this.props.duplicateDatasets(values);
+                        await this.props.copyDatasetColumn(values);
                         await Swal(
                             `Datasets duplicated in the selected workspaces`,
                             '',
@@ -72,13 +88,23 @@ class DuplicateDatasets extends Component {
                                 onSubmit={handleSubmit}
                                 className="dataset_copy_form"
                             >
+                                <center>
+                                    This tool serves as a way to copy a column
+                                    (say pixel from tracker) from a specific
+                                    dataset to the same column of another
+                                    dataset. <br /> The classical use case is if
+                                    a subsystem did a batch update of many
+                                    datasets of a ReReco or UltraLegacy (UL) and
+                                    now want to revert the change they made.{' '}
+                                    <br />
+                                    So we use this tool so that they can copy
+                                    that column they changed back into what was
+                                    the original PromptReco value
+                                </center>
                                 <div className="form_container">
-                                    Tip:Selecting 'online' will duplicate the
-                                    original dataset as it came from P5, without
-                                    any LS alteration afterwards.
                                     <br />
-                                    <br />
-                                    Source dataset name:
+                                    Source dataset name (whose columns we want
+                                    to copy from):
                                     <Select
                                         placeholder="Source dataset name"
                                         value={values['source_dataset_name']}
@@ -99,37 +125,51 @@ class DuplicateDatasets extends Component {
                                     </Select>
                                     <br />
                                     <br />
-                                    Target dataset name:
-                                    <Input
+                                    Target dataset name (whose columns we want
+                                    to copy to):
+                                    <Select
+                                        placeholder="Target dataset name"
                                         value={values['target_dataset_name']}
-                                        onChange={evt =>
+                                        onChange={value =>
                                             setFieldValue(
                                                 'target_dataset_name',
-                                                evt.target.value
+                                                value
                                             )
                                         }
-                                        type="text"
-                                    />
+                                    >
+                                        {unique_dataset_names.map(
+                                            dataset_name => (
+                                                <Option value={dataset_name}>
+                                                    {dataset_name}
+                                                </Option>
+                                            )
+                                        )}
+                                    </Select>
                                     <br />
                                     <br />
-                                    Workspaces to copy dataset into:
+                                    Columns to copy from dataset
+                                    <br />
+                                    These columns all belong to the {
+                                        workspace
+                                    }{' '}
+                                    workspace <br />
                                     <ul>
-                                        {workspaces.map(({ workspace }) => (
-                                            <li key={workspace}>
+                                        {columns.map(column => (
+                                            <li key={column}>
                                                 <Checkbox
                                                     checked={
                                                         values[
-                                                            `workspaces-${workspace}`
+                                                            `columns*${column}`
                                                         ]
                                                     }
                                                     onChange={({ target }) =>
                                                         setFieldValue(
-                                                            `workspaces-${workspace}`,
+                                                            `columns*${column}`,
                                                             target.checked
                                                         )
                                                     }
                                                 >
-                                                    {workspace}
+                                                    {column.split('-')[1]}
                                                 </Checkbox>
                                             </li>
                                         ))}
@@ -171,11 +211,12 @@ const mapStateToProps = state => {
         datasets,
         count,
         filter,
-        workspaces: state.offline.workspace.workspaces
+        workspaces: state.offline.workspace.workspaces,
+        workspace: state.offline.workspace.workspace
     };
 };
 
 export default connect(
     mapStateToProps,
-    { duplicateDatasets }
-)(DuplicateDatasets);
+    { copyDatasetColumn }
+)(CopyDatasetColumn);

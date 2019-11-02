@@ -8,6 +8,7 @@ import ComponentClassifierConfiguration from '../../common/componentClassifierCo
 import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import DatasetCopy from './datasetCopy/DatasetCopy';
+import DatasetColumnCopy from './datasetColumnCopy/DatasetColumnCopy';
 import DatasetUpdate from './datasetUpdate/DatasetUpdate';
 import CreateCycle from './createCycle/CreateCycle';
 
@@ -43,6 +44,7 @@ class ConfigurationModal extends Component {
             datasets_accepted_configuration:
                 'Change the RegExp of the Datasets Accepted in RR',
             dataset_copy: 'Copy datasets',
+            dataset_column_copy: 'Copy Columns Across Datasets',
             create_cycle: 'Create cycle',
             dataset_update: 'Dataset Update'
         };
@@ -60,6 +62,7 @@ class ConfigurationModal extends Component {
             column_configuration: <ColumnConfiguration />,
             datasets_accepted_configuration: <DatasetsAccepted />,
             dataset_copy: <DatasetCopy />,
+            dataset_column_copy: <DatasetColumnCopy />,
             create_cycle: <CreateCycle />,
             dataset_update: <DatasetUpdate />
         };

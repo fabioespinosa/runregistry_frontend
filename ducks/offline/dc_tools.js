@@ -34,6 +34,37 @@ export const duplicateDatasets = ({
         });
     });
 
+export const copyDatasetColumn = ({
+    source_dataset_name,
+    target_dataset_name,
+    columns_to_copy
+}) =>
+    error_handler(async (dispatch, getState) => {
+        const current_filter = getState().offline.editable_datasets.filter;
+
+        const filter_with_source_dataset_name_and_target = {
+            ...current_filter,
+            name: {
+                or: [{ '=': source_dataset_name }, { '=': target_dataset_name }]
+            }
+        };
+        let { data: datasets } = await axios.post(
+            `${api_url}/dc_tools/copy_column_from_datasets`,
+            {
+                source_dataset_name,
+                target_dataset_name,
+                columns_to_copy,
+                filter: filter_with_source_dataset_name_and_target
+            },
+            auth(getState, 'Copy columns across datasets')
+        );
+        datasets = formatDatasets(datasets);
+        dispatch({
+            type: FIND_AND_REPLACE_DATASETS,
+            payload: datasets
+        });
+    });
+
 export const datasetUpdate = ({ source_dataset_name, new_state }) =>
     error_handler(async (dispatch, getState) => {
         const current_filter = getState().offline.editable_datasets.filter;

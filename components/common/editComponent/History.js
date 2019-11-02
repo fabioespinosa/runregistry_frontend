@@ -30,7 +30,6 @@ class History extends Component {
                     ...event,
                     change: event.jsonb[component]
                 };
-                delete formatted_event.jsonb;
                 return formatted_event;
             });
         const history = this.adapt_history(
@@ -72,7 +71,8 @@ class History extends Component {
                     lumisection_ranges,
                     by,
                     comment,
-                    createdAt
+                    createdAt,
+                    change
                 };
             }
         );
@@ -99,39 +99,57 @@ class History extends Component {
                                 lumisection_ranges,
                                 by,
                                 comment,
-                                createdAt
-                            }) => (
-                                <tr key={version}>
-                                    <td className="viz">
-                                        <BarPlot
-                                            ls_ranges_lengths={
-                                                ls_ranges_lengths
-                                            }
-                                            lumisection_ranges={
-                                                lumisection_ranges
-                                            }
-                                            height={50}
-                                            margin={{
-                                                top: 0,
-                                                right: 0,
-                                                left: 0,
-                                                bottom: 0
-                                            }}
-                                        />
-                                    </td>
-                                    <td>{by}</td>
-                                    <td>{comment}</td>
-                                    <td>{createdAt}</td>
-                                </tr>
-                            )
+                                createdAt,
+                                change
+                            }) => {
+                                const parsed_date = new Date(createdAt)
+                                    .toISOString()
+                                    .replace(/T/, ' ')
+                                    .replace(/\..+/, '');
+                                const change_comment = change.comment;
+                                return (
+                                    <tr key={version}>
+                                        <td className="viz">
+                                            <BarPlot
+                                                ls_ranges_lengths={
+                                                    ls_ranges_lengths
+                                                }
+                                                lumisection_ranges={
+                                                    lumisection_ranges
+                                                }
+                                                height={50}
+                                                margin={{
+                                                    top: 0,
+                                                    right: 0,
+                                                    left: 0,
+                                                    bottom: 0
+                                                }}
+                                            />
+                                        </td>
+                                        <td className="meta_data">{by}</td>
+                                        <td className="meta_data">
+                                            {comment}
+                                            {change_comment && comment && ' - '}
+                                            {change_comment}
+                                        </td>
+                                        <td className="meta_data">
+                                            {parsed_date}
+                                        </td>
+                                    </tr>
+                                );
+                            }
                         )}
                     </tbody>
                 </table>
                 <style jsx>{`
                     .viz {
-                        width: 80%;
+                        width: 70%;
                         padding-right: 10px;
                         padding-left: -20px;
+                    }
+
+                    .meta_data {
+                        font-size: 0.7em;
                     }
                 `}</style>
             </div>

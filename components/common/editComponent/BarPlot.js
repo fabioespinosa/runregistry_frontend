@@ -44,7 +44,7 @@ class BarPlot extends Component {
             height,
             margin
         } = this.props;
-        console.log(ls_ranges_lengths, lumisection_ranges);
+
         return (
             <ResponsiveContainer width="100%" aspect={30.0 / 3.0}>
                 <BarChart

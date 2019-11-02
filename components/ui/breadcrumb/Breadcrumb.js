@@ -47,6 +47,9 @@ class BreadcrumbCmp extends Component {
             </Menu.Item>
             <SubMenu key="expert_tools" title="DC Expert Tools">
                 <Menu.Item key="dataset_copy">Dataset Copy</Menu.Item>
+                <Menu.Item key="dataset_column_copy">
+                    Dataset Column Copy
+                </Menu.Item>
                 <Menu.Item key="dataset_update">Dataset Update</Menu.Item>
                 <Menu.Item key="create_cycle">Create Cycle</Menu.Item>
             </SubMenu>
