@@ -66,7 +66,6 @@ class DuplicateDatasets extends Component {
                         );
                     }}
                     render={({ values, setFieldValue, handleSubmit }) => {
-                        console.log(values);
                         return (
                             <form
                                 onSubmit={handleSubmit}
@@ -91,7 +90,10 @@ class DuplicateDatasets extends Component {
                                     >
                                         {unique_dataset_names.map(
                                             dataset_name => (
-                                                <Option value={dataset_name}>
+                                                <Option
+                                                    key={dataset_name}
+                                                    value={dataset_name}
+                                                >
                                                     {dataset_name}
                                                 </Option>
                                             )
@@ -171,11 +173,11 @@ const mapStateToProps = state => {
         datasets,
         count,
         filter,
+        workspace: state.offline.workspace.workspace,
         workspaces: state.offline.workspace.workspaces
     };
 };
 
-export default connect(
-    mapStateToProps,
-    { duplicateDatasets }
-)(DuplicateDatasets);
+export default connect(mapStateToProps, { duplicateDatasets })(
+    DuplicateDatasets
+);
