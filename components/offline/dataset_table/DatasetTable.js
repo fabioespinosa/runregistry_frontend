@@ -220,18 +220,26 @@ class DatasetTable extends Component {
         const filter = filters.length > 0;
         return (
             <div>
-                {section === 'cycles'
-                    ? 'Datasets in cycle:'
-                    : 'Editable datasets (already appeared in DQM GUI, or forcefully moved down):'}
-                <button
-                    onClick={() =>
-                        this.props.showOfflineConfigurationModal(
-                            'export_to_csv'
-                        )
-                    }
+                <div
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
-                    Export to CSV
-                </button>
+                    <div>
+                        {section === 'cycles'
+                            ? 'Datasets in cycle:'
+                            : 'Editable datasets (already appeared in DQM GUI, or forcefully moved down):'}
+                    </div>
+                    <div>
+                        <Button
+                            onClick={() =>
+                                this.props.showOfflineConfigurationModal(
+                                    'export_to_csv'
+                                )
+                            }
+                        >
+                            Export to CSV
+                        </Button>
+                    </div>
+                </div>
                 {filter ? (
                     <div
                         style={{

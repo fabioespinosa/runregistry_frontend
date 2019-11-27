@@ -23,8 +23,10 @@ class ExportToCSV extends Component {
 
         const datasets_csv = await this.props.exportToCSV(columns_to_export);
         // Make browser download CSV
+        const csvData = new Blob([datasets_csv], { type: 'text/csv' });
+        const csvUrl = URL.createObjectURL(csvData);
         const hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:text/csv;charset=utf-8,' + datasets_csv;
+        hiddenElement.href = csvUrl;
         hiddenElement.target = '_blank';
         hiddenElement.download = 'datasets.csv';
         hiddenElement.click();
@@ -65,7 +67,7 @@ class ExportToCSV extends Component {
             <div>
                 <h3>
                     This tool will allow the user to export the results on the
-                    table to a CSV file
+                    table to a CSV file (DOES NOT WORK IN INTERNET EXPLORER)
                 </h3>
                 <h5 style={{ textAlign: 'center', color: 'red' }}>
                     {count} Datasets Selected
