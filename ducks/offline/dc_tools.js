@@ -89,6 +89,27 @@ export const datasetUpdate = ({ source_dataset_name, new_state }) =>
         });
     });
 
+export const datasetColumnBatchUpdate = ({ columns_to_update, new_status }) =>
+    error_handler(async (dispatch, getState) => {
+        const current_filter = getState().offline.editable_datasets.filter;
+
+        let { data: datasets } = await axios.post(
+            `${api_url}/dc_tools/dataset_column_batch_update`,
+            {
+                filter: current_filter,
+                columns_to_update,
+                new_status
+            },
+            auth(getState, 'Change column status in batch')
+        );
+
+        datasets = formatDatasets(datasets);
+        dispatch({
+            type: FIND_AND_REPLACE_DATASETS,
+            payload: datasets
+        });
+    });
+
 export const exportToCSV = columns =>
     error_handler(async (dispatch, getState) => {
         const current_filter = getState().offline.editable_datasets.filter;

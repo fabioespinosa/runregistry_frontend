@@ -50,6 +50,9 @@ class BreadcrumbCmp extends Component {
                 <Menu.Item key="dataset_column_copy">
                     Dataset Column Copy
                 </Menu.Item>
+                <Menu.Item key="dataset_column_batch_update">
+                    Dataset Column Batch Update
+                </Menu.Item>
                 <Menu.Item key="dataset_update">Dataset Update</Menu.Item>
                 <Menu.Item key="create_cycle">Create Cycle</Menu.Item>
             </SubMenu>
@@ -153,10 +156,7 @@ class BreadcrumbCmp extends Component {
     }
 }
 
-export default connect(
-    null,
-    {
-        showOnlineConfigurationModal,
-        showOfflineConfigurationModal
-    }
-)(BreadcrumbCmp);
+export default connect(null, {
+    showOnlineConfigurationModal,
+    showOfflineConfigurationModal
+})(BreadcrumbCmp);

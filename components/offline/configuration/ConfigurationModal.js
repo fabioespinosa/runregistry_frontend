@@ -9,6 +9,7 @@ import ColumnConfiguration from './columnConfiguration/ColumnConfiguration';
 import DatasetsAccepted from './datasetsAcceptedConfiguration/DatasetsAcceptedConfiguration';
 import DatasetCopy from './datasetCopy/DatasetCopy';
 import DatasetColumnCopy from './datasetColumnCopy/DatasetColumnCopy';
+import DatasetColumnBatchUpdate from './datasetColumnBatchUpdate/DatasetColumnBatchUpdate';
 import DatasetUpdate from './datasetUpdate/DatasetUpdate';
 import CreateCycle from './createCycle/CreateCycle';
 import ExportToCSV from './exportToCSV/ExportToCSV';
@@ -46,6 +47,7 @@ class ConfigurationModal extends Component {
                 'Change the RegExp of the Datasets Accepted in RR',
             dataset_copy: 'Copy datasets',
             dataset_column_copy: 'Copy Columns Across Datasets',
+            dataset_column_batch_update: 'Dataset Column Batch Update',
             create_cycle: 'Create cycle',
             dataset_update: 'Dataset Update',
             export_to_csv: 'Export To CSV'
@@ -65,6 +67,7 @@ class ConfigurationModal extends Component {
             datasets_accepted_configuration: <DatasetsAccepted />,
             dataset_copy: <DatasetCopy />,
             dataset_column_copy: <DatasetColumnCopy />,
+            dataset_column_batch_update: <DatasetColumnBatchUpdate />,
             create_cycle: <CreateCycle />,
             dataset_update: <DatasetUpdate />,
             export_to_csv: <ExportToCSV />
