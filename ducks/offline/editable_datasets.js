@@ -12,6 +12,7 @@ const INITIAL_STATE = {
     pages: 0,
     count: 0,
     filter: {},
+    sortings: [],
     filterable: false
 };
 export default function(state = INITIAL_STATE, action) {
@@ -23,7 +24,8 @@ export default function(state = INITIAL_STATE, action) {
                 datasets: payload.datasets,
                 pages: payload.pages,
                 count: payload.count,
-                filter: action.filter
+                filter: action.filter,
+                sortings: action.sortings
             };
         case EDIT_DATASET:
             return {

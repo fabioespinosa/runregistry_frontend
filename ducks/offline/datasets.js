@@ -58,7 +58,8 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
             type: FILTER_EDITABLE_DATASETS,
             payload: datasets,
             // We include the filter because we will need it for DC tools:
-            filter: filter_with_state_and_name
+            filter: filter_with_state_and_name,
+            sortings
         });
     });
 

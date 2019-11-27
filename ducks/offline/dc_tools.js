@@ -89,6 +89,21 @@ export const datasetUpdate = ({ source_dataset_name, new_state }) =>
         });
     });
 
+export const exportToCSV = columns =>
+    error_handler(async (dispatch, getState) => {
+        const current_filter = getState().offline.editable_datasets.filter;
+        const current_sortings = getState().offline.editable_datasets.sortings;
+        const { data: datasets } = await axios.post(
+            `${api_url}/datasets/export_to_csv`,
+            {
+                columns,
+                sortings: current_sortings,
+                filter: current_filter
+            }
+        );
+        return datasets;
+    });
+
 const INITIAL_STATE = {};
 export default function(state = INITIAL_STATE, action) {
     const { type, payload } = action;

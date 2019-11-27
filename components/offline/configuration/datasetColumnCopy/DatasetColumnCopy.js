@@ -44,7 +44,8 @@ class CopyDatasetColumn extends Component {
         return (
             <div>
                 <h3>
-                    This tool will allow the DC Expert to duplicate datasets
+                    This tool will allow the DC Expert to copy certain columns
+                    across datasets
                 </h3>
                 <h5 style={{ textAlign: 'center', color: 'red' }}>
                     {count} Datasets Selected
@@ -216,7 +217,6 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(
-    mapStateToProps,
-    { copyDatasetColumn }
-)(CopyDatasetColumn);
+export default connect(mapStateToProps, { copyDatasetColumn })(
+    CopyDatasetColumn
+);

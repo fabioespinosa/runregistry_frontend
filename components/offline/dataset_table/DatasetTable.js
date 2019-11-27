@@ -11,6 +11,7 @@ import {
 } from '../../../ducks/offline/datasets';
 import { showManageDatasetModal } from '../../../ducks/offline/ui';
 import { showLumisectionModal } from '../../../ducks/global_ui';
+import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
 import format_filters from '../../common/CommonTableComponents/FilteringAndSorting/format_filters';
 import format_sortings from '../../common/CommonTableComponents/FilteringAndSorting/format_sortings';
 import rename_triplets from '../../common/CommonTableComponents/FilteringAndSorting/rename_triplets';
@@ -222,6 +223,15 @@ class DatasetTable extends Component {
                 {section === 'cycles'
                     ? 'Datasets in cycle:'
                     : 'Editable datasets (already appeared in DQM GUI, or forcefully moved down):'}
+                <button
+                    onClick={() =>
+                        this.props.showOfflineConfigurationModal(
+                            'export_to_csv'
+                        )
+                    }
+                >
+                    Export to CSV
+                </button>
                 {filter ? (
                     <div
                         style={{
@@ -311,14 +321,12 @@ const mapStateToProps = state => {
 };
 
 export default withRouter(
-    connect(
-        mapStateToProps,
-        {
-            filterEditableDatasets,
-            showManageDatasetModal,
-            showLumisectionModal,
-            moveDataset,
-            reGenerateCache
-        }
-    )(DatasetTable)
+    connect(mapStateToProps, {
+        filterEditableDatasets,
+        showManageDatasetModal,
+        showLumisectionModal,
+        moveDataset,
+        reGenerateCache,
+        showOfflineConfigurationModal
+    })(DatasetTable)
 );

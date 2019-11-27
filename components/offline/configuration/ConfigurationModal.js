@@ -11,6 +11,7 @@ import DatasetCopy from './datasetCopy/DatasetCopy';
 import DatasetColumnCopy from './datasetColumnCopy/DatasetColumnCopy';
 import DatasetUpdate from './datasetUpdate/DatasetUpdate';
 import CreateCycle from './createCycle/CreateCycle';
+import ExportToCSV from './exportToCSV/ExportToCSV';
 
 // For component classifier:
 import {
@@ -46,7 +47,8 @@ class ConfigurationModal extends Component {
             dataset_copy: 'Copy datasets',
             dataset_column_copy: 'Copy Columns Across Datasets',
             create_cycle: 'Create cycle',
-            dataset_update: 'Dataset Update'
+            dataset_update: 'Dataset Update',
+            export_to_csv: 'Export To CSV'
         };
         const modal_types = {
             dataset_classifiers: <DatasetClassifierConfiguration />,
@@ -64,7 +66,8 @@ class ConfigurationModal extends Component {
             dataset_copy: <DatasetCopy />,
             dataset_column_copy: <DatasetColumnCopy />,
             create_cycle: <CreateCycle />,
-            dataset_update: <DatasetUpdate />
+            dataset_update: <DatasetUpdate />,
+            export_to_csv: <ExportToCSV />
         };
         return (
             <div>
@@ -99,14 +102,11 @@ const mapStateToProps = state => {
         configuration_modal_type: state.offline.ui.configuration_modal_type
     };
 };
-export default connect(
-    mapStateToProps,
-    {
-        hideConfigurationModal,
-        hideJsonEditor,
-        fetchComponentClassifiers,
-        deleteComponentClassifier,
-        editComponentClassifier,
-        newComponentClassifier
-    }
-)(ConfigurationModal);
+export default connect(mapStateToProps, {
+    hideConfigurationModal,
+    hideJsonEditor,
+    fetchComponentClassifiers,
+    deleteComponentClassifier,
+    editComponentClassifier,
+    newComponentClassifier
+})(ConfigurationModal);
