@@ -49,6 +49,7 @@ class DuplicateDatasets extends Component {
                     initialValues={initialValues}
                     onSubmit={async values => {
                         // TODO: validation (empty fields, ...)
+                        values.target_dataset_name = values.target_dataset_name.trim();
                         values.workspaces = [];
                         for (const [key, val] of Object.entries(values)) {
                             if (key.includes('workspaces-')) {

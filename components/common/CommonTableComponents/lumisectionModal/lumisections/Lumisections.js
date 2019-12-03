@@ -7,7 +7,8 @@ import { Radio, Icon } from 'antd';
 import {
     api_url,
     lumisection_attributes,
-    certifiable_offline_components
+    certifiable_offline_components,
+    certifiable_online_components
 } from '../../../../../config/config';
 import LumisectionStatus from '../../LumisectionStatus';
 
@@ -24,7 +25,10 @@ class Lumisections extends Component {
         const { run_number, dataset_name } = this.props;
         const { data: lumisections } = await axios.post(
             `${api_url}/lumisections/${endpoint}_ranges`,
-            { run_number, dataset_name }
+            {
+                run_number,
+                dataset_name
+            }
         );
         this.setState({
             lumisections: lumisections.reverse(),
@@ -39,7 +43,13 @@ class Lumisections extends Component {
     };
 
     render() {
-        const { run_number, dataset_name, workspace, workspaces } = this.props;
+        const { run_number, dataset_name } = this.props;
+        const {
+            online_workspace,
+            online_workspaces,
+            offline_workspace,
+            offline_workspaces
+        } = this.props;
         const { shown_lumisections, lumisections } = this.state;
         let columns = [
             {
@@ -78,85 +88,70 @@ class Lumisections extends Component {
             shown_lumisections === 'rr_lumisection' ||
             shown_lumisections === 'joint_lumisection'
         ) {
-            if (dataset_name === 'online') {
-                // let component_columns = components.map(component => ({
-                //     Header: component
-                // }));
-                // component_columns = component_columns.map(column => {
-                //     return {
-                //         ...column,
-                //         maxWidth: 66,
-                //         id: `${column['Header']}`,
-                //         accessor: data => {
-                //             const triplet = data[`${column['Header']}`];
-                //             return triplet;
-                //         },
-                //         Cell: ({ original, value }) => (
-                //             <LumisectionStatus triplet={value} />
-                //         )
-                //     };
-                // });
+            let certifiable_components = certifiable_online_components;
+            let workspace = online_workspace;
+            let workspaces = online_workspaces;
 
-                columns = [...columns, ...component_columns];
-            } else {
-                // Add global columns
-                const global_columns = [];
-                for (const [key, val] of Object.entries(
-                    certifiable_offline_components
-                )) {
-                    val.forEach(sub_name => {
-                        global_columns.push(`${key}-${sub_name}`);
-                    });
-                }
-                // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
-                let all_columns_formatted = [];
-                workspaces.forEach(({ workspace, columns }) => {
-                    columns.forEach(column => {
-                        const column_name = `${workspace}-${column}`;
-                        if (!global_columns.includes(column_name)) {
-                            all_columns_formatted.push(column_name);
-                        }
-                    });
+            // if dataset_name is online, it means we are in the online application, therefore we use the online workspaces, if its not online, we know we are in offline
+            if (dataset_name !== 'online') {
+                certifiable_components = certifiable_offline_components;
+                workspace = offline_workspace;
+                workspaces = offline_workspaces;
+            }
+
+            // Add global columns
+            const global_columns = [];
+            for (const [key, val] of Object.entries(certifiable_components)) {
+                val.forEach(sub_name => {
+                    global_columns.push(`${key}-${sub_name}`);
                 });
+            }
+            // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
+            let all_columns_formatted = [];
+            workspaces.forEach(({ workspace, columns }) => {
+                columns.forEach(column => {
+                    const column_name = `${workspace}-${column}`;
+                    if (!global_columns.includes(column_name)) {
+                        all_columns_formatted.push(column_name);
+                    }
+                });
+            });
 
-                all_columns_formatted = all_columns_formatted.concat(
-                    global_columns
-                );
-                // Put components in format Header: component
-                let offline_columns_composed = [];
-                if (workspace === 'global') {
-                    offline_columns_composed = global_columns.map(column => ({
+            all_columns_formatted = all_columns_formatted.concat(
+                global_columns
+            );
+            // Put components in format Header: component
+            let columns_composed = [];
+            if (workspace === 'global') {
+                columns_composed = global_columns.map(column => ({
+                    accessor: column,
+                    Header: column.split('-')[1]
+                }));
+            } else {
+                columns_composed = all_columns_formatted
+                    .filter(column => {
+                        return (
+                            column.startsWith(workspace.toLowerCase()) &&
+                            column.includes('-')
+                        );
+                    })
+                    .map(column => ({
                         accessor: column,
                         Header: column.split('-')[1]
                     }));
-                } else {
-                    offline_columns_composed = all_columns_formatted
-                        .filter(column => {
-                            return (
-                                column.startsWith(workspace.toLowerCase()) &&
-                                column.includes('-')
-                            );
-                        })
-                        .map(column => ({
-                            accessor: column,
-                            Header: column.split('-')[1]
-                        }));
-                }
-                offline_columns_composed = offline_columns_composed.map(
-                    column => {
-                        return {
-                            ...column,
-                            maxWidth: 66,
-                            id: column.accessor,
-                            accessor: data => data[column.accessor],
-                            Cell: ({ original, value }) => (
-                                <LumisectionStatus triplet={value} />
-                            )
-                        };
-                    }
-                );
-                columns = [...columns, ...offline_columns_composed];
             }
+            columns_composed = columns_composed.map(column => {
+                return {
+                    ...column,
+                    maxWidth: 66,
+                    id: column.accessor,
+                    accessor: data => data[column.accessor],
+                    Cell: ({ original, value }) => (
+                        <LumisectionStatus triplet={value} />
+                    )
+                };
+            });
+            columns = [...columns, ...columns_composed];
         }
         if (
             shown_lumisections === 'oms_lumisection' ||
@@ -213,10 +208,11 @@ class Lumisections extends Component {
 }
 
 const mapStateToProps = state => {
-    const { workspace, workspaces } = state.offline.workspace;
     return {
-        workspace,
-        workspaces
+        online_workspace: state.online.workspace.workspace,
+        online_workspaces: state.online.workspace.workspaces,
+        offline_workspace: state.offline.workspace.workspace,
+        offline_workspaces: state.offline.workspace.workspaces
     };
 };
 

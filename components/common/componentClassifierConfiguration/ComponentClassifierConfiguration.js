@@ -110,12 +110,6 @@ class ComponentClassifierConfiguration extends Component {
                 getProps: () => ({ style: { textAlign: 'center' } })
             },
             {
-                Header: 'Component',
-                accessor: 'component',
-                width: 90,
-                getProps: () => ({ style: { textAlign: 'center' } })
-            },
-            {
                 Header: 'Enabled',
                 accessor: 'enabled',
                 width: 80,
@@ -141,11 +135,6 @@ class ComponentClassifierConfiguration extends Component {
                     );
                     return <span>{displayed_text}</span>;
                 }
-            },
-            {
-                Header: 'Priority',
-                accessor: 'priority',
-                width: 80
             },
             { Header: 'Updated at', accessor: 'createdAt', width: 100 },
             {
@@ -300,15 +289,12 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(
-    mapStateToProps,
-    {
-        hideJsonEditor,
-        fetchComponentClassifiers,
-        deleteComponentClassifier,
-        editComponentClassifier,
-        newComponentClassifier,
-        changeJsonEditorValue,
-        editClassifierIntent
-    }
-)(ComponentClassifierConfiguration);
+export default connect(mapStateToProps, {
+    hideJsonEditor,
+    fetchComponentClassifiers,
+    deleteComponentClassifier,
+    editComponentClassifier,
+    newComponentClassifier,
+    changeJsonEditorValue,
+    editClassifierIntent
+})(ComponentClassifierConfiguration);
