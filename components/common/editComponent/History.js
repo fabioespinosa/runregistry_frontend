@@ -129,8 +129,10 @@ class History extends Component {
                                         <td className="meta_data">{by}</td>
                                         <td className="meta_data">
                                             {comment}
-                                            {change_comment && comment && ' - '}
-                                            {change_comment}
+                                            {change_comment &&
+                                                comment &&
+                                                ' - User comment: '}
+                                            <i>{change_comment}</i>
                                         </td>
                                         <td className="meta_data">
                                             {parsed_date}
