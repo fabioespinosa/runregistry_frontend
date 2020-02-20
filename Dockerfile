@@ -1,9 +1,21 @@
-FROM node:latest
+FROM node:13.8-stretch
 
-WORKDIR /usr/app
+# Setting working directory. All the path will be relative to WORKDIR
+WORKDIR /usr/src/app
 
-RUN export ENV=development && export NODE_ENV=development
-COPY package.json .
-RUN npm install --quiet
+ENV NODE_ENV production
+ENV ENV production
+# Installing dependencies
+COPY package*.json ./
+RUN npm install
 
+# Copying source files
 COPY . .
+
+# Building app
+RUN npm run build
+
+EXPOSE 7001
+
+# Running the app
+CMD [ "npm", "start" ]
