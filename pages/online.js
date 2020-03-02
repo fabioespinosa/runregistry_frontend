@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { CHANGE_WORKSPACE, fetchWorkspaces } from '../ducks/online/workspace';
@@ -15,74 +16,79 @@ import LumisectionModal from '../components/common/CommonTableComponents/lumisec
 import ClassifierVisualizationModal from '../components/online/classifier_visualization/ClassifierVisualizationModal';
 const { Content } = Layout;
 
+// const Filter = dynamic(
+//   import('../components/online/run_table/filter/Filter2'),
+//   {
+//     ssr: false
+//   }
+// );
 class Online extends Component {
-    static getInitialProps({ store, query, isServer }) {
-        if (isServer) {
-            initializeUser(store, query);
-            initializeEnvironment(store);
-        }
-        // We put the filters from URL in the redux store:
-        initializeFiltersFromUrl({ store, query });
-        if (!isServer) {
-            store.dispatch({
-                type: CHANGE_WORKSPACE,
-                payload: query.workspace
-            });
-        }
+  static getInitialProps({ store, query, isServer }) {
+    if (isServer) {
+      initializeUser(store, query);
+      initializeEnvironment(store);
     }
-
-    async componentDidMount() {
-        const {
-            router: { query }
-        } = this.props;
-        await this.props.fetchWorkspaces(query);
+    // We put the filters from URL in the redux store:
+    initializeFiltersFromUrl({ store, query });
+    if (!isServer) {
+      store.dispatch({
+        type: CHANGE_WORKSPACE,
+        payload: query.workspace
+      });
     }
+  }
 
-    render() {
-        const { router } = this.props;
-        const {
-            router: {
-                asPath,
-                query: { type, section, workspace, run_filter }
-            },
-            user
-        } = this.props;
+  async componentDidMount() {
+    const {
+      router: { query }
+    } = this.props;
+    await this.props.fetchWorkspaces(query);
+  }
 
-        const breadcrumbs = asPath.split('/');
-        return (
-            <Page router={router} user={user} side_nav={true}>
-                <BreadcrumbCmp router={router} online={true}>
-                    <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
-                </BreadcrumbCmp>
-                <Content
-                    style={{
-                        // background: '#fff',
-                        padding: 0,
-                        margin: 0,
-                        minHeight: 280
-                    }}
-                >
-                    <ManageRunModal />
-                    <LumisectionModal />
-                    <ClassifierVisualizationModal />
+  render() {
+    const { router } = this.props;
+    const {
+      router: {
+        asPath,
+        query: { type, section, workspace, run_filter }
+      },
+      user
+    } = this.props;
 
-                    <RunTable defaultPageSize={12} />
-                    <SignificantRunTable defaultPageSize={5} />
-                </Content>
-            </Page>
-        );
-    }
+    const breadcrumbs = asPath.split('/');
+    return (
+      <Page router={router} user={user} side_nav={true}>
+        <BreadcrumbCmp router={router} online={true}>
+          <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
+        </BreadcrumbCmp>
+        <Content
+          style={{
+            // background: '#fff',
+            padding: 0,
+            margin: 0,
+            minHeight: 280
+          }}
+        >
+          <ManageRunModal />
+          <LumisectionModal />
+          <ClassifierVisualizationModal />
+          {/* <Filter /> */}
+          <RunTable defaultPageSize={12} />
+          <SignificantRunTable defaultPageSize={5} />
+        </Content>
+      </Page>
+    );
+  }
 }
 
 const mapStateToProps = state => {
-    return {
-        user: state.info
-    };
+  return {
+    user: state.info
+  };
 };
 
 export default withRouter(
-    connect(
-        mapStateToProps,
-        { fetchWorkspaces, initializeFiltersFromUrl }
-    )(Online)
+  connect(mapStateToProps, { fetchWorkspaces, initializeFiltersFromUrl })(
+    Online
+  )
 );

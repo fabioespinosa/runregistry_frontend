@@ -7,8 +7,8 @@ export default function(getState, comment) {
     process.env.ENV === 'development'
   ) {
     email = 'fespinos@cern.ch';
-    // egroups = 'cms-dqm-runregistry-experts';
-    egroups = 'cms-dqm-runregistry-offline-csc-certifiers'; // For testing
+    egroups = 'cms-dqm-runregistry-experts';
+    // egroups = 'cms-dqm-runregistry-offline-csc-certifiers'; // For testing
   }
   const options = {
     headers: { egroups, email }
