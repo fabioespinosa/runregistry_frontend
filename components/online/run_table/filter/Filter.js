@@ -426,7 +426,7 @@ class RootView extends Component {
         </div>
         <style jsx global>{`
           .ruleGroup {
-            background-color: white;
+            background-color: white !important;
           }
           .ruleGroup,
           .ruleGroup .ruleGroup,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
-import { withRouter } from 'next/router';
+import Router, { withRouter } from 'next/router';
 import qs from 'qs';
 import format_filters from '../../common/CommonTableComponents/FilteringAndSorting/format_filters';
 import format_sortings from '../../common/CommonTableComponents/FilteringAndSorting/format_sortings';
@@ -77,7 +77,7 @@ class RunTable extends Component {
     super(props);
     this.defaultPageSize = props.defaultPageSize;
     let sortings = [];
-    const { filters } = this.props.router.query;
+    const { filters } = Router.query;
     if (filters) {
       const query_sortings = filters['top_sortings'];
       if (query_sortings) {
@@ -128,8 +128,8 @@ class RunTable extends Component {
   };
 
   setSortingsOnUrl = sortings => {
-    const { filters } = this.props.router.query;
-    let { asPath } = this.props.router;
+    const { filters } = Router.query;
+    let { asPath } = Router;
 
     if (asPath.includes('?')) {
       asPath = asPath.split('?')[0];
