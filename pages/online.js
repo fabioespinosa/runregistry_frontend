@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { CHANGE_WORKSPACE, fetchWorkspaces } from '../ducks/online/workspace';
@@ -16,12 +15,6 @@ import LumisectionModal from '../components/common/CommonTableComponents/lumisec
 import ClassifierVisualizationModal from '../components/online/classifier_visualization/ClassifierVisualizationModal';
 const { Content } = Layout;
 
-// const Filter = dynamic(
-//   import('../components/online/run_table/filter/Filter2'),
-//   {
-//     ssr: false
-//   }
-// );
 class Online extends Component {
   static getInitialProps({ store, query, isServer }) {
     if (isServer) {
@@ -29,7 +22,7 @@ class Online extends Component {
       initializeEnvironment(store);
     }
     // We put the filters from URL in the redux store:
-    initializeFiltersFromUrl({ store, query });
+    // initializeFiltersFromUrl({ store, query });
     if (!isServer) {
       store.dispatch({
         type: CHANGE_WORKSPACE,
@@ -43,6 +36,10 @@ class Online extends Component {
       router: { query }
     } = this.props;
     await this.props.fetchWorkspaces(query);
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   render() {
@@ -72,7 +69,6 @@ class Online extends Component {
           <ManageRunModal />
           <LumisectionModal />
           <ClassifierVisualizationModal />
-          {/* <Filter /> */}
           <RunTable defaultPageSize={12} />
           <SignificantRunTable defaultPageSize={5} />
         </Content>

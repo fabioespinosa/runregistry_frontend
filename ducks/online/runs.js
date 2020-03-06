@@ -1,4 +1,6 @@
 import axios from 'axios';
+const CancelToken = axios.CancelToken;
+let cancel;
 
 import { api_url } from '../../config/config';
 import auth from '../../auth/auth';
@@ -11,26 +13,34 @@ const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS';
 export const initializeFiltersFromUrl = ({ store, query }) => {
   const { filters } = query;
   if (filters) {
-    if (Object.keys(filters).length > 0) {
-      store.dispatch({
-        type: INITIALIZE_FILTERS,
-        payload: Object.keys(filters).map(key => ({
-          id: key,
-          value: filters[key]
-        })),
-        filters,
-        from_url: true
-      });
-      store.dispatch(toggleTableFilters());
-    }
+    //   if (Object.keys(filters).length > 0) {
+    //     store.dispatch({
+    //       type: INITIALIZE_FILTERS,
+    //       payload: Object.keys(filters).map(key => ({
+    //         id: key,
+    //         value: filters[key]
+    //       })),
+    //       filters,
+    //       from_url: true
+    //     });
+    //     store.dispatch(toggleTableFilters());
+    //   }
   }
 };
 
-export const filterRuns = (page_size, page, sortings, filtered) =>
+export const filterRuns = (page_size, page, sortings, filter) =>
   error_handler(async (dispatch, getState) => {
+    if (cancel) {
+      cancel();
+    }
     const { data: runs } = await axios.post(
       `${api_url}/runs_filtered_ordered`,
-      { page, page_size, sortings, filter: filtered },
+      { page, page_size, sortings, filter },
+      {
+        cancelToken: new CancelToken(function executor(c) {
+          cancel = c;
+        })
+      },
       auth(getState)
     );
     runs.runs = formatRuns(runs.runs);

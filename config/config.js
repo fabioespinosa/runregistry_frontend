@@ -28,6 +28,7 @@ exports.config = config;
 exports.api_url = config[ENV]['api_url'];
 exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
+
 const offline_column_structure = {
     // None of the offline_column_structure can contain "-" character, only "_".
 

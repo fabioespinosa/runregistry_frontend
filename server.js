@@ -2,16 +2,22 @@ const fs = require('fs');
 const express = require('express');
 const next = require('next');
 
+const qs = require('qs');
 const http = require('http');
 const https = require('https');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
+
 const handle = app.getRequestHandler();
 const http_port = process.env.PORT || 7001;
 
 app.prepare().then(() => {
   const server = express();
+  // We set depth of query parser to allow complicated url filters on the table (for bookmarkability)
+  server.set('query parser', function(str) {
+    return qs.parse(str, { depth: 50 });
+  });
   // const router = express.Router();
 
   // Redirects primary url to runs/all

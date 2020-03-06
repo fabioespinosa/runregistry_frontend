@@ -1,49 +1,25 @@
-import { components, rr_attributes } from '../../../../config/config';
-
 import { certifiable_online_components } from '../../../../config/config';
 import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
-
-const column_filter_description = {
-  string: '=, like, notlike, <>',
-  date: '>, <, >=, <=, <>',
-  component: '=, like, notlike, <>',
-  boolean: 'true, false'
-};
-const column_types = {
-  'hlt_key.value': 'string',
-  'class.value': 'string',
-  run_number: 'integer',
-  class: 'string',
-  significant: 'boolean',
-  'state.value': 'string',
-  b_field: 'integer',
-  start_time: 'date',
-  hlt_key: 'string',
-  duration: 'integer',
-  clock_type: 'string',
-  component: 'component'
-};
 
 const column_generator = ({
   showManageRunModal,
   showClassifierVisualizationModal,
   moveRun,
   showLumisectionModal,
-  toggleShowFilters,
   significant_runs,
-  filterable,
   markSignificant,
-  filter_object,
   workspace,
   workspaces
 }) => {
   let columns = [
     {
       Header: 'Run Number',
+      id: 'run_number',
       accessor: 'run_number',
-      maxWidth: 110,
+      prefix_for_filtering: '',
+      maxWidth: 90,
       resizable: false,
       Cell: ({ original, value }) => (
         <div style={{ textAlign: 'center', width: '100%' }}>
@@ -53,7 +29,9 @@ const column_generator = ({
     },
     {
       Header: 'Class',
+      id: 'class',
       accessor: 'class',
+      prefix_for_filtering: 'rr_attributes',
       Cell: ({ original, value }) => (
         <div style={{ textAlign: 'center' }}>
           <a onClick={() => showClassifierVisualizationModal(original)}>
@@ -65,7 +43,6 @@ const column_generator = ({
     {
       Header: 'Manage / LS',
       id: 'manage',
-      filterable: false,
       sortable: false,
       maxWidth: 75,
       Cell: ({ original }) => (
@@ -82,8 +59,8 @@ const column_generator = ({
       Header: 'Significant',
       id: 'significant',
       accessor: 'significant',
-      maxWidth: 100,
-      filterable: !significant_runs && filterable,
+      prefix_for_filtering: 'rr_attributes',
+      maxWidth: 90,
       sortable: !significant_runs,
       Cell: ({ original, value }) => (
         <div style={{ textAlign: 'center' }}>
@@ -121,6 +98,7 @@ const column_generator = ({
     {
       Header: 'State',
       id: 'state',
+      prefix_for_filtering: 'rr_attributes',
       accessor: 'state',
       Cell: ({ original, value }) => {
         if (original.significant) {
@@ -169,17 +147,45 @@ const column_generator = ({
               </a>
             </div>
           );
+        } else {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <span
+                style={{
+                  color: 'white',
+                  fontSize: '0.8em',
+                  color: 'grey',
+                  borderRadius: '1px'
+                }}
+              >
+                <span style={{ padding: '2px' }}>Non Significant(Open)</span>
+              </span>
+            </div>
+          );
         }
       }
     },
-    { Header: 'Started', accessor: 'start_time' },
+    {
+      Header: 'Started',
+      id: 'start_time',
+      accessor: 'start_time',
+      prefix_for_filtering: 'oms_attributes'
+    },
     {
       Header: 'Hlt Key Description',
-      accessor: 'hlt_key'
+      id: 'hlt_key',
+      accessor: 'hlt_key',
+      prefix_for_filtering: 'oms_attributes'
+    },
+    {
+      Header: 'LS Duration',
+      id: 'ls_duration',
+      maxWidth: 70,
+      accessor: 'ls_duration',
+      prefix_for_filtering: 'oms_attributes'
     },
     {
       Header: 'GUI',
-      filterable: false,
       maxWidth: 40,
       Cell: ({ original }) => (
         <div style={{ textAlign: 'center' }}>
@@ -195,9 +201,18 @@ const column_generator = ({
   ];
 
   const other_columns = [
-    { Header: 'LS Duration', accessor: 'ls_duration' },
-    { Header: 'B Field', accessor: 'b_field' },
-    { Header: 'Clock Type', accessor: 'clock_type' }
+    {
+      Header: 'B Field',
+      id: 'b_field',
+      accessor: 'b_field',
+      prefix_for_filtering: 'oms_attributes'
+    },
+    {
+      Header: 'Clock Type',
+      id: 'clock_type',
+      accessor: 'clock_type',
+      prefix_for_filtering: 'oms_attributes'
+    }
   ];
   // Now add the ones in global:
   const global_columns = [];
@@ -244,6 +259,7 @@ const column_generator = ({
       ...column,
       maxWidth: 66,
       id: column.accessor,
+      prefix_for_filtering: 'triplet_summary',
       accessor: data => {
         const triplet = data.triplet_summary[column['accessor']];
         return triplet;
@@ -260,102 +276,7 @@ const column_generator = ({
       )
     };
   });
-  // console.log(online_columns_composed);
   columns = [...columns, ...online_columns_composed, ...other_columns];
-  // columns = component_columns;
-  columns = columns.map(column => {
-    return {
-      ...column,
-      Header: () => (
-        <div>
-          {column.Header}
-          &nbsp;&nbsp;
-          <Icon
-            onClick={evt => {
-              toggleShowFilters();
-              // The following is to stop react-table from performing a sort when a user just clicked on the magnifying glass to filter
-              evt.stopPropagation();
-            }}
-            type="search"
-            style={{ fontSize: '12px' }}
-          />
-        </div>
-      ),
-      Filter: ({ column, onChange }) => {
-        const { id } = column;
-        const type = column_types[id] || 'string';
-        const style = `
-                        text-align: left;
-                        border: 1px solid grey;
-                        white-space: pre-wrap;
-                        transition: all 1s;
-                        margin-left: -10px;
-                        margin-top: 20px;
-                        padding: 9px;
-                        width: 200px;
-                        z-index: 900;
-                        height: 270px;
-                        background: white;
-                        position: fixed;
-                        display: none;`;
-        return (
-          <div className="filter_selector" style={{ zIndex: 999 }}>
-            <input
-              defaultValue={filter_object[column.id]}
-              onMouseEnter={evt => {
-                const block = document.querySelector(`#${column.id}`);
-                block.setAttribute('style', `${style} display: inline-block;`);
-              }}
-              onMouseLeave={({ clientX, clientY }) => {
-                const block = document.querySelector(`#${column.id}`);
-                block.setAttribute('style', style);
-              }}
-              type="text"
-              onKeyPress={evt => {
-                if (evt.key == 'Enter') {
-                  onChange(evt.target.value);
-                }
-              }}
-              style={
-                { width: '100%' } // onChange={evt => onChange(evt.target.value)}
-              }
-            />
-            <div style={{ display: 'none' }} id={column.id}>
-              <h3
-                style={{
-                  textTransform: 'capitalize'
-                }}
-              >
-                {type} filter
-              </h3>
-              Supported operators: {column_filter_description[type]}
-              <p />
-              <p>Structure:</p>
-              <p>
-                <i>operator</i> value <i>and/or</i> <i>operator</i> value
-              </p>
-              <p>Examples:</p>
-              <p>
-                <i>{'='}</i> 322433
-              </p>
-              <p>
-                <i>{'>'}</i> 40 <i>and</i> <i>{'<'}</i> 100 <i>or</i>{' '}
-                <i>{'>'}</i> 500
-              </p>
-              <p>
-                <i>{'like'}</i> %physics% <i>and</i> <i>{'like'}</i> %2018%
-              </p>
-              <p>
-                <strong>
-                  {'Space between operator and value is mandatory'}
-                </strong>
-              </p>
-            </div>
-          </div>
-        );
-      }
-    };
-  });
   return columns;
 };
 export default column_generator;
