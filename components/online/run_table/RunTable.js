@@ -40,8 +40,9 @@ const table_columns = [
 const online_columns = [];
 
 const valueProcessor = ({ field, operator, value }) => {
-  if (field === 'run_number' && operator === '=' && value === '') {
-    value = null;
+  if (value === '') {
+    // If user enters new value, we default to something that is true before the user types, in this case that run_number is not null (which will always be true):
+    return { field: 'run_number', operator: '<>', value: null };
   }
   if (field === 'run_number' && operator === 'in') {
     // Handle the case where there are lots of run numbers in the text field:
