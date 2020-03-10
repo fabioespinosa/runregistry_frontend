@@ -87,118 +87,6 @@ const rr_attributes = [
   'stop_reason'
 ];
 
-const triplet_summary = [
-  'dt-dt',
-  'rpc-hv',
-  'rpc-lv',
-  'cms-cms',
-  'csc-csc',
-  'csc-mem',
-  'csc-mep',
-  'ecal-es',
-  'hcal-hb',
-  'hcal-he',
-  'hcal-hf',
-  'hlt-hlt',
-  'hlt-tau',
-  'l1t-jet',
-  'l1t-l1t',
-  'rpc-feb',
-  'rpc-rpc',
-  'tau-tau',
-  'csc-ddus',
-  'ecal-ebm',
-  'ecal-ebp',
-  'ecal-eem',
-  'ecal-eep',
-  'ecal-esm',
-  'ecal-esp',
-  'ecal-tpg',
-  'hcal-ho0',
-  'l1t-muon',
-  'rpc-elog',
-  'btag-btag',
-  'csc-csctf',
-  'ecal-ecal',
-  'hcal-hbls',
-  'hcal-hcal',
-  'hcal-hels',
-  'hcal-hfls',
-  'hcal-ho12',
-  'hlt-bjets',
-  'hlt-muons',
-  'l1t-l1tmu',
-  'lumi-lumi',
-  'muon-muon',
-  'rpc-noise',
-  'csc-strips',
-  'csc-timing',
-  'ecal-laser',
-  'ecal-noise',
-  'hcal-ho0ls',
-  'hlt-global',
-  'hlt-jetmet',
-  'ctpps-ctpps',
-  'ecal-timing',
-  'hcal-ho12ls',
-  'hlt-photons',
-  'l1t-e_gamma',
-  'l1t-hf_tech',
-  'l1t-l1tcalo',
-  'l1t-muon_dt',
-  'csc-gasgains',
-  'csc-segments',
-  'l1t-bcs_tech',
-  'l1t-hf_rings',
-  'l1t-muon_csc',
-  'l1t-muon_rpc',
-  'l1t-rpc_tech',
-  'l1t-software',
-  'castor-castor',
-  'csc-integrity',
-  'csc-occupancy',
-  'csc-pedestals',
-  'csc-triggerpe',
-  'ecal-analysis',
-  'egamma-egamma',
-  'hlt-electrons',
-  'hlt-technical',
-  'jetmet-jetmet',
-  'l1t-bptx_tech',
-  'tracker-pixel',
-  'tracker-strip',
-  'csc-efficiency',
-  'csc-resolution',
-  'ctpps-rp45_210',
-  'ctpps-rp45_220',
-  'ctpps-rp45_cyl',
-  'ctpps-rp56_210',
-  'ctpps-rp56_220',
-  'ctpps-rp56_cyl',
-  'ecal-preshower',
-  'ecal-collisions',
-  'l1t-energy_sums',
-  'ctpps-time45_box',
-  'ctpps-time56_box',
-  'tracker-tracking'
-];
-
-// const fields = [
-//   { name: 'run_number', label: 'run_number' },
-//   ...rr_attributes.map(rr_attribute => ({
-//     name: `rr_attributes.${rr_attribute}`,
-//     label: rr_attribute
-//   })),
-//   ...oms_attributes.map(oms_attribute => ({
-//     name: `oms_attributes.${oms_attribute}`,
-//     label: oms_attribute
-//   })),
-//   ...triplet_summary.map(triplet => ({
-//     name: `${triplet}`,
-//     label: triplet
-//   }))
-// ];
-
 const formatSequelize = rules => {
   if (rules) {
     const sequelize_filter = [];
@@ -316,18 +204,18 @@ class RootView extends Component {
   constructor(props) {
     super(props);
     this.handleQueryChangeDebounced = debounce(390, this.handleQueryChange);
-    this.state = { initialQuery: true };
+    this.state = { initialQuery: false };
   }
-  state = {
-    initialQuery: false
-  };
 
   componentWillMount() {
-    const { filters } = Router.query;
-    // For top table it is 'top', for bottom table it is 'bottom'
-    const { prefix_from_url } = this.props;
+    const filters_from_url = window.location.href.split('?')[1];
+    let filters = {};
+    if (filters_from_url) {
+      filters = qs.parse(filters_from_url, { depth: Infinity });
+    }
+    const { filter_prefix_from_url } = this.props;
     if (filters) {
-      const query = filters[prefix_from_url];
+      const query = filters[filter_prefix_from_url];
       if (query) {
         this.setState({ query });
       }
@@ -353,25 +241,32 @@ class RootView extends Component {
   };
 
   handleQueryChange = async query => {
-    const { filters } = Router.query;
-    const { filterTable, valueProcessor, prefix_from_url } = this.props;
+    // const { filters } = Router.query;
+    const { filterTable, valueProcessor, filter_prefix_from_url } = this.props;
     const query_without_ids = removeIdsFromQuery(query);
 
+    const filters_from_url = window.location.href.split('?')[1];
+    let filters = {};
+    if (filters_from_url) {
+      filters = qs.parse(filters_from_url, { depth: Infinity });
+    }
     let { asPath } = Router;
     if (asPath.includes('?')) {
       asPath = asPath.split('?')[0];
     }
+
     let url_query = qs.stringify({
       ...filters,
-      [prefix_from_url]: query_without_ids
+      [filter_prefix_from_url]: query_without_ids
     });
     if (query.rules.length === 0) {
       const new_filter = { ...filters };
-      delete new_filter[prefix_from_url];
+      delete new_filter[filter_prefix_from_url];
       url_query = qs.stringify(new_filter);
     }
 
     history.pushState({}, '', `${asPath}?${url_query}`);
+
     const processed_query = processQuery(query_without_ids, valueProcessor);
     const formated_filters = formatSequelize([processed_query])[0];
     // 0 is for the page number:
@@ -425,6 +320,9 @@ class RootView extends Component {
           </div>
         </div>
         <style jsx global>{`
+          .rule {
+            overflow-x: scroll !important;
+          }
           .ruleGroup {
             background-color: white !important;
           }

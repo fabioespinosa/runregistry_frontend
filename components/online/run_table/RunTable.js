@@ -6,11 +6,7 @@ import qs from 'qs';
 import format_filters from '../../common/CommonTableComponents/FilteringAndSorting/format_filters';
 import format_sortings from '../../common/CommonTableComponents/FilteringAndSorting/format_sortings';
 import rename_triplets from '../../common/CommonTableComponents/FilteringAndSorting/rename_triplets';
-import {
-  moveRun,
-  markSignificant,
-  filterRuns
-} from '../../../ducks/online/runs';
+import { moveRun, markSignificant } from '../../../ducks/online/runs';
 import {
   showManageRunModal,
   showClassifierVisualizationModal
@@ -23,23 +19,16 @@ const Filter = dynamic(import('./filter/Filter'), {
   ssr: false
 });
 
-// When user enters URL with filter, we only show one table (the one which contains all runs)
-// If a user filters with the SignificantRunTable then the url will also include the filter of significance
-
-const table_columns = [
-  { name: 'run_number', label: 'run_number' },
-  { name: 'rr_attributes.class', label: 'class' },
-  { name: 'rr_attributes.significant', label: 'significant' },
-  { name: 'rr_attributes.state', label: 'state' },
-  { name: 'oms_attributes.start_time', label: 'start_time' },
-  { name: 'oms_attributes.ls_duration', label: 'ls_duration' },
-  { name: 'oms_attributes.b_field', label: 'b_field' },
-  { name: 'oms_attributes.clock_type', label: 'clock_type' }
-];
-
 const online_columns = [];
 
 const valueProcessor = ({ field, operator, value }) => {
+  if (field.startsWith('triplet_summary')) {
+    return {
+      field: `${field}.${value || 'GOOD'}`,
+      operator: '>',
+      value: 0
+    };
+  }
   if (value === '') {
     // If user enters new value, we default to something that is true before the user types, in this case that run_number is not null (which will always be true):
     return { field: 'run_number', operator: '<>', value: null };
@@ -61,12 +50,7 @@ const valueProcessor = ({ field, operator, value }) => {
       })
     };
   }
-  if (field.startsWith('triplet_summary')) {
-    value = value || 'GOOD';
-    field = `${field}.${value}`;
-    operator = '>';
-    value = 0;
-  }
+
   if (field === 'oms_attributes.ls_duration') {
     value = parseInt(value);
   }
@@ -80,7 +64,8 @@ class RunTable extends Component {
     let sortings = [];
     const { filters } = this.props.router.query;
     if (filters) {
-      const query_sortings = filters['top_sortings'];
+      const { sorting_prefix_from_url } = this.props;
+      const query_sortings = filters[sorting_prefix_from_url];
       if (query_sortings) {
         sortings = query_sortings;
       }
@@ -104,13 +89,12 @@ class RunTable extends Component {
     }
   }
 
-  // When a user filters the table, it goes and applies the filters to the url, then it filters the runs
   filterTable = async (filters, page, pageSize) => {
     this.setState({ filters, loading: true });
-    const { sortings } = this.state;
-    const renamed_sortings = rename_triplets(sortings, false);
-    const formated_sortings = format_sortings(renamed_sortings);
     try {
+      const { sortings } = this.state;
+      const renamed_sortings = rename_triplets(sortings, false);
+      const formated_sortings = format_sortings(renamed_sortings);
       await this.props.filterRuns(
         pageSize || this.defaultPageSize,
         page,
@@ -129,7 +113,12 @@ class RunTable extends Component {
   };
 
   setSortingsOnUrl = sortings => {
-    const { filters } = this.props.router.query;
+    const { sorting_prefix_from_url } = this.props;
+    const filters_from_url = window.location.href.split('?')[1];
+    let filters = {};
+    if (filters_from_url) {
+      filters = qs.parse(filters_from_url, { depth: Infinity });
+    }
     let { asPath } = this.props.router;
 
     if (asPath.includes('?')) {
@@ -137,11 +126,11 @@ class RunTable extends Component {
     }
     let url_query = qs.stringify({
       ...filters,
-      ['top_sortings']: sortings
+      [sorting_prefix_from_url]: sortings
     });
     if (sortings.length === 0) {
       const new_filter = { ...filters };
-      delete new_filter['top_sortings'];
+      delete new_filter[sorting_prefix_from_url];
       url_query = qs.stringify(new_filter);
     }
     history.pushState({}, '', `${asPath}?${url_query}`);
@@ -150,11 +139,11 @@ class RunTable extends Component {
   // When a user sorts by any field, we want to preserve the filters:
   sortTable = async (sortings, page, pageSize) => {
     this.setState({ sortings, loading: true });
-    this.setSortingsOnUrl(sortings);
-    const { filters } = this.state;
-    const renamed_sortings = rename_triplets(sortings, false);
-    const formated_sortings = format_sortings(renamed_sortings);
     try {
+      this.setSortingsOnUrl(sortings);
+      const { filters } = this.state;
+      const renamed_sortings = rename_triplets(sortings, false);
+      const formated_sortings = format_sortings(renamed_sortings);
       await this.props.filterRuns(
         pageSize || this.defaultPageSize,
         page,
@@ -162,6 +151,7 @@ class RunTable extends Component {
         filters
       );
     } catch (e) {
+      console.log(e);
       this.setState({ loading: false });
     }
     this.setState({ loading: false });
@@ -179,6 +169,7 @@ class RunTable extends Component {
     const {
       run_table,
       moveRun,
+      filter_prefix_from_url,
       showManageRunModal,
       showLumisectionModal,
       showClassifierVisualizationModal,
@@ -205,7 +196,7 @@ class RunTable extends Component {
         {filter ? 'Runs with filter ' : 'All runs '} ({count}):{' '}
         {filter && (
           <a onClick={this.removeFilters}>
-            &nbsp; Click here to remove all filters and sortings from this table
+            &nbsp; Click here to remove all filters and sortings
           </a>
         )}
         <Filter
@@ -219,7 +210,7 @@ class RunTable extends Component {
           other_columns={online_columns}
           filterTable={this.filterTable}
           valueProcessor={valueProcessor}
-          prefix_from_url="top"
+          filter_prefix_from_url={filter_prefix_from_url}
           setParentLoading={loading => this.setState({ loading })}
         />
         <ReactTable
@@ -266,7 +257,6 @@ class RunTable extends Component {
 
 const mapStateToProps = state => {
   return {
-    run_table: state.online.runs,
     workspaces: state.online.workspace.workspaces,
     workspace: state.online.workspace.workspace
   };
@@ -274,7 +264,6 @@ const mapStateToProps = state => {
 
 export default withRouter(
   connect(mapStateToProps, {
-    filterRuns,
     showManageRunModal,
     showLumisectionModal,
     showClassifierVisualizationModal,

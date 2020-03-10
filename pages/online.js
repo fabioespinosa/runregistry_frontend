@@ -3,16 +3,17 @@ import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { CHANGE_WORKSPACE, fetchWorkspaces } from '../ducks/online/workspace';
 import { Layout, Breadcrumb } from 'antd';
-import { initializeFiltersFromUrl } from '../ducks/online/runs';
 import { initializeUser, initializeEnvironment } from '../ducks/info';
 
 import Page from '../layout/page';
 import RunTable from '../components/online/run_table/RunTable';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
-import SignificantRunTable from '../components/online/run_table/SignificantRunTable';
 import ManageRunModal from '../components/online/manage_run/ManageRunModal';
 import LumisectionModal from '../components/common/CommonTableComponents/lumisectionModal/LumisectionModal';
 import ClassifierVisualizationModal from '../components/online/classifier_visualization/ClassifierVisualizationModal';
+
+import { filterRuns } from '../ducks/online/runs';
+import { filterRuns as filterSignificantRuns } from '../ducks/online/significant_runs';
 const { Content } = Layout;
 
 class Online extends Component {
@@ -21,8 +22,6 @@ class Online extends Component {
       initializeUser(store, query);
       initializeEnvironment(store);
     }
-    // We put the filters from URL in the redux store:
-    // initializeFiltersFromUrl({ store, query });
     if (!isServer) {
       store.dispatch({
         type: CHANGE_WORKSPACE,
@@ -38,10 +37,6 @@ class Online extends Component {
     await this.props.fetchWorkspaces(query);
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
   render() {
     const { router } = this.props;
     const {
@@ -49,9 +44,12 @@ class Online extends Component {
         asPath,
         query: { type, section, workspace, run_filter }
       },
-      user
+      user,
+      run_table,
+      significant_run_table,
+      filterRuns,
+      filterSignificantRuns
     } = this.props;
-
     const breadcrumbs = asPath.split('/');
     return (
       <Page router={router} user={user} side_nav={true}>
@@ -69,8 +67,24 @@ class Online extends Component {
           <ManageRunModal />
           <LumisectionModal />
           <ClassifierVisualizationModal />
-          <RunTable defaultPageSize={12} />
-          <SignificantRunTable defaultPageSize={5} />
+          <RunTable
+            run_table={run_table}
+            filterRuns={filterRuns}
+            defaultPageSize={12}
+            // ots for Online Top Sortings
+            sorting_prefix_from_url="ots"
+            // otf for One Top Filters
+            filter_prefix_from_url="otf"
+          />
+          <RunTable
+            run_table={significant_run_table}
+            filterRuns={filterSignificantRuns}
+            defaultPageSize={5}
+            // obs for Online Bottom Sortings
+            sorting_prefix_from_url="obs"
+            // obf for Online Bottom Filters
+            filter_prefix_from_url="obf"
+          />
         </Content>
       </Page>
     );
@@ -79,12 +93,17 @@ class Online extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.info
+    user: state.info,
+    // Top Run Table:
+    run_table: state.online.runs,
+    significant_run_table: state.online.significant_runs
   };
 };
 
 export default withRouter(
-  connect(mapStateToProps, { fetchWorkspaces, initializeFiltersFromUrl })(
-    Online
-  )
+  connect(mapStateToProps, {
+    fetchWorkspaces,
+    filterRuns,
+    filterSignificantRuns
+  })(Online)
 );

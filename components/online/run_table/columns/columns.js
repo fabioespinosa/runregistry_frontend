@@ -182,7 +182,8 @@ const column_generator = ({
       id: 'ls_duration',
       maxWidth: 70,
       accessor: 'ls_duration',
-      prefix_for_filtering: 'oms_attributes'
+      prefix_for_filtering: 'oms_attributes',
+      Cell: ({ value }) => <div style={{ textAlign: 'center' }}>{value}</div>
     },
     {
       Header: 'GUI',

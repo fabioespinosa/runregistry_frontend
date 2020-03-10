@@ -10,24 +10,6 @@ export const EDIT_RUN = 'EDIT_RUN';
 const FILTER_RUNS = 'FILTER_RUNS';
 const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS';
 
-export const initializeFiltersFromUrl = ({ store, query }) => {
-  const { filters } = query;
-  if (filters) {
-    //   if (Object.keys(filters).length > 0) {
-    //     store.dispatch({
-    //       type: INITIALIZE_FILTERS,
-    //       payload: Object.keys(filters).map(key => ({
-    //         id: key,
-    //         value: filters[key]
-    //       })),
-    //       filters,
-    //       from_url: true
-    //     });
-    //     store.dispatch(toggleTableFilters());
-    //   }
-  }
-};
-
 export const filterRuns = (page_size, page, sortings, filter) =>
   error_handler(async (dispatch, getState) => {
     if (cancel) {
@@ -111,7 +93,9 @@ export const reFetchRun = run_number =>
   });
 
 const INITIAL_STATE = {
-  runs: []
+  runs: [],
+  pages: 0,
+  count: 0
 };
 
 export default function(state = INITIAL_STATE, action) {
