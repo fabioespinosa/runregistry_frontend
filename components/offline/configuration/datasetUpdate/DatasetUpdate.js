@@ -70,8 +70,8 @@ class DatasetUpdate extends Component {
                   Change state to:
                   <Select
                     placeholder="Change state to"
-                    value={values['new_state']}
-                    onChange={value => setFieldValue('new_state', value)}
+                    value={values['to_state']}
+                    onChange={value => setFieldValue('to_state', value)}
                   >
                     <Option value="COMPLETED">COMPLETED</Option>
                     <Option value="OPEN">OPEN</Option>

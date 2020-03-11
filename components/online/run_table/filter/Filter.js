@@ -87,14 +87,18 @@ const rr_attributes = [
   'stop_reason'
 ];
 
+const isRuleGroup = ruleOrGroup => {
+  return !!(ruleOrGroup.combinator && ruleOrGroup.rules);
+};
+
 const formatSequelize = rules => {
   if (rules) {
     const sequelize_filter = [];
     for (const rule of rules) {
       const { combinator, rules } = rule;
-      if (combinator) {
+      if (isRuleGroup(rule)) {
         sequelize_filter.push({ [combinator]: formatSequelize(rules) });
-      } else {
+      } else if (rule.field) {
         sequelize_filter.push({
           [rule.field]: {
             [rule.operator]: rule.value
@@ -249,6 +253,7 @@ class RootView extends Component {
     let filters = {};
     if (filters_from_url) {
       filters = qs.parse(filters_from_url, { depth: Infinity });
+      console.log(filters);
     }
     let { asPath } = Router;
     if (asPath.includes('?')) {
@@ -322,6 +327,10 @@ class RootView extends Component {
         <style jsx global>{`
           .rule {
             overflow-x: scroll !important;
+            display: flex;
+          }
+          .ruleGroup-header {
+            display: flex;
           }
           .ruleGroup {
             background-color: white !important;
@@ -343,7 +352,7 @@ class RootView extends Component {
           }
           .ruleGroup-remove,
           .rule-remove {
-            float: right;
+            order: -1;
           }
           .ruleGroup-combinators,
           .ruleGroup-addRule,
@@ -364,9 +373,10 @@ class RootView extends Component {
             border-radius: 3px;
             color: white;
             background-color: #e74c3c;
-            padding: 0px 6px;
+            padding: 0px 4px;
             font-weight: bolder;
             cursor: pointer;
+            margin-right: 5px;
           }
         `}</style>
       </div>

@@ -67,7 +67,7 @@ export const copyDatasetColumn = ({
 
 export const datasetUpdate = ({
   source_dataset_name,
-  new_state,
+  to_state,
   change_in_all_workspaces
 }) =>
   error_handler(async (dispatch, getState) => {
@@ -77,16 +77,29 @@ export const datasetUpdate = ({
       ...current_filter,
       name: { '=': source_dataset_name }
     };
-    let { data: datasets } = await axios.post(
-      `${api_url}/dc_tools/dataset_update`,
-      {
-        filter: filter_with_source_dataset_name,
-        workspace_to_change_state_in: workspace,
-        new_state,
-        change_in_all_workspaces
-      },
-      auth(getState, 'Change dataset state in batch')
-    );
+    let datasets;
+    if (change_in_all_workspaces) {
+      const { data } = await axios.post(
+        `${api_url}/dc_tools/change_multiple_dataset_states_in_all_workspaces/${to_state}`,
+        {
+          filter: filter_with_source_dataset_name
+        },
+        auth(getState, 'Change dataset state in batch (in all workspaces)')
+      );
+      datasets = data;
+    } else {
+      // To get the from_state, we get the state of the first dataset in the editable dataset table. To batch edit it is only possible to go from one state to another, therefore if there are other datasets not in the same state, it will error out
+      const first_dataset = getState().offline.editable_datasets.datasets[0];
+      const from_state = first_dataset[`${workspace}_state`];
+      const { data } = await axios.post(
+        `${api_url}/dc_tools/change_multiple_dataset_states/${workspace}/${from_state}/${to_state}`,
+        {
+          filter: filter_with_source_dataset_name
+        },
+        auth(getState, 'Change dataset state in batch')
+      );
+      datasets = data;
+    }
     datasets = formatDatasets(datasets);
     dispatch({
       type: FIND_AND_REPLACE_DATASETS,

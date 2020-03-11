@@ -22,7 +22,7 @@ const Filter = dynamic(import('./filter/Filter'), {
 const online_columns = [];
 
 const valueProcessor = ({ field, operator, value }) => {
-  if (field.startsWith('triplet_summary')) {
+  if (field && field.startsWith('triplet_summary')) {
     return {
       field: `${field}.${value || 'GOOD'}`,
       operator: '>',

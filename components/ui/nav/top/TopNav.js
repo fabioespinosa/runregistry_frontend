@@ -32,18 +32,25 @@ class TopNav extends Component {
             backgroundColor
           }}
         >
-          <Menu.Item key="0" disabled>
-            <img className="logo" src={`/static/images/cms_logo.png`} />
-            <h4
-              style={{
-                display: 'inline-block',
-                color: 'white',
-                marginLeft: '10px',
-                marginBottom: 0
-              }}
+          <Menu.Item key="0">
+            <Link
+              as={`/online`}
+              href="/online/global?type=online&workspace=global"
             >
-              Run Registry
-            </h4>
+              <div>
+                <img className="logo" src={`/static/images/cms_logo.png`} />
+                <h4
+                  style={{
+                    display: 'inline-block',
+                    color: 'white',
+                    marginLeft: '10px',
+                    marginBottom: 0
+                  }}
+                >
+                  Run Registry
+                </h4>
+              </div>
+            </Link>
           </Menu.Item>
           <Menu.Item key="online">
             <Link
