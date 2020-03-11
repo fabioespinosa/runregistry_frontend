@@ -8,17 +8,25 @@ const SubMenu = Menu.SubMenu;
 
 class SideNav extends Component {
   onRouteChangeHandler({ key, keyPath }) {
+    let url_query = '';
+    const filters = window.location.href.split('?')[1];
+    if (filters) {
+      url_query = filters;
+    }
     const {
       router: {
         query: { type, section, workspace }
       }
     } = this.props;
     if (type === 'online') {
-      Router.push(`/online?type=${type}&workspace=${key}`, `/${type}/${key}`);
+      Router.push(
+        `/online?type=${type}&workspace=${key}&filters=${url_query}`,
+        `/${type}/${key}?${url_query}`
+      );
     } else {
       Router.push(
-        `/offline?type=${type}&section=${section}&workspace=${key}`,
-        `/offline/${section}/${key}`
+        `/offline?type=${type}&section=${section}&workspace=${key}&filters=${url_query}`,
+        `/offline/${section}/${key}?${url_query}`
       );
     }
   }

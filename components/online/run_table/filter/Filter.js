@@ -253,7 +253,6 @@ class RootView extends Component {
     let filters = {};
     if (filters_from_url) {
       filters = qs.parse(filters_from_url, { depth: Infinity });
-      console.log(filters);
     }
     let { asPath } = Router;
     if (asPath.includes('?')) {

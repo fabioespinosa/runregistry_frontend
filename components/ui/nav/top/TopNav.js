@@ -21,6 +21,7 @@ class TopNav extends Component {
     console.log('user:', user.displayname);
     console.log(type);
     const backgroundColor = env === 'staging' ? 'purple' : '';
+
     return (
       <Header className="header" style={{ backgroundColor }}>
         <Menu

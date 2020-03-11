@@ -85,7 +85,7 @@ class RunTable extends Component {
       previous_query.section !== section ||
       previous_query.workspace !== workspace
     ) {
-      this.setState({ filters: {}, sortings: [] });
+      // this.setState({ filters: {}, sortings: [] });
     }
   }
 

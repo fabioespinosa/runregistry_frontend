@@ -8,7 +8,7 @@ export default function(getState, comment) {
   ) {
     email = 'fespinos@cern.ch';
     egroups = 'cms-dqm-runregistry-experts';
-    // egroups = 'cms-dqm-runregistry-offline-csc-certifiers'; // For testing
+    // egroups = 'cms-dqm-runregistry-admins-csc'; // For testing
   }
   const options = {
     headers: { egroups, email }
