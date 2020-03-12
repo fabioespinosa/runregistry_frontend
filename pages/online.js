@@ -55,6 +55,7 @@ class Online extends Component {
       <Page router={router} user={user} side_nav={true}>
         <BreadcrumbCmp router={router} online={true}>
           <Breadcrumb.Item>{type || breadcrumbs[0]}</Breadcrumb.Item>
+          <Breadcrumb.Item>{workspace || breadcrumbs[1]}</Breadcrumb.Item>
         </BreadcrumbCmp>
         <Content
           style={{
@@ -94,7 +95,6 @@ class Online extends Component {
 const mapStateToProps = state => {
   return {
     user: state.info,
-    // Top Run Table:
     run_table: state.online.runs,
     significant_run_table: state.online.significant_runs
   };

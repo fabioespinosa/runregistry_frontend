@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
+import dynamic from 'next/dynamic';
 import { withRouter } from 'next/router';
 import qs from 'qs';
 import format_filters from '../../common/CommonTableComponents/FilteringAndSorting/format_filters';
@@ -15,9 +15,12 @@ import { showLumisectionModal } from '../../../ducks/global_ui';
 
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';
-const Filter = dynamic(import('./filter/Filter'), {
-  ssr: false
-});
+const Filter = dynamic(
+  import('../../common/CommonTableComponents/filter/Filter'),
+  {
+    ssr: false
+  }
+);
 
 const online_columns = [];
 
@@ -27,6 +30,13 @@ const valueProcessor = ({ field, operator, value }) => {
       field: `${field}.${value || 'GOOD'}`,
       operator: '>',
       value: 0
+    };
+  }
+  if ((field && field.includes('_state')) || field === 'state') {
+    return {
+      field,
+      operator,
+      value: value || 'OPEN'
     };
   }
   if (value === '') {
@@ -73,28 +83,13 @@ class RunTable extends Component {
     this.state = { filters: {}, sortings, loading: true };
   }
 
-  async componentDidUpdate(prevProps) {
-    const {
-      router: {
-        query: { section, workspace }
-      }
-    } = this.props;
-    const previous_query = prevProps.router.query;
-    // Navigates between workspaces, we refetch and remove filters
-    if (
-      previous_query.section !== section ||
-      previous_query.workspace !== workspace
-    ) {
-      // this.setState({ filters: {}, sortings: [] });
-    }
-  }
-
   filterTable = async (filters, page, pageSize) => {
     this.setState({ filters, loading: true });
     try {
       const { sortings } = this.state;
       const renamed_sortings = rename_triplets(sortings, false);
       const formated_sortings = format_sortings(renamed_sortings);
+      console.log(this.props);
       await this.props.filterRuns(
         pageSize || this.defaultPageSize,
         page,
@@ -107,7 +102,7 @@ class RunTable extends Component {
     this.setState({ loading: false });
   };
 
-  // Remove filters
+  // Navigate entirely to a route without filters (when clicking remove filters)
   removeFilters = async () => {
     window.location.href = window.location.href.split('?')[0];
   };
@@ -184,13 +179,13 @@ class RunTable extends Component {
       showLumisectionModal,
       moveRun,
       significant_runs: false,
-      toggleShowFilters: this.toggleShowFilters,
       markSignificant,
       workspace,
       workspaces
     });
-    // Filter is on if the array of filters is greater than 0
-    const filter = filters.and && filters.and.length > 0;
+    // Filter is on if there is an 'and' and it has contents
+    const filter =
+      (filters.and && filters.and.length > 0) || sortings.length > 0;
     return (
       <div>
         {filter ? 'Runs with filter ' : 'All runs '} ({count}):{' '}
@@ -229,10 +224,6 @@ class RunTable extends Component {
           onPageSizeChange={(pageSize, page) =>
             this.onPageSizeChange(pageSize, page)
           }
-          // onFilteredChange={(filtered, column, table) => {
-          //   // 0 is for first page
-          //   this.filterTable(filtered, 0);
-          // }}
           onSortedChange={sortings => {
             // 0 is for first page
             this.sortTable(sortings, 0);

@@ -30,14 +30,14 @@ const column_generator = ({
   workspace,
   workspaces,
   moveDataset,
-  toggleShowFilters,
-  filter_object,
   reGenerateCache
 }) => {
   let columns = [
     {
       Header: 'Run Number',
+      id: 'run_number',
       accessor: 'run_number',
+      prefix_for_filtering: '',
       maxWidth: 90,
       resizable: false,
       Cell: ({ original, value }) => (
@@ -46,19 +46,28 @@ const column_generator = ({
         </div>
       )
     },
-    { Header: 'Dataset Name', accessor: 'name', maxWidth: 250 },
+    {
+      Header: 'Dataset Name',
+      id: 'name',
+      accessor: 'name',
+      prefix_for_filtering: '',
+      maxWidth: 250
+    },
     {
       Header: 'Class',
+      id: 'class',
       accessor: 'class',
+      prefix_for_filtering: 'rr_attributes',
       maxWidth: 90,
       Cell: ({ original }) => (
-        <div style={{ textAlign: 'center' }}>{original.Run.class}</div>
+        <div style={{ textAlign: 'center' }}>
+          {original.Run.rr_attributes.class}
+        </div>
       )
     },
     {
       Header: 'Manage / LS',
       id: 'manage',
-      filterable: false,
       sortable: false,
       maxWidth: 75,
       Cell: ({ original }) => (
@@ -75,6 +84,7 @@ const column_generator = ({
       Header: 'Appeared In',
       id: 'appeared_in',
       accessor: 'appeared_in',
+      prefix_for_filtering: 'dataset_attributes',
       maxWidth: 150,
       Cell: ({ original, value }) => (
         <div style={{ textAlign: 'center' }}>
@@ -94,6 +104,7 @@ const column_generator = ({
       Header: `${workspace} State`,
       id: `${workspace.toLowerCase()}_state`,
       accessor: `${workspace.toLowerCase()}_state`,
+      prefix_for_filtering: 'dataset_attributes',
       minWidth: 145,
       maxWidth: 145,
       Cell: ({ original, value }) => (
@@ -154,7 +165,19 @@ const column_generator = ({
         </div>
       )
     },
-    { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 }
+    {
+      Header: 'LS Duration',
+      id: 'ls_duration',
+      accessor: 'ls_duration',
+      prefix_for_filtering: 'oms_attributes',
+      maxWidth: 70,
+      Cell: ({ original }) => (
+        <div style={{ textAlign: 'center' }}>
+          {original.Run.oms_attributes.ls_duration}
+        </div>
+      )
+    }
+    // { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 }
   ];
   // {
   //     Header: 'Hlt Key Description',
@@ -222,6 +245,7 @@ const column_generator = ({
       ...column,
       maxWidth: 66,
       id: column.accessor,
+      prefix_for_filtering: 'triplet_summary',
       accessor: data => {
         const triplet = data.triplet_summary[column['accessor']];
         return triplet;
@@ -232,130 +256,39 @@ const column_generator = ({
           triplet_summary={value}
           run_number={original.run_number}
           dataset_name={original.name}
-          component={`${column['accessor']}`}
+          component={column['accessor']}
         />
       )
     };
   });
   columns = [...columns, ...offline_columns_composed];
-  columns.push({
-    Header: 'Cache',
-    id: 'cache',
-    filterable: false,
-    sortable: false,
-    Cell: ({ original }) => {
-      const { run_number, name } = original;
-      return (
-        <div>
-          <span>
-            <a
-              onClick={() =>
-                reGenerateCache({
-                  run_number,
-                  dataset_name: name
-                })
-              }
-            >
-              Re-create cache
-            </a>
-          </span>
-        </div>
-      );
-    }
-  });
+  // columns.push({
+  //   Header: 'Cache',
+  //   id: 'cache',
+  //   filterable: false,
+  //   sortable: false,
+  //   Cell: ({ original }) => {
+  //     const { run_number, name } = original;
+  //     return (
+  //       <div>
+  //         <span>
+  //           <a
+  //             onClick={() =>
+  //               reGenerateCache({
+  //                 run_number,
+  //                 dataset_name: name
+  //               })
+  //             }
+  //           >
+  //             Re-create cache
+  //           </a>
+  //         </span>
+  //       </div>
+  //     );
+  //   }
+  // });
   // columns = component_columns;
-  columns = columns.map(column => {
-    return {
-      ...column,
-      Header: () => (
-        <div>
-          {column.Header}
-          &nbsp;&nbsp;
-          <Icon
-            onClick={evt => {
-              toggleShowFilters();
-              evt.stopPropagation();
-            }}
-            type="search"
-            style={{ fontSize: '10px' }}
-          />
-        </div>
-      ),
-      Filter: ({ column, onChange }) => {
-        const { id } = column;
-        const type = column_types[id] || 'string';
-        const style = `
-                        text-align: left;
-                        border: 1px solid grey;
-                        white-space: pre-wrap;
-                        transition: all 1s;
-                        margin-left: -10px;
-                        margin-top: 20px;
-                        padding: 9px;
-                        width: 200px;
-                        z-index: 900;
-                        height: 270px;
-                        background: white;
-                        position: fixed;
-                        display: none;`;
-        return (
-          <div className="filter_selector" style={{ zIndex: 999 }}>
-            <input
-              defaultValue={filter_object[column.id]}
-              onMouseEnter={evt => {
-                const block = document.querySelector(`#${column.id}`);
-                block.setAttribute('style', `${style} display: inline-block;`);
-              }}
-              onMouseLeave={({ clientX, clientY }) => {
-                const block = document.querySelector(`#${column.id}`);
-                block.setAttribute('style', style);
-              }}
-              type="text"
-              onKeyPress={evt => {
-                if (evt.key == 'Enter') {
-                  onChange(evt.target.value);
-                }
-              }}
-              style={
-                { width: '100%' } // onChange={evt => onChange(evt.target.value)}
-              }
-            />
-            <div style={{ display: 'none' }} id={column.id}>
-              <h3
-                style={{
-                  textTransform: 'capitalize'
-                }}
-              >
-                {type} filter
-              </h3>
-              Supported operators: {column_filter_description[type]}
-              <p />
-              <p>Structure:</p>
-              <p>
-                <i>operator</i> value <i>and/or</i> <i>operator</i> value
-              </p>
-              <p>Examples:</p>
-              <p>
-                <i>{'='}</i> 322433
-              </p>
-              <p>
-                <i>{'>'}</i> 40 <i>and</i> <i>{'<'}</i> 100 <i>or</i>{' '}
-                <i>{'>'}</i> 500
-              </p>
-              <p>
-                <i>{'like'}</i> %physics% <i>and</i> <i>{'like'}</i> %2018%
-              </p>
-              <p>
-                <strong>
-                  {'Space between operator and value is mandatory'}
-                </strong>
-              </p>
-            </div>
-          </div>
-        );
-      }
-    };
-  });
+
   return columns;
 };
 export default column_generator;

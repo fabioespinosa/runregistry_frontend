@@ -1,4 +1,6 @@
 import axios from 'axios';
+const CancelToken = axios.CancelToken;
+let cancel;
 import { api_url, WAITING_DQM_GUI_CONSTANT } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 import { hideManageDatasetModal } from './ui';
@@ -12,6 +14,7 @@ export const TOGGLE_TABLE_FILTERS = 'TOGGLE_TABLE_FILTERS-OFFLINE';
 export const CLEAR_DATASETS = 'CLEAR_DATASETS';
 
 // endpoint can be either waiting_list or editable
+
 export const filterEditableDatasets = (page_size, page, sortings, filter) =>
   error_handler(async (dispatch, getState) => {
     const workspace = getState().offline.workspace.workspace.toLowerCase();
@@ -40,6 +43,9 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
         and: state_filter
       }
     };
+    if (cancel) {
+      cancel();
+    }
     const { data: datasets } = await axios.post(
       `${api_url}/datasets_filtered_ordered`,
       {
@@ -48,6 +54,11 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
         page_size,
         sortings,
         filter: filter_with_state_and_name
+      },
+      {
+        cancelToken: new CancelToken(function executor(c) {
+          cancel = c;
+        })
       },
       auth(getState)
     );
@@ -162,7 +173,7 @@ export const formatDatasets = datasets => {
   return datasets.map(dataset => ({
     ...dataset.dataset_attributes,
     ...dataset,
-    Run: dataset.Run.rr_attributes,
+    Run: dataset.Run,
     triplet_summary: dataset.DatasetTripletCache
       ? dataset.DatasetTripletCache.triplet_summary
       : {}

@@ -147,6 +147,9 @@ const getValueEditorType = (field, operator) => {
   if (field && field.startsWith('triplet_summary')) {
     return 'select';
   }
+  if (field && (field.includes('_state') || field === 'state')) {
+    return 'select';
+  }
   switch (field) {
     case 'rr_attributes.significant':
       return 'checkbox';
@@ -189,6 +192,13 @@ const getValues = (field, operator) => {
       { name: 'EXCLUDED', label: 'EXCLUDED' },
       { name: 'NOTSET', label: 'NOTSET' },
       { name: 'NO VALUE FOUND', label: 'NO VALUE FOUND' }
+    ];
+  }
+  if (field && (field.includes('_state') || field === 'state')) {
+    return [
+      { name: 'OPEN', label: 'OPEN' },
+      { name: 'SIGNOFF', label: 'SIGNOFF' },
+      { name: 'COMPLETED', label: 'COMPLETED' }
     ];
   }
   switch (field) {
@@ -274,6 +284,7 @@ class RootView extends Component {
     const processed_query = processQuery(query_without_ids, valueProcessor);
     const formated_filters = formatSequelize([processed_query])[0];
     // 0 is for the page number:
+
     await filterTable(formated_filters, 0);
     this.setState({ initialQuery: false });
     // Router.push(asPath, `${asPath}?${url_query}`, {

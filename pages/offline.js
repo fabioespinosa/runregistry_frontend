@@ -13,24 +13,30 @@ import WaitingListDatasetTable from '../components/offline/dataset_table/Waiting
 import ManageDatasetModal from '../components/offline/manage_dataset/ManageDatasetModal';
 import LumisectionModal from '../components/common/CommonTableComponents/lumisectionModal/LumisectionModal';
 import CycleInfo from '../components/offline/cycles/cycleInfo/CycleInfo';
+import {
+  filterEditableDatasets,
+  filterWaitingDatasets
+} from '../ducks/offline/datasets';
 
 const { Content } = Layout;
 
 class Offline extends Component {
   static async getInitialProps({ store, query, isServer }) {
-    store.dispatch({
-      type: CHANGE_WORKSPACE,
-      payload: query.workspace,
-    });
     if (isServer) {
       initializeUser(store, query);
       initializeEnvironment(store);
+    }
+    if (!isServer) {
+      store.dispatch({
+        type: CHANGE_WORKSPACE,
+        payload: query.workspace
+      });
     }
   }
 
   async componentDidMount() {
     const {
-      router: { query },
+      router: { query }
     } = this.props;
     await this.props.fetchWorkspaces(query);
   }
@@ -40,9 +46,13 @@ class Offline extends Component {
     const {
       router: {
         asPath,
-        query: { type, section, workspace },
+        query: { type, section, workspace }
       },
       selected_cycle,
+      waiting_datasets,
+      editable_datasets,
+      filterWaitingDatasets,
+      filterEditableDatasets
     } = this.props;
     const breadcrumbs = asPath.split('/');
     return (
@@ -56,7 +66,7 @@ class Offline extends Component {
           style={{
             padding: 0,
             margin: 0,
-            minHeight: 280,
+            minHeight: 280
           }}
         >
           <div style={{ display: 'flex' }}>
@@ -71,9 +81,27 @@ class Offline extends Component {
               <ManageDatasetModal />
               <LumisectionModal />
               {section !== 'cycles' && (
-                <WaitingListDatasetTable defaultPageSize={5} />
+                <DatasetTable
+                  dataset_table={waiting_datasets}
+                  filterDatasets={filterWaitingDatasets}
+                  // ofts for OFfline Top Sortings
+                  sorting_prefix_from_url="ofts"
+                  // oftf for OFfline Top Filters
+                  filter_prefix_from_url="oftf"
+                  defaultPageSize={5}
+                  show_workspace_state_columns_button={false}
+                />
               )}
-              <DatasetTable defaultPageSize={20} />
+              <DatasetTable
+                dataset_table={editable_datasets}
+                filterDatasets={filterEditableDatasets}
+                // ofbs for OFfline Bottom Sortings
+                sorting_prefix_from_url="ofbs"
+                // ofbf for OFfline Bottom Filters
+                filter_prefix_from_url="ofbf"
+                defaultPageSize={20}
+                show_workspace_state_columns_button
+              />
             </div>
           </div>
         </Content>
@@ -85,8 +113,14 @@ class Offline extends Component {
 const mapStateToProps = state => ({
   user: state.info,
   selected_cycle: state.offline.cycles.selected_cycle,
+  waiting_datasets: state.offline.waiting_datasets,
+  editable_datasets: state.offline.editable_datasets
 });
 
 export default withRouter(
-  connect(mapStateToProps, { fetchWorkspaces })(Offline)
+  connect(mapStateToProps, {
+    fetchWorkspaces,
+    filterWaitingDatasets,
+    filterEditableDatasets
+  })(Offline)
 );
