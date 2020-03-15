@@ -102,7 +102,8 @@ class DatasetTable extends Component {
     super(props);
     this.defaultPageSize = props.defaultPageSize;
     let sortings = [];
-    const { filters } = this.props.router.query;
+    const { section, filters } = this.props.router.query;
+
     if (filters) {
       const { sorting_prefix_from_url } = this.props;
       const query_sortings = filters[sorting_prefix_from_url];
@@ -110,10 +111,11 @@ class DatasetTable extends Component {
         sortings = query_sortings;
       }
     }
+    const start_with_loading_true = section !== 'cycles';
     this.state = {
       filters: {},
       sortings,
-      loading: true,
+      loading: start_with_loading_true,
       show_state_columns: false
     };
   }
@@ -213,7 +215,8 @@ class DatasetTable extends Component {
       workspace,
       workspaces,
       reGenerateCache,
-      show_workspace_state_columns_button
+      show_workspace_state_columns_button,
+      table_label
     } = this.props;
     let { datasets, pages, count } = dataset_table;
     let columns = column_generator({
@@ -243,11 +246,7 @@ class DatasetTable extends Component {
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>
-            {section === 'cycles'
-              ? 'Datasets in cycle:'
-              : 'Editable datasets (already appeared in DQM GUI, or forcefully moved down):'}
-          </div>
+          <div>{section !== 'cycles' && table_label}</div>
           <div>
             <Button
               onClick={() =>
@@ -258,26 +257,33 @@ class DatasetTable extends Component {
             </Button>
           </div>
         </div>
-        {filter ? 'Datasets with filter ' : 'All datasets '} ({count}):{' '}
+        {filter
+          ? 'Datasets with filter '
+          : section === 'cycles'
+          ? 'Datasets in cycle'
+          : 'All datasets '}{' '}
+        ({count}):{' '}
         {filter && (
           <a onClick={this.removeFilters}>
             &nbsp; Click here to remove all filters and sortings
           </a>
         )}
-        <Filter
-          table_columns={columns
-            .filter(({ accessor }) => !!accessor)
-            .map(({ prefix_for_filtering: prefix, id }) => ({
-              name: `${prefix}${prefix && '.'}${id}`,
-              label: id
-            }))}
-          key={workspace}
-          other_columns={offline_columns}
-          filterTable={this.filterTable}
-          valueProcessor={valueProcessor}
-          filter_prefix_from_url={filter_prefix_from_url}
-          setParentLoading={loading => this.setState({ loading })}
-        />
+        {section !== 'cycles' && (
+          <Filter
+            table_columns={columns
+              .filter(({ accessor }) => !!accessor)
+              .map(({ prefix_for_filtering: prefix, id }) => ({
+                name: `${prefix}${prefix && '.'}${id}`,
+                label: id
+              }))}
+            key={workspace}
+            other_columns={offline_columns}
+            filterTable={this.filterTable}
+            valueProcessor={valueProcessor}
+            filter_prefix_from_url={filter_prefix_from_url}
+            setParentLoading={loading => this.setState({ loading })}
+          />
+        )}
         <ReactTable
           columns={columns}
           sorted={sortings}
