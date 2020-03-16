@@ -102,7 +102,7 @@ class Offline extends Component {
                 filter_prefix_from_url="ofbf"
                 defaultPageSize={20}
                 show_workspace_state_columns_button
-                table_label="Editable datasets (already appeared in DQM GUI, or forcefully moved down):"
+                table_label="Editable datasets"
               />
             </div>
           </div>

@@ -246,7 +246,19 @@ class DatasetTable extends Component {
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>{section !== 'cycles' && table_label}</div>
+          <div>
+            {filter
+              ? 'Datasets with filter '
+              : section === 'cycles'
+              ? 'Datasets in cycle'
+              : table_label}{' '}
+            ({count === 0 ? 'loading...' : count}):{' '}
+            {filter && (
+              <a onClick={this.removeFilters}>
+                &nbsp; Click here to remove all filters and sortings
+              </a>
+            )}
+          </div>
           <div>
             <Button
               onClick={() =>
@@ -257,17 +269,7 @@ class DatasetTable extends Component {
             </Button>
           </div>
         </div>
-        {filter
-          ? 'Datasets with filter '
-          : section === 'cycles'
-          ? 'Datasets in cycle'
-          : 'All datasets '}{' '}
-        ({count}):{' '}
-        {filter && (
-          <a onClick={this.removeFilters}>
-            &nbsp; Click here to remove all filters and sortings
-          </a>
-        )}
+
         {section !== 'cycles' && (
           <Filter
             table_columns={columns
