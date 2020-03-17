@@ -20,8 +20,14 @@ Router.onRouteChangeError = () => Progress.done();
 
 class Page extends Component {
   componentDidMount() {
-    if (publicRuntimeConfig.ENVIRONMENT === 'production') {
-      hotjar.initialize(1731488, 6);
+    if (process.env.NODE_ENV === 'production') {
+      if (location && location.href) {
+        if (location.href.includes('dev-cmsrunregistry')) {
+          hotjar.initialize(1731488, 6);
+        } else if (location.href.includes('cmsrunregistry')) {
+          hotjar.initialize(1732502, 6);
+        }
+      }
     }
   }
   render() {
