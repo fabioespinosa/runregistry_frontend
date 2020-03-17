@@ -33,7 +33,7 @@ class TopNav extends Component {
             backgroundColor
           }}
         >
-          <Menu.Item key="0">
+          <Menu.Item key="0" disabled>
             <Link
               as={`/online`}
               href="/online/global?type=online&workspace=global"

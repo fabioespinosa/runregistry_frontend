@@ -20,7 +20,7 @@ Router.onRouteChangeError = () => Progress.done();
 
 class Page extends Component {
   componentDidMount() {
-    if (process.env.ENV === 'production' || process.env.ENV === 'staging') {
+    if (publicRuntimeConfig.ENVIRONMENT === 'production') {
       hotjar.initialize(1731488, 6);
     }
   }
