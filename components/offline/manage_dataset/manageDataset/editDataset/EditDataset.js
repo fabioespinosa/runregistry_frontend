@@ -58,7 +58,7 @@ class EditRunLumisections extends Component {
     return (
       <div>
         {dataset[`${current_workspace}_state`] !== 'waiting dqm gui' ? (
-          <div>
+          <div style={{ overflowX: 'scroll' }}>
             <br />
             <table className="edit_run_form">
               <thead>
