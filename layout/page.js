@@ -4,6 +4,7 @@ import Router from 'next/router';
 import Progress from 'nprogress';
 import { connect } from 'react-redux';
 import { hotjar } from 'react-hotjar';
+import Swal from 'sweetalert2';
 // import stylesheet from 'antd/dist/antd.min.css';
 // import sweet from 'sweetalert2/dist/sweetalert2.min.css';
 import { initGA, logPageView } from '../services/analytics';
@@ -24,6 +25,13 @@ class Page extends Component {
       if (location && location.href) {
         if (location.href.includes('dev-cmsrunregistry')) {
           hotjar.initialize(1731488, 6);
+          Swal({
+            type: 'warning',
+            title: 'You are not in Production RR',
+            html: `This environment of RR is only for testing, please use it freely to test all features, none of the results will be taken into account for certification. <br/><br/>
+                   For production Run Registry go to <br/> <a href="https://cmsrunregistry.web.cern.ch">cmsrunregistry.web.cern.ch</a>. <br/><br/>
+                   We are actively looking for bugs in the application, please report anything weird to <a href="mailto:cms-dqm-coreTeam@cern.ch">cms-dqm-coreTeam@cern.ch</a>`
+          });
         } else if (location.href.includes('cmsrunregistry')) {
           hotjar.initialize(1732502, 6);
         }
@@ -34,6 +42,7 @@ class Page extends Component {
     const { router, children, env, side_nav } = this.props;
     const title =
       env === 'production' ? 'CMS Run Registry' : 'NON PRODUCTION RR';
+
     return (
       <div>
         <Head>
