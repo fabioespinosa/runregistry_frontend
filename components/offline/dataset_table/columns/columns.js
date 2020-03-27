@@ -1,4 +1,3 @@
-import { Icon, Tooltip } from 'antd';
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
 import { certifiable_offline_components } from '../../../../config/config';

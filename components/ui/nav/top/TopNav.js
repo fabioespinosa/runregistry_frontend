@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
-import { Layout, Menu, Breadcrumb, Icon } from 'antd';
+import { Layout, Menu, Breadcrumb } from 'antd';
 import config from '../../../../config/config';
 const { Header, Content, Footer, Sider } = Layout;
 

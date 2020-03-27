@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Timeline, Button } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
 import { error_handler } from '../../utils/error_handlers';
 import { api_url } from '../../config/config';
 import Event from './event/Event';
@@ -11,7 +12,7 @@ class LogViewer extends Component {
     versions: [],
     page: 0,
     pages: 0,
-    count: 0,
+    count: 0
   };
 
   componentDidMount = () => this.fetchVersions(0);
@@ -19,7 +20,7 @@ class LogViewer extends Component {
   fetchVersions = error_handler(async page => {
     const { data } = await axios.post(`${api_url}/versions/get_versions`, {
       page,
-      page_size: INITIAL_PAGE_SIZE,
+      page_size: INITIAL_PAGE_SIZE
     });
 
     const { versions, pages, count } = data;
@@ -27,7 +28,7 @@ class LogViewer extends Component {
       versions: [...this.state.versions, ...versions],
       pages,
       count,
-      page,
+      page
     });
   });
 
@@ -40,13 +41,13 @@ class LogViewer extends Component {
       RunEvent,
       DatasetEvent,
       LumisectionEvent,
-      OMSLumisectionEvent,
+      OMSLumisectionEvent
     } = event;
-    let dot = <Icon type="clock-circle-o" style={{ fontSize: '16px' }} />;
+    let dot = <ClockCircleOutlined style={{ fontSize: '16px' }} />;
     let color = 'white';
     if (RunEvent !== null) {
       color = 'blue';
-      dot = <Icon type="clock-circle-o" style={{ fontSize: '20px' }} />;
+      dot = <ClockCircleOutlined style={{ fontSize: '20px' }} />;
     }
     if (DatasetEvent !== null) {
       color = 'yellow';

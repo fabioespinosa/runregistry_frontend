@@ -1,5 +1,6 @@
 import { certifiable_online_components } from '../../../../config/config';
-import { Icon, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
 
@@ -65,7 +66,7 @@ const column_generator = ({
       Cell: ({ original, value }) => (
         <div style={{ textAlign: 'center' }}>
           {value ? (
-            <Icon type={'check'} />
+            <CheckOutlined />
           ) : (
             <a
               onClick={async () => {

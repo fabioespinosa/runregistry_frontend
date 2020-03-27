@@ -218,7 +218,6 @@ class ClassifierVisualization extends Component {
                 }}
               />
             )}
-
             {' - '}
             {JSON.stringify(rules[0])}
             <style jsx>{`

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
-import { Menu, Button, Input } from 'antd';
+import { AutoComplete, Menu, Button, Input } from 'antd';
 import {
   CloseCircleOutlined,
-  PlusCircleOutlined,
   EditOutlined,
   DeleteOutlined
 } from '@ant-design/icons';
@@ -19,7 +18,6 @@ import {
   deleteJsonConfiguration
 } from '../../../../ducks/json/configuration';
 import stringify from 'json-stringify-pretty-compact';
-import JSONDenominator from './json_denominator/JSONDenominator';
 import swal from 'sweetalert2';
 
 const { SubMenu } = Menu;
@@ -37,7 +35,6 @@ class Configuration extends Component {
     editing: false,
     creating: false,
     new_name: '',
-    show_denominator: false,
     run_list: false
   };
 
@@ -164,13 +161,61 @@ class Configuration extends Component {
       number_of_runs,
       number_of_lumisections
     } = this.props;
-    const { creating, menu_selection, editing, show_denominator } = this.state;
+    const { creating, menu_selection, editing } = this.state;
     const download_string =
       'data:text/json;charset=utf-8,' +
       encodeURIComponent(this.getDisplayedJSON(current_json));
+
+    const options = [
+      {
+        label: 'Unique dataset name',
+        options: [
+          {
+            value: '/PromptReco/Collisions2018A/DQM',
+            label: '/PromptReco/Collisions2018A/DQM'
+          }
+        ]
+      },
+      {
+        label: 'Partial dataset name (including all eras)',
+        options: [
+          {
+            value: '/PromptReco/Collisions2018_/DQM',
+            label: '/PromptReco/Collisions2018_/DQM'
+          }
+        ]
+      },
+      {
+        label: 'Partial dataset name (incomplete start or end)',
+        options: [
+          {
+            value: '%/PromptReco/Collisions%',
+            label: '/PromptReco/Collisions2018_/DQM'
+          }
+        ]
+      }
+    ];
     return (
       <div className="configuration">
         <div className="editor">
+          <div style={{ width: '80%' }}>
+            Enter range of the json you want:
+            <br />
+            <AutoComplete
+              dropdownClassName="certain-category-search-dropdown"
+              dropdownMatchSelectWidth={500}
+              style={{ width: 250 }}
+              options={options}
+            >
+              <Input.Search
+                placeholder="Enter a dataset name (e.g. /PromptReco/HICosmics18_/DQM)"
+                onChange={e => this.setState({ dataset_name: e.target.value })}
+              />
+            </AutoComplete>
+            <br />
+          </div>
+          <br />
+          <br />
           {creating ? (
             this.addNewConfigurationInput()
           ) : (
@@ -228,16 +273,6 @@ class Configuration extends Component {
             </p>
           )}
           <br />
-          {show_denominator && (
-            <div>
-              <p>You are in visualization Mode. </p>
-              <p>
-                You must provide a denominator configuration as to evaluate over
-                which range you want to visualize the luminosity that didn't
-                make it to the golden json.
-              </p>
-            </div>
-          )}
           <TextEditor
             onChange={this.changeValue}
             value={json_logic}
@@ -259,8 +294,6 @@ class Configuration extends Component {
               >
                 Edit configuration
               </Button>
-            ) : show_denominator ? (
-              <div></div>
             ) : (
               <div>
                 <Button type="primary" onClick={() => generateJson(json_logic)}>
@@ -269,59 +302,46 @@ class Configuration extends Component {
               </div>
             )}
           </div>
-          {show_denominator && <JSONDenominator golden_logic={json_logic} />}
           <br />
           <br />
-
-          <Button
-            onClick={() =>
-              this.setState({
-                show_denominator: !this.state.show_denominator
-              })
-            }
-          >
-            {show_denominator ? 'Hide Visualization mode' : 'Visualize'}
-          </Button>
         </div>
-        {show_denominator ? (
-          <div>Visualization Mode</div>
-        ) : (
-          <div className="produced_json">
-            <h3>Generated JSON:</h3>
-            <TextEditor
-              onChange={() => {}}
-              value={
-                this.state.run_list
-                  ? this.getDisplayedJSON(this.getRunList(current_json))
-                  : this.getDisplayedJSON(current_json)
-              }
-              lan="javascript"
-              theme="github"
-              readOnly={true}
-            />
-            The number of runs in this json are: {number_of_runs} and number of
-            lumisections: {number_of_lumisections}
-            <br />
+
+        <div className="produced_json">
+          <h3>Generated JSON:</h3>
+          <TextEditor
+            onChange={() => {}}
+            value={
+              this.state.run_list
+                ? this.getDisplayedJSON(this.getRunList(current_json))
+                : this.getDisplayedJSON(current_json)
+            }
+            lan="javascript"
+            theme="github"
+            readOnly={true}
+          />
+          The number of runs in this json are: {number_of_runs} and number of
+          lumisections: {number_of_lumisections}
+          <br />
+          <Button
+            onClick={() => {
+              this.setState({ run_list: !this.state.run_list });
+            }}
+          >
+            {this.state.run_list ? 'Get lumisections' : 'Get run list'}
+          </Button>
+          <div className="generate_button">
             <Button
-              onClick={() => {
-                this.setState({ run_list: !this.state.run_list });
-              }}
+              type="primary"
+              disabled={current_json === '{}'}
+              onClick={() => generateJson(json_logic)}
             >
-              {this.state.run_list ? 'Get lumisections' : 'Get run list'}
+              <a href={download_string} download="custom_json.json">
+                Download JSON file
+              </a>
             </Button>
-            <div className="generate_button">
-              <Button
-                type="primary"
-                disabled={current_json === '{}'}
-                onClick={() => generateJson(json_logic)}
-              >
-                <a href={download_string} download="custom_json.json">
-                  Download JSON file
-                </a>
-              </Button>
-            </div>
           </div>
-        )}
+        </div>
+
         <style jsx>{`
           .configuration {
             display: flex;

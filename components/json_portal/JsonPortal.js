@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Menu, Icon } from 'antd';
+import { Menu } from 'antd';
+import { MailOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
 
@@ -23,15 +24,15 @@ class JsonPortal extends Component {
           mode="horizontal"
         >
           <Menu.Item key="my_jsons">
-            <Icon type="mail" />
+            <MailOutlined />
             My JSONs
           </Menu.Item>
           <Menu.Item key="other_jsons">
-            <Icon type="appstore" />
+            <AppstoreOutlined />
             Other JSONs
           </Menu.Item>
           <Menu.Item key="official_jsons">
-            <Icon type="appstore" />
+            <AppstoreOutlined />
             Official JSONs
           </Menu.Item>
         </Menu>

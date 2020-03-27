@@ -7,11 +7,11 @@ import {
   Menu,
   Dropdown,
   Button,
-  Icon,
   Radio,
   message,
   Progress
 } from 'antd';
+import { CopyOutlined, RetweetOutlined, DownOutlined } from '@ant-design/icons';
 
 import { showConfigurationModal as showOnlineConfigurationModal } from '../../../ducks/online/ui';
 
@@ -71,7 +71,7 @@ class BreadcrumbCmp extends Component {
             //     as={`/offline/datasets/${workspace}`}
             // >
             <a href={`/offline/datasets/${workspace}`}>
-              <Button type="primary" size="large" icon="copy">
+              <Button type="primary" size="large" icon={<CopyOutlined />}>
                 Show All Datasets
               </Button>
             </a>
@@ -83,7 +83,7 @@ class BreadcrumbCmp extends Component {
               as={`/offline/cycles/${workspace}`}
             >
               <a>
-                <Button type="primary" size="large" icon="retweet">
+                <Button type="primary" size="large" icon={<RetweetOutlined />}>
                   Show Cycles
                 </Button>
               </a>
@@ -103,7 +103,7 @@ class BreadcrumbCmp extends Component {
           <Dropdown overlay={online ? this.online_menu : this.offline_menu}>
             <Button style={{ marginTop: '-6px' }}>
               Configuration
-              <Icon type="down" />
+              <DownOutlined />
             </Button>
           </Dropdown>
         </div>

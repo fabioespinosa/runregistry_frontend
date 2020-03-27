@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import dynamic from 'next/dynamic';
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
-import { Statistic, Progress, Tag, Button, Icon } from 'antd';
+import { Statistic, Progress, Tag, Button } from 'antd';
+import {
+  DownloadOutlined,
+  BugOutlined,
+  PieChartOutlined,
+  DeleteOutlined
+} from '@ant-design/icons';
 import stringify from 'json-stringify-pretty-compact';
 import moment from 'moment';
 import axios from 'axios';
@@ -191,18 +197,18 @@ class JsonList extends Component {
           <p>By: </p>
           <p>Official: false</p>
           <p>Run Registry version: 2343353</p>
-          <Button icon="download">Download JSON</Button>
+          <Button icon={<DownloadOutlined />}>Download JSON</Button>
           <br />
           <br />
-          <Button icon="bug">Debug JSON</Button>
+          <Button icon={<BugOutlined />}>Debug JSON</Button>
           <br />
           <br />
-          <Button icon="pie-chart">
+          <Button icon={<PieChartOutlined />}>
             Generate JSON Luminosity losses Visualization
           </Button>
           <br />
           <br />
-          <Button icon="delete" type="danger">
+          <Button icon={<DeleteOutlined />} type="danger">
             Delete JSON
           </Button>
         </div>

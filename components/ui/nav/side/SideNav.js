@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
-import { Layout, Menu, Icon, Badge } from 'antd';
+import { Layout, Menu, Badge } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -92,7 +93,7 @@ class SideNav extends Component {
               key="workspaces"
               title={
                 <span>
-                  <Icon type="laptop" />
+                  <LaptopOutlined />
                   <span>WORKSPACES</span>
                 </span>
               }
