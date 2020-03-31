@@ -40,10 +40,9 @@ class DeleteDatasets extends Component {
           {count} Datasets Selected
         </h5>
         <h4>
-          You cannot delete a single dataset, you must delete all datasets
-          belonging to a certain dataset name (this will delete all datasets
-          associated with that dataset name, for all workspaces, including those
-          in waiting list)
+          You must select a dataset name of the datasets you selected(this will
+          delete all datasets that match the filter <strong>and</strong> the
+          dataset name, for all workspaces, including those in waiting list)
         </h4>
         <h5>
           {Object.keys(filter).length === 0
@@ -54,15 +53,8 @@ class DeleteDatasets extends Component {
         <Formik
           initialValues={initialValues}
           onSubmit={async values => {
-            if (
-              values.reason_for_hiding &&
-              values.reason_for_hiding.length < 1
-            ) {
-              // Error
-            } else {
-              await this.props.deleteDatasets(values);
-              await Swal(`Datasets deleted`, '', 'success');
-            }
+            await this.props.deleteDatasets(values);
+            await Swal(`Datasets deleted`, '', 'success');
           }}
           render={({ values, setFieldValue, handleSubmit }) => {
             return (

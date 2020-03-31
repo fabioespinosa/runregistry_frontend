@@ -114,7 +114,6 @@ export const datasetUpdate = ({
 export const datasetColumnBatchUpdate = ({ columns_to_update, new_status }) =>
   error_handler(async (dispatch, getState) => {
     const current_filter = getState().offline.editable_datasets.filter;
-
     let { data: datasets } = await axios.post(
       `${api_url}/dc_tools/dataset_column_batch_update`,
       {
@@ -134,6 +133,11 @@ export const datasetColumnBatchUpdate = ({ columns_to_update, new_status }) =>
 
 export const deleteDatasets = ({ reason_for_hiding, dataset_name }) =>
   error_handler(async (dispatch, getState) => {
+    const current_filter = getState().offline.editable_datasets.filter;
+    const filter_with_source_dataset_name = {
+      ...current_filter,
+      name: { '=': dataset_name }
+    };
     const { headers } = auth(getState);
     let { data: datasets } = await axios.delete(
       `${api_url}/dc_tools/hide_datasets`,
@@ -141,7 +145,7 @@ export const deleteDatasets = ({ reason_for_hiding, dataset_name }) =>
         headers,
         data: {
           reason_for_hiding,
-          dataset_name
+          filter: filter_with_source_dataset_name
         }
       }
     );

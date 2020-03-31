@@ -229,7 +229,6 @@ class DatasetTable extends Component {
       moveDataset,
       reGenerateCache
     });
-    console.log(error);
 
     if (show_state_columns) {
       columns = [
@@ -255,7 +254,7 @@ class DatasetTable extends Component {
               : section === 'cycles'
               ? 'Datasets in cycle'
               : table_label}{' '}
-            ({count === 0 ? 'loading...' : count}):{' '}
+            ({loading ? 'loading...' : count}):{' '}
             {filter && (
               <a onClick={this.removeFilters}>
                 &nbsp; Click here to remove all filters and sortings
