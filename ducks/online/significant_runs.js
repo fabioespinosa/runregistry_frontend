@@ -1,5 +1,5 @@
 import axios from 'axios';
-const Canceltoken = axios.CancelToken;
+const CancelToken = axios.CancelToken;
 let cancel;
 
 import { api_url } from '../../config/config';
