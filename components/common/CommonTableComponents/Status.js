@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Tooltip, Popover } from 'antd';
+import Linkify from 'react-linkify';
 import PopoverContent from './PopoverContent';
 
 // This is the order in which the statuses are displayed in the cell:
@@ -41,6 +42,12 @@ const status_colors_and_text = {
     fontSize: '1em'
   }
 };
+
+const linkifyTarget = (href, text, key) => (
+  <a href={href} key={key} target="_blank">
+    {text}
+  </a>
+);
 
 class Status extends Component {
   render() {
@@ -87,11 +94,14 @@ class Status extends Component {
             />
           }
           trigger="click"
-          title={`Comments in this component: ${comments.join(' , ')}`}
         >
           <Popover
             placement="top"
-            content={`${run_stop_reason}   ${comments.join(' , ')}`}
+            content={
+              <Linkify componentDecorator={linkifyTarget}>
+                {run_stop_reason} {comments.join(' , ')}
+              </Linkify>
+            }
             // We use the length as conditional, because if there are no comments, we want no automatica popover on hover
             trigger={comments.length || run_stop_reason ? 'hover' : ''}
           >

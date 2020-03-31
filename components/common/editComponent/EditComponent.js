@@ -3,12 +3,19 @@ import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
 import { Input, Button, InputNumber } from 'antd';
 import Swal from 'sweetalert2';
+import Linkify from 'react-linkify';
 import { reFetchDataset } from '../../../ducks/offline/datasets';
 import { reFetchRun } from '../../../ducks/online/runs';
 import { addLumisectionRange } from '../../../ducks/online/lumisections';
 import BarPlot from './BarPlot';
 import History from './History';
 const { TextArea } = Input;
+
+const linkifyTarget = (href, text, key) => (
+  <a href={href} key={key} target="_blank">
+    {text}
+  </a>
+);
 
 class EditComponent extends Component {
   constructor(props) {
@@ -82,7 +89,9 @@ class EditComponent extends Component {
                         <strong>{end}</strong>
                         {' - '}Comment:{' '}
                         <strong style={{ wordBreak: 'break-all' }}>
-                          {comment}
+                          <Linkify componentDecorator={linkifyTarget}>
+                            {comment}
+                          </Linkify>
                         </strong>
                       </div>
                     )
