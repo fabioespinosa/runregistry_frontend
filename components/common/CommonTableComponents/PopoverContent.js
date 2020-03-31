@@ -122,7 +122,6 @@ class PopoverContent extends Component {
             })}
           </div>
         </div>
-        <br />
         {loading ? (
           <center>
             <h4>Loading...</h4>
@@ -153,7 +152,6 @@ class PopoverContent extends Component {
             <h4>No comments in this run</h4>
           </center>
         )}
-        <br />
         {show_history && (
           <History
             run_number={run_number}
@@ -170,11 +168,9 @@ class PopoverContent extends Component {
             {show_history ? 'Hide History' : 'Show History'}
           </Button>
         </center>
-        <br />
-        <br />
         <style jsx>{`
           .popover_content {
-            width: 40vw;
+            width: 900px;
           }
 
           .lumisection_display {
