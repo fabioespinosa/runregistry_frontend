@@ -80,10 +80,6 @@ export const calculateJson = (json_logic, dataset_name) =>
       }
     );
     const { final_json, dataset_in_run_in_json } = json_output;
-    dispatch({
-      type: GENERATE_JSON,
-      payload: { final_json, dataset_in_run_in_json, json_logic }
-    });
   });
 
 export const changeJsonLogic = new_json_logic => ({

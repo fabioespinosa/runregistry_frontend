@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import ReactTable from 'react-table';
-import { CheckOutlined, CrossOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { api_url } from '../../../../../config/config';
 import { components } from '../../../../../config/config';
 import { error_handler } from '../../../../../utils/error_handlers';
@@ -94,7 +94,7 @@ class History extends Component {
           if (value) {
             return (
               <div style={{ textAlign: 'center' }}>
-                {value.value ? <CheckOutlined /> : <CrossOutlined />}
+                {value.value ? <CheckOutlined /> : <CloseOutlined />}
               </div>
             );
           }

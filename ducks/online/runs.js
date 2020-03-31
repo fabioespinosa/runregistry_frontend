@@ -11,26 +11,30 @@ const FILTER_RUNS = 'FILTER_RUNS';
 const INITIALIZE_FILTERS = 'INITIALIZE_FILTERS';
 
 export const filterRuns = (page_size, page, sortings, filter) =>
-  error_handler(async (dispatch, getState) => {
-    if (cancel) {
-      cancel();
-    }
-    const { data: runs } = await axios.post(
-      `${api_url}/runs_filtered_ordered`,
-      { page, page_size, sortings, filter },
-      {
-        cancelToken: new CancelToken(function executor(c) {
-          cancel = c;
-        })
-      },
-      auth(getState)
-    );
-    runs.runs = formatRuns(runs.runs);
-    dispatch({
-      type: FILTER_RUNS,
-      payload: runs
-    });
-  });
+  error_handler(
+    async (dispatch, getState) => {
+      if (cancel) {
+        cancel();
+      }
+      const { data: runs } = await axios.post(
+        `${api_url}/runs_filtered_ordered`,
+        { page, page_size, sortings, filter },
+        {
+          cancelToken: new CancelToken(function executor(c) {
+            cancel = c;
+          })
+        },
+        auth(getState)
+      );
+      runs.runs = formatRuns(runs.runs);
+      dispatch({
+        type: FILTER_RUNS,
+        payload: runs
+      });
+    },
+    false,
+    false
+  );
 
 export const editRun = (run_number, updated_run) =>
   error_handler(async (dispatch, getState) => {

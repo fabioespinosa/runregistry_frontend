@@ -2,7 +2,11 @@ import axios from 'axios';
 import { api_url } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 import auth from '../../auth/auth';
-import { FIND_AND_REPLACE_DATASETS, formatDatasets } from './datasets';
+import {
+  FIND_AND_REPLACE_DATASETS,
+  DELETE_DATASETS,
+  formatDatasets
+} from './datasets';
 
 export const duplicateDatasets = ({
   target_dataset_name,
@@ -124,6 +128,26 @@ export const datasetColumnBatchUpdate = ({ columns_to_update, new_status }) =>
     datasets = formatDatasets(datasets);
     dispatch({
       type: FIND_AND_REPLACE_DATASETS,
+      payload: datasets
+    });
+  });
+
+export const deleteDatasets = ({ reason_for_hiding, dataset_name }) =>
+  error_handler(async (dispatch, getState) => {
+    const { headers } = auth(getState);
+    let { data: datasets } = await axios.delete(
+      `${api_url}/dc_tools/hide_datasets`,
+      {
+        headers,
+        data: {
+          reason_for_hiding,
+          dataset_name
+        }
+      }
+    );
+    datasets = formatDatasets(datasets);
+    dispatch({
+      type: DELETE_DATASETS,
       payload: datasets
     });
   });

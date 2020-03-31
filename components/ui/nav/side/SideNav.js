@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
 import { Layout, Menu, Badge } from 'antd';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, LaptopOutlined } from '@ant-design/icons';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;

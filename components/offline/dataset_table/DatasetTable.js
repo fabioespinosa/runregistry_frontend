@@ -116,33 +116,10 @@ class DatasetTable extends Component {
       filters: {},
       sortings,
       loading: start_with_loading_true,
-      show_state_columns: false
+      show_state_columns: false,
+      error: ''
     };
   }
-
-  filterTable = async (filters, page, pageSize) => {
-    this.setState({ filters, loading: true });
-    try {
-      const { sortings } = this.state;
-      const renamed_sortings = rename_triplets(sortings, false);
-      const formated_sortings = format_sortings(renamed_sortings);
-      await this.props.filterDatasets(
-        pageSize || this.defaultPageSize,
-        page,
-        formated_sortings,
-        filters
-      );
-    } catch (e) {
-      console.log(e);
-      this.setState({ loading: false });
-    }
-    this.setState({ loading: false });
-  };
-
-  // Navigate entirely to a route without filters (when clicking remove filters)
-  removeFilters = async () => {
-    window.location.href = window.location.href.split('?')[0];
-  };
 
   setSortingsOnUrl = sortings => {
     const { sorting_prefix_from_url } = this.props;
@@ -168,8 +145,27 @@ class DatasetTable extends Component {
     history.pushState({}, '', `${asPath}?${url_query}`);
   };
 
+  filterTable = async (filters, page, pageSize) => {
+    this.setState({ filters, loading: true, error: '' });
+    try {
+      const { sortings } = this.state;
+      const renamed_sortings = rename_triplets(sortings, false);
+      const formated_sortings = format_sortings(renamed_sortings);
+      await this.props.filterDatasets(
+        pageSize || this.defaultPageSize,
+        page,
+        formated_sortings,
+        filters
+      );
+    } catch (err) {
+      console.log(err);
+      this.setState({ loading: false, error: err });
+    }
+    this.setState({ loading: false });
+  };
+
   sortTable = async (sortings, page, pageSize) => {
-    this.setState({ sortings, loading: true });
+    this.setState({ sortings, loading: true, error: '' });
     try {
       this.setSortingsOnUrl(sortings);
       const { filters } = this.state;
@@ -183,7 +179,7 @@ class DatasetTable extends Component {
       );
     } catch (e) {
       console.log(e);
-      this.setState({ loading: false });
+      this.setState({ loading: false, error: err });
     }
     this.setState({ loading: false });
   };
@@ -195,6 +191,11 @@ class DatasetTable extends Component {
     this.sortTable(this.state.sortings, page, newSize);
   };
 
+  // Navigate entirely to a route without filters (when clicking remove filters)
+  removeFilters = async () => {
+    window.location.href = window.location.href.split('?')[0];
+  };
+
   render() {
     const {
       query: { section }
@@ -204,7 +205,8 @@ class DatasetTable extends Component {
       sortings,
       loading,
       show_state_columns,
-      filterable
+      filterable,
+      error
     } = this.state;
     const {
       dataset_table,
@@ -227,6 +229,7 @@ class DatasetTable extends Component {
       moveDataset,
       reGenerateCache
     });
+    console.log(error);
 
     if (show_state_columns) {
       columns = [
@@ -285,6 +288,11 @@ class DatasetTable extends Component {
             filter_prefix_from_url={filter_prefix_from_url}
             setParentLoading={loading => this.setState({ loading })}
           />
+        )}
+        {error && (
+          <div style={{ color: 'red' }}>
+            <strong>{error}</strong>
+          </div>
         )}
         <ReactTable
           columns={columns}

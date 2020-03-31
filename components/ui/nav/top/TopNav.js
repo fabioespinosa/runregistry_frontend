@@ -33,7 +33,7 @@ class TopNav extends Component {
             backgroundColor
           }}
         >
-          <Menu.Item key="0" disabled>
+          <Menu.Item key="0">
             <Link
               as={`/online`}
               href="/online/global?type=online&workspace=global"
@@ -75,7 +75,7 @@ class TopNav extends Component {
             </Link>
           </Menu.Item>
           <Menu.Item key="json_portal">
-            <Link as={`/json_portal`} href="/json">
+            <Link as={`/json_portal`} href="/json_portal">
               <a>JSON PORTAL</a>
             </Link>
           </Menu.Item>

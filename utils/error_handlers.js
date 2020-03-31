@@ -1,7 +1,9 @@
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
-export const error_handler = (fn, error_message) => (...params) =>
+export const error_handler = (fn, error_message, show_popup = true) => (
+  ...params
+) =>
   fn(...params).catch(err => {
     if (axios.isCancel(err)) {
       // It is a canceled request, not really an error
@@ -25,7 +27,12 @@ export const error_handler = (fn, error_message) => (...params) =>
         swal_message.title = 'You are not authorized to perform this action';
         swal_message.html = data.message;
       }
+      if (show_popup === false) {
+        throw swal_message.text;
+      }
     }
-    Swal(swal_message);
+    if (show_popup) {
+      Swal(swal_message);
+    }
     throw 'Error';
   });

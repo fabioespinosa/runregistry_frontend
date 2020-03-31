@@ -180,10 +180,10 @@ class JsonList extends Component {
       item => item.id === selected_json_id
     );
     const { data, returnvalue } = json_item;
-    const { run_min, run_max, dataset_name, golden_json_logic } = data;
+    const { run_min, run_max, dataset_name, json_logic } = data;
     const { generated_json, generated_json_with_dataset_names } = returnvalue;
 
-    const json_logic = JSON.parse(golden_json_logic);
+    const parsed_json_logic = JSON.parse(json_logic);
     return (
       <div className="container">
         <div className="json_info">
@@ -227,7 +227,7 @@ class JsonList extends Component {
           <h3>JSON Logic that was used to generate this JSON:</h3>
           <TextEditor
             onChange={() => {}}
-            value={this.getDisplayedJSON(json_logic, 100)}
+            value={this.getDisplayedJSON(parsed_json_logic, 100)}
             lan="javascript"
             theme="github"
             height="80vh"

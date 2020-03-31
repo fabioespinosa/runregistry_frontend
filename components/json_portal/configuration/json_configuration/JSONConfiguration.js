@@ -3,13 +3,14 @@ import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
 import { AutoComplete, Menu, Button, Input } from 'antd';
 import {
+  PlusCircleOutlined,
   CloseCircleOutlined,
   EditOutlined,
   DeleteOutlined
 } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 import {
-  generateJson,
+  calculateJson,
   changeJsonLogic,
   getJsonConfigurations,
   resetJson,
@@ -35,7 +36,8 @@ class Configuration extends Component {
     editing: false,
     creating: false,
     new_name: '',
-    run_list: false
+    run_list: false,
+    dataset_name: ''
   };
 
   async componentDidMount() {
@@ -151,70 +153,102 @@ class Configuration extends Component {
     return runs;
   };
 
+  renderTitle = title => {
+    return <span>{title}</span>;
+  };
+
+  renderItem = (title, label) => {
+    return {
+      value: title,
+      label: (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}
+        >
+          {title}
+          <span>{label}</span>
+        </div>
+      )
+    };
+  };
+
   render() {
     const {
       json_configurations,
       json_configurations_array,
-      generateJson,
+      calculateJson,
       current_json,
       json_logic,
       number_of_runs,
       number_of_lumisections
     } = this.props;
-    const { creating, menu_selection, editing } = this.state;
+    const { creating, menu_selection, editing, dataset_name } = this.state;
     const download_string =
       'data:text/json;charset=utf-8,' +
       encodeURIComponent(this.getDisplayedJSON(current_json));
 
     const options = [
       {
-        label: 'Unique dataset name',
+        label: this.renderTitle('Unique dataset name'),
+        options: [this.renderItem('/PromptReco/Collisions2018A/DQM')]
+      },
+      {
+        label: this.renderTitle(
+          'Partial dataset name (for example, to include all eras)'
+        ),
         options: [
-          {
-            value: '/PromptReco/Collisions2018A/DQM',
-            label: '/PromptReco/Collisions2018A/DQM'
-          }
+          this.renderItem(
+            '/PromptReco/Collisions2018_/DQM',
+            'The _ is a wildcard for any character (in this case all eras)'
+          )
         ]
       },
       {
-        label: 'Partial dataset name (including all eras)',
+        label: this.renderTitle(
+          'Only certain characters (for example to include certain eras)'
+        ),
         options: [
-          {
-            value: '/PromptReco/Collisions2018_/DQM',
-            label: '/PromptReco/Collisions2018_/DQM'
-          }
+          this.renderItem(
+            '/PromptReco/Collisions2018(A|B)/DQM',
+            'The (A|B) works as a filter for era A or era B'
+          )
         ]
       },
       {
-        label: 'Partial dataset name (incomplete start or end)',
+        label: this.renderTitle(
+          'Partial dataset name (incomplete start or end)'
+        ),
         options: [
-          {
-            value: '%/PromptReco/Collisions%',
-            label: '/PromptReco/Collisions2018_/DQM'
-          }
+          this.renderItem(
+            '%PromptReco/Collisions%',
+            'The % is a wildcard for 1 or more characters'
+          )
         ]
       }
     ];
     return (
       <div className="configuration">
         <div className="editor">
-          <div style={{ width: '80%' }}>
-            Enter range of the json you want:
+          <div>
+            Enter the dataset of the runs you want to create a json from:
             <br />
             <AutoComplete
               dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={500}
-              style={{ width: 250 }}
+              dropdownMatchSelectWidth={650}
+              style={{ width: 500 }}
               options={options}
+              onChange={dataset_name => this.setState({ dataset_name })}
             >
-              <Input.Search
+              <Input
+                size="large"
                 placeholder="Enter a dataset name (e.g. /PromptReco/HICosmics18_/DQM)"
                 onChange={e => this.setState({ dataset_name: e.target.value })}
               />
             </AutoComplete>
             <br />
           </div>
-          <br />
           <br />
           {creating ? (
             this.addNewConfigurationInput()
@@ -228,9 +262,11 @@ class Configuration extends Component {
                 <Menu.Item key={name}>{name}</Menu.Item>
               ))}
               <Menu.Item key="arbitrary">arbitrary configuration</Menu.Item>
-              <Button type="link" onClick={this.toggleCreationMode}>
-                <PlusCircleOutlined />
-              </Button>
+              <Button
+                type="link"
+                onClick={this.toggleCreationMode}
+                icon={<PlusCircleOutlined />}
+              />
             </Menu>
           )}
           {menu_selection !== 'arbitrary' && !creating && !editing && (
@@ -241,13 +277,17 @@ class Configuration extends Component {
                 marginTop: '10px'
               }}
             >
-              <Button type="link" onClick={this.toggleEditionMode}>
-                <EditOutlined />
-              </Button>
+              <Button
+                type="link"
+                onClick={this.toggleEditionMode}
+                icon={<EditOutlined />}
+              />
               &nbsp;
-              <Button type="link" onClick={this.deleteConfiguration}>
-                <DeleteOutlined />
-              </Button>
+              <Button
+                type="link"
+                onClick={this.deleteConfiguration}
+                icon={<DeleteOutlined />}
+              />
             </div>
           )}
           {editing && (
@@ -296,7 +336,10 @@ class Configuration extends Component {
               </Button>
             ) : (
               <div>
-                <Button type="primary" onClick={() => generateJson(json_logic)}>
+                <Button
+                  type="primary"
+                  onClick={() => calculateJson(json_logic, dataset_name)}
+                >
                   Generate JSON
                 </Button>
               </div>
@@ -306,42 +349,6 @@ class Configuration extends Component {
           <br />
         </div>
 
-        <div className="produced_json">
-          <h3>Generated JSON:</h3>
-          <TextEditor
-            onChange={() => {}}
-            value={
-              this.state.run_list
-                ? this.getDisplayedJSON(this.getRunList(current_json))
-                : this.getDisplayedJSON(current_json)
-            }
-            lan="javascript"
-            theme="github"
-            readOnly={true}
-          />
-          The number of runs in this json are: {number_of_runs} and number of
-          lumisections: {number_of_lumisections}
-          <br />
-          <Button
-            onClick={() => {
-              this.setState({ run_list: !this.state.run_list });
-            }}
-          >
-            {this.state.run_list ? 'Get lumisections' : 'Get run list'}
-          </Button>
-          <div className="generate_button">
-            <Button
-              type="primary"
-              disabled={current_json === '{}'}
-              onClick={() => generateJson(json_logic)}
-            >
-              <a href={download_string} download="custom_json.json">
-                Download JSON file
-              </a>
-            </Button>
-          </div>
-        </div>
-
         <style jsx>{`
           .configuration {
             display: flex;
@@ -349,13 +356,39 @@ class Configuration extends Component {
           .editor {
             width: 1000px;
           }
-          .produced_json {
-            width: 1000px;
+        `}</style>
+
+        <style jsx global>{`
+          .ant-select-item {
+            padding: 5px 12px;
           }
-          .generate_button {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
+          .ant-select-item-group {
+            color: rgba(0, 0, 0, 0.45);
+            font-size: 12px;
+          }
+          .certain-category-search-dropdown
+            .ant-select-dropdown-menu-item-group-title {
+            color: #666;
+            font-weight: bold;
+          }
+
+          .certain-category-search-dropdown
+            .ant-select-dropdown-menu-item-group {
+            border-bottom: 1px solid #f6f6f6;
+          }
+
+          .certain-category-search-dropdown .ant-select-item-option-grouped {
+            padding-left: 24px;
+          }
+
+          .certain-category-search-dropdown
+            .ant-select-dropdown-menu-item.show-all {
+            text-align: center;
+            cursor: default;
+          }
+
+          .certain-category-search-dropdown .ant-select-dropdown-menu {
+            max-height: 300px;
           }
         `}</style>
       </div>
@@ -376,7 +409,7 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  generateJson,
+  calculateJson,
   changeJsonLogic,
   getJsonConfigurations,
   resetJson,

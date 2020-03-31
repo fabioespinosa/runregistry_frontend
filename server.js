@@ -54,7 +54,7 @@ app.prepare().then(() => {
   });
 
   server.get('/json_portal', (req, res) => {
-    req.params.type = 'json';
+    req.params.type = 'json_portal';
     const params = { ...req.headers, ...req.params, filters: req.query };
     app.render(req, res, `/json_portal`, params);
   });

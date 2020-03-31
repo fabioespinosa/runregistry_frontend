@@ -11,7 +11,7 @@ import { showModal } from '../ducks/json/ui';
 
 import Page from '../layout/page';
 import JsonPortal from '../components/json_portal/JsonPortal';
-import JSONModal from '../components/json/configuration/JSONModal';
+import JSONModal from '../components/json_portal/configuration/JSONModal';
 import FilteredTable from '../components/json/filtered_table/FilteredTable';
 
 const TextEditor = dynamic(

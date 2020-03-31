@@ -102,7 +102,9 @@ class CopyDatasetColumn extends Component {
                         }
                       >
                         {unique_dataset_names.map(dataset_name => (
-                          <Option value={dataset_name}>{dataset_name}</Option>
+                          <Option key={dataset_name} value={dataset_name}>
+                            {dataset_name}
+                          </Option>
                         ))}
                       </Select>
                       <br />

@@ -46,6 +46,7 @@ class BreadcrumbCmp extends Component {
           Dataset Column Batch Update
         </Menu.Item>
         <Menu.Item key="dataset_update">Dataset Update</Menu.Item>
+        <Menu.Item key="dataset_delete">Dataset Delete</Menu.Item>
         <Menu.Item key="create_cycle">Create Cycle</Menu.Item>
       </SubMenu>
     </Menu>

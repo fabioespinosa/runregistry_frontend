@@ -80,24 +80,23 @@ class RunTable extends Component {
         sortings = query_sortings;
       }
     }
-    this.state = { filters: {}, sortings, loading: true };
+    this.state = { filters: {}, sortings, loading: true, error: '' };
   }
 
   filterTable = async (filters, page, pageSize) => {
-    this.setState({ filters, loading: true });
+    this.setState({ filters, loading: true, error: '' });
     try {
       const { sortings } = this.state;
       const renamed_sortings = rename_triplets(sortings, false);
       const formated_sortings = format_sortings(renamed_sortings);
-      console.log(this.props);
       await this.props.filterRuns(
         pageSize || this.defaultPageSize,
         page,
         formated_sortings,
         filters
       );
-    } catch (e) {
-      this.setState({ loading: false });
+    } catch (err) {
+      this.setState({ loading: false, error: err });
     }
     this.setState({ loading: false });
   };
@@ -133,7 +132,7 @@ class RunTable extends Component {
 
   // When a user sorts by any field, we want to preserve the filters:
   sortTable = async (sortings, page, pageSize) => {
-    this.setState({ sortings, loading: true });
+    this.setState({ sortings, loading: true, error: '' });
     try {
       this.setSortingsOnUrl(sortings);
       const { filters } = this.state;
@@ -145,9 +144,9 @@ class RunTable extends Component {
         formated_sortings,
         filters
       );
-    } catch (e) {
-      console.log(e);
-      this.setState({ loading: false });
+    } catch (err) {
+      console.log(err);
+      this.setState({ loading: false, error: err });
     }
     this.setState({ loading: false });
   };
@@ -160,7 +159,7 @@ class RunTable extends Component {
   };
 
   render() {
-    const { filters, sortings, loading } = this.state;
+    const { filters, sortings, loading, error } = this.state;
     const {
       run_table,
       moveRun,
@@ -208,6 +207,11 @@ class RunTable extends Component {
           filter_prefix_from_url={filter_prefix_from_url}
           setParentLoading={loading => this.setState({ loading })}
         />
+        {error && (
+          <div style={{ color: 'red' }}>
+            <strong>{error}</strong>
+          </div>
+        )}
         <ReactTable
           columns={columns}
           sorted={sortings}
