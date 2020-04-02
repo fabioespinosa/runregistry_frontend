@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import dynamic from 'next/dynamic';
-import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Layout, Breadcrumb, Button } from 'antd';

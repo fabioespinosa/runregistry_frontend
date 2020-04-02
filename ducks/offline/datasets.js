@@ -151,6 +151,31 @@ export const moveDataset = (
     // TODO: remove dataset from top table, add it to below table in different color
   });
 
+export const moveDatasetFromCycleView = (
+  { run_number, dataset_name },
+  workspace,
+  from_state,
+  to_state
+) =>
+  error_handler(async (dispatch, getState) => {
+    const { id_cycle } = getState().offline.cycles.selected_cycle;
+    if (!id_cycle) {
+      throw 'No cycle selected';
+    }
+    let { data: dataset } = await axios.post(
+      `${api_url}/cycles/move_dataset/${workspace}/${from_state}/${to_state}`,
+      {
+        id_cycle,
+        run_number,
+        dataset_name,
+        workspace
+      },
+      auth(getState)
+    );
+    dataset = formatDatasets([dataset])[0];
+    dispatch({ type: EDIT_DATASET, payload: dataset });
+  });
+
 export const editDataset = (
   { run_number, dataset_name },
   workspace,

@@ -79,7 +79,9 @@ export const calculateJson = (json_logic, dataset_name) =>
         dataset_name
       }
     );
-    const { final_json, dataset_in_run_in_json } = json_output;
+    const { id } = json_output;
+    console.log(json_output);
+    return id;
   });
 
 export const changeJsonLogic = new_json_logic => ({

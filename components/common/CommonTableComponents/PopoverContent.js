@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { Component } from 'react';
 import { Button } from 'antd';
-import Linkify from 'react-linkify';
 import { api_url } from '../../../config/config';
 import { error_handler } from '../../../utils/error_handlers';
 
 import BarPlot from '../editComponent/BarPlot';
 import History from '../editComponent/History';
+import DisplayComments from '../editComponent/DisplayComments';
 
 const color_coding = {
   BAD: 'red',
@@ -18,11 +18,6 @@ const color_coding = {
   ARTIFICIALLY_EMPTY: 'transparent'
 };
 
-const linkifyTarget = (href, text, key) => (
-  <a href={href} key={key} target="_blank">
-    {text}
-  </a>
-);
 class PopoverContent extends Component {
   state = {
     lumisection_ranges: [],
@@ -113,7 +108,7 @@ class PopoverContent extends Component {
             />
           </div>
           <div className="ls_summary">
-            <h4>Lumisection Summary:</h4>
+            <h4>Lumisection Ranges:</h4>
             {lumisection_ranges.map(range => {
               const { start, end, status } = range;
               const formatted_range = `${start} - ${end} : ${status}`;
@@ -131,21 +126,9 @@ class PopoverContent extends Component {
             <center>
               <h4>Comments:</h4>
             </center>
-            {lumisections_with_comments.map(
-              ({ status, start, end, comment }) => (
-                <div>
-                  Status: <strong>{status}</strong>
-                  {' - '}From LS: <strong>{start}</strong> to LS:{' '}
-                  <strong>{end}</strong>
-                  {' - '}Comment:{' '}
-                  <strong style={{ wordBreak: 'break-all' }}>
-                    <Linkify componentDecorator={linkifyTarget}>
-                      {comment}
-                    </Linkify>
-                  </strong>
-                </div>
-              )
-            )}
+            <DisplayComments
+              lumisections_with_comments={lumisections_with_comments}
+            />
           </div>
         ) : (
           <center>

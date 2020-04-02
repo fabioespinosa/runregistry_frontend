@@ -3,19 +3,13 @@ import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
 import { Input, Button, InputNumber } from 'antd';
 import Swal from 'sweetalert2';
-import Linkify from 'react-linkify';
 import { reFetchDataset } from '../../../ducks/offline/datasets';
 import { reFetchRun } from '../../../ducks/online/runs';
 import { addLumisectionRange } from '../../../ducks/online/lumisections';
 import BarPlot from './BarPlot';
 import History from './History';
+import DisplayComments from './DisplayComments';
 const { TextArea } = Input;
-
-const linkifyTarget = (href, text, key) => (
-  <a href={href} key={key} target="_blank">
-    {text}
-  </a>
-);
 
 class EditComponent extends Component {
   constructor(props) {
@@ -81,21 +75,10 @@ class EditComponent extends Component {
               {lumisections_with_comments.length > 0 && (
                 <div>
                   <h4>Comments:</h4>
-                  {lumisections_with_comments.map(
-                    ({ status, start, end, comment }) => (
-                      <div>
-                        Status: <strong>{status}</strong>
-                        {' - '}From LS: <strong>{start}</strong> to LS:{' '}
-                        <strong>{end}</strong>
-                        {' - '}Comment:{' '}
-                        <strong style={{ wordBreak: 'break-all' }}>
-                          <Linkify componentDecorator={linkifyTarget}>
-                            {comment}
-                          </Linkify>
-                        </strong>
-                      </div>
-                    )
-                  )}
+                  <DisplayComments
+                    lumisections_with_comments={lumisections_with_comments}
+                    label_width={42}
+                  />
                 </div>
               )}
             </div>

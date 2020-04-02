@@ -33,6 +33,7 @@ class SideNav extends Component {
   }
 
   displayWorkspace = workspace => {
+    workspace = workspace.toLowerCase();
     const {
       router: {
         query: { section }
@@ -79,6 +80,7 @@ class SideNav extends Component {
         query: { type, section, workspace }
       }
     } = this.props;
+
     return (
       <Layout hasSider={true}>
         <Sider collapsible width={200} style={{ background: '#fff' }}>
@@ -98,7 +100,7 @@ class SideNav extends Component {
                 </span>
               }
             >
-              <Menu.Item key="global">GLOBAL</Menu.Item>
+              {this.displayWorkspace('global')}
               {workspaces.map(({ workspace }) =>
                 this.displayWorkspace(workspace)
               )}

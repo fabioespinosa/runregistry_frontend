@@ -6,9 +6,6 @@ import config from '../../../../config/config';
 const { Header, Content, Footer, Sider } = Layout;
 
 class TopNav extends Component {
-  state = {
-    hello: 'string'
-  };
   render() {
     const {
       router: {
@@ -20,20 +17,21 @@ class TopNav extends Component {
     // Log to see who has used the webpage on the server:
     console.log('user:', user.displayname);
     console.log(type);
-    const backgroundColor = env === 'staging' ? 'purple' : '';
-
+    const menu_style = { lineHeight: '64px', minWidth: '800px' };
+    const header_style = {};
+    if (env === 'staging') {
+      menu_style.backgroundColor = 'purple';
+      header_style.backgroundColor = 'purple';
+    }
     return (
-      <Header className="header" style={{ backgroundColor }}>
+      <Header className="header" style={header_style}>
         <Menu
           theme="dark"
           mode="horizontal"
           defaultSelectedKeys={[type]}
-          style={{
-            lineHeight: '64px',
-            backgroundColor
-          }}
+          style={menu_style}
         >
-          <Menu.Item key="0">
+          <Menu.Item key="logo">
             <Link
               as={`/online`}
               href="/online/global?type=online&workspace=global"
@@ -84,27 +82,28 @@ class TopNav extends Component {
               <a>LOG</a>
             </Link>
           </Menu.Item>
-          <Menu.Item
-            disabled
-            key="warning"
-            style={{ opacity: 1, color: 'red !important' }}
-          >
-            <span
-              onClick={() => {}}
-              style={{
-                color: 'red !important',
-                fontSize: '0.9em'
-              }}
+          {env === 'staging' && (
+            <Menu.Item
+              disabled
+              key="warning"
+              style={{ opacity: 1, color: 'red !important' }}
             >
-              {env === 'staging'
-                ? 'STAGING ENV (FOR TESTING)'
-                : 'OFFICIAL RUN REGISTRY'}
-            </span>
-          </Menu.Item>
+              <span
+                onClick={() => {}}
+                style={{
+                  color: 'red !important',
+                  fontSize: '0.9em'
+                }}
+              >
+                STAGING ENV (FOR TESTING)
+              </span>
+            </Menu.Item>
+          )}
         </Menu>
         <div>
           <h3 className="user_name white">
-            {user.displayname || 'Fabio Espinosa'}
+            {user.displayname ||
+              'No User Specified in the Headers, or User is Developing'}
           </h3>
 
           <a className="white" href="https://cmsrunregistry.web.cern.ch/logout">

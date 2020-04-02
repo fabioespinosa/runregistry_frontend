@@ -18,6 +18,7 @@ import {
   editConfiguration,
   deleteJsonConfiguration
 } from '../../../../ducks/json/configuration';
+import { hideModal } from '../../../../ducks/json/ui';
 import stringify from 'json-stringify-pretty-compact';
 import swal from 'sweetalert2';
 
@@ -182,7 +183,8 @@ class Configuration extends Component {
       current_json,
       json_logic,
       number_of_runs,
-      number_of_lumisections
+      number_of_lumisections,
+      hideModal
     } = this.props;
     const { creating, menu_selection, editing, dataset_name } = this.state;
     const download_string =
@@ -231,43 +233,50 @@ class Configuration extends Component {
     return (
       <div className="configuration">
         <div className="editor">
-          <div>
-            Enter the dataset of the runs you want to create a json from:
-            <br />
-            <AutoComplete
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={650}
-              style={{ width: 500 }}
-              options={options}
-              onChange={dataset_name => this.setState({ dataset_name })}
-            >
-              <Input
-                size="large"
-                placeholder="Enter a dataset name (e.g. /PromptReco/HICosmics18_/DQM)"
-                onChange={e => this.setState({ dataset_name: e.target.value })}
-              />
-            </AutoComplete>
-            <br />
-          </div>
+          <center>
+            <div>
+              <h4>
+                Enter the dataset of the runs you want to create a json from:
+              </h4>
+              <AutoComplete
+                dropdownClassName="certain-category-search-dropdown"
+                dropdownMatchSelectWidth={650}
+                style={{ width: 800 }}
+                options={options}
+                onChange={dataset_name => this.setState({ dataset_name })}
+              >
+                <Input
+                  size="large"
+                  placeholder="Enter the dataset name (e.g. /PromptReco/HICosmics18_/DQM)"
+                  onChange={e =>
+                    this.setState({ dataset_name: e.target.value })
+                  }
+                />
+              </AutoComplete>
+              <br />
+            </div>
+          </center>
           <br />
           {creating ? (
             this.addNewConfigurationInput()
           ) : (
-            <Menu
-              onClick={({ key }) => this.handleMenuChange(key)}
-              selectedKeys={[menu_selection]}
-              mode="horizontal"
-            >
-              {json_configurations_array.map(({ name }) => (
-                <Menu.Item key={name}>{name}</Menu.Item>
-              ))}
-              <Menu.Item key="arbitrary">arbitrary configuration</Menu.Item>
-              <Button
-                type="link"
-                onClick={this.toggleCreationMode}
-                icon={<PlusCircleOutlined />}
-              />
-            </Menu>
+            <center>
+              <Menu
+                onClick={({ key }) => this.handleMenuChange(key)}
+                selectedKeys={[menu_selection]}
+                mode="horizontal"
+              >
+                {json_configurations_array.map(({ name }) => (
+                  <Menu.Item key={name}>{name}</Menu.Item>
+                ))}
+                <Menu.Item key="arbitrary">arbitrary configuration</Menu.Item>
+                <Button
+                  type="link"
+                  onClick={this.toggleCreationMode}
+                  icon={<PlusCircleOutlined />}
+                />
+              </Menu>
+            </center>
           )}
           {menu_selection !== 'arbitrary' && !creating && !editing && (
             <div
@@ -319,34 +328,43 @@ class Configuration extends Component {
             lan="javascript"
             theme="github"
           />
-          <div className="generate_button">
-            {creating ? (
-              <Button
-                type="primary"
-                onClick={() => this.createNewConfiguration(json_logic)}
-              >
-                Save new configuration
-              </Button>
-            ) : editing ? (
-              <Button
-                type="dashed"
-                onClick={() => this.editConfiguration(json_logic)}
-              >
-                Edit configuration
-              </Button>
-            ) : (
-              <div>
+          <br />
+          <center>
+            <div className="generate_button">
+              {creating ? (
                 <Button
                   type="primary"
-                  onClick={() => calculateJson(json_logic, dataset_name)}
+                  onClick={() => this.createNewConfiguration(json_logic)}
                 >
-                  Generate JSON
+                  Save new configuration
                 </Button>
-              </div>
-            )}
-          </div>
-          <br />
-          <br />
+              ) : editing ? (
+                <Button
+                  type="dashed"
+                  onClick={() => this.editConfiguration(json_logic)}
+                >
+                  Edit configuration
+                </Button>
+              ) : (
+                <div>
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      const id = await calculateJson(json_logic, dataset_name);
+                      hideModal();
+                      await Swal({
+                        type: 'success',
+                        title: `JSON job ${id} received, it is being generated now`,
+                        html: `Your JSON will take approx. 5 minutes to generate, you can see it with the id: <strong>${id}</strong> on the list.`
+                      });
+                    }}
+                  >
+                    Generate JSON
+                  </Button>
+                </div>
+              )}
+            </div>
+          </center>
         </div>
 
         <style jsx>{`
@@ -354,41 +372,7 @@ class Configuration extends Component {
             display: flex;
           }
           .editor {
-            width: 1000px;
-          }
-        `}</style>
-
-        <style jsx global>{`
-          .ant-select-item {
-            padding: 5px 12px;
-          }
-          .ant-select-item-group {
-            color: rgba(0, 0, 0, 0.45);
-            font-size: 12px;
-          }
-          .certain-category-search-dropdown
-            .ant-select-dropdown-menu-item-group-title {
-            color: #666;
-            font-weight: bold;
-          }
-
-          .certain-category-search-dropdown
-            .ant-select-dropdown-menu-item-group {
-            border-bottom: 1px solid #f6f6f6;
-          }
-
-          .certain-category-search-dropdown .ant-select-item-option-grouped {
-            padding-left: 24px;
-          }
-
-          .certain-category-search-dropdown
-            .ant-select-dropdown-menu-item.show-all {
-            text-align: center;
-            cursor: default;
-          }
-
-          .certain-category-search-dropdown .ant-select-dropdown-menu {
-            max-height: 300px;
+            width: 100%;
           }
         `}</style>
       </div>
@@ -415,5 +399,6 @@ export default connect(mapStateToProps, {
   resetJson,
   addConfiguration,
   editConfiguration,
-  deleteJsonConfiguration
+  deleteJsonConfiguration,
+  hideModal
 })(Configuration);

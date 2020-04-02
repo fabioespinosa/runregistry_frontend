@@ -6,7 +6,11 @@ import qs from 'qs';
 import { Button } from 'antd';
 import { certifiable_offline_components } from '../../../config/config';
 
-import { moveDataset, reGenerateCache } from '../../../ducks/offline/datasets';
+import {
+  moveDataset,
+  moveDatasetFromCycleView,
+  reGenerateCache
+} from '../../../ducks/offline/datasets';
 import { showManageDatasetModal } from '../../../ducks/offline/ui';
 import { showLumisectionModal } from '../../../ducks/global_ui';
 import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
@@ -211,6 +215,7 @@ class DatasetTable extends Component {
     const {
       dataset_table,
       moveDataset,
+      moveDatasetFromCycleView,
       filter_prefix_from_url,
       showManageDatasetModal,
       showLumisectionModal,
@@ -226,8 +231,11 @@ class DatasetTable extends Component {
       showLumisectionModal,
       workspace,
       workspaces,
-      moveDataset,
-      reGenerateCache
+      // If we are in the cycles section we use a different route to allow people to move the dataset back to open if the cycle is still in
+      moveDataset:
+        section === 'cycles' ? moveDatasetFromCycleView : moveDataset,
+      reGenerateCache,
+      section
     });
 
     if (show_state_columns) {
@@ -357,6 +365,7 @@ export default withRouter(
     showManageDatasetModal,
     showLumisectionModal,
     moveDataset,
+    moveDatasetFromCycleView,
     reGenerateCache,
     showOfflineConfigurationModal
   })(DatasetTable)
