@@ -4,7 +4,7 @@ import axios from 'axios';
 export const error_handler = (fn, error_message, show_popup = true) => (
   ...params
 ) =>
-  fn(...params).catch(err => {
+  fn(...params).catch((err) => {
     if (axios.isCancel(err)) {
       // It is a canceled request, not really an error
       console.log('request canceled due to race condition');
@@ -15,7 +15,7 @@ export const error_handler = (fn, error_message, show_popup = true) => (
       type: 'error',
       title: 'Error:',
 
-      text: error_message || err ? err.message : ''
+      text: error_message || err ? err.message : '',
     };
     if (err.response) {
       console.log(err.response);

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
-import { withRouter } from 'next/router';
 import qs from 'qs';
 import { Button } from 'antd';
 import { certifiable_offline_components } from '../../../config/config';
@@ -9,7 +8,7 @@ import { certifiable_offline_components } from '../../../config/config';
 import {
   moveDataset,
   moveDatasetFromCycleView,
-  reGenerateCache
+  reGenerateCache,
 } from '../../../ducks/offline/datasets';
 import { showManageDatasetModal } from '../../../ducks/offline/ui';
 import { showLumisectionModal } from '../../../ducks/global_ui';
@@ -24,7 +23,7 @@ import column_generator from './columns/columns';
 const Filter = dynamic(
   import('../../common/CommonTableComponents/filter/Filter'),
   {
-    ssr: false
+    ssr: false,
   }
 );
 
@@ -33,14 +32,14 @@ const valueProcessor = ({ field, operator, value }) => {
     return {
       field: `${field}.${value || 'GOOD'}`,
       operator: '>',
-      value: 0
+      value: 0,
     };
   }
   if ((field && field.includes('_state')) || field === 'state') {
     return {
       field,
       operator,
-      value: value || 'OPEN'
+      value: value || 'OPEN',
     };
   }
   if (value === '') {
@@ -51,17 +50,17 @@ const valueProcessor = ({ field, operator, value }) => {
     // Handle the case where there are lots of run numbers in the text field:
     value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
     value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
-    const run_numbers = value.split(' ').filter(arg => arg !== ''); // Split per space
+    const run_numbers = value.split(' ').filter((arg) => arg !== ''); // Split per space
     return {
       combinator: 'or',
       not: false,
-      rules: run_numbers.map(run_number => {
+      rules: run_numbers.map((run_number) => {
         return {
           field: 'run_number',
           operator: '=',
-          value: run_number
+          value: run_number,
         };
-      })
+      }),
     };
   }
 
@@ -89,13 +88,13 @@ const generate_state_columns = () => {
               fontSize: '0.95em',
               fontWeight: 'bold',
               color: value === 'OPEN' ? 'red' : 'grey',
-              borderRadius: '1px'
+              borderRadius: '1px',
             }}
           >
             <span style={{ padding: '4px' }}>{value}</span>
           </span>
         </div>
-      )
+      ),
     });
   }
   return columns;
@@ -106,7 +105,7 @@ class DatasetTable extends Component {
     super(props);
     this.defaultPageSize = props.defaultPageSize;
     let sortings = [];
-    const { section, filters } = this.props.router.query;
+    const { section, filters } = this.props;
 
     if (filters) {
       const { sorting_prefix_from_url } = this.props;
@@ -115,31 +114,32 @@ class DatasetTable extends Component {
         sortings = query_sortings;
       }
     }
-    const start_with_loading_true = section !== 'cycles';
+    // Not starts loading in cycles:
+    // const start_with_loading_true = section !== 'cycles';
     this.state = {
       filters: {},
       sortings,
-      loading: start_with_loading_true,
+      loading: true,
       show_state_columns: false,
-      error: ''
+      error: '',
     };
   }
 
-  setSortingsOnUrl = sortings => {
+  setSortingsOnUrl = (sortings) => {
     const { sorting_prefix_from_url } = this.props;
     const filters_from_url = window.location.href.split('?')[1];
     let filters = {};
     if (filters_from_url) {
       filters = qs.parse(filters_from_url, { depth: Infinity });
     }
-    let { asPath } = this.props.router;
+    let { asPath } = this.props;
 
     if (asPath.includes('?')) {
       asPath = asPath.split('?')[0];
     }
     let url_query = qs.stringify({
       ...filters,
-      [sorting_prefix_from_url]: sortings
+      [sorting_prefix_from_url]: sortings,
     });
     if (sortings.length === 0) {
       const new_filter = { ...filters };
@@ -187,7 +187,7 @@ class DatasetTable extends Component {
     }
     this.setState({ loading: false });
   };
-  onPageChange = async page => {
+  onPageChange = async (page) => {
     this.sortTable(this.state.sortings, page);
   };
   onPageSizeChange = async (newSize, page) => {
@@ -202,17 +202,15 @@ class DatasetTable extends Component {
 
   render() {
     const {
-      query: { section }
-    } = this.props.router;
-    const {
       filters,
       sortings,
       loading,
       show_state_columns,
       filterable,
-      error
+      error,
     } = this.state;
     const {
+      section,
       dataset_table,
       moveDataset,
       moveDatasetFromCycleView,
@@ -223,7 +221,7 @@ class DatasetTable extends Component {
       workspaces,
       reGenerateCache,
       show_workspace_state_columns_button,
-      table_label
+      table_label,
     } = this.props;
     let { datasets, pages, count } = dataset_table;
     let columns = column_generator({
@@ -235,7 +233,7 @@ class DatasetTable extends Component {
       moveDataset:
         section === 'cycles' ? moveDatasetFromCycleView : moveDataset,
       reGenerateCache,
-      section
+      section,
     });
 
     if (show_state_columns) {
@@ -247,7 +245,7 @@ class DatasetTable extends Component {
         columns[2],
         columns[3],
         ...generate_state_columns(),
-        ...columns.slice(4)
+        ...columns.slice(4),
       ];
     }
     // Filter is on if there is an 'and' and it has contents
@@ -286,14 +284,14 @@ class DatasetTable extends Component {
               .filter(({ accessor }) => !!accessor)
               .map(({ prefix_for_filtering: prefix, id }) => ({
                 name: `${prefix}${prefix && '.'}${id}`,
-                label: id
+                label: id,
               }))}
             key={workspace}
             other_columns={offline_columns}
             filterTable={this.filterTable}
             valueProcessor={valueProcessor}
             filter_prefix_from_url={filter_prefix_from_url}
-            setParentLoading={loading => this.setState({ loading })}
+            setParentLoading={(loading) => this.setState({ loading })}
           />
         )}
         {error && (
@@ -311,13 +309,13 @@ class DatasetTable extends Component {
           }
           pages={pages}
           loading={loading}
-          onPageChange={page => {
+          onPageChange={(page) => {
             this.onPageChange(page);
           }}
           onPageSizeChange={(pageSize, page) =>
             this.onPageSizeChange(pageSize, page)
           }
-          onSortedChange={sortings => {
+          onSortedChange={(sortings) => {
             // 0 is for first page
             this.sortTable(sortings, 0);
           }}
@@ -332,7 +330,7 @@ class DatasetTable extends Component {
           <Button
             onClick={() =>
               this.setState({
-                show_state_columns: !show_state_columns
+                show_state_columns: !show_state_columns,
               })
             }
           >
@@ -353,20 +351,23 @@ class DatasetTable extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     workspaces: state.offline.workspace.workspaces,
-    workspace: state.offline.workspace.workspace
+    workspace: state.offline.workspace.workspace,
   };
 };
 
-export default withRouter(
-  connect(mapStateToProps, {
+export default connect(
+  mapStateToProps,
+  {
     showManageDatasetModal,
     showLumisectionModal,
     moveDataset,
     moveDatasetFromCycleView,
     reGenerateCache,
-    showOfflineConfigurationModal
-  })(DatasetTable)
-);
+    showOfflineConfigurationModal,
+  },
+  null,
+  { forwardRef: true }
+)(DatasetTable);

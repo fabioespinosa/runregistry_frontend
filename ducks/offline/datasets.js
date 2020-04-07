@@ -26,8 +26,8 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
       // ONLY THOSE OPEN SIGNOFF OR COMPLETED ARE SHOWN IN EDITABLE
       const state_filter = [
         {
-          or: [{ '=': 'OPEN' }, { '=': 'SIGNOFF' }, { '=': 'COMPLETED' }]
-        }
+          or: [{ '=': 'OPEN' }, { '=': 'SIGNOFF' }, { '=': 'COMPLETED' }],
+        },
       ];
       // If user was filtering on name (we also want to add that to the no-online name)
       if (filter.name) {
@@ -43,8 +43,8 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
         name: { and: name_filter },
         // For a dataset to be editable it must be either OPEN, SIGNOFF, or COMPLETED (ALL but waiting dqm gui)
         [`dataset_attributes.${workspace}_state`]: {
-          and: state_filter
-        }
+          and: state_filter,
+        },
       };
       if (cancel_editable_datasets_fetch) {
         cancel_editable_datasets_fetch();
@@ -56,12 +56,12 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
           page,
           page_size,
           sortings,
-          filter: filter_with_state_and_name
+          filter: filter_with_state_and_name,
         },
         {
           cancelToken: new CancelToken(function executor(c) {
             cancel_editable_datasets_fetch = c;
-          })
+          }),
         },
         auth(getState)
       );
@@ -71,7 +71,7 @@ export const filterEditableDatasets = (page_size, page, sortings, filter) =>
         payload: datasets,
         // We include the filter because we will need it for DC tools:
         filter: filter_with_state_and_name,
-        sortings
+        sortings,
       });
     },
     false,
@@ -97,20 +97,20 @@ export const filterWaitingDatasets = (page_size, page, sortings, filter) =>
             // Online is the dataset we show in Online RR, we don't want to show it here:
             name: { '<>': 'online' },
             // For a dataset to be considered waiting, its state must be 'waiting dqm gui'
-            [`dataset_attributes.${workspace}_state`]: WAITING_DQM_GUI_CONSTANT
-          }
+            [`dataset_attributes.${workspace}_state`]: WAITING_DQM_GUI_CONSTANT,
+          },
         },
         {
           cancelToken: new CancelToken(function executor(c) {
             cancel_waiting_datasets_fetch = c;
-          })
+          }),
         },
         auth(getState)
       );
       datasets.datasets = formatDatasets(datasets.datasets);
       dispatch({
         type: FILTER_WAITING_DATASETS,
-        payload: datasets
+        payload: datasets,
       });
     },
     false,
@@ -123,7 +123,7 @@ export const reGenerateCache = ({ run_number, dataset_name }) =>
       `${api_url}/recalculate_cache_for_specific_dataset`,
       {
         run_number,
-        dataset_name
+        dataset_name,
       }
     );
     dataset = formatDatasets([dataset])[0];
@@ -142,7 +142,7 @@ export const moveDataset = (
       {
         run_number,
         dataset_name,
-        workspace
+        workspace,
       },
       auth(getState)
     );
@@ -168,7 +168,7 @@ export const moveDatasetFromCycleView = (
         id_cycle,
         run_number,
         dataset_name,
-        workspace
+        workspace,
       },
       auth(getState)
     );
@@ -193,33 +193,33 @@ export const editDataset = (
   });
 
 export const reFetchDataset = (run_number, dataset_name) =>
-  error_handler(async dispatch => {
+  error_handler(async (dispatch) => {
     let { data: dataset } = await axios.post(
       `${api_url}/datasets/get_dataset`,
       {
         run_number,
-        dataset_name
+        dataset_name,
       }
     );
     dataset = formatDatasets([dataset])[0];
     dispatch({
       type: EDIT_DATASET,
-      payload: dataset
+      payload: dataset,
     });
   });
 
 export const clearDatasets = () => ({
-  type: CLEAR_DATASETS
+  type: CLEAR_DATASETS,
 });
 
-export const formatDatasets = datasets => {
-  return datasets.map(dataset => ({
+export const formatDatasets = (datasets) => {
+  return datasets.map((dataset) => ({
     ...dataset.dataset_attributes,
     ...dataset,
     Run: dataset.Run,
     triplet_summary: dataset.DatasetTripletCache
       ? dataset.DatasetTripletCache.triplet_summary
-      : {}
+      : {},
   }));
 };
 

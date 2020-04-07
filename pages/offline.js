@@ -15,12 +15,16 @@ import LumisectionModal from '../components/common/CommonTableComponents/lumisec
 import CycleInfo from '../components/offline/cycles/cycleInfo/CycleInfo';
 import {
   filterEditableDatasets,
-  filterWaitingDatasets
+  filterWaitingDatasets,
 } from '../ducks/offline/datasets';
 
 const { Content } = Layout;
 
 class Offline extends Component {
+  constructor(props) {
+    super(props);
+    this.editable_datasets_ref = React.createRef();
+  }
   static async getInitialProps({ store, query, isServer }) {
     if (isServer) {
       initializeUser(store, query);
@@ -29,14 +33,14 @@ class Offline extends Component {
     if (!isServer) {
       store.dispatch({
         type: CHANGE_WORKSPACE,
-        payload: query.workspace
+        payload: query.workspace,
       });
     }
   }
 
   async componentDidMount() {
     const {
-      router: { query }
+      router: { query },
     } = this.props;
     await this.props.fetchWorkspaces(query);
   }
@@ -46,13 +50,13 @@ class Offline extends Component {
     const {
       router: {
         asPath,
-        query: { type, section, workspace }
+        query: { type, section, workspace, filters },
       },
       selected_cycle,
       waiting_datasets,
       editable_datasets,
       filterWaitingDatasets,
-      filterEditableDatasets
+      filterEditableDatasets,
     } = this.props;
     const breadcrumbs = asPath.split('/');
     return (
@@ -66,11 +70,13 @@ class Offline extends Component {
           style={{
             padding: 0,
             margin: 0,
-            minHeight: 280
+            minHeight: 280,
           }}
         >
           <div style={{ display: 'flex' }}>
-            {section === 'cycles' && <Cycles />}
+            {section === 'cycles' && (
+              <Cycles editable_datasets_ref={this.editable_datasets_ref} />
+            )}
             <div style={{ overflowX: 'scroll' }}>
               {selected_cycle && section === 'cycles' && (
                 <CycleInfo
@@ -82,6 +88,9 @@ class Offline extends Component {
               <LumisectionModal />
               {section !== 'cycles' && (
                 <DatasetTable
+                  asPath={asPath}
+                  section={section}
+                  url_filters={filters}
                   dataset_table={waiting_datasets}
                   filterDatasets={filterWaitingDatasets}
                   // ofts for OFfline Top Sortings
@@ -94,6 +103,10 @@ class Offline extends Component {
                 />
               )}
               <DatasetTable
+                ref={this.editable_datasets_ref}
+                asPath={asPath}
+                section={section}
+                url_filters={filters}
                 dataset_table={editable_datasets}
                 filterDatasets={filterEditableDatasets}
                 // ofbs for OFfline Bottom Sortings
@@ -112,17 +125,17 @@ class Offline extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.info,
   selected_cycle: state.offline.cycles.selected_cycle,
   waiting_datasets: state.offline.waiting_datasets,
-  editable_datasets: state.offline.editable_datasets
+  editable_datasets: state.offline.editable_datasets,
 });
 
 export default withRouter(
   connect(mapStateToProps, {
     fetchWorkspaces,
     filterWaitingDatasets,
-    filterEditableDatasets
+    filterEditableDatasets,
   })(Offline)
 );

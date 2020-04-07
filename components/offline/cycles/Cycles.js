@@ -3,11 +3,7 @@ import { connect } from 'react-redux';
 import { List, Badge } from 'antd';
 import moment from 'moment';
 import { getCycles, selectCycle } from '../../../ducks/offline/cycles';
-import {
-  filterEditableDatasets,
-  filterWaitingDatasets,
-  clearDatasets
-} from '../../../ducks/offline/datasets';
+import { clearDatasets } from '../../../ducks/offline/datasets';
 
 class Cycles extends Component {
   async componentDidMount() {
@@ -21,7 +17,7 @@ class Cycles extends Component {
       this.props.clearDatasets();
     }
   }
-  displayCycle = selected_cycle => {
+  displayCycle = (selected_cycle) => {
     this.props.selectCycle(selected_cycle);
     // We filter now only the datasets in the cycle:
     const datasets_filter = selected_cycle.datasets.map(
@@ -29,33 +25,31 @@ class Cycles extends Component {
         and: [
           {
             run_number: {
-              '=': run_number
-            }
+              '=': run_number,
+            },
           },
           {
             name: {
-              '=': name
-            }
-          }
-        ]
+              '=': name,
+            },
+          },
+        ],
       })
     );
     const filter = {
-      or: datasets_filter
+      or: datasets_filter,
     };
-
-    this.props.filterWaitingDatasets(5, 0, [], filter);
-    this.props.filterEditableDatasets(20, 0, [], filter);
+    if (this.props.editable_datasets_ref.current) {
+      this.props.editable_datasets_ref.current.filterTable(filter, 0);
+    }
   };
   componentDidUpdate(prevProps) {
-    const { selected_cycle } = this.props;
-    if (prevProps.selected_cycle === null && selected_cycle) {
-      this.displayCycle(selected_cycle);
-    }
+    const { selected_cycle, workspace } = this.props;
     if (
-      selected_cycle !== null &&
-      prevProps.selected_cycle &&
-      selected_cycle.cycle_id !== prevProps.selected_cycle.cycle_id
+      (selected_cycle !== null &&
+        prevProps.selected_cycle &&
+        prevProps.selected_cycle.cycle_id !== selected_cycle.cycle_id) ||
+      prevProps.workspace !== workspace
     ) {
       this.displayCycle(selected_cycle);
     }
@@ -72,7 +66,7 @@ class Cycles extends Component {
             itemLayout="horizontal"
             bordered
             dataSource={cycles}
-            renderItem={cycle => {
+            renderItem={(cycle) => {
               let isSelected = false;
               if (selected_cycle) {
                 isSelected = cycle.id_cycle === selected_cycle.id_cycle;
@@ -86,7 +80,7 @@ class Cycles extends Component {
                   style={{
                     backgroundColor: isSelected ? 'rgba(9,30,66,0.08)' : '',
                     paddingLeft: '15px',
-                    paddingRight: '5px'
+                    paddingRight: '5px',
                     // backgroundColor:
                     //     workspace_status === 'pending'
                     //         ? 'rgba(200,90,50,0.1)'
@@ -113,7 +107,7 @@ class Cycles extends Component {
                             isSelected
                               ? {
                                   color: '#1890ff',
-                                  fontSize: 'bold'
+                                  fontSize: 'bold',
                                 }
                               : {}
                           }
@@ -148,17 +142,15 @@ class Cycles extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     cycles: state.offline.cycles.cycles,
     selected_cycle: state.offline.cycles.selected_cycle,
-    workspace: state.offline.workspace.workspace
+    workspace: state.offline.workspace.workspace,
   };
 };
 export default connect(mapStateToProps, {
   getCycles,
   selectCycle,
-  filterEditableDatasets,
-  filterWaitingDatasets,
-  clearDatasets
+  clearDatasets,
 })(Cycles);
