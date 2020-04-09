@@ -115,11 +115,11 @@ class DatasetTable extends Component {
       }
     }
     // Not starts loading in cycles:
-    // const start_with_loading_true = section !== 'cycles';
+    const start_with_loading_true = section !== 'cycles';
     this.state = {
       filters: {},
       sortings,
-      loading: true,
+      loading: start_with_loading_true,
       show_state_columns: false,
       error: '',
     };

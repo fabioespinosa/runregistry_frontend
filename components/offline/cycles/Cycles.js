@@ -18,39 +18,43 @@ class Cycles extends Component {
     }
   }
   displayCycle = (selected_cycle) => {
-    this.props.selectCycle(selected_cycle);
-    // We filter now only the datasets in the cycle:
-    const datasets_filter = selected_cycle.datasets.map(
-      ({ run_number, name }) => ({
-        and: [
-          {
-            run_number: {
-              '=': run_number,
+    if (selected_cycle !== null) {
+      this.props.selectCycle(selected_cycle);
+      // We filter now only the datasets in the cycle:
+      const datasets_filter = selected_cycle.datasets.map(
+        ({ run_number, name }) => ({
+          and: [
+            {
+              run_number: {
+                '=': run_number,
+              },
             },
-          },
-          {
-            name: {
-              '=': name,
+            {
+              name: {
+                '=': name,
+              },
             },
-          },
-        ],
-      })
-    );
-    const filter = {
-      or: datasets_filter,
-    };
-    if (this.props.editable_datasets_ref.current) {
-      this.props.editable_datasets_ref.current.filterTable(filter, 0);
+          ],
+        })
+      );
+      const filter = {
+        or: datasets_filter,
+      };
+      if (this.props.editable_datasets_ref.current) {
+        this.props.editable_datasets_ref.current.filterTable(filter, 0);
+      }
     }
   };
   componentDidUpdate(prevProps) {
     const { selected_cycle, workspace } = this.props;
     if (
-      (selected_cycle !== null &&
-        prevProps.selected_cycle &&
-        prevProps.selected_cycle.cycle_id !== selected_cycle.cycle_id) ||
-      prevProps.workspace !== workspace
+      selected_cycle !== null &&
+      prevProps.selected_cycle &&
+      prevProps.selected_cycle.cycle_id !== selected_cycle.cycle_id
     ) {
+      this.displayCycle(selected_cycle);
+    }
+    if (prevProps.workspace !== workspace) {
       this.displayCycle(selected_cycle);
     }
   }
@@ -59,7 +63,7 @@ class Cycles extends Component {
     return (
       <div className="cycles">
         <center>
-          <h3>Certif. Cycles</h3>
+          <h3>Certif. Cycles:</h3>
         </center>
         <div className="cycle_list">
           <List
@@ -112,7 +116,9 @@ class Cycles extends Component {
                               : {}
                           }
                         >
-                          Cycle {cycle.id_cycle}{' '}
+                          {cycle.id_cycle}
+                          {' - '}
+                          {cycle.cycle_name}
                         </a>
                       </div>
                     }
@@ -130,7 +136,7 @@ class Cycles extends Component {
           }
           .cycle_list {
             height: 80vh;
-            overflow-y: scroll;
+            overflow-y: auto;
           }
           .create_cycle {
             text-align: center;

@@ -5,20 +5,20 @@ import auth from '../../auth/auth';
 import {
   FIND_AND_REPLACE_DATASETS,
   DELETE_DATASETS,
-  formatDatasets
+  formatDatasets,
 } from './datasets';
 
 export const duplicateDatasets = ({
   target_dataset_name,
   source_dataset_name,
-  workspaces
+  workspaces,
 }) =>
   error_handler(async (dispatch, getState) => {
     const current_filter = getState().offline.editable_datasets.filter;
 
     const filter_with_source_dataset_name = {
       ...current_filter,
-      name: { '=': source_dataset_name }
+      name: { '=': source_dataset_name },
     };
     let { data: datasets } = await axios.post(
       `${api_url}/dc_tools/duplicate_datasets`,
@@ -27,21 +27,21 @@ export const duplicateDatasets = ({
         source_dataset_name,
         workspaces_to_duplicate_into: workspaces,
         // The filter comes from the editable_datasets filter, which already guarantees we are dealing with a filter that does not include 'waiting dqm gui' datasets
-        filter: filter_with_source_dataset_name
+        filter: filter_with_source_dataset_name,
       },
       auth(getState, 'Dataset duplication in batch')
     );
     datasets = formatDatasets(datasets);
     dispatch({
       type: FIND_AND_REPLACE_DATASETS,
-      payload: datasets
+      payload: datasets,
     });
   });
 
 export const copyDatasetColumn = ({
   source_dataset_name,
   target_dataset_name,
-  columns_to_copy
+  columns_to_copy,
 }) =>
   error_handler(async (dispatch, getState) => {
     const current_filter = getState().offline.editable_datasets.filter;
@@ -49,8 +49,8 @@ export const copyDatasetColumn = ({
     const filter_with_source_dataset_name_and_target = {
       ...current_filter,
       name: {
-        or: [{ '=': source_dataset_name }, { '=': target_dataset_name }]
-      }
+        or: [{ '=': source_dataset_name }, { '=': target_dataset_name }],
+      },
     };
     let { data: datasets } = await axios.post(
       `${api_url}/dc_tools/copy_column_from_datasets`,
@@ -58,35 +58,38 @@ export const copyDatasetColumn = ({
         source_dataset_name,
         target_dataset_name,
         columns_to_copy,
-        filter: filter_with_source_dataset_name_and_target
+        filter: filter_with_source_dataset_name_and_target,
       },
       auth(getState, 'Copy columns across datasets')
     );
     datasets = formatDatasets(datasets);
     dispatch({
       type: FIND_AND_REPLACE_DATASETS,
-      payload: datasets
+      payload: datasets,
     });
   });
 
 export const datasetUpdate = ({
   source_dataset_name,
   to_state,
-  change_in_all_workspaces
+  change_in_all_workspaces,
 }) =>
   error_handler(async (dispatch, getState) => {
+    if (!source_dataset_name) {
+      throw { message: 'You need to select a dataset name' };
+    }
     const current_filter = getState().offline.editable_datasets.filter;
     const workspace = getState().offline.workspace.workspace.toLowerCase();
     const filter_with_source_dataset_name = {
       ...current_filter,
-      name: { '=': source_dataset_name }
+      name: { '=': source_dataset_name },
     };
     let datasets;
     if (change_in_all_workspaces) {
       const { data } = await axios.post(
         `${api_url}/dc_tools/change_multiple_dataset_states_in_all_workspaces/${to_state}`,
         {
-          filter: filter_with_source_dataset_name
+          filter: filter_with_source_dataset_name,
         },
         auth(getState, 'Change dataset state in batch (in all workspaces)')
       );
@@ -98,7 +101,7 @@ export const datasetUpdate = ({
       const { data } = await axios.post(
         `${api_url}/dc_tools/change_multiple_dataset_states/${workspace}/${from_state}/${to_state}`,
         {
-          filter: filter_with_source_dataset_name
+          filter: filter_with_source_dataset_name,
         },
         auth(getState, 'Change dataset state in batch')
       );
@@ -107,7 +110,7 @@ export const datasetUpdate = ({
     datasets = formatDatasets(datasets);
     dispatch({
       type: FIND_AND_REPLACE_DATASETS,
-      payload: datasets
+      payload: datasets,
     });
   });
 
@@ -119,7 +122,7 @@ export const datasetColumnBatchUpdate = ({ columns_to_update, new_status }) =>
       {
         filter: current_filter,
         columns_to_update,
-        new_status
+        new_status,
       },
       auth(getState, 'Change column status in batch')
     );
@@ -127,7 +130,7 @@ export const datasetColumnBatchUpdate = ({ columns_to_update, new_status }) =>
     datasets = formatDatasets(datasets);
     dispatch({
       type: FIND_AND_REPLACE_DATASETS,
-      payload: datasets
+      payload: datasets,
     });
   });
 
@@ -136,7 +139,7 @@ export const deleteDatasets = ({ reason_for_hiding, dataset_name }) =>
     const current_filter = getState().offline.editable_datasets.filter;
     const filter_with_source_dataset_name = {
       ...current_filter,
-      name: { '=': dataset_name }
+      name: { '=': dataset_name },
     };
     const { headers } = auth(getState);
     let { data: datasets } = await axios.delete(
@@ -145,18 +148,18 @@ export const deleteDatasets = ({ reason_for_hiding, dataset_name }) =>
         headers,
         data: {
           reason_for_hiding,
-          filter: filter_with_source_dataset_name
-        }
+          filter: filter_with_source_dataset_name,
+        },
       }
     );
     datasets = formatDatasets(datasets);
     dispatch({
       type: DELETE_DATASETS,
-      payload: datasets
+      payload: datasets,
     });
   });
 
-export const exportToCSV = columns =>
+export const exportToCSV = (columns) =>
   error_handler(async (dispatch, getState) => {
     const current_filter = getState().offline.editable_datasets.filter;
     const current_sortings = getState().offline.editable_datasets.sortings;
@@ -165,14 +168,14 @@ export const exportToCSV = columns =>
       {
         columns,
         sortings: current_sortings,
-        filter: current_filter
+        filter: current_filter,
       }
     );
     return datasets;
   });
 
 const INITIAL_STATE = {};
-export default function(state = INITIAL_STATE, action) {
+export default function (state = INITIAL_STATE, action) {
   const { type, payload } = action;
   switch (type) {
     default:

@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Card, Button } from 'antd';
 import {
   markCycleComplete,
-  moveCycleBackToPending
+  moveCycleBackToPending,
 } from '../../../../ducks/offline/cycles';
 
 class CycleInfo extends Component {
@@ -33,13 +33,17 @@ class CycleInfo extends Component {
         bodyStyle={{ padding: '10px' }}
       >
         <center>
-          <h3>Showing Datasets from Cycle {selected_cycle.id_cycle} </h3>
+          <h3>
+            Showing Datasets from Cycle {selected_cycle.id_cycle} - Cycle name:{' '}
+            <i>{selected_cycle.cycle_name}</i>
+          </h3>
           Cycle created on:{' '}
           {moment(selected_cycle.createdAt).format('dddd, MMMM Do YYYY')}
-          {', '}
+          <br />
           <strong>
             Deadline of cycle:{' '}
-            {moment(selected_cycle.deadline).format('dddd, MMMM Do YYYY')}
+            {moment(selected_cycle.deadline).format('dddd, MMMM Do YYYY')} at
+            23:59
           </strong>
           <br />
           <br />
@@ -67,5 +71,5 @@ class CycleInfo extends Component {
 
 export default connect(null, {
   markCycleComplete,
-  moveCycleBackToPending
+  moveCycleBackToPending,
 })(CycleInfo);
