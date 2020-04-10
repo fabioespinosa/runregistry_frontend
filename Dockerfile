@@ -4,10 +4,10 @@ FROM node:13.8-stretch
 WORKDIR /usr/src/app
 
 ENV NODE_ENV production
-ENV ENV production
+ENV ENV staging
 # Installing dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --loglevel verbose
 
 # Copying source files
 COPY . .

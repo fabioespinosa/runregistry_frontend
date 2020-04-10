@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import dynamic from 'next/dynamic';
-import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Layout, Breadcrumb, Button } from 'antd';
@@ -16,7 +15,7 @@ import FilteredTable from '../components/json/filtered_table/FilteredTable';
 const TextEditor = dynamic(
   import('../components/common/ClassifierEditor/JSONEditor/JSONEditor'),
   {
-    ssr: false
+    ssr: false,
   }
 );
 
@@ -33,9 +32,6 @@ class Json extends Component {
   getDisplayedJSON(json) {
     return stringify(json, { maxLength: 30 });
   }
-  componentDidMount() {
-    this.socket = io('http://localhost:9500');
-  }
 
   render() {
     const { router, showModal, current_json } = this.props;
@@ -45,7 +41,7 @@ class Json extends Component {
           style={{
             padding: 0,
             margin: 0,
-            minHeight: 280
+            minHeight: 280,
           }}
         >
           <div className="show_json_configuration_button">
@@ -62,7 +58,7 @@ class Json extends Component {
               style={{
                 width: '20%',
                 marginLeft: '15px',
-                height: '1000px'
+                height: '1000px',
               }}
             >
               Current JSON:
@@ -91,10 +87,10 @@ class Json extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.info,
-    current_json: state.json.configuration.current_json
+    current_json: state.json.configuration.current_json,
   };
 };
 

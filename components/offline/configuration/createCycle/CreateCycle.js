@@ -49,7 +49,7 @@ class CreateCycle extends Component {
                 }
 
                 const cycle_attributes = { global_state: 'pending' };
-                workspaces.forEach(({ workspace }) => {
+                workspaces.forEach((workspace) => {
                   cycle_attributes[`${workspace}_state`] = 'pending';
                 });
 

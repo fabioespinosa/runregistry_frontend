@@ -13,17 +13,19 @@ class JsonList extends Component {
 
   async componentDidMount() {
     await this.fetchJsons();
-
-    this.socket = io(`${api_url}`);
-    this.socket.on('progress', evt => {
+    const socket_path = `/${api_url.includes('/api') ? 'api/' : ''}socket.io`;
+    this.socket = io(`${api_url.split('/api')[0]}`, {
+      path: socket_path,
+    });
+    this.socket.on('progress', (evt) => {
       this.updateProgress(evt);
     });
-    this.socket.on('completed', async evt => {
+    this.socket.on('completed', async (evt) => {
       await this.fetchJsons();
       console.log('completed', evt);
       // replace completed json
     });
-    this.socket.on('new_json_added_to_queue', async evt => {
+    this.socket.on('new_json_added_to_queue', async (evt) => {
       console.log('new job');
       await this.fetchJsons();
     });
@@ -39,25 +41,25 @@ class JsonList extends Component {
     const { data } = await axios.get(`${api_url}/json_portal/jsons`);
     // We want no nulls and those in progress on top
     const jsons = data.jsons
-      .filter(json => json !== null)
+      .filter((json) => json !== null)
       .sort((a, b) => b.timestamp - a.timestamp);
 
     this.setState({ jsons });
   };
 
-  updateProgress = event => {
+  updateProgress = (event) => {
     const { job_id, progress } = event;
     this.setState({
-      jsons: this.state.jsons.map(json => {
+      jsons: this.state.jsons.map((json) => {
         if (json.id === job_id) {
           json.progress = progress;
         }
         return json;
-      })
+      }),
     });
   };
 
-  renderItem = item => {
+  renderItem = (item) => {
     const { selected_json_id } = this.state;
     const {
       id,
@@ -67,7 +69,7 @@ class JsonList extends Component {
       date,
       official,
       by,
-      finishedOn
+      finishedOn,
     } = item;
     const { run_min, run_max, dataset_name } = data;
     const selected = id === selected_json_id;
@@ -142,7 +144,7 @@ class JsonList extends Component {
       <div>
         <h4>List of JSONS:</h4>
         <ul>
-          {jsons.map(item => {
+          {jsons.map((item) => {
             return this.renderItem(item);
           })}
         </ul>
@@ -187,7 +189,7 @@ class JsonList extends Component {
           <div className="json_content">
             {selected_json_id !== null ? (
               <JsonDisplay
-                item={jsons.find(item => item.id === selected_json_id)}
+                item={jsons.find((item) => item.id === selected_json_id)}
               />
             ) : (
               <div>Select a JSON on the left</div>
@@ -224,9 +226,9 @@ class JsonList extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    user: state.info
+    user: state.info,
   };
 };
 
