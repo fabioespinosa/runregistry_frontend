@@ -9,7 +9,6 @@ import Page from '../layout/page';
 import BreadcrumbCmp from '../components/ui/breadcrumb/Breadcrumb';
 import DatasetTable from '../components/offline/dataset_table/DatasetTable';
 import Cycles from '../components/offline/cycles/Cycles';
-import WaitingListDatasetTable from '../components/offline/dataset_table/WaitingListDatasetTable';
 import ManageDatasetModal from '../components/offline/manage_dataset/ManageDatasetModal';
 import LumisectionModal from '../components/common/CommonTableComponents/lumisectionModal/LumisectionModal';
 import CycleInfo from '../components/offline/cycles/cycleInfo/CycleInfo';

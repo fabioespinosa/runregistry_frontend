@@ -30,12 +30,14 @@ const Filter = dynamic(
 const valueProcessor = ({ field, operator, value }) => {
   if (field && field.startsWith('triplet_summary')) {
     return {
+      // We add default value, because when selected triplet_summary value is GOOD in display, but not in select
       field: `${field}.${value || 'GOOD'}`,
       operator: '>',
       value: 0,
     };
   }
   if ((field && field.includes('_state')) || field === 'state') {
+    // We add default value, because when selected triplet_summary value is OPEN in display, but not in select
     return {
       field,
       operator,
@@ -58,6 +60,24 @@ const valueProcessor = ({ field, operator, value }) => {
         return {
           field: 'run_number',
           operator: '=',
+          value: run_number,
+        };
+      }),
+    };
+  }
+
+  if (field === 'run_number' && operator === 'not in') {
+    // Handle the case where there are lots of run numbers in the text field:
+    value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
+    value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
+    const run_numbers = value.split(' ').filter((arg) => arg !== ''); // Split per space
+    return {
+      combinator: 'and',
+      not: false,
+      rules: run_numbers.map((run_number) => {
+        return {
+          field: 'run_number',
+          operator: '<>',
           value: run_number,
         };
       }),

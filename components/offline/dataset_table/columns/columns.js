@@ -6,7 +6,7 @@ const column_filter_description = {
   string: '=, like, notlike, <>',
   date: '>, <, >=, <=, <>',
   component: '=, like, notlike, <>',
-  boolean: 'true, false'
+  boolean: 'true, false',
 };
 const column_types = {
   'hlt_key.value': 'string',
@@ -20,7 +20,7 @@ const column_types = {
   hlt_key: 'string',
   duration: 'integer',
   clock_type: 'string',
-  component: 'component'
+  component: 'component',
 };
 
 const column_generator = ({
@@ -29,8 +29,9 @@ const column_generator = ({
   workspace,
   workspaces,
   moveDataset,
-  reGenerateCache
+  reGenerateCache,
 }) => {
+  workspace = workspace.toLowerCase();
   let columns = [
     {
       Header: 'Run Number',
@@ -43,14 +44,14 @@ const column_generator = ({
         <div style={{ textAlign: 'center', width: '100%' }}>
           <a onClick={() => showManageDatasetModal(original)}>{value}</a>
         </div>
-      )
+      ),
     },
     {
       Header: 'Dataset Name',
       id: 'name',
       accessor: 'name',
       prefix_for_filtering: '',
-      maxWidth: 250
+      maxWidth: 250,
     },
     {
       Header: 'Class',
@@ -62,7 +63,7 @@ const column_generator = ({
         <div style={{ textAlign: 'center' }}>
           {original.Run.rr_attributes.class}
         </div>
-      )
+      ),
     },
     {
       Header: 'Manage / LS',
@@ -75,9 +76,9 @@ const column_generator = ({
             <a onClick={() => showManageDatasetModal(original)}>Manage</a>
             {' / '}
           </span>
-          <a onClick={evt => showLumisectionModal(original)}>LS</a>
+          <a onClick={(evt) => showLumisectionModal(original)}>LS</a>
         </div>
-      )
+      ),
     },
     {
       Header: 'Appeared In',
@@ -91,13 +92,13 @@ const column_generator = ({
             style={{
               fontSize: '0.95em',
               fontWeight: 'bold',
-              borderRadius: '1px'
+              borderRadius: '1px',
             }}
           >
             <span style={{ padding: '4px' }}>{value}</span>
           </span>
         </div>
-      )
+      ),
     },
     {
       Header: `${workspace} State`,
@@ -114,7 +115,7 @@ const column_generator = ({
               fontSize: '0.95em',
               fontWeight: 'bold',
               color: value === 'OPEN' ? 'red' : 'grey',
-              borderRadius: '1px'
+              borderRadius: '1px',
             }}
           >
             <span style={{ padding: '4px' }}>{value}</span>
@@ -127,7 +128,7 @@ const column_generator = ({
               let options = {
                 OPEN: 'To OPEN',
                 SIGNOFF: 'to SIGNOFF',
-                COMPLETED: 'to COMPLETED'
+                COMPLETED: 'to COMPLETED',
               };
 
               if (value === 'waiting dqm gui') {
@@ -139,13 +140,13 @@ const column_generator = ({
                 input: 'select',
                 inputOptions: options,
                 showCancelButton: true,
-                reverseButtons: true
+                reverseButtons: true,
               });
               if (to_state) {
                 await moveDataset(
                   {
                     run_number,
-                    dataset_name: name
+                    dataset_name: name,
                   },
                   workspace.toLowerCase(),
                   from_state,
@@ -162,7 +163,7 @@ const column_generator = ({
             move
           </a>
         </div>
-      )
+      ),
     },
     {
       Header: 'LS Duration',
@@ -174,8 +175,8 @@ const column_generator = ({
         <div style={{ textAlign: 'center' }}>
           {original.Run.oms_attributes.ls_duration}
         </div>
-      )
-    }
+      ),
+    },
     // { Header: 'Dataset Created', accessor: 'createdAt', maxWidth: 150 }
   ];
   // {
@@ -203,14 +204,14 @@ const column_generator = ({
   // Now add the ones in global:
   const global_columns = [];
   for (const [key, val] of Object.entries(certifiable_offline_components)) {
-    val.forEach(sub_name => {
+    val.forEach((sub_name) => {
       global_columns.push(`${key}-${sub_name}`);
     });
   }
   // all_columns_formatted are in the form of workspace-subcomponent like csc-efficiency
   let all_columns_formatted = [];
   workspaces.forEach(({ workspace, columns }) => {
-    columns.forEach(column => {
+    columns.forEach((column) => {
       const column_name = `${workspace}-${column}`;
       if (!global_columns.includes(column_name)) {
         all_columns_formatted.push(column_name);
@@ -222,30 +223,30 @@ const column_generator = ({
   // Put components in format Header: component
   let offline_columns_composed = [];
   if (workspace === 'global') {
-    offline_columns_composed = global_columns.map(column => ({
+    offline_columns_composed = global_columns.map((column) => ({
       accessor: column,
-      Header: column.split('-')[1]
+      Header: column.split('-')[1],
     }));
   } else {
     offline_columns_composed = all_columns_formatted
-      .filter(column => {
+      .filter((column) => {
         return (
           column.startsWith(workspace.toLowerCase()) && column.includes('-')
         );
       })
-      .map(column => ({
+      .map((column) => ({
         accessor: column,
-        Header: column.split('-')[1]
+        Header: column.split('-')[1],
       }));
   }
 
-  offline_columns_composed = offline_columns_composed.map(column => {
+  offline_columns_composed = offline_columns_composed.map((column) => {
     return {
       ...column,
       maxWidth: 66,
       id: column.accessor,
       prefix_for_filtering: 'triplet_summary',
-      accessor: data => {
+      accessor: (data) => {
         const triplet = data.triplet_summary[column['accessor']];
         return triplet;
       },
@@ -257,7 +258,7 @@ const column_generator = ({
           dataset_name={original.name}
           component={column['accessor']}
         />
-      )
+      ),
     };
   });
   columns = [...columns, ...offline_columns_composed];

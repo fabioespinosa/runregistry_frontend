@@ -9,7 +9,7 @@ import {
   Button,
   Radio,
   message,
-  Progress
+  Progress,
 } from 'antd';
 import { CopyOutlined, RetweetOutlined, DownOutlined } from '@ant-design/icons';
 
@@ -48,6 +48,7 @@ class BreadcrumbCmp extends Component {
         <Menu.Item key="dataset_update">Dataset Update</Menu.Item>
         <Menu.Item key="dataset_delete">Dataset Delete</Menu.Item>
         <Menu.Item key="create_cycle">Create Cycle</Menu.Item>
+        <Menu.Item key="edit_cycle">Edit Cycle</Menu.Item>
       </SubMenu>
     </Menu>
   );
@@ -56,9 +57,9 @@ class BreadcrumbCmp extends Component {
     const {
       children,
       router: {
-        query: { type, section, workspace }
+        query: { type, section, workspace },
       },
-      online
+      online,
     } = this.props;
     return (
       <div className="breadcrumb_container">
@@ -145,5 +146,5 @@ class BreadcrumbCmp extends Component {
 
 export default connect(null, {
   showOnlineConfigurationModal,
-  showOfflineConfigurationModal
+  showOfflineConfigurationModal,
 })(BreadcrumbCmp);

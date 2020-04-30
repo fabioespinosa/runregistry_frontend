@@ -13,6 +13,7 @@ import DatasetColumnBatchUpdate from './datasetColumnBatchUpdate/DatasetColumnBa
 import DatasetUpdate from './datasetUpdate/DatasetUpdate';
 import DatasetDelete from './datasetDelete/DatasetDelete';
 import CreateCycle from './createCycle/CreateCycle';
+import EditCycle from './editCycle/EditCycle';
 import ExportToCSV from './exportToCSV/ExportToCSV';
 
 // For component classifier:
@@ -20,7 +21,7 @@ import {
   fetchComponentClassifiers,
   deleteComponentClassifier,
   editComponentClassifier,
-  newComponentClassifier
+  newComponentClassifier,
 } from '../../../ducks/offline/classifiers/component';
 
 class ConfigurationModal extends Component {
@@ -30,13 +31,13 @@ class ConfigurationModal extends Component {
       hideConfigurationModal,
       hideJsonEditor,
       children,
-      configuration_modal_type
+      configuration_modal_type,
     } = this.props;
     const {
       fetchComponentClassifiers,
       deleteComponentClassifier,
       editComponentClassifier,
-      newComponentClassifier
+      newComponentClassifier,
     } = this.props;
     const title_types = {
       dataset_classifiers:
@@ -50,9 +51,10 @@ class ConfigurationModal extends Component {
       dataset_column_copy: 'Copy Columns Across Datasets',
       dataset_column_batch_update: 'Dataset Column Batch Update',
       create_cycle: 'Create cycle',
+      edit_cycle: 'Edit Cycle',
       dataset_update: 'Dataset Update',
       dataset_delete: 'Dataset Delete',
-      export_to_csv: 'Export To CSV'
+      export_to_csv: 'Export To CSV',
     };
     const modal_types = {
       dataset_classifiers: <DatasetClassifierConfiguration />,
@@ -71,9 +73,10 @@ class ConfigurationModal extends Component {
       dataset_column_copy: <DatasetColumnCopy />,
       dataset_column_batch_update: <DatasetColumnBatchUpdate />,
       create_cycle: <CreateCycle />,
+      edit_cycle: <EditCycle />,
       dataset_update: <DatasetUpdate />,
       dataset_delete: <DatasetDelete />,
-      export_to_csv: <ExportToCSV />
+      export_to_csv: <ExportToCSV />,
     };
     return (
       <div>
@@ -87,7 +90,7 @@ class ConfigurationModal extends Component {
           footer={[
             <Button key="submit" onClick={hideConfigurationModal}>
               Close
-            </Button>
+            </Button>,
           ]}
           width="90vw"
           maskClosable={false}
@@ -101,10 +104,10 @@ class ConfigurationModal extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     configuration_modal_visible: state.offline.ui.configuration_modal_visible,
-    configuration_modal_type: state.offline.ui.configuration_modal_type
+    configuration_modal_type: state.offline.ui.configuration_modal_type,
   };
 };
 export default connect(mapStateToProps, {
@@ -113,5 +116,5 @@ export default connect(mapStateToProps, {
   fetchComponentClassifiers,
   deleteComponentClassifier,
   editComponentClassifier,
-  newComponentClassifier
+  newComponentClassifier,
 })(ConfigurationModal);

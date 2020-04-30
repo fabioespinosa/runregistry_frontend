@@ -59,6 +59,45 @@ export const moveCycleBackToPending = (id_cycle, workspace) =>
     dispatch(getCycles(current_workspace));
   });
 
+export const editCycle = ({
+  id_cycle,
+  deadline,
+  cycle_attributes,
+  cycle_name,
+}) =>
+  error_handler(async (dispatch, getState) => {
+    const { data: cycle } = await axios.put(
+      `${api_url}/cycles`,
+      { id_cycle, deadline, cycle_attributes, cycle_name },
+      auth(getState)
+    );
+    const current_workspace = getState().offline.workspace.workspace;
+    dispatch(getCycles(current_workspace));
+    return cycle;
+  });
+
+export const addDatasetsToCycle = ({ id_cycle }) =>
+  error_handler(async (dispatch, getState) => {
+    const current_filter = getState().offline.editable_datasets.filter;
+    const { data: cycle } = await axios.post(
+      `${api_url}/cycles/add_datasets_to_cycle`,
+      { id_cycle, filter: current_filter },
+      auth(getState)
+    );
+    return cycle;
+  });
+
+export const deleteDatasetsFromCycle = ({ id_cycle }) =>
+  error_handler(async (dispatch, getState) => {
+    const current_filter = getState().offline.editable_datasets.filter;
+    const { data: cycle } = await axios.post(
+      `${api_url}/cycles/delete_datasets_from_cycle`,
+      { id_cycle, filter: current_filter },
+      auth(getState)
+    );
+    return cycle;
+  });
+
 export const selectCycle = (selected_cycle) => ({
   type: SELECT_CYCLE,
   payload: selected_cycle,

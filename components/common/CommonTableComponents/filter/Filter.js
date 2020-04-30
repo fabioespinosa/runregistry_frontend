@@ -76,7 +76,7 @@ const oms_attributes = [
   'tracker_efed_included',
   'hlt_physics_throughput',
   'initial_prescale_index',
-  'beams_present_and_stable'
+  'beams_present_and_stable',
 ];
 
 const rr_attributes = [
@@ -84,14 +84,14 @@ const rr_attributes = [
   'state',
   'short_run',
   'significant',
-  'stop_reason'
+  'stop_reason',
 ];
 
-const isRuleGroup = ruleOrGroup => {
+const isRuleGroup = (ruleOrGroup) => {
   return !!(ruleOrGroup.combinator && ruleOrGroup.rules);
 };
 
-const formatSequelize = rules => {
+const formatSequelize = (rules) => {
   if (rules) {
     const sequelize_filter = [];
     for (const rule of rules) {
@@ -101,8 +101,8 @@ const formatSequelize = rules => {
       } else if (rule.field) {
         sequelize_filter.push({
           [rule.field]: {
-            [rule.operator]: rule.value
-          }
+            [rule.operator]: rule.value,
+          },
         });
       }
     }
@@ -110,21 +110,21 @@ const formatSequelize = rules => {
   }
 };
 
-const removeIdsFromQuery = query => {
+const removeIdsFromQuery = (query) => {
   const query_copy = { ...query };
   delete query_copy.id;
   if (query_copy.rules) {
-    query_copy.rules = query_copy.rules.map(rule => removeIdsFromQuery(rule));
+    query_copy.rules = query_copy.rules.map((rule) => removeIdsFromQuery(rule));
   }
   return query_copy;
 };
 
 const processQuery = (query, valueProcessor) => {
   if (!valueProcessor) {
-    valueProcessor = value => value;
+    valueProcessor = (value) => value;
   }
   const query_copy = { ...query };
-  query_copy.rules = query.rules.map(rule => {
+  query_copy.rules = query.rules.map((rule) => {
     if (rule.rules) {
       return processQuery(rule, valueProcessor);
     }
@@ -133,7 +133,7 @@ const processQuery = (query, valueProcessor) => {
   return query_copy;
 };
 
-const getOperators = field => {
+const getOperators = (field) => {
   switch (field) {
     case 'rr_attributes.significant':
       return [{ name: '=', label: 'is' }];
@@ -179,8 +179,9 @@ const operators = [
   { name: '<=', label: '<=' },
   { name: '>=', label: '>=' },
   { name: 'in', label: 'in' },
+  { name: 'not in', label: 'not in' },
   { name: 'like', label: 'like' },
-  { name: 'notlike', label: 'notlike' }
+  { name: 'notlike', label: 'notlike' },
 ];
 
 const getValues = (field, operator) => {
@@ -191,14 +192,14 @@ const getValues = (field, operator) => {
       { name: 'STANDBY', label: 'STANDBY' },
       { name: 'EXCLUDED', label: 'EXCLUDED' },
       { name: 'NOTSET', label: 'NOTSET' },
-      { name: 'NO VALUE FOUND', label: 'NO VALUE FOUND' }
+      { name: 'NO VALUE FOUND', label: 'NO VALUE FOUND' },
     ];
   }
   if (field && (field.includes('_state') || field === 'state')) {
     return [
       { name: 'OPEN', label: 'OPEN' },
       { name: 'SIGNOFF', label: 'SIGNOFF' },
-      { name: 'COMPLETED', label: 'COMPLETED' }
+      { name: 'COMPLETED', label: 'COMPLETED' },
     ];
   }
   switch (field) {
@@ -206,7 +207,7 @@ const getValues = (field, operator) => {
       return [
         { name: 'M', label: 'Male' },
         { name: 'F', label: 'Female' },
-        { name: 'O', label: 'Other' }
+        { name: 'O', label: 'Other' },
       ];
 
     default:
@@ -240,7 +241,7 @@ class RootView extends Component {
   }
 
   setInputWidths() {
-    document.querySelectorAll('input.rule-value').forEach(node => {
+    document.querySelectorAll('input.rule-value').forEach((node) => {
       const text_length = node.value.length;
       if (text_length < 20) {
         node.size = 20;
@@ -254,7 +255,7 @@ class RootView extends Component {
     return [...table_columns, ...other_columns];
   };
 
-  handleQueryChange = async query => {
+  handleQueryChange = async (query) => {
     // const { filters } = Router.query;
     const { filterTable, valueProcessor, filter_prefix_from_url } = this.props;
     const query_without_ids = removeIdsFromQuery(query);
@@ -271,7 +272,7 @@ class RootView extends Component {
 
     let url_query = qs.stringify({
       ...filters,
-      [filter_prefix_from_url]: query_without_ids
+      [filter_prefix_from_url]: query_without_ids,
     });
     if (query.rules.length === 0) {
       const new_filter = { ...filters };
@@ -308,7 +309,7 @@ class RootView extends Component {
               query={query}
               fields={fields}
               controlClassnames={{ fields: 'form-control' }}
-              onQueryChange={async query => {
+              onQueryChange={async (query) => {
                 // Make text fit the input:
                 this.setInputWidths();
                 if (initialQuery) {

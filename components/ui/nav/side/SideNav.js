@@ -16,8 +16,8 @@ class SideNav extends Component {
     }
     const {
       router: {
-        query: { type, section, workspace }
-      }
+        query: { type, section, workspace },
+      },
     } = this.props;
     if (type === 'online') {
       Router.push(
@@ -32,16 +32,16 @@ class SideNav extends Component {
     }
   }
 
-  displayWorkspace = workspace => {
+  displayWorkspace = (workspace) => {
     workspace = workspace.toLowerCase();
     const {
       router: {
-        query: { section }
+        query: { section },
       },
-      cycles
+      cycles,
     } = this.props;
     let workspace_status = 0;
-    cycles.forEach(cycle => {
+    cycles.forEach((cycle) => {
       for (const [key, val] of Object.entries(cycle.cycle_attributes)) {
         if (key.includes('_state')) {
           const workspace_name = key.split('_state')[0];
@@ -53,14 +53,14 @@ class SideNav extends Component {
     });
     const backgroundColor = workspace_status === 0 ? '#52c41a' : '';
     return (
-      <Menu.Item key={workspace.toUpperCase()}>
+      <Menu.Item key={workspace}>
         <div>
           {workspace.toUpperCase()}
           {section === 'cycles' && (
             <Badge
               showZero
               style={{
-                backgroundColor
+                backgroundColor,
               }}
               count={workspace_status}
               offset={[10, 0]}
@@ -77,8 +77,8 @@ class SideNav extends Component {
       cycles,
       selected_cycle,
       router: {
-        query: { type, section, workspace }
-      }
+        query: { type, section, workspace },
+      },
     } = this.props;
 
     return (
@@ -117,13 +117,13 @@ class SideNav extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const {
-    router: { query }
+    router: { query },
   } = ownProps;
   const { type } = query;
   return {
     workspaces: state[type].workspace.workspaces,
     cycles: state.offline.cycles.cycles,
-    selected_cycle: state.offline.cycles.selected_cycle
+    selected_cycle: state.offline.cycles.selected_cycle,
   };
 };
 
