@@ -1,4 +1,4 @@
-export default function(getState, comment) {
+export default function (getState, comment) {
   const state = getState();
   let email = state.info.email;
   let egroups = state.info.egroups;
@@ -11,7 +11,7 @@ export default function(getState, comment) {
     // egroups = 'cms-dqm-runregistry-admins-csc'; // For testing
   }
   const options = {
-    headers: { egroups, email }
+    headers: { egroups, email },
   };
   if (comment) {
     options.headers.comment = comment;

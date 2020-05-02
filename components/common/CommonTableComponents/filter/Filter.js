@@ -178,8 +178,8 @@ const operators = [
   { name: '>', label: '>' },
   { name: '<=', label: '<=' },
   { name: '>=', label: '>=' },
-  { name: 'in', label: 'in' },
-  { name: 'not in', label: 'not in' },
+  { name: 'in', label: 'in list of run_numbers' },
+  { name: 'not in', label: 'not in list of run_numbers' },
   { name: 'like', label: 'like' },
   { name: 'notlike', label: 'notlike' },
 ];

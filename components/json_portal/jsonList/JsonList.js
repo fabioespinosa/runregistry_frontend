@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { Progress, Tag } from 'antd';
-
 import moment from 'moment';
 import axios from 'axios';
+import { error_handler } from '../../../utils/error_handlers';
 import JsonDisplay from './jsonDisplay/JsonDisplay';
 import { api_url } from '../../../config/config';
 
@@ -37,7 +37,7 @@ class JsonList extends Component {
     }
   }
 
-  fetchJsons = async () => {
+  fetchJsons = error_handler(async () => {
     const { data } = await axios.get(`${api_url}/json_portal/jsons`);
     // We want no nulls and those in progress on top
     const jsons = data.jsons
@@ -45,13 +45,13 @@ class JsonList extends Component {
       .sort((a, b) => b.timestamp - a.timestamp);
 
     this.setState({ jsons });
-  };
+  });
 
   updateProgress = (event) => {
-    const { job_id, progress } = event;
+    const { id, progress } = event;
     this.setState({
       jsons: this.state.jsons.map((json) => {
-        if (json.id === job_id) {
+        if (json.id === id) {
           json.progress = progress;
         }
         return json;
@@ -63,15 +63,15 @@ class JsonList extends Component {
     const { selected_json_id } = this.state;
     const {
       id,
-      data,
-      returnvalue,
+      dataset_name_filter,
+      created_by,
+      tags,
       progress,
-      date,
+      active,
+      waiting,
+      createdAt,
       official,
-      by,
-      finishedOn,
     } = item;
-    const { run_min, run_max, dataset_name } = data;
     const selected = id === selected_json_id;
     const finished = progress === 1;
     return (
@@ -86,18 +86,18 @@ class JsonList extends Component {
             className={selected && 'selected_link'}
             onClick={() => this.setState({ selected_json_id: id })}
           >
-            {dataset_name}
+            {dataset_name_filter}
           </a>
         ) : (
-          <a disabled>{dataset_name}</a>
+          <a disabled>{dataset_name_filter}</a>
         )}
         <div className="date">
           id: {id} -{' '}
-          {finished
-            ? moment(finishedOn).format('MMMM Do YYYY, h:mm:ss a')
+          {createdAt
+            ? moment(createdAt).format('MMMM Do YYYY, h:mm:ss a')
             : 'pending'}
         </div>
-        <div className="author">By: {by}</div>
+        <div className="author">By: {created_by}</div>
         <div className="progress">
           <Progress
             percent={(progress * 100).toFixed(1)}
