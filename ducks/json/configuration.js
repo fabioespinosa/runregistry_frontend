@@ -71,13 +71,13 @@ export const generateJson = (json_logic) =>
     });
   });
 
-export const calculateJson = (json_logic, dataset_name) =>
+export const calculateJson = (json_logic, dataset_name_filter) =>
   error_handler(async (dispatch, getState) => {
     const { data: json_output } = await axios.post(
       `${api_url}/json_portal/generate`,
       {
         json_logic,
-        dataset_name,
+        dataset_name_filter,
       },
       auth(getState)
     );

@@ -6,7 +6,7 @@ import {
   PlusCircleOutlined,
   CloseCircleOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 import {
@@ -16,7 +16,7 @@ import {
   resetJson,
   addConfiguration,
   editConfiguration,
-  deleteJsonConfiguration
+  deleteJsonConfiguration,
 } from '../../../../ducks/json/configuration';
 import { hideModal } from '../../../../ducks/json/ui';
 import stringify from 'json-stringify-pretty-compact';
@@ -27,7 +27,7 @@ const { SubMenu } = Menu;
 const TextEditor = dynamic(
   import('../../../common/ClassifierEditor/JSONEditor/JSONEditor'),
   {
-    ssr: false
+    ssr: false,
   }
 );
 
@@ -38,7 +38,7 @@ class Configuration extends Component {
     creating: false,
     new_name: '',
     run_list: false,
-    dataset_name: ''
+    dataset_name_filter: '',
   };
 
   async componentDidMount() {
@@ -46,7 +46,7 @@ class Configuration extends Component {
     const default_selection = this.state.menu_selection;
     this.handleMenuChange(default_selection);
   }
-  handleMenuChange = new_menu_selection => {
+  handleMenuChange = (new_menu_selection) => {
     if (!new_menu_selection) {
       new_menu_selection = 'golden';
     }
@@ -57,7 +57,7 @@ class Configuration extends Component {
     this.changeValue(formatted);
   };
 
-  createNewConfiguration = async new_configuration => {
+  createNewConfiguration = async (new_configuration) => {
     new_configuration = JSON.parse(new_configuration);
     const { new_name } = this.state;
     await this.props.addConfiguration(new_configuration, new_name);
@@ -67,7 +67,7 @@ class Configuration extends Component {
     await Swal(`New Configuration ${new_name} added`, '', 'success');
   };
 
-  editConfiguration = async new_configuration => {
+  editConfiguration = async (new_configuration) => {
     new_configuration = JSON.parse(new_configuration);
     const { menu_selection } = this.state;
     const { json_configurations_array } = this.props;
@@ -97,7 +97,7 @@ class Configuration extends Component {
       text: '',
       showCancelButton: true,
       confirmButtonText: 'Yes',
-      reverseButtons: true
+      reverseButtons: true,
     });
     if (value) {
       await this.props.deleteJsonConfiguration(selected.id);
@@ -107,7 +107,7 @@ class Configuration extends Component {
     }
   };
 
-  changeValue = new_configuration => {
+  changeValue = (new_configuration) => {
     this.props.changeJsonLogic(new_configuration);
   };
 
@@ -130,7 +130,7 @@ class Configuration extends Component {
       <Input
         onChange={({ target }) =>
           this.setState({
-            new_name: target.value
+            new_name: target.value,
           })
         }
         placeholder="Enter the name of the new configuration"
@@ -146,7 +146,7 @@ class Configuration extends Component {
     </div>
   );
 
-  getRunList = current_json => {
+  getRunList = (current_json) => {
     const runs = [];
     for (const [key, val] of Object.entries(current_json)) {
       runs.push(+key);
@@ -154,7 +154,7 @@ class Configuration extends Component {
     return runs;
   };
 
-  renderTitle = title => {
+  renderTitle = (title) => {
     return <span>{title}</span>;
   };
 
@@ -165,13 +165,13 @@ class Configuration extends Component {
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
           }}
         >
           {title}
           <span>{label}</span>
         </div>
-      )
+      ),
     };
   };
 
@@ -184,9 +184,14 @@ class Configuration extends Component {
       json_logic,
       number_of_runs,
       number_of_lumisections,
-      hideModal
+      hideModal,
     } = this.props;
-    const { creating, menu_selection, editing, dataset_name } = this.state;
+    const {
+      creating,
+      menu_selection,
+      editing,
+      dataset_name_filter,
+    } = this.state;
     const download_string =
       'data:text/json;charset=utf-8,' +
       encodeURIComponent(this.getDisplayedJSON(current_json));
@@ -194,7 +199,7 @@ class Configuration extends Component {
     const options = [
       {
         label: this.renderTitle('Unique dataset name'),
-        options: [this.renderItem('/PromptReco/Collisions2018A/DQM')]
+        options: [this.renderItem('/PromptReco/Collisions2018A/DQM')],
       },
       {
         label: this.renderTitle(
@@ -204,8 +209,8 @@ class Configuration extends Component {
           this.renderItem(
             '/PromptReco/Collisions2018_/DQM',
             'The _ is a wildcard for any character (in this case all eras)'
-          )
-        ]
+          ),
+        ],
       },
       {
         label: this.renderTitle(
@@ -215,8 +220,8 @@ class Configuration extends Component {
           this.renderItem(
             '/PromptReco/Collisions2018(A|B)/DQM',
             'The (A|B) works as a filter for era A or era B'
-          )
-        ]
+          ),
+        ],
       },
       {
         label: this.renderTitle(
@@ -226,9 +231,9 @@ class Configuration extends Component {
           this.renderItem(
             '%PromptReco/Collisions%',
             'The % is a wildcard for 1 or more characters'
-          )
-        ]
-      }
+          ),
+        ],
+      },
     ];
     return (
       <div className="configuration">
@@ -243,13 +248,15 @@ class Configuration extends Component {
                 dropdownMatchSelectWidth={650}
                 style={{ width: 800 }}
                 options={options}
-                onChange={dataset_name => this.setState({ dataset_name })}
+                onChange={(dataset_name_filter) =>
+                  this.setState({ dataset_name_filter })
+                }
               >
                 <Input
                   size="large"
                   placeholder="Enter the dataset name (e.g. /PromptReco/HICosmics18_/DQM)"
-                  onChange={e =>
-                    this.setState({ dataset_name: e.target.value })
+                  onChange={(e) =>
+                    this.setState({ dataset_name_filter: e.target.value })
                   }
                 />
               </AutoComplete>
@@ -283,7 +290,7 @@ class Configuration extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'center',
-                marginTop: '10px'
+                marginTop: '10px',
               }}
             >
               <Button
@@ -350,12 +357,15 @@ class Configuration extends Component {
                   <Button
                     type="primary"
                     onClick={async () => {
-                      const id = await calculateJson(json_logic, dataset_name);
+                      const id = await calculateJson(
+                        json_logic,
+                        dataset_name_filter
+                      );
                       hideModal();
                       await Swal({
                         type: 'success',
                         title: `JSON job ${id} received, it is being generated now`,
-                        html: `Your JSON will take approx. 5 minutes to generate, you can see it with the id: <strong>${id}</strong> on the list.`
+                        html: `Your JSON will take approx. 5 minutes to generate, you can see it with the id: <strong>${id}</strong> on the list.`,
                       });
                     }}
                   >
@@ -388,7 +398,7 @@ function mapStateToProps(state) {
     current_json: state.json.configuration.current_json,
     json_logic: state.json.configuration.json_logic,
     number_of_runs: state.json.configuration.number_of_runs,
-    number_of_lumisections: state.json.configuration.number_of_lumisections
+    number_of_lumisections: state.json.configuration.number_of_lumisections,
   };
 }
 
@@ -400,5 +410,5 @@ export default connect(mapStateToProps, {
   addConfiguration,
   editConfiguration,
   deleteJsonConfiguration,
-  hideModal
+  hideModal,
 })(Configuration);
