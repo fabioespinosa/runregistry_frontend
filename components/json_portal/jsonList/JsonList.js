@@ -1,66 +1,13 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { Progress, Tag } from 'antd';
 import moment from 'moment';
-import axios from 'axios';
-import { error_handler } from '../../../utils/error_handlers';
+
 import JsonDisplay from './jsonDisplay/JsonDisplay';
-import { api_url } from '../../../config/config';
 
 class JsonList extends Component {
-  state = { selected_json_id: null, jsons: [] };
-
-  async componentDidMount() {
-    await this.fetchJsons();
-    const socket_path = `/${api_url.includes('/api') ? 'api/' : ''}socket.io`;
-    this.socket = io(`${api_url.split('/api')[0]}`, {
-      path: socket_path,
-    });
-    this.socket.on('progress', (evt) => {
-      this.updateProgress(evt);
-    });
-    this.socket.on('completed', async (evt) => {
-      await this.fetchJsons();
-      console.log('completed', evt);
-      // replace completed json
-    });
-    this.socket.on('new_json_added_to_queue', async (evt) => {
-      console.log('new job');
-      await this.fetchJsons();
-    });
-  }
-
-  componentWillUnmount() {
-    if (this.socket) {
-      this.socket.close();
-    }
-  }
-
-  fetchJsons = error_handler(async () => {
-    const { data } = await axios.get(`${api_url}/json_portal/jsons`);
-    // We want no nulls and those in progress on top
-    const jsons = data.jsons
-      .filter((json) => json !== null)
-      .sort((a, b) => b.timestamp - a.timestamp);
-
-    this.setState({ jsons });
-  });
-
-  updateProgress = (event) => {
-    const { id, progress } = event;
-    this.setState({
-      jsons: this.state.jsons.map((json) => {
-        if (json.id === id) {
-          json.progress = progress;
-        }
-        return json;
-      }),
-    });
-  };
-
   renderItem = (item) => {
-    const { selected_json_id } = this.state;
+    const { selected_json, selectJson } = this.props;
     const {
       id,
       dataset_name_filter,
@@ -72,7 +19,7 @@ class JsonList extends Component {
       createdAt,
       official,
     } = item;
-    const selected = id === selected_json_id;
+    const selected = id === selected_json.id;
     const finished = progress === 1;
     return (
       <li key={id} className={`container ${selected && 'selected'}`}>
@@ -84,7 +31,7 @@ class JsonList extends Component {
         {progress === 1 ? (
           <a
             className={selected && 'selected_link'}
-            onClick={() => this.setState({ selected_json_id: id })}
+            onClick={() => selectJson(id)}
           >
             {dataset_name_filter}
           </a>
@@ -139,7 +86,7 @@ class JsonList extends Component {
   };
 
   renderList = () => {
-    const { jsons } = this.state;
+    const { jsons } = this.props;
     return (
       <div>
         <h4>List of JSONS:</h4>
@@ -172,8 +119,8 @@ class JsonList extends Component {
   };
 
   render() {
-    const { jsons, selected_json_id } = this.state;
-
+    const { jsons, selected_json } = this.props;
+    const { toggleDebugging } = this.props;
     return (
       <div className="container">
         <div className="inner_container">
@@ -187,9 +134,10 @@ class JsonList extends Component {
             )}
           </div>
           <div className="json_content">
-            {selected_json_id !== null ? (
+            {typeof selected_json.id !== 'undefined' ? (
               <JsonDisplay
-                item={jsons.find((item) => item.id === selected_json_id)}
+                item={selected_json}
+                toggleDebugging={toggleDebugging}
               />
             ) : (
               <div>Select a JSON on the left</div>

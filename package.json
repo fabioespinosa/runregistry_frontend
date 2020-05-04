@@ -45,6 +45,7 @@
     "react-linkify": "^1.0.0-alpha",
     "react-querybuilder": "^3.1.1",
     "react-redux": "^7.2.0",
+    "react-scroll": "^1.7.16",
     "react-table": "^6.8.6",
     "recharts": "^1.5.0",
     "redux": "^4.0.0",

@@ -223,16 +223,19 @@ class RootView extends Component {
   }
 
   componentWillMount() {
-    const filters_from_url = window.location.href.split('?')[1];
-    let filters = {};
-    if (filters_from_url) {
-      filters = qs.parse(filters_from_url, { depth: Infinity });
-    }
-    const { filter_prefix_from_url } = this.props;
-    if (filters) {
-      const query = filters[filter_prefix_from_url];
-      if (query) {
-        this.setState({ query });
+    const { ignore_filters_from_url } = this.props;
+    if (!ignore_filters_from_url) {
+      const filters_from_url = window.location.href.split('?')[1];
+      let filters = {};
+      if (filters_from_url) {
+        filters = qs.parse(filters_from_url, { depth: Infinity });
+      }
+      const { filter_prefix_from_url } = this.props;
+      if (filters) {
+        const query = filters[filter_prefix_from_url];
+        if (query) {
+          this.setState({ query });
+        }
       }
     }
   }
@@ -257,30 +260,35 @@ class RootView extends Component {
 
   handleQueryChange = async (query) => {
     // const { filters } = Router.query;
-    const { filterTable, valueProcessor, filter_prefix_from_url } = this.props;
+    const {
+      filterTable,
+      valueProcessor,
+      filter_prefix_from_url,
+      ignore_filters_from_url,
+    } = this.props;
     const query_without_ids = removeIdsFromQuery(query);
+    if (!ignore_filters_from_url) {
+      const filters_from_url = window.location.href.split('?')[1];
+      let { asPath } = Router;
+      if (asPath.includes('?')) {
+        asPath = asPath.split('?')[0];
+      }
+      let filters = {};
+      if (filters_from_url) {
+        filters = qs.parse(filters_from_url, { depth: Infinity });
+      }
 
-    const filters_from_url = window.location.href.split('?')[1];
-    let filters = {};
-    if (filters_from_url) {
-      filters = qs.parse(filters_from_url, { depth: Infinity });
+      let url_query = qs.stringify({
+        ...filters,
+        [filter_prefix_from_url]: query_without_ids,
+      });
+      if (query.rules.length === 0) {
+        const new_filter = { ...filters };
+        delete new_filter[filter_prefix_from_url];
+        url_query = qs.stringify(new_filter);
+      }
+      history.pushState({}, '', `${asPath}?${url_query}`);
     }
-    let { asPath } = Router;
-    if (asPath.includes('?')) {
-      asPath = asPath.split('?')[0];
-    }
-
-    let url_query = qs.stringify({
-      ...filters,
-      [filter_prefix_from_url]: query_without_ids,
-    });
-    if (query.rules.length === 0) {
-      const new_filter = { ...filters };
-      delete new_filter[filter_prefix_from_url];
-      url_query = qs.stringify(new_filter);
-    }
-
-    history.pushState({}, '', `${asPath}?${url_query}`);
 
     const processed_query = processQuery(query_without_ids, valueProcessor);
     const formated_filters = formatSequelize([processed_query])[0];

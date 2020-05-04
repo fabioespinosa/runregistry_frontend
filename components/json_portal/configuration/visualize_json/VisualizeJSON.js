@@ -17,9 +17,8 @@ class ClassifierVisualization extends Component {
 
   testClassifier = error_handler(
     async (selected_dataset_to_visualize, json_logic) => {
-      const parsed_logic = JSON.parse(json_logic);
       const ready_to_compare_logic = this.transformJSONLumisectionVars(
-        parsed_logic
+        json_logic
       );
       const stringified_ready_to_compare_logic = JSON.stringify(
         ready_to_compare_logic
@@ -28,29 +27,30 @@ class ClassifierVisualization extends Component {
         `${api_url}/classifier_playground_arbitrary`,
         {
           data: selected_dataset_to_visualize,
-          json_logic: stringified_ready_to_compare_logic
+          json_logic: stringified_ready_to_compare_logic,
         }
       );
       this.setState({
-        result: data.result[0]
+        result: data.result[0],
       });
     }
   );
 
   testLumisectionClassifier = error_handler(
     async ({ run_number, name, lumisection_number, json_logic }) => {
+      json_logic = JSON.stringify(json_logic);
       const { data } = await axios.post(
         `${api_url}/classifier_playground/test_lumisection`,
         {
           run_number,
           name,
           lumisection_number,
-          json_logic
+          json_logic,
         }
       );
       this.setState({
         lumisection_result: data.result[0],
-        lumisection_number
+        lumisection_number,
       });
     }
   );
@@ -59,24 +59,24 @@ class ClassifierVisualization extends Component {
   // In JSON logic they are stored as {"==": [{"var": "lumisection.rr.dt-dt"}, "GOOD"]}
   // So we want a logic that works like this: {">": [{"var": "lumisection.rr.dt-dt.GOOD"}, 0]}
   // This converst the latter to the first.
-  transformJSONLumisectionVars = json_logic => {
+  transformJSONLumisectionVars = (json_logic) => {
     for (const [key, val] of Object.entries(json_logic)) {
       // The only possible comparison with lumisections is the comparators, the rest are ands, ins or  ors:
       if (['==', '>=', '<=', '>', '<'].includes(key)) {
         return this.parse_operator(val, key);
       } else if (key === 'in') {
         return {
-          [key]: val
+          [key]: val,
         };
       } else {
         return {
-          [key]: this.parse_and_or(val)
+          [key]: this.parse_and_or(val),
         };
       }
     }
   };
   parse_and_or = (array_of_expressions, operator) => {
-    return array_of_expressions.map(expression => {
+    return array_of_expressions.map((expression) => {
       return this.transformJSONLumisectionVars(expression);
     });
   };
@@ -103,7 +103,7 @@ class ClassifierVisualization extends Component {
       if (typeof rhs !== 'object') {
         // Case where argumetns are (expr, value);
         return {
-          [operator]: [this.transformJSONLumisectionVars(lhs), rhs]
+          [operator]: [this.transformJSONLumisectionVars(lhs), rhs],
         };
       }
       if (typeof rhs === 'object') {
@@ -111,8 +111,8 @@ class ClassifierVisualization extends Component {
         return {
           [operator]: [
             this.transformJSONLumisectionVars(lhs),
-            this.transformJSONLumisectionVars(rhs)
-          ]
+            this.transformJSONLumisectionVars(rhs),
+          ],
         };
       }
     }
@@ -123,7 +123,7 @@ class ClassifierVisualization extends Component {
     if (final_value.hasOwnProperty('resulted_value')) {
       if (rules[0].hasOwnProperty('and') || rules[0].hasOwnProperty('or')) {
         const children = rules[0][Object.keys(rules[0])];
-        const diplayed_chilren = children.map(child_rule =>
+        const diplayed_chilren = children.map((child_rule) =>
           this.displayRules(child_rule, final_value.resulted_value)
         );
         const color = final_value.resulted_value
@@ -142,7 +142,7 @@ class ClassifierVisualization extends Component {
                 style={{
                   fontSize: 15,
                   margin: '0 auto',
-                  color: 'green'
+                  color: 'green',
                 }}
               />
             ) : (
@@ -150,7 +150,7 @@ class ClassifierVisualization extends Component {
                 style={{
                   fontSize: 15,
                   margin: '0 auto',
-                  color: 'red'
+                  color: 'red',
                 }}
               />
             )}
@@ -206,7 +206,7 @@ class ClassifierVisualization extends Component {
                 style={{
                   fontSize: 15,
                   margin: '0 auto',
-                  color: 'green'
+                  color: 'green',
                 }}
               />
             ) : (
@@ -214,7 +214,7 @@ class ClassifierVisualization extends Component {
                 style={{
                   fontSize: 15,
                   margin: '0 auto',
-                  color: 'red'
+                  color: 'red',
                 }}
               />
             )}
@@ -239,7 +239,7 @@ class ClassifierVisualization extends Component {
       selected_dataset_to_visualize,
       included_in_json,
       current_json,
-      json_logic
+      json_logic,
     } = this.props;
     const { result, lumisection_result, lumisection_number } = this.state;
     const { name } = selected_dataset_to_visualize.dataset;
@@ -288,12 +288,12 @@ class ClassifierVisualization extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    json_logic: state.json.configuration.json_logic,
+    json_logic: state.json.ui.selected_json.json_logic,
     selected_dataset_to_visualize: state.json.ui.selected_dataset_to_visualize,
     included_in_json: state.json.ui.dataset_included_in_json,
-    current_json: state.json.configuration.current_json
+    current_json: state.json.ui.selected_json.generated_json,
   };
 };
 export default connect(mapStateToProps, {})(ClassifierVisualization);

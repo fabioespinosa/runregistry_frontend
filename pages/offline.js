@@ -92,7 +92,7 @@ class Offline extends Component {
                   url_filters={filters}
                   dataset_table={waiting_datasets}
                   filterDatasets={filterWaitingDatasets}
-                  // ofts for OFfline Top Sortings
+                  // ofts for OFfline Top Sortings (O.F.T.S)
                   sorting_prefix_from_url="ofts"
                   // oftf for OFfline Top Filters
                   filter_prefix_from_url="oftf"

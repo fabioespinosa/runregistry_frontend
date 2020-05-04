@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Menu } from 'antd';
+import io from 'socket.io-client';
+import axios from 'axios';
 import { MailOutlined, AppstoreOutlined } from '@ant-design/icons';
+import DebuggingJson from './debuggingJson/DebuggingJson';
+import { selectJson } from '../../ducks/json/ui';
+import { api_url } from '../../config/config';
+import { error_handler } from '../../utils/error_handlers';
 
 const { SubMenu } = Menu;
 
@@ -8,14 +15,71 @@ import JsonList from './jsonList/JsonList';
 
 class JsonPortal extends Component {
   state = {
-    selected_tab: 'my_jsons'
+    selected_tab: 'my_jsons',
+    jsons: [],
+    debugging_json: false,
   };
+
+  async componentDidMount() {
+    await this.fetchJsons();
+    const socket_path = `/${api_url.includes('/api') ? 'api/' : ''}socket.io`;
+    this.socket = io(`${api_url.split('/api')[0]}`, {
+      path: socket_path,
+    });
+    this.socket.on('progress', (evt) => {
+      this.updateProgress(evt);
+    });
+    this.socket.on('completed', async (evt) => {
+      await this.fetchJsons();
+      console.log('completed', evt);
+      // replace completed json
+    });
+    this.socket.on('new_json_added_to_queue', async (evt) => {
+      console.log('new job');
+      await this.fetchJsons();
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.socket) {
+      this.socket.close();
+    }
+  }
+
+  fetchJsons = error_handler(async () => {
+    const { data } = await axios.get(`${api_url}/json_portal/jsons`);
+    // We want no nulls
+    const jsons = data.jsons.filter((json) => json !== null);
+    this.setState({ jsons });
+  });
+
   changeTab = ({ key }) => {
     this.setState({ selected_tab: key });
   };
 
+  updateProgress = (event) => {
+    const { id, progress } = event;
+    this.setState({
+      jsons: this.state.jsons.map((json) => {
+        if (json.id === id) {
+          json.progress = progress;
+        }
+        return json;
+      }),
+    });
+  };
+
+  selectJson = (selected_id) => {
+    const json = this.state.jsons.find(({ id }) => id === selected_id);
+    this.props.selectJson(json);
+    this.setState({ debugging_json: false });
+  };
+
+  toggleDebugging = (show) => this.setState({ debugging_json: show });
+
   render() {
-    const { selected_tab } = this.state;
+    const { selected_json } = this.props;
+    const { selected_tab, debugging_json, jsons } = this.state;
     return (
       <div className="container">
         <Menu
@@ -38,7 +102,17 @@ class JsonPortal extends Component {
         </Menu>
         <br />
         <br />
-        <JsonList category={selected_tab} />
+        <JsonList
+          jsons={jsons}
+          category={selected_tab}
+          selected_json={selected_json}
+          selectJson={this.selectJson}
+          toggleDebugging={this.toggleDebugging}
+          fetchJson={this.fetchJsons}
+        />
+        {debugging_json && (
+          <DebuggingJson selected_json={selected_json} jsons={jsons} />
+        )}
         <style jsx>{`
           .container {
             padding: 10px;
@@ -55,4 +129,9 @@ class JsonPortal extends Component {
   }
 }
 
-export default JsonPortal;
+const mapStateToProps = (state) => {
+  return {
+    selected_json: state.json.ui.selected_json,
+  };
+};
+export default connect(mapStateToProps, { selectJson })(JsonPortal);

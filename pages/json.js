@@ -9,7 +9,6 @@ import { initializeUser, initializeEnvironment } from '../ducks/info';
 import { showModal } from '../ducks/json/ui';
 
 import Page from '../layout/page';
-import JSONModal from '../components/json/configuration/JSONModal';
 import FilteredTable from '../components/json/filtered_table/FilteredTable';
 
 const TextEditor = dynamic(
@@ -45,7 +44,6 @@ class Json extends Component {
           }}
         >
           <div className="show_json_configuration_button">
-            <JSONModal />
             <Button onClick={() => showModal('create_json')}>
               Create JSON
             </Button>

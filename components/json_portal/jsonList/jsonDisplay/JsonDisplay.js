@@ -30,7 +30,11 @@ const calculate_number_of_lumisections_from_json = (json) => {
 };
 
 class JsonDisplay extends Component {
-  state = { number_of_runs_in_json: 0, number_of_lumisections_in_json: 0 };
+  state = {
+    number_of_runs_in_json: 0,
+    number_of_lumisections_in_json: 0,
+    show_debugging: false,
+  };
 
   getDisplayedJSON(json, length) {
     return stringify(json, { maxLength: length || 44 });
@@ -66,7 +70,7 @@ class JsonDisplay extends Component {
       number_of_runs_in_json,
       number_of_lumisections_in_json,
     } = this.state;
-    const { item } = this.props;
+    const { item, toggleDebugging } = this.props;
     const {
       id,
       dataset_name_filter,
@@ -114,7 +118,9 @@ class JsonDisplay extends Component {
           </Button>
           <br />
           <br />
-          <Button icon={<BugOutlined />}>Debug JSON</Button>
+          <Button onClick={() => toggleDebugging(true)} icon={<BugOutlined />}>
+            Debug JSON
+          </Button>
           <br />
           <br />
           <Button icon={<PieChartOutlined />}>

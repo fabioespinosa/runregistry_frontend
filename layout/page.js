@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import Progress from 'nprogress';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import { hotjar } from 'react-hotjar';
 import Swal from 'sweetalert2';
 // import stylesheet from 'antd/dist/antd.min.css';
@@ -15,7 +15,7 @@ import { colors } from '../components/ui/theme';
  * Starts nprogress (the 5px colored bar on top that appears progressing as route changes)
  * @param {*} url
  */
-Router.onRouteChangeStart = url => Progress.start();
+Router.onRouteChangeStart = (url) => Progress.start();
 Router.onRouteChangeComplete = () => Progress.done();
 Router.onRouteChangeError = () => Progress.done();
 
@@ -24,16 +24,16 @@ class Page extends Component {
     if (process.env.NODE_ENV === 'production') {
       if (location && location.href) {
         if (location.href.includes('dev-cmsrunregistry')) {
-          hotjar.initialize(1731488, 6);
+          // hotjar.initialize(1731488, 6);
           Swal({
             type: 'warning',
             title: 'You are not in Production RR',
             html: `This environment of RR is only for testing, please use it freely to test all features, none of the results will be taken into account for certification. <br/><br/>
                    For production Run Registry go to <br/> <a href="https://cmsrunregistry.web.cern.ch">cmsrunregistry.web.cern.ch</a>. <br/><br/>
-                   We are actively looking for bugs in the application, please report anything weird to <a href="mailto:cms-dqm-coreTeam@cern.ch">cms-dqm-coreTeam@cern.ch</a>`
+                   We are actively looking for bugs in the application, please report anything weird to <a href="mailto:cms-dqm-coreTeam@cern.ch">cms-dqm-coreTeam@cern.ch</a>`,
           });
         } else if (location.href.includes('cmsrunregistry')) {
-          hotjar.initialize(1732502, 6);
+          // hotjar.initialize(1732502, 6);
         }
       }
     }
@@ -87,9 +87,9 @@ class Page extends Component {
   }
 }
 
-const mapStatetoProps = state => {
+const mapStatetoProps = (state) => {
   return {
-    env: state.info.environment
+    env: state.info.environment,
   };
 };
 export default connect(mapStatetoProps)(Page);
