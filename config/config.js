@@ -25,7 +25,7 @@ const config = {
 };
 exports.config = config;
 
-exports.api_url = config[ENV]['api_url'];
+exports.api_url = config[ENV || 'development']['api_url'];
 exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
 const offline_column_structure = {

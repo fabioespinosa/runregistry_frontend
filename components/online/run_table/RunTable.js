@@ -9,7 +9,7 @@ import rename_triplets from '../../common/CommonTableComponents/FilteringAndSort
 import { moveRun, markSignificant } from '../../../ducks/online/runs';
 import {
   showManageRunModal,
-  showClassifierVisualizationModal
+  showClassifierVisualizationModal,
 } from '../../../ducks/online/ui';
 import { showLumisectionModal } from '../../../ducks/global_ui';
 
@@ -18,7 +18,7 @@ import column_generator from './columns/columns';
 const Filter = dynamic(
   import('../../common/CommonTableComponents/filter/Filter'),
   {
-    ssr: false
+    ssr: false,
   }
 );
 
@@ -29,14 +29,14 @@ const valueProcessor = ({ field, operator, value }) => {
     return {
       field: `${field}.${value || 'GOOD'}`,
       operator: '>',
-      value: 0
+      value: 0,
     };
   }
   if ((field && field.includes('_state')) || field === 'state') {
     return {
       field,
       operator,
-      value: value || 'OPEN'
+      value: value || 'OPEN',
     };
   }
   if (value === '') {
@@ -47,17 +47,17 @@ const valueProcessor = ({ field, operator, value }) => {
     // Handle the case where there are lots of run numbers in the text field:
     value = value.replace(/,/g, ''); // Replace commas for spaces, useful for input of runs in syntax: 325334, 234563
     value = value.trim().replace(/ +/g, ' '); // Replace more than one space for 1 space
-    const run_numbers = value.split(' ').filter(arg => arg !== ''); // Split per space
+    const run_numbers = value.split(' ').filter((arg) => arg !== ''); // Split per space
     return {
       combinator: 'or',
       not: false,
-      rules: run_numbers.map(run_number => {
+      rules: run_numbers.map((run_number) => {
         return {
           field: 'run_number',
           operator: '=',
-          value: run_number
+          value: run_number,
         };
-      })
+      }),
     };
   }
 
@@ -106,7 +106,7 @@ class RunTable extends Component {
     window.location.href = window.location.href.split('?')[0];
   };
 
-  setSortingsOnUrl = sortings => {
+  setSortingsOnUrl = (sortings) => {
     const { sorting_prefix_from_url } = this.props;
     const filters_from_url = window.location.href.split('?')[1];
     let filters = {};
@@ -120,7 +120,7 @@ class RunTable extends Component {
     }
     let url_query = qs.stringify({
       ...filters,
-      [sorting_prefix_from_url]: sortings
+      [sorting_prefix_from_url]: sortings,
     });
     if (sortings.length === 0) {
       const new_filter = { ...filters };
@@ -150,7 +150,7 @@ class RunTable extends Component {
     }
     this.setState({ loading: false });
   };
-  onPageChange = async page => {
+  onPageChange = async (page) => {
     this.sortTable(this.state.sortings, page);
   };
   onPageSizeChange = async (newSize, page) => {
@@ -169,7 +169,8 @@ class RunTable extends Component {
       showClassifierVisualizationModal,
       markSignificant,
       workspace,
-      workspaces
+      workspaces,
+      table_label,
     } = this.props;
     const { runs, pages, count } = run_table;
     const columns = column_generator({
@@ -180,14 +181,14 @@ class RunTable extends Component {
       significant_runs: false,
       markSignificant,
       workspace,
-      workspaces
+      workspaces,
     });
     // Filter is on if there is an 'and' and it has contents
     const filter =
       (filters.and && filters.and.length > 0) || sortings.length > 0;
     return (
       <div>
-        {filter ? 'Runs with filter ' : 'All runs '} ({count}):{' '}
+        {filter ? 'Runs with filter ' : table_label} ({count}):{' '}
         {filter && (
           <a onClick={this.removeFilters}>
             &nbsp; Click here to remove all filters and sortings
@@ -198,14 +199,14 @@ class RunTable extends Component {
             .filter(({ accessor }) => !!accessor)
             .map(({ prefix_for_filtering: prefix, id }) => ({
               name: `${prefix}${prefix && '.'}${id}`,
-              label: id
+              label: id,
             }))}
           key={workspace}
           other_columns={online_columns}
           filterTable={this.filterTable}
           valueProcessor={valueProcessor}
           filter_prefix_from_url={filter_prefix_from_url}
-          setParentLoading={loading => this.setState({ loading })}
+          setParentLoading={(loading) => this.setState({ loading })}
         />
         {error && (
           <div style={{ color: 'red' }}>
@@ -222,13 +223,13 @@ class RunTable extends Component {
           }
           pages={pages}
           loading={loading}
-          onPageChange={page => {
+          onPageChange={(page) => {
             this.onPageChange(page);
           }}
           onPageSizeChange={(pageSize, page) =>
             this.onPageSizeChange(pageSize, page)
           }
-          onSortedChange={sortings => {
+          onSortedChange={(sortings) => {
             // 0 is for first page
             this.sortTable(sortings, 0);
           }}
@@ -250,10 +251,10 @@ class RunTable extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     workspaces: state.online.workspace.workspaces,
-    workspace: state.online.workspace.workspace
+    workspace: state.online.workspace.workspace,
   };
 };
 
@@ -263,6 +264,6 @@ export default withRouter(
     showLumisectionModal,
     showClassifierVisualizationModal,
     moveRun,
-    markSignificant
+    markSignificant,
   })(RunTable)
 );

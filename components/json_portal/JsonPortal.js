@@ -4,11 +4,13 @@ import { Menu } from 'antd';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { MailOutlined, AppstoreOutlined } from '@ant-design/icons';
-import DebuggingJson from './debuggingJson/DebuggingJson';
 import { selectJson } from '../../ducks/json/ui';
 import { api_url } from '../../config/config';
 import { error_handler } from '../../utils/error_handlers';
 
+import DebuggingJson from './debuggingJson/DebuggingJson';
+import VisualizeLuminosity from './visualizeLuminosity/VisualizeLuminosity';
+import SubystemDivision from './visualizeLuminosity/subSystemDivision/SubsystemDivision';
 const { SubMenu } = Menu;
 
 import JsonList from './jsonList/JsonList';
@@ -18,6 +20,7 @@ class JsonPortal extends Component {
     selected_tab: 'my_jsons',
     jsons: [],
     debugging_json: false,
+    visualize_luminosity: false,
   };
 
   async componentDidMount() {
@@ -77,9 +80,17 @@ class JsonPortal extends Component {
 
   toggleDebugging = (show) => this.setState({ debugging_json: show });
 
+  toggleVisualizeLuminosity = (show) =>
+    this.setState({ visualize_luminosity: show });
+
   render() {
     const { selected_json } = this.props;
-    const { selected_tab, debugging_json, jsons } = this.state;
+    const {
+      selected_tab,
+      debugging_json,
+      visualize_luminosity,
+      jsons,
+    } = this.state;
     return (
       <div className="container">
         <Menu
@@ -108,10 +119,17 @@ class JsonPortal extends Component {
           selected_json={selected_json}
           selectJson={this.selectJson}
           toggleDebugging={this.toggleDebugging}
+          toggleVisualizeLuminosity={this.toggleVisualizeLuminosity}
           fetchJson={this.fetchJsons}
         />
         {debugging_json && (
           <DebuggingJson selected_json={selected_json} jsons={jsons} />
+        )}
+        {visualize_luminosity && (
+          <div>
+            <SubystemDivision selected_json={selected_json} />
+            {/* <VisualizeLuminosity selected_json={selected_json} /> */}
+          </div>
         )}
         <style jsx>{`
           .container {

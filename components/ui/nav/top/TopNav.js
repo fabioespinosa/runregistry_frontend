@@ -9,10 +9,10 @@ class TopNav extends Component {
   render() {
     const {
       router: {
-        query: { type, section, workspace }
+        query: { type, section, workspace },
       },
       user,
-      env
+      env,
     } = this.props;
     // Log to see who has used the webpage on the server:
     console.log('user:', user.displayname);
@@ -43,7 +43,7 @@ class TopNav extends Component {
                     display: 'inline-block',
                     color: 'white',
                     marginLeft: '10px',
-                    marginBottom: 0
+                    marginBottom: 0,
                   }}
                 >
                   Run Registry
@@ -92,7 +92,7 @@ class TopNav extends Component {
                 onClick={() => {}}
                 style={{
                   color: 'red !important',
-                  fontSize: '0.9em'
+                  fontSize: '0.9em',
                 }}
               >
                 STAGING ENV (FOR TESTING)
@@ -132,10 +132,10 @@ class TopNav extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.info,
-    env: state.info.environment
+    env: state.info.environment,
   };
 };
 

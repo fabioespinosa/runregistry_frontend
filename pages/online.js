@@ -25,14 +25,14 @@ class Online extends Component {
     if (!isServer) {
       store.dispatch({
         type: CHANGE_WORKSPACE,
-        payload: query.workspace
+        payload: query.workspace,
       });
     }
   }
 
   async componentDidMount() {
     const {
-      router: { query }
+      router: { query },
     } = this.props;
     await this.props.fetchWorkspaces(query);
   }
@@ -42,13 +42,13 @@ class Online extends Component {
     const {
       router: {
         asPath,
-        query: { type, section, workspace, run_filter }
+        query: { type, section, workspace, run_filter },
       },
       user,
       run_table,
       significant_run_table,
       filterRuns,
-      filterSignificantRuns
+      filterSignificantRuns,
     } = this.props;
     const breadcrumbs = asPath.split('/');
     return (
@@ -62,7 +62,7 @@ class Online extends Component {
             // background: '#fff',
             padding: 0,
             margin: 0,
-            minHeight: 280
+            minHeight: 280,
           }}
         >
           <ManageRunModal />
@@ -76,6 +76,7 @@ class Online extends Component {
             sorting_prefix_from_url="ots"
             // otf for One Top Filters
             filter_prefix_from_url="otf"
+            table_label="All runs "
           />
           <RunTable
             run_table={significant_run_table}
@@ -85,6 +86,7 @@ class Online extends Component {
             sorting_prefix_from_url="obs"
             // obf for Online Bottom Filters
             filter_prefix_from_url="obf"
+            table_label="Significant runs "
           />
         </Content>
       </Page>
@@ -92,11 +94,11 @@ class Online extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.info,
     run_table: state.online.runs,
-    significant_run_table: state.online.significant_runs
+    significant_run_table: state.online.significant_runs,
   };
 };
 
@@ -104,6 +106,6 @@ export default withRouter(
   connect(mapStateToProps, {
     fetchWorkspaces,
     filterRuns,
-    filterSignificantRuns
+    filterSignificantRuns,
   })(Online)
 );

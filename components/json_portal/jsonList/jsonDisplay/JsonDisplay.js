@@ -70,7 +70,7 @@ class JsonDisplay extends Component {
       number_of_runs_in_json,
       number_of_lumisections_in_json,
     } = this.state;
-    const { item, toggleDebugging } = this.props;
+    const { item, toggleDebugging, toggleVisualizeLuminosity } = this.props;
     const {
       id,
       dataset_name_filter,
@@ -123,7 +123,10 @@ class JsonDisplay extends Component {
           </Button>
           <br />
           <br />
-          <Button icon={<PieChartOutlined />}>
+          <Button
+            onClick={() => toggleVisualizeLuminosity(true)}
+            icon={<PieChartOutlined />}
+          >
             Generate JSON Luminosity losses Visualization
           </Button>
           <br />

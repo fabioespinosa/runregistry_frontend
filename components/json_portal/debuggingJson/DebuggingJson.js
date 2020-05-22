@@ -9,7 +9,7 @@ class DebuggingJson extends Component {
     this.scrollToBottom();
   }
   scrollToBottom() {
-    animateScroll.scrollToBottom();
+    // animateScroll.scrollToBottom();
   }
 
   render() {
