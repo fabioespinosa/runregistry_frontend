@@ -1,5 +1,7 @@
 import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
+import { Menu, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { certifiable_offline_components } from '../../../../config/config';
 
 const column_filter_description = {
@@ -81,10 +83,10 @@ const column_generator = ({
       ),
     },
     {
-      Header: 'Appeared In',
-      id: 'appeared_in',
-      accessor: 'appeared_in',
-      prefix_for_filtering: 'dataset_attributes',
+      Header: 'GUI Link',
+      id: 'datasets_in_gui',
+      accessor: 'datasets_in_gui',
+      prefix_for_filtering: '',
       maxWidth: 150,
       Cell: ({ original, value }) => (
         <div style={{ textAlign: 'center' }}>
@@ -95,7 +97,35 @@ const column_generator = ({
               borderRadius: '1px',
             }}
           >
-            <span style={{ padding: '4px' }}>{value}</span>
+            {original.datasets_in_gui?.length > 0 ? (
+              <Dropdown
+                overlay={
+                  <Menu>
+                    {original.datasets_in_gui.map((dataset_in_gui) => (
+                      <Menu.Item key={dataset_in_gui}>
+                        <a
+                          target="_blank"
+                          href={`https://dqm-gui.web.cern.ch/?dataset_name=${dataset_in_gui}&run_number=${original.run_number}`}
+                        >
+                          {original.run_number} - {dataset_in_gui}
+                        </a>
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+                }
+                trigger={['click']}
+              >
+                <a
+                  className="ant-dropdown-link"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  GUI Link
+                  <DownOutlined />
+                </a>
+              </Dropdown>
+            ) : (
+              <span style={{ padding: '4px' }}>Not in GUI yet</span>
+            )}
           </span>
         </div>
       ),

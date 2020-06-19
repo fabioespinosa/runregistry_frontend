@@ -14,9 +14,14 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { CaretUpOutlined } from '@ant-design/icons';
 import { LuminositySourceModal } from './luminositySourceModal/LuminositySourceModal';
 import { error_handler } from '../../../../utils/error_handlers';
-import { dcs_mapping } from '../../../../config/json_visualization_dcs_bit_mapping';
+import {
+  dcs_mapping,
+  short_runs_mapping,
+  tracker_mapping,
+} from '../../../../config/json_visualization_dcs_bit_mapping';
 import { add_jsons_fast } from 'golden-json-helpers';
 
 const COLORS = [
@@ -95,7 +100,7 @@ const getVars = (rule) => {
   return vars;
 };
 
-const getWhichSubsystemDCSBelongsTo = (dcs_var) => {
+const getWhichSubsystemDCSBelongsTo = (dcs_var, dcs_mapping) => {
   for (const [subsystem, dcs_vars] of Object.entries(dcs_mapping)) {
     if (dcs_vars.includes(dcs_var)) {
       return subsystem;
@@ -104,26 +109,29 @@ const getWhichSubsystemDCSBelongsTo = (dcs_var) => {
   return 'unknown';
 };
 
-const CustomTooltip = ({ label, active, payload, runs }) => {
-  if (active) {
-    return (
-      <div className="custom-tooltip">
-        <p className="label">{`${label}: ${payload[0].value}`}</p>
-        <p className="desc">{JSON.stringify(runs[label], null, 2)}</p>
-      </div>
-    );
+function isSubsetOf(set, subset) {
+  if (set.length === 0 || subset.length === 0) {
+    return false;
   }
-  return null;
-};
+  for (let i = 0; i < set.length; i++) {
+    if (subset.indexOf(set[i]) == -1) {
+      return false;
+    }
+  }
+  return true;
+}
 
 const PieChartAndBarChart = ({ title, data, runs }) => {
   const [barChart, setChart] = useState('bar');
   const [showModal, setShowModal] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState('');
   const onClick = (props) => {
+    console.log(props);
     if (props) {
-      setShowModal(true);
-      setSelectedLabel(props.activeLabel);
+      if (props.activePayload && props.activePayload[0]) {
+        setShowModal(true);
+        setSelectedLabel(props.activePayload[0].payload.name);
+      }
     }
   };
   return (
@@ -155,6 +163,7 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
             data={data}
             margin={{ top: 5, right: 30, left: 200, bottom: 5 }}
             onClick={onClick}
+            cursor="pointer"
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
@@ -166,7 +175,7 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
         </ResponsiveContainer>
       ) : (
         <ResponsiveContainer width="80%" height={450}>
-          <PieChart onClick={onClick}>
+          <PieChart onClick={onClick} cursor="pointer">
             <Pie
               data={data}
               cx="50%"
@@ -194,6 +203,14 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
         </ResponsiveContainer>
       )}
     </div>
+  );
+};
+
+const Delta = ({ value, reason }) => {
+  return (
+    <p>
+      <CaretUpOutlined /> = {value}/pb {reason}
+    </p>
   );
 };
 
@@ -237,12 +254,92 @@ class VisualizeLuminosity extends Component {
       runs_lumisections_responsible_for_rule,
     } = this.props.selected_json;
 
+    const rules_flagged_false_combination_without_short_runs = {};
+    // Only short runs:
+    let short_runs_losses = {};
+    let short_runs_runs = {};
+    let short_runs_total = 0;
+    for (const [key, val] of Object.entries(
+      rules_flagged_false_combination_luminosity
+    )) {
+      const vars = getVars(key);
+      // Short run attributes always belong to OMS:
+      const dcs_only = vars
+        .filter((name) => name.includes('.oms.'))
+        .map((name) => name.split('.oms.')[1]);
+
+      let category_added = false;
+      dcs_only.forEach((dcs_name) => {
+        const category = getWhichSubsystemDCSBelongsTo(
+          dcs_name,
+          short_runs_mapping
+        );
+        if (category !== 'unknown') {
+          category_added = true;
+          short_runs_total += val;
+          if (typeof short_runs_losses[dcs_name] === 'undefined') {
+            short_runs_losses[dcs_name] = val;
+            short_runs_runs[dcs_name] =
+              runs_lumisections_responsible_for_rule[key];
+          } else {
+            short_runs_losses[dcs_name] += val;
+            short_runs_runs[dcs_name] = add_jsons_fast(
+              short_runs_runs[dcs_name],
+              runs_lumisections_responsible_for_rule[key]
+            );
+          }
+        }
+      });
+      // Now we build a combination without the short runs keys:
+      if (!category_added) {
+        rules_flagged_false_combination_without_short_runs[key] = val;
+      }
+    }
+
+    // Exlusive only short runs;
+    let short_runs_exclusive_losses = {};
+    let short_runs_exclusive_runs = {};
+    let short_runs_exclusive_total = 0;
+    for (const [key, val] of Object.entries(
+      rules_flagged_false_combination_luminosity
+    )) {
+      const vars = getVars(key);
+      // Short run attributes always belong to OMS:
+      const dcs_only = vars
+        .filter((name) => name.includes('.oms.'))
+        .map((name) => name.split('.oms.')[1]);
+
+      const all_belong_to_short_runs =
+        dcs_only.length > 0 &&
+        dcs_only.every(
+          (rule) =>
+            getWhichSubsystemDCSBelongsTo(rule, short_runs_mapping) !==
+            'unknown'
+        );
+      if (all_belong_to_short_runs) {
+        const category_string = dcs_only.join(', ');
+        short_runs_exclusive_total += val;
+        if (
+          typeof short_runs_exclusive_losses[category_string] === 'undefined'
+        ) {
+          short_runs_exclusive_losses[category_string] = val;
+          short_runs_exclusive_runs[category_string] =
+            runs_lumisections_responsible_for_rule[key];
+        } else {
+          short_runs_exclusive_losses[category_string] += val;
+          short_runs_exclusive_runs[category_string] = add_jsons_fast(
+            short_runs_exclusive_runs[category_string],
+            runs_lumisections_responsible_for_rule[key]
+          );
+        }
+      }
+    }
     // ONLY DCS:
     let dcs_lumi_losses = {};
     let dcs_lumi_losses_runs = {};
     let dcs_lumi_loss_total = 0;
     for (const [key, val] of Object.entries(
-      rules_flagged_false_combination_luminosity
+      rules_flagged_false_combination_without_short_runs
     )) {
       const vars = getVars(key);
       const dcs_only = vars
@@ -256,7 +353,7 @@ class VisualizeLuminosity extends Component {
           dcs_lumi_losses_runs[dcs_name] =
             runs_lumisections_responsible_for_rule[key];
         } else {
-          dcs_lumi_losses[dcs_name] = dcs_lumi_losses[dcs_name] + val;
+          dcs_lumi_losses[dcs_name] += val;
           dcs_lumi_losses_runs[dcs_name] = add_jsons_fast(
             dcs_lumi_losses_runs[dcs_name],
             runs_lumisections_responsible_for_rule[key]
@@ -272,7 +369,7 @@ class VisualizeLuminosity extends Component {
     let subsystem_dcs_losses_runs = {};
     let subsystem_lumi_loss_total = 0;
     for (const [key, val] of Object.entries(
-      rules_flagged_false_combination_luminosity
+      rules_flagged_false_combination_without_short_runs
     )) {
       const vars = getVars(key);
       const dcs_only = vars
@@ -282,7 +379,7 @@ class VisualizeLuminosity extends Component {
       const subsystem_already_added = {};
       dcs_only.forEach((dcs_name) => {
         // We need to find to which subsystem does this dcs rule belong to:
-        const subsystem = getWhichSubsystemDCSBelongsTo(dcs_name);
+        const subsystem = getWhichSubsystemDCSBelongsTo(dcs_name, dcs_mapping);
         if (typeof subsystem_already_added[subsystem] === 'undefined') {
           subsystem_lumi_loss_total += val;
           if (typeof subsystem_dcs_losses[subsystem] === 'undefined') {
@@ -309,7 +406,7 @@ class VisualizeLuminosity extends Component {
     let rr_lumi_losses_runs = {};
     let rr_lumi_loss_total = 0;
     for (const [key, val] of Object.entries(
-      rules_flagged_false_combination_luminosity
+      rules_flagged_false_combination_without_short_runs
     )) {
       const vars = getVars(key);
       const rr_only = vars
@@ -339,7 +436,7 @@ class VisualizeLuminosity extends Component {
     let subsystem_rr_losses_runs = {};
     let subsystem_rr_loss = 0;
     for (const [key, val] of Object.entries(
-      rules_flagged_false_combination_luminosity
+      rules_flagged_false_combination_without_short_runs
     )) {
       const vars = getVars(key);
       const rr_only = vars
@@ -376,7 +473,7 @@ class VisualizeLuminosity extends Component {
     let inclusive_losses_runs = {};
     let inclusive_loss = 0;
     for (const [key, val] of Object.entries(
-      rules_flagged_false_combination_luminosity
+      rules_flagged_false_combination_without_short_runs
     )) {
       const vars = getVars(key);
       const rr_only = vars
@@ -409,7 +506,7 @@ class VisualizeLuminosity extends Component {
 
       dcs_only.forEach((dcs_name) => {
         // We need to find to which subsystem does this dcs rule belong to:
-        const subsystem = getWhichSubsystemDCSBelongsTo(dcs_name);
+        const subsystem = getWhichSubsystemDCSBelongsTo(dcs_name, dcs_mapping);
         if (typeof subsystem_already_added[subsystem] === 'undefined') {
           inclusive_loss += val;
           if (typeof inclusive_losses[subsystem] === 'undefined') {
@@ -436,11 +533,12 @@ class VisualizeLuminosity extends Component {
     // Exclusive losses
     let exclusive_losses = {
       mixed: 0,
+      tracker_hv: 0,
     };
     let exclusive_losses_runs = { mixed: {} };
     let exclusive_loss = 0;
     for (const [key, val] of Object.entries(
-      rules_flagged_false_combination_luminosity
+      rules_flagged_false_combination_without_short_runs
     )) {
       const vars = getVars(key);
       const rr_only = vars
@@ -451,32 +549,69 @@ class VisualizeLuminosity extends Component {
         .filter((name) => name.includes('.oms.'))
         .map((name) => name.split('.oms.')[1]);
 
-      const loss_added = false;
-      for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
-        const only_dcs_bits_from_this_subystem = dcs_only.every((dcs_bit) =>
-          dcs_bits.includes(dcs_bit)
-        );
-        const only_rr_from_this_subystem = rr_only.every(
-          (rr_rule) => rr_rule.split('-')[0] === subsystem
-        );
-        if (only_dcs_bits_from_this_subystem && only_rr_from_this_subystem) {
-          exclusive_loss += val;
+      let loss_added = false;
+
+      if (!loss_added) {
+        const strip_dcs_bits = tracker_mapping['strip'];
+        const pixel_dcs_bits = tracker_mapping['pixel'];
+        // For tracker_hv to be added it must be at least one from strip and at least 1 from pixel:
+        const number_of_dcs_bits_in_strip = dcs_only.filter((dcs_bit) =>
+          strip_dcs_bits.includes(dcs_bit)
+        ).length;
+        const number_of_dcs_bits_in_pixel = dcs_only.filter((dcs_bit) =>
+          pixel_dcs_bits.includes(dcs_bit)
+        ).length;
+        if (
+          number_of_dcs_bits_in_strip > 0 &&
+          number_of_dcs_bits_in_pixel > 0
+        ) {
           loss_added = true;
-          if (typeof exclusive_losses[subsystem] === 'undefined') {
-            exclusive_losses[subsystem] = val;
-            exclusive_losses_runs[subsystem] =
-              runs_lumisections_responsible_for_rule[key];
-          } else {
-            exclusive_losses[subsystem] = exclusive_losses[subsystem] + val;
-            exclusive_losses_runs[subsystem] = add_jsons_fast(
-              exclusive_losses_runs[subsystem],
-              runs_lumisections_responsible_for_rule[key]
-            );
+          exclusive_losses['tracker_hv'] += val;
+          exclusive_losses_runs['tracker_hv'] = add_jsons_fast(
+            exclusive_losses_runs['tracker_hv'],
+            runs_lumisections_responsible_for_rule[key]
+          );
+        }
+      }
+      // We check that the loss hasn't been added and that there are ONLY rules failing belonging to Run Registry or OMS, if by some chance another rule appeared which belongs to other criteria it shouldn't be attributed here
+      if (!loss_added && dcs_only.length + rr_only.length === vars.length) {
+        for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
+          const only_dcs_bits_from_this_subystem = dcs_only.every((dcs_bit) =>
+            dcs_bits.includes(dcs_bit)
+          );
+          const only_rr_from_this_subystem = rr_only.every((rr_rule) => {
+            let [rr_subsystem, rr_column] = rr_rule.split('-');
+            if (rr_subsystem === 'ecal' && rr_column === 'es') {
+              rr_subsystem = 'es';
+            }
+            if (rr_subsystem === 'tracker' && rr_column === 'strip') {
+              rr_subsystem = 'strip';
+            }
+            if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
+              rr_subsystem = 'pixel';
+            }
+            return rr_subsystem === subsystem;
+          });
+          if (only_dcs_bits_from_this_subystem && only_rr_from_this_subystem) {
+            exclusive_loss += val;
+            loss_added = true;
+            if (typeof exclusive_losses[subsystem] === 'undefined') {
+              exclusive_losses[subsystem] = val;
+              exclusive_losses_runs[subsystem] =
+                runs_lumisections_responsible_for_rule[key];
+            } else {
+              exclusive_losses[subsystem] = exclusive_losses[subsystem] + val;
+              exclusive_losses_runs[subsystem] = add_jsons_fast(
+                exclusive_losses_runs[subsystem],
+                runs_lumisections_responsible_for_rule[key]
+              );
+            }
           }
         }
       }
+
       if (!loss_added) {
-        exclusive_losses['mixed'] = exclusive_losses['mixed'] + val;
+        exclusive_losses['mixed'] += val;
         exclusive_losses_runs['mixed'] = add_jsons_fast(
           exclusive_losses_runs['mixed'],
           runs_lumisections_responsible_for_rule[key]
@@ -489,6 +624,142 @@ class VisualizeLuminosity extends Component {
       exclusive_losses_runs
     );
 
+    // Exclusive losses dcs
+
+    let exclusive_losses_dcs = {
+      tracker_hv: 0,
+    };
+    let exclusive_losses_dcs_runs = {};
+    let exclusive_loss_dcs = 0;
+    for (const [key, val] of Object.entries(
+      rules_flagged_false_combination_without_short_runs
+    )) {
+      const vars = getVars(key);
+
+      const dcs_only = vars
+        .filter((name) => name.includes('.oms.'))
+        .map((name) => name.split('.oms.')[1]);
+
+      let loss_added = false;
+
+      if (!loss_added) {
+        const strip_dcs_bits = tracker_mapping['strip'];
+        const pixel_dcs_bits = tracker_mapping['pixel'];
+        // For tracker_hv to be added it must be at least one from strip and at least 1 from pixel:
+        const number_of_dcs_bits_in_strip = dcs_only.filter((dcs_bit) =>
+          strip_dcs_bits.includes(dcs_bit)
+        ).length;
+        const number_of_dcs_bits_in_pixel = dcs_only.filter((dcs_bit) =>
+          pixel_dcs_bits.includes(dcs_bit)
+        ).length;
+        if (
+          number_of_dcs_bits_in_strip > 0 &&
+          number_of_dcs_bits_in_pixel > 0
+        ) {
+          loss_added = true;
+          exclusive_losses_dcs['tracker_hv'] += val;
+          exclusive_losses_dcs_runs['tracker_hv'] = add_jsons_fast(
+            exclusive_losses_dcs_runs['tracker_hv'],
+            runs_lumisections_responsible_for_rule[key]
+          );
+        }
+      }
+
+      if (!loss_added) {
+        for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
+          const only_dcs_bits_from_this_subystem = isSubsetOf(
+            dcs_only,
+            dcs_bits
+          );
+          if (only_dcs_bits_from_this_subystem) {
+            loss_added = true;
+            exclusive_loss_dcs += val;
+            if (typeof exclusive_losses_dcs[subsystem] === 'undefined') {
+              exclusive_losses_dcs[subsystem] = val;
+              exclusive_losses_dcs_runs[subsystem] =
+                runs_lumisections_responsible_for_rule[key];
+            } else {
+              exclusive_losses_dcs[subsystem] += val;
+              exclusive_losses_dcs_runs[subsystem] = add_jsons_fast(
+                exclusive_losses_dcs_runs[subsystem],
+                runs_lumisections_responsible_for_rule[key]
+              );
+            }
+          }
+        }
+      }
+    }
+
+    // Exclusive losses dcs per dcs bit
+    let exclusive_losses_dcs_per_bit = {};
+    let exclusive_losses_dcs_per_bit_runs = {};
+    let exclusive_loss_dcs_per_bit = 0;
+    for (const [key, val] of Object.entries(
+      rules_flagged_false_combination_without_short_runs
+    )) {
+      const vars = getVars(key);
+
+      const dcs_only = vars
+        .filter((name) => name.includes('.oms.'))
+        .map((name) => name.split('.oms.')[1]);
+
+      if (vars.length === dcs_only.length && vars.length === 1) {
+        dcs_only.forEach((dcs_name) => {
+          exclusive_loss_dcs_per_bit += val;
+          if (typeof exclusive_losses_dcs_per_bit[dcs_name] === 'undefined') {
+            exclusive_losses_dcs_per_bit[dcs_name] = val;
+            exclusive_losses_dcs_per_bit_runs[dcs_name] =
+              runs_lumisections_responsible_for_rule[key];
+          } else {
+            exclusive_losses_dcs_per_bit[dcs_name] =
+              exclusive_losses_dcs_per_bit[dcs_name] + val;
+            exclusive_losses_dcs_per_bit_runs[dcs_name] = add_jsons_fast(
+              exclusive_losses_dcs_per_bit_runs[dcs_name],
+              runs_lumisections_responsible_for_rule[key]
+            );
+          }
+        });
+      }
+    }
+
+    // Exclusive losses
+    let exclusive_losses_rr = {};
+    let exclusive_losses_rr_runs = {};
+    let exclusive_loss_rr = 0;
+    for (const [key2, val2] of Object.entries(
+      rules_flagged_false_combination_without_short_runs
+    )) {
+      const vars = getVars(key2);
+      const rr_only = vars
+        .filter((name) => name.includes('.rr.'))
+        .map((name) => name.split('.rr.')[1]);
+
+      for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
+        const only_rr_from_this_subystem =
+          rr_only.length > 0 &&
+          rr_only.every((rr_rule) => rr_rule.split('-')[0] === subsystem);
+        if (only_rr_from_this_subystem) {
+          exclusive_loss_rr += val2;
+          if (typeof exclusive_losses_rr[subsystem] === 'undefined') {
+            exclusive_losses_rr[subsystem] = val2;
+            exclusive_losses_rr_runs[subsystem] =
+              runs_lumisections_responsible_for_rule[key2];
+          } else {
+            exclusive_losses_rr[subsystem] =
+              exclusive_losses_rr[subsystem] + val2;
+            exclusive_losses_rr_runs[subsystem] = add_jsons_fast(
+              exclusive_losses_rr_runs[subsystem],
+              runs_lumisections_responsible_for_rule[key2]
+            );
+          }
+        }
+      }
+    }
+
+    short_runs_losses = this.transform_data_to_recharts(short_runs_losses);
+    short_runs_exclusive_losses = this.transform_data_to_recharts(
+      short_runs_exclusive_losses
+    );
     dcs_lumi_losses = this.transform_data_to_recharts(dcs_lumi_losses);
     subsystem_dcs_losses = this.transform_data_to_recharts(
       subsystem_dcs_losses
@@ -497,6 +768,13 @@ class VisualizeLuminosity extends Component {
     subsystem_rr_losses = this.transform_data_to_recharts(subsystem_rr_losses);
     inclusive_losses = this.transform_data_to_recharts(inclusive_losses);
     exclusive_losses = this.transform_data_to_recharts(exclusive_losses);
+    exclusive_losses_dcs = this.transform_data_to_recharts(
+      exclusive_losses_dcs
+    );
+    exclusive_losses_rr = this.transform_data_to_recharts(exclusive_losses_rr);
+    exclusive_losses_dcs_per_bit = this.transform_data_to_recharts(
+      exclusive_losses_dcs_per_bit
+    );
 
     rules_flagged_false_quantity_luminosity = this.transform_data_to_recharts(
       rules_flagged_false_quantity_luminosity
@@ -508,20 +786,31 @@ class VisualizeLuminosity extends Component {
       rules_flagged_false_quantity_luminosity,
       rules_flagged_false_combination_luminosity,
 
+      short_runs_losses,
+      short_runs_exclusive_losses,
       dcs_lumi_losses,
       subsystem_dcs_losses,
       rr_lumi_losses,
       subsystem_rr_losses,
       inclusive_losses,
       exclusive_losses,
+      exclusive_losses_dcs,
+      exclusive_losses_rr,
+      exclusive_losses_dcs_per_bit,
 
+      short_runs_runs,
+      short_runs_exclusive_runs,
       dcs_lumi_losses_runs,
       subsystem_dcs_losses_runs,
       rr_lumi_losses_runs,
       subsystem_rr_losses_runs,
       inclusive_losses_runs,
       exclusive_losses_runs,
+      exclusive_losses_dcs_runs,
+      exclusive_losses_rr_runs,
+      exclusive_losses_dcs_per_bit_runs,
 
+      short_runs_total,
       dcs_lumi_loss_total,
       subsystem_lumi_loss_total,
       rr_lumi_loss_total,
@@ -548,27 +837,45 @@ class VisualizeLuminosity extends Component {
   };
   render() {
     const {
+      total_recorded_luminosity,
+      total_delivered_luminosity,
+      recorded_luminosity_in_json,
+      delivered_luminosity_in_json,
       total_recorded_luminosity_lost,
       total_delivered_luminosity_lost,
+      total_recorded_luminosity_from_run_range,
+      total_delivered_luminosity_from_run_range,
     } = this.props.selected_json;
 
     const {
       rules_flagged_false_quantity_luminosity,
       rules_flagged_false_combination_luminosity,
 
+      short_runs_losses,
+      short_runs_exclusive_losses,
       dcs_lumi_losses,
       subsystem_dcs_losses,
       rr_lumi_losses,
       subsystem_rr_losses,
       inclusive_losses,
       exclusive_losses,
+      exclusive_losses_dcs,
+      exclusive_losses_rr,
+      exclusive_losses_dcs_per_bit,
 
+      short_runs_total,
+
+      short_runs_runs,
+      short_runs_exclusive_runs,
       dcs_lumi_losses_runs,
       subsystem_dcs_losses_runs,
       rr_lumi_losses_runs,
       subsystem_rr_losses_runs,
       inclusive_losses_runs,
       exclusive_losses_runs,
+      exclusive_losses_dcs_runs,
+      exclusive_losses_rr_runs,
+      exclusive_losses_dcs_per_bit_runs,
     } = this.state;
     console.log(
       'rules_flagged_false_quantity_luminosity',
@@ -581,19 +888,152 @@ class VisualizeLuminosity extends Component {
     return (
       <div className="contant">
         <br />
-        Total recorded luminosity lost: {total_recorded_luminosity_lost}
-        <br />
-        Total delivered luminosity lost: {total_delivered_luminosity_lost}
-        <br />
         <br />
         <br />
         <br />
         <br />
         <center>
+          <div style={{ display: 'flex' }}>
+            <div>
+              <h4>
+                <strong>(EXPERIMENTAL)</strong> LHC delivered (including runs
+                that were not signed off):{' '}
+                {total_delivered_luminosity_from_run_range}/pb
+              </h4>
+              <Delta
+                value={
+                  total_delivered_luminosity_from_run_range -
+                  total_recorded_luminosity_from_run_range
+                }
+                reason="Luminosity lost within runs that were not signed off (delivered - recorded)"
+              />
+              <h4>
+                Leaving a total of recorded luminosity (including runs not
+                signed off): {total_recorded_luminosity_from_run_range}/pb
+              </h4>
+            </div>
+            <div>
+              <h4>
+                <strong>(Experimental) </strong>LHC recorded (including runs not
+                signed off): {total_recorded_luminosity_from_run_range}/pb
+              </h4>
+              <Delta
+                value={
+                  total_recorded_luminosity_from_run_range -
+                  total_recorded_luminosity
+                }
+                reason="(recorded from whole run list, including runs that were not signed off) - (recorded within runs that were signed off)"
+              />
+              <h4>
+                Total recorded luminosity (within runs signed off) is:{' '}
+                {total_recorded_luminosity}/pb
+              </h4>
+            </div>
+          </div>
+          <hr />
+          <div style={{ display: 'flex' }}>
+            <div>
+              <h4>
+                LHC delivered (within runs signed off):{' '}
+                {total_delivered_luminosity}/pb
+              </h4>
+              <Delta
+                value={total_delivered_luminosity - total_recorded_luminosity}
+                reason="(downtime & dead time)"
+              />
+              <h4>
+                Total recorded luminosity (within runs signed off) is:{' '}
+                {total_recorded_luminosity}/pb
+              </h4>
+            </div>
+          </div>
+          <hr />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div>
+              <h4>CMS recorded: {total_recorded_luminosity}/pb</h4>
+              <Delta
+                value={short_runs_total}
+                reason="(commissioning/short/special/50ns/lowpu)"
+              />
+              <h4>
+                Leaving a total of:{' '}
+                {total_recorded_luminosity - short_runs_total}/pb{' '}
+              </h4>
+              <p>
+                Every lumisection that had a rule that did not pass for any of
+                the attributes that classify in the short_run category, will
+                account to this loss, even if other rules (like HV or quality)
+                failed.
+              </p>
+              <p>Attributes that classify as short_run attributes:</p>
+              <i>
+                {Object.entries(short_runs_mapping)
+                  .map((attributes) => attributes[1].join(', '))
+                  .join(', ')}
+              </i>
+            </div>
+            <div>
+              <PieChartAndBarChart
+                title={`Visualizing ${short_runs_total} loses due to 'short runs' attributes (inclusive)`}
+                data={short_runs_losses}
+                runs={short_runs_runs}
+              />
+            </div>
+          </div>
+          <hr />
+          <div style={{ display: 'flex' }}>
+            <div>
+              <h4>
+                CMS Recorded and processed by DC team:{' '}
+                {total_recorded_luminosity - short_runs_total} {' - '}{' '}
+                {total_recorded_luminosity_lost}
+              </h4>
+              <Delta
+                value={total_recorded_luminosity - short_runs_total}
+                reason="(Quality flags: data marked as BAD, and HV losses)"
+              />
+              <h4>
+                Leaving a total of:{' '}
+                {total_recorded_luminosity - short_runs_total}/pb{' '}
+              </h4>
+            </div>
+            <div>
+              <PieChartAndBarChart
+                title="Exclusive losses per Subsystem (both DCS and Quality per Subsystem)"
+                data={exclusive_losses}
+                runs={exclusive_losses_runs}
+              />
+            </div>
+          </div>
+          <br />
           <PieChartAndBarChart
-            title="Exclusive losses per Subsystem (both DCS and Subsystem)"
+            title="Exclusive losses accountable for any of the Short run categories"
+            data={short_runs_exclusive_losses}
+            runs={short_runs_exclusive_runs}
+          />
+          <br />
+          <PieChartAndBarChart
+            title="Exclusive losses per Subsystem (both DCS and Quality per Subsystem)"
             data={exclusive_losses}
             runs={exclusive_losses_runs}
+          />
+          <br />
+          <PieChartAndBarChart
+            title="Exclusive losses (only DCS per subsystem)"
+            data={exclusive_losses_dcs}
+            runs={exclusive_losses_dcs_runs}
+          />
+          <br />
+          <PieChartAndBarChart
+            title="Exclusive losses (only DCS)"
+            data={exclusive_losses_dcs_per_bit}
+            runs={exclusive_losses_dcs_per_bit_runs}
+          />
+          <br />
+          <PieChartAndBarChart
+            title="Exclusive losses (only Quality per subsystem)"
+            data={exclusive_losses_rr}
+            runs={exclusive_losses_rr_runs}
           />
           <br />
           <PieChartAndBarChart
@@ -619,6 +1059,7 @@ class VisualizeLuminosity extends Component {
             data={inclusive_losses}
             runs={inclusive_losses_runs}
           />
+          <br />
         </center>
         <style jsx>{`
           .contant {

@@ -8,7 +8,8 @@
     "dev": "export ENV=development && export NODE_ENV=development && node server",
     "build": "next build",
     "start": "node server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "docker build . -t cmssw/runregistry-frontend && docker push cmssw/runregistry-frontend"
   },
   "keywords": [],
   "author": "",
