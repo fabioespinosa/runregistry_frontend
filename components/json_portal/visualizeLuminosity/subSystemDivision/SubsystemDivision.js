@@ -611,6 +611,7 @@ class VisualizeLuminosity extends Component {
       }
 
       if (!loss_added) {
+        loss_added = true;
         exclusive_losses['mixed'] += val;
         exclusive_losses_runs['mixed'] = add_jsons_fast(
           exclusive_losses_runs['mixed'],
@@ -723,36 +724,70 @@ class VisualizeLuminosity extends Component {
     }
 
     // Exclusive losses
-    let exclusive_losses_rr = {};
-    let exclusive_losses_rr_runs = {};
+    let exclusive_losses_rr = { mixed: 0 };
+    let exclusive_losses_rr_runs = { mixed: {} };
     let exclusive_loss_rr = 0;
-    for (const [key2, val2] of Object.entries(
+    for (const [key, val] of Object.entries(
       rules_flagged_false_combination_without_short_runs
     )) {
-      const vars = getVars(key2);
+      const vars = getVars(key);
       const rr_only = vars
         .filter((name) => name.includes('.rr.'))
         .map((name) => name.split('.rr.')[1]);
 
-      for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
-        const only_rr_from_this_subystem =
-          rr_only.length > 0 &&
-          rr_only.every((rr_rule) => rr_rule.split('-')[0] === subsystem);
-        if (only_rr_from_this_subystem) {
-          exclusive_loss_rr += val2;
-          if (typeof exclusive_losses_rr[subsystem] === 'undefined') {
-            exclusive_losses_rr[subsystem] = val2;
-            exclusive_losses_rr_runs[subsystem] =
-              runs_lumisections_responsible_for_rule[key2];
-          } else {
-            exclusive_losses_rr[subsystem] =
-              exclusive_losses_rr[subsystem] + val2;
-            exclusive_losses_rr_runs[subsystem] = add_jsons_fast(
-              exclusive_losses_rr_runs[subsystem],
-              runs_lumisections_responsible_for_rule[key2]
-            );
+      const dcs_only = vars
+        .filter((name) => name.includes('.oms.'))
+        .map((name) => name.split('.oms.')[1]);
+
+      let loss_added;
+      if (!loss_added) {
+        const strip_dcs_bits = tracker_mapping['strip'];
+        const pixel_dcs_bits = tracker_mapping['pixel'];
+        // For tracker_hv to be added it must be at least one from strip and at least 1 from pixel:
+        const number_of_dcs_bits_in_strip = dcs_only.filter((dcs_bit) =>
+          strip_dcs_bits.includes(dcs_bit)
+        ).length;
+        const number_of_dcs_bits_in_pixel = dcs_only.filter((dcs_bit) =>
+          pixel_dcs_bits.includes(dcs_bit)
+        ).length;
+        if (
+          number_of_dcs_bits_in_strip > 0 &&
+          number_of_dcs_bits_in_pixel > 0
+        ) {
+          // Tracker_hv should be subtracted from quality as well
+          loss_added = true;
+        }
+      }
+      if (!loss_added) {
+        for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
+          const only_rr_from_this_subystem =
+            rr_only.length > 0 &&
+            rr_only.every((rr_rule) => rr_rule.split('-')[0] === subsystem);
+          if (only_rr_from_this_subystem) {
+            exclusive_loss_rr += val;
+            if (typeof exclusive_losses_rr[subsystem] === 'undefined') {
+              exclusive_losses_rr[subsystem] = val;
+              exclusive_losses_rr_runs[subsystem] =
+                runs_lumisections_responsible_for_rule[key];
+            } else {
+              exclusive_losses_rr[subsystem] =
+                exclusive_losses_rr[subsystem] + val;
+              exclusive_losses_rr_runs[subsystem] = add_jsons_fast(
+                exclusive_losses_rr_runs[subsystem],
+                runs_lumisections_responsible_for_rule[key]
+              );
+            }
           }
         }
+      }
+      // If the loss wasn't added and there is still some quality of RR it means there should be more than 1 subsystem, therefore it should go into the mixed category
+      if (!loss_added && rr_only.length > 0) {
+        loss_added = true;
+        exclusive_losses_rr['mixed'] += val;
+        exclusive_losses_rr_runs['mixed'] = add_jsons_fast(
+          exclusive_losses_rr_runs['mixed'],
+          runs_lumisections_responsible_for_rule[key]
+        );
       }
     }
 
