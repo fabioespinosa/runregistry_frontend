@@ -576,6 +576,7 @@ class VisualizeLuminosity extends Component {
       // We check that the loss hasn't been added and that there are ONLY rules failing belonging to Run Registry or OMS, if by some chance another rule appeared which belongs to other criteria it shouldn't be attributed here
       if (!loss_added && dcs_only.length + rr_only.length === vars.length) {
         for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
+          // We don't check for >0 in dcs_only or rr_only since we are checking before for dcs_only + rr_only is all there is
           const only_dcs_bits_from_this_subystem = dcs_only.every((dcs_bit) =>
             dcs_bits.includes(dcs_bit)
           );
@@ -740,30 +741,25 @@ class VisualizeLuminosity extends Component {
         .map((name) => name.split('.oms.')[1]);
 
       let loss_added;
-      if (!loss_added) {
-        const strip_dcs_bits = tracker_mapping['strip'];
-        const pixel_dcs_bits = tracker_mapping['pixel'];
-        // For tracker_hv to be added it must be at least one from strip and at least 1 from pixel:
-        const number_of_dcs_bits_in_strip = dcs_only.filter((dcs_bit) =>
-          strip_dcs_bits.includes(dcs_bit)
-        ).length;
-        const number_of_dcs_bits_in_pixel = dcs_only.filter((dcs_bit) =>
-          pixel_dcs_bits.includes(dcs_bit)
-        ).length;
-        if (
-          number_of_dcs_bits_in_strip > 0 &&
-          number_of_dcs_bits_in_pixel > 0
-        ) {
-          // Tracker_hv should be subtracted from quality as well
-          loss_added = true;
-        }
-      }
-      if (!loss_added) {
+      if (!loss_added && dcs_only.length === 0) {
         for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
           const only_rr_from_this_subystem =
             rr_only.length > 0 &&
-            rr_only.every((rr_rule) => rr_rule.split('-')[0] === subsystem);
+            rr_only.every((rr_rule) => {
+              let [rr_subsystem, rr_column] = rr_rule.split('-');
+              if (rr_subsystem === 'ecal' && rr_column === 'es') {
+                rr_subsystem = 'es';
+              }
+              if (rr_subsystem === 'tracker' && rr_column === 'strip') {
+                rr_subsystem = 'strip';
+              }
+              if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
+                rr_subsystem = 'pixel';
+              }
+              return rr_subsystem === subsystem;
+            });
           if (only_rr_from_this_subystem) {
+            loss_added = true;
             exclusive_loss_rr += val;
             if (typeof exclusive_losses_rr[subsystem] === 'undefined') {
               exclusive_losses_rr[subsystem] = val;
@@ -781,7 +777,7 @@ class VisualizeLuminosity extends Component {
         }
       }
       // If the loss wasn't added and there is still some quality of RR it means there should be more than 1 subsystem, therefore it should go into the mixed category
-      if (!loss_added && rr_only.length > 0) {
+      if (!loss_added && rr_only.length > 0 && dcs_only.length === 0) {
         loss_added = true;
         exclusive_losses_rr['mixed'] += val;
         exclusive_losses_rr_runs['mixed'] = add_jsons_fast(
