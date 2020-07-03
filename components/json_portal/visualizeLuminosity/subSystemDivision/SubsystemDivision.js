@@ -469,6 +469,19 @@ class VisualizeLuminosity extends Component {
       }
 
       if (!loss_added) {
+        const subsystem_also_has_dcs_losses = {};
+        // We remove the subsystems which had already DCS losses:
+        dcs_only.forEach((dcs_name) => {
+          // We need to find to which subsystem does this dcs rule belong to:
+          const subsystem = getWhichSubsystemDCSBelongsTo(
+            dcs_name,
+            dcs_mapping
+          );
+          if (typeof subsystem_already_added[subsystem] === 'undefined') {
+            subsystem_also_has_dcs_losses[subsystem] = true;
+          }
+        });
+
         const subsystem_already_added = {};
         rr_only.forEach((rr_name) => {
           let [rr_subsystem, rr_column] = rr_name.split('-');
@@ -485,7 +498,10 @@ class VisualizeLuminosity extends Component {
           if (rr_subsystem === 'tracker' && rr_column === 'track') {
             rr_subsystem = 'track';
           }
-          if (typeof subsystem_already_added[rr_subsystem] === 'undefined') {
+          if (
+            typeof subsystem_already_added[rr_subsystem] === 'undefined' &&
+            typeof subsystem_also_has_dcs_losses[rr_subsystem] === 'undefined'
+          ) {
             subsystem_rr_loss += val;
             if (typeof subsystem_rr_losses[rr_subsystem] === 'undefined') {
               subsystem_rr_losses[rr_subsystem] = val;
