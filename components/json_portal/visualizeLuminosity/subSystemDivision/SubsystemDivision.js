@@ -524,84 +524,58 @@ class VisualizeLuminosity extends Component {
         .filter((name) => name.includes('.oms.'))
         .map((name) => name.split('.oms.')[1]);
 
-      let loss_added = false;
-
-      // We remove tracker_hv:
-      if (!loss_added) {
-        const strip_dcs_bits = tracker_mapping['strip'];
-        const pixel_dcs_bits = tracker_mapping['pixel'];
-        // For tracker_hv to be added it must be at least one from strip and at least 1 from pixel:
-        const number_of_dcs_bits_in_strip = dcs_only.filter((dcs_bit) =>
-          strip_dcs_bits.includes(dcs_bit)
-        ).length;
-        const number_of_dcs_bits_in_pixel = dcs_only.filter((dcs_bit) =>
-          pixel_dcs_bits.includes(dcs_bit)
-        ).length;
-        if (
-          number_of_dcs_bits_in_strip > 0 &&
-          number_of_dcs_bits_in_pixel > 0
-        ) {
-          loss_added = true;
+      const subsystem_already_added = {};
+      rr_only.forEach((rr_name) => {
+        let [rr_subsystem, rr_column] = rr_name.split('-');
+        if (rr_subsystem === 'ecal' && rr_column === 'es') {
+          rr_subsystem = 'es';
         }
-      }
+        if (rr_subsystem === 'tracker' && rr_column === 'strip') {
+          rr_subsystem = 'strip';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
+          rr_subsystem = 'pixel';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'track') {
+          rr_subsystem = 'track';
+        }
+        if (typeof subsystem_already_added[rr_subsystem] === 'undefined') {
+          inclusive_loss += val;
+          if (typeof inclusive_losses[rr_subsystem] === 'undefined') {
+            inclusive_losses[rr_subsystem] = val;
+            inclusive_losses_runs[rr_subsystem] =
+              runs_lumisections_responsible_for_rule[key];
+          } else {
+            inclusive_losses[rr_subsystem] =
+              inclusive_losses[rr_subsystem] + val;
+            inclusive_losses_runs[rr_subsystem] = add_jsons_fast(
+              inclusive_losses_runs[rr_subsystem],
+              runs_lumisections_responsible_for_rule[key]
+            );
+          }
+          subsystem_already_added[rr_subsystem] = true;
+        }
+      });
 
-      if (!loss_added) {
-        const subsystem_already_added = {};
-        rr_only.forEach((rr_name) => {
-          let [rr_subsystem, rr_column] = rr_name.split('-');
-          if (rr_subsystem === 'ecal' && rr_column === 'es') {
-            rr_subsystem = 'es';
+      dcs_only.forEach((dcs_name) => {
+        // We need to find to which subsystem does this dcs rule belong to:
+        const subsystem = getWhichSubsystemDCSBelongsTo(dcs_name, dcs_mapping);
+        if (typeof subsystem_already_added[subsystem] === 'undefined') {
+          inclusive_loss += val;
+          if (typeof inclusive_losses[subsystem] === 'undefined') {
+            inclusive_losses[subsystem] = val;
+            inclusive_losses_runs[subsystem] =
+              runs_lumisections_responsible_for_rule[key];
+          } else {
+            inclusive_losses[subsystem] = inclusive_losses[subsystem] + val;
+            inclusive_losses_runs[subsystem] = add_jsons_fast(
+              inclusive_losses_runs[subsystem],
+              runs_lumisections_responsible_for_rule[key]
+            );
           }
-          if (rr_subsystem === 'tracker' && rr_column === 'strip') {
-            rr_subsystem = 'strip';
-          }
-          if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
-            rr_subsystem = 'pixel';
-          }
-          if (rr_subsystem === 'tracker' && rr_column === 'track') {
-            rr_subsystem = 'track';
-          }
-          if (typeof subsystem_already_added[rr_subsystem] === 'undefined') {
-            inclusive_loss += val;
-            if (typeof inclusive_losses[rr_subsystem] === 'undefined') {
-              inclusive_losses[rr_subsystem] = val;
-              inclusive_losses_runs[rr_subsystem] =
-                runs_lumisections_responsible_for_rule[key];
-            } else {
-              inclusive_losses[rr_subsystem] =
-                inclusive_losses[rr_subsystem] + val;
-              inclusive_losses_runs[rr_subsystem] = add_jsons_fast(
-                inclusive_losses_runs[rr_subsystem],
-                runs_lumisections_responsible_for_rule[key]
-              );
-            }
-            subsystem_already_added[rr_subsystem] = true;
-          }
-        });
-
-        dcs_only.forEach((dcs_name) => {
-          // We need to find to which subsystem does this dcs rule belong to:
-          const subsystem = getWhichSubsystemDCSBelongsTo(
-            dcs_name,
-            dcs_mapping
-          );
-          if (typeof subsystem_already_added[subsystem] === 'undefined') {
-            inclusive_loss += val;
-            if (typeof inclusive_losses[subsystem] === 'undefined') {
-              inclusive_losses[subsystem] = val;
-              inclusive_losses_runs[subsystem] =
-                runs_lumisections_responsible_for_rule[key];
-            } else {
-              inclusive_losses[subsystem] = inclusive_losses[subsystem] + val;
-              inclusive_losses_runs[subsystem] = add_jsons_fast(
-                inclusive_losses_runs[subsystem],
-                runs_lumisections_responsible_for_rule[key]
-              );
-            }
-            subsystem_already_added[subsystem] = true;
-          }
-        });
-      }
+          subsystem_already_added[subsystem] = true;
+        }
+      });
     }
 
     // Exclusive losses
