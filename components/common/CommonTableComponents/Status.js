@@ -9,38 +9,38 @@ const status_colors_and_text = {
   BAD: {
     backgroundColor: 'red',
     text: 'white',
-    fontSize: '1em'
+    fontSize: '1em',
   },
   GOOD: {
     backgroundColor: 'green',
     text: 'white',
-    fontSize: '1em'
+    fontSize: '1em',
   },
   STANDBY: {
     backgroundColor: 'yellow',
     text: 'black',
-    fontSize: '1em'
+    fontSize: '1em',
   },
   EXCLUDED: {
     backgroundColor: 'grey',
     text: 'white',
-    fontSize: '0.85em'
+    fontSize: '0.85em',
   },
   NOTSET: {
     backgroundColor: 'white',
     text: 'black',
-    fontSize: '1em'
+    fontSize: '1em',
   },
   EMPTY: {
     backgroundColor: 'black',
     text: 'black',
-    fontSize: '1em'
+    fontSize: '1em',
   },
   INSIG: {
     backgroundColor: 'white',
     text: 'black',
-    fontSize: '1em'
-  }
+    fontSize: '1em',
+  },
 };
 
 const linkifyTarget = (href, text, key) => (
@@ -57,7 +57,7 @@ class Status extends Component {
       significant,
       run_number,
       dataset_name,
-      component
+      component,
     } = this.props;
     let run_stop_reason = '';
     if (triplet_summary) {
@@ -109,7 +109,7 @@ class Status extends Component {
               style={{
                 textAlign: 'center',
                 position: 'relative',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
               title={comments.join(',')}
             >
@@ -118,21 +118,21 @@ class Status extends Component {
                   <span
                     style={{
                       position: 'absolute',
-                      borderLeft: '16px solid darkred',
+                      borderLeft: '16px solid blue',
                       borderBottom: '16px solid transparent',
                       zIndex: '100',
                       left: '0',
-                      top: '0'
+                      top: '0',
                     }}
                   />
                   <span
                     style={{
                       position: 'absolute',
                       borderLeft: '17px solid transparent',
-                      borderBottom: '16px solid darkred',
+                      borderBottom: '16px solid blue',
                       zIndex: '100',
                       right: '0',
-                      bottom: '0'
+                      bottom: '0',
                     }}
                   />
                 </span>
@@ -145,7 +145,7 @@ class Status extends Component {
                       const {
                         backgroundColor,
                         text,
-                        fontSize
+                        fontSize,
                       } = status_colors_and_text[status];
                       return (
                         <div
@@ -154,14 +154,14 @@ class Status extends Component {
                           style={{
                             display: 'inline-block',
                             backgroundColor,
-                            width: `${100 / length}%`
+                            width: `${100 / length}%`,
                           }}
                         >
                           <span
                             className="status"
                             style={{
                               color: text,
-                              fontSize
+                              fontSize,
                             }}
                           >
                             {length === 1 ? status : status[0]}
@@ -182,7 +182,7 @@ class Status extends Component {
                       <span
                         key={status}
                         style={{
-                          backgroundColor: 'white'
+                          backgroundColor: 'white',
                         }}
                       >
                         <span style={{ color: 'black' }}>{status}</span>
@@ -194,12 +194,12 @@ class Status extends Component {
                 <div
                   style={{
                     backgroundColor:
-                      status_colors_and_text['INSIG'].backgroundColor
+                      status_colors_and_text['INSIG'].backgroundColor,
                   }}
                 >
                   <span
                     style={{
-                      color: status_colors_and_text['INSIG'].text
+                      color: status_colors_and_text['INSIG'].text,
                     }}
                   >
                     INSIG.
