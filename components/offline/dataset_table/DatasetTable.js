@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import qs from 'qs';
 import { Button } from 'antd';
-import { certifiable_offline_components } from '../../../config/config';
+import {
+  certifiable_offline_components,
+  hdqm_link,
+} from '../../../config/config';
 
 import {
   moveDataset,
@@ -201,8 +204,8 @@ class DatasetTable extends Component {
         formated_sortings,
         filters
       );
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log(err);
       this.setState({ loading: false, error: err });
     }
     this.setState({ loading: false });
@@ -243,7 +246,7 @@ class DatasetTable extends Component {
       show_workspace_state_columns_button,
       table_label,
     } = this.props;
-    let { datasets, pages, count } = dataset_table;
+    let { datasets, pages, count, filter } = dataset_table;
     let columns = column_generator({
       showManageDatasetModal,
       showLumisectionModal,
@@ -268,20 +271,20 @@ class DatasetTable extends Component {
         ...columns.slice(4),
       ];
     }
-    // Filter is on if there is an 'and' and it has contents
-    const filter =
+    // Filtering is on if there is an 'and' and it has contents
+    const filtering =
       (filters.and && filters.and.length > 0) || sortings.length > 0;
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
-            {filter
+            {filtering
               ? 'Datasets with filter '
               : section === 'cycles'
               ? 'Datasets in cycle'
               : table_label}{' '}
             ({loading ? 'loading...' : count}):{' '}
-            {filter && (
+            {filtering && (
               <a onClick={this.removeFilters}>
                 &nbsp; Click here to remove all filters and sortings
               </a>
@@ -294,6 +297,18 @@ class DatasetTable extends Component {
               }
             >
               Export to CSV
+            </Button>
+            <Button
+              onClick={() =>
+                this.props.showOfflineConfigurationModal('get_api_call')
+              }
+            >
+              Get API Call
+            </Button>
+            <Button>
+              <a href={`${hdqm_link}${qs.stringify(filter)}`} target="_blank">
+                Open in HDQM
+              </a>
             </Button>
           </div>
         </div>

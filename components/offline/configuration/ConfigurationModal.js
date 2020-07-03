@@ -15,6 +15,7 @@ import DatasetDelete from './datasetDelete/DatasetDelete';
 import CreateCycle from './createCycle/CreateCycle';
 import EditCycle from './editCycle/EditCycle';
 import ExportToCSV from './exportToCSV/ExportToCSV';
+import GetAPICall from './getAPICall/GetAPICall';
 
 // For component classifier:
 import {
@@ -55,6 +56,7 @@ class ConfigurationModal extends Component {
       dataset_update: 'Dataset Update',
       dataset_delete: 'Dataset Delete',
       export_to_csv: 'Export To CSV',
+      get_api_call: 'Get API Call',
     };
     const modal_types = {
       dataset_classifiers: <DatasetClassifierConfiguration />,
@@ -77,6 +79,7 @@ class ConfigurationModal extends Component {
       dataset_update: <DatasetUpdate />,
       dataset_delete: <DatasetDelete />,
       export_to_csv: <ExportToCSV />,
+      get_api_call: <GetAPICall />,
     };
     return (
       <div>

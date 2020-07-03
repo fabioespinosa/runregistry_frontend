@@ -431,7 +431,7 @@ class VisualizeLuminosity extends Component {
     console.log('rr losses', rr_lumi_losses);
     console.log('rr losses runs', rr_lumi_losses_runs);
 
-    // RR Quality per subsystem:
+    // RR Quality per subsystem (inclusive):
     let subsystem_rr_losses = {};
     let subsystem_rr_losses_runs = {};
     let subsystem_rr_loss = 0;
@@ -445,22 +445,35 @@ class VisualizeLuminosity extends Component {
 
       const subsystem_already_added = {};
       rr_only.forEach((rr_name) => {
-        const subsystem = rr_name.split('-')[0];
-        if (typeof subsystem_already_added[subsystem] === 'undefined') {
+        let [rr_subsystem, rr_column] = rr_name.split('-');
+
+        if (rr_subsystem === 'ecal' && rr_column === 'es') {
+          rr_subsystem = 'es';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'strip') {
+          rr_subsystem = 'strip';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
+          rr_subsystem = 'pixel';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'track') {
+          rr_subsystem = 'track';
+        }
+        if (typeof subsystem_already_added[rr_subsystem] === 'undefined') {
           subsystem_rr_loss += val;
-          if (typeof subsystem_rr_losses[subsystem] === 'undefined') {
-            subsystem_rr_losses[subsystem] = val;
-            subsystem_rr_losses_runs[subsystem] =
+          if (typeof subsystem_rr_losses[rr_subsystem] === 'undefined') {
+            subsystem_rr_losses[rr_subsystem] = val;
+            subsystem_rr_losses_runs[rr_subsystem] =
               runs_lumisections_responsible_for_rule[key];
           } else {
-            subsystem_rr_losses[subsystem] =
-              subsystem_rr_losses[subsystem] + val;
-            subsystem_rr_losses_runs[subsystem] = add_jsons_fast(
-              subsystem_rr_losses_runs[subsystem],
+            subsystem_rr_losses[rr_subsystem] =
+              subsystem_rr_losses[rr_subsystem] + val;
+            subsystem_rr_losses_runs[rr_subsystem] = add_jsons_fast(
+              subsystem_rr_losses_runs[rr_subsystem],
               runs_lumisections_responsible_for_rule[key]
             );
           }
-          subsystem_already_added[subsystem] = true;
+          subsystem_already_added[rr_subsystem] = true;
         }
       });
     }
@@ -486,21 +499,34 @@ class VisualizeLuminosity extends Component {
 
       const subsystem_already_added = {};
       rr_only.forEach((rr_name) => {
-        const subsystem = rr_name.split('-')[0];
-        if (typeof subsystem_already_added[subsystem] === 'undefined') {
+        let [rr_subsystem, rr_column] = rr_name.split('-');
+        if (rr_subsystem === 'ecal' && rr_column === 'es') {
+          rr_subsystem = 'es';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'strip') {
+          rr_subsystem = 'strip';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
+          rr_subsystem = 'pixel';
+        }
+        if (rr_subsystem === 'tracker' && rr_column === 'track') {
+          rr_subsystem = 'track';
+        }
+        if (typeof subsystem_already_added[rr_subsystem] === 'undefined') {
           inclusive_loss += val;
-          if (typeof inclusive_losses[subsystem] === 'undefined') {
-            inclusive_losses[subsystem] = val;
-            inclusive_losses_runs[subsystem] =
+          if (typeof inclusive_losses[rr_subsystem] === 'undefined') {
+            inclusive_losses[rr_subsystem] = val;
+            inclusive_losses_runs[rr_subsystem] =
               runs_lumisections_responsible_for_rule[key];
           } else {
-            inclusive_losses[subsystem] = inclusive_losses[subsystem] + val;
-            inclusive_losses_runs[subsystem] = add_jsons_fast(
-              inclusive_losses_runs[subsystem],
+            inclusive_losses[rr_subsystem] =
+              inclusive_losses[rr_subsystem] + val;
+            inclusive_losses_runs[rr_subsystem] = add_jsons_fast(
+              inclusive_losses_runs[rr_subsystem],
               runs_lumisections_responsible_for_rule[key]
             );
           }
-          subsystem_already_added[subsystem] = true;
+          subsystem_already_added[rr_subsystem] = true;
         }
       });
 
@@ -524,11 +550,6 @@ class VisualizeLuminosity extends Component {
         }
       });
     }
-    console.log('both quality and dcs inclusive losses', inclusive_losses);
-    console.log(
-      'both quality and dcs inclusive losses runs',
-      inclusive_losses_runs
-    );
 
     // Exclusive losses
     let exclusive_losses = {
@@ -590,6 +611,9 @@ class VisualizeLuminosity extends Component {
             }
             if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
               rr_subsystem = 'pixel';
+            }
+            if (rr_subsystem === 'tracker' && rr_column === 'track') {
+              rr_subsystem = 'track';
             }
             return rr_subsystem === subsystem;
           });
@@ -755,6 +779,9 @@ class VisualizeLuminosity extends Component {
               }
               if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
                 rr_subsystem = 'pixel';
+              }
+              if (rr_subsystem === 'tracker' && rr_column === 'track') {
+                rr_subsystem = 'track';
               }
               return rr_subsystem === subsystem;
             });

@@ -28,6 +28,7 @@ exports.config = config;
 exports.api_url = config[ENV || 'development']['api_url'];
 exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
+exports.hdqm_link = 'https://cms-hdqm.web.cern.ch/?filter=rr&filterValue=';
 const offline_column_structure = {
   // None of the offline_column_structure can contain "-" character, only "_".
 
