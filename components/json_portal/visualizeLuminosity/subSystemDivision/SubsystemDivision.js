@@ -477,9 +477,7 @@ class VisualizeLuminosity extends Component {
             dcs_name,
             dcs_mapping
           );
-          if (typeof subsystem_already_added[subsystem] === 'undefined') {
-            subsystem_also_has_dcs_losses[subsystem] = true;
-          }
+          subsystem_also_has_dcs_losses[subsystem] = true;
         });
 
         const subsystem_already_added = {};
