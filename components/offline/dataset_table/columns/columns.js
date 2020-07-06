@@ -103,12 +103,21 @@ const column_generator = ({
                   <Menu>
                     {original.datasets_in_gui.map((dataset_in_gui) => (
                       <Menu.Item key={dataset_in_gui}>
-                        <a
-                          target="_blank"
-                          href={`https://dqm-gui.web.cern.ch/?dataset_name=${dataset_in_gui}&run_number=${original.run_number}`}
-                        >
-                          {original.run_number} - {dataset_in_gui}
-                        </a>
+                        <div>
+                          <a
+                            href={`https://cmsweb.cern.ch/dqm/offline/start?runnr=${original.run_number};dataset=${dataset_in_gui}`}
+                            target="_blank"
+                          >
+                            {original.run_number} - {dataset_in_gui}
+                          </a>
+                          {' --- '}
+                          <a
+                            href={`https://dqm-gui.web.cern.ch/?dataset_name=${dataset_in_gui}&run_number=${original.run_number}`}
+                            target="_blank"
+                          >
+                            Or try the new GUI (beta) by clicking here
+                          </a>
+                        </div>
                       </Menu.Item>
                     ))}
                   </Menu>
