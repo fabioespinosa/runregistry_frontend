@@ -22,7 +22,7 @@ const transform_to_array = (attributes) => {
 };
 
 export default function RunInfo({ run }) {
-  const { run_number, oms_attributes, rr_attributes } = run;
+  const { oms_attributes, rr_attributes } = run;
   const oms_data = transform_to_array(oms_attributes);
   const rr_data = transform_to_array(rr_attributes);
   return (
@@ -35,7 +35,7 @@ export default function RunInfo({ run }) {
           column={1}
         >
           <Descriptions.Item label="OMS link">
-            <a target="_blank" href={oms_link(run_number)}>
+            <a target="_blank" href={oms_link(oms_attributes.run_number)}>
               Open in OMS
             </a>
           </Descriptions.Item>
