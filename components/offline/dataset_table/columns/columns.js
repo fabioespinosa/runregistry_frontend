@@ -2,7 +2,10 @@ import Swal from 'sweetalert2';
 import Status from '../../../common/CommonTableComponents/Status';
 import { Menu, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { certifiable_offline_components } from '../../../../config/config';
+import {
+  oms_link,
+  certifiable_offline_components,
+} from '../../../../config/config';
 
 const column_filter_description = {
   string: '=, like, notlike, <>',
@@ -136,6 +139,19 @@ const column_generator = ({
               <span style={{ padding: '4px' }}>Not in GUI yet</span>
             )}
           </span>
+        </div>
+      ),
+    },
+    {
+      Header: 'OMS',
+      id: 'oms',
+      sortable: false,
+      maxWidth: 40,
+      Cell: ({ original }) => (
+        <div style={{ textAlign: 'center' }}>
+          <a target="_blank" href={oms_link(original.run_number)}>
+            OMS
+          </a>
         </div>
       ),
     },

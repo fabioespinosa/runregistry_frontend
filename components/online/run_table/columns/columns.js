@@ -2,6 +2,7 @@ import { certifiable_online_components } from '../../../../config/config';
 import { Tooltip } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import Swal from 'sweetalert2';
+import { oms_link } from '../../../../config/config';
 import Status from '../../../common/CommonTableComponents/Status';
 
 const column_generator = ({
@@ -12,7 +13,7 @@ const column_generator = ({
   significant_runs,
   markSignificant,
   workspace,
-  workspaces
+  workspaces,
 }) => {
   let columns = [
     {
@@ -26,7 +27,7 @@ const column_generator = ({
         <div style={{ textAlign: 'center', width: '100%' }}>
           <a onClick={() => showManageRunModal(original)}>{value}</a>
         </div>
-      )
+      ),
     },
     {
       Header: 'Class',
@@ -39,7 +40,7 @@ const column_generator = ({
             {value}
           </a>
         </div>
-      )
+      ),
     },
     {
       Header: 'Manage / LS',
@@ -54,7 +55,7 @@ const column_generator = ({
           </span>
           <a onClick={() => showLumisectionModal(original)}>LS</a>
         </div>
-      )
+      ),
     },
     {
       Header: 'Significant',
@@ -77,7 +78,7 @@ const column_generator = ({
                   showCancelButton: true,
                   confirmButtonText: 'Yes',
                   reverseButtons: true,
-                  footer: '<a >What does this mean?</a>'
+                  footer: '<a >What does this mean?</a>',
                 });
                 if (value) {
                   const { run_number } = original;
@@ -94,7 +95,7 @@ const column_generator = ({
             </a>
           )}
         </div>
-      )
+      ),
     },
     {
       Header: 'State',
@@ -111,7 +112,7 @@ const column_generator = ({
                   fontSize: '0.95em',
                   fontWeight: 'bold',
                   color: value === 'OPEN' ? 'red' : 'grey',
-                  borderRadius: '1px'
+                  borderRadius: '1px',
                 }}
               >
                 <span style={{ padding: '4px' }}>{value}</span>
@@ -124,7 +125,7 @@ const column_generator = ({
                   const options = {
                     OPEN: 'To OPEN',
                     SIGNOFF: 'to SIGNOFF',
-                    COMPLETED: 'to COMPLETED'
+                    COMPLETED: 'to COMPLETED',
                   };
                   delete options[value];
                   const { value: to_state } = await Swal({
@@ -132,7 +133,7 @@ const column_generator = ({
                     input: 'select',
                     inputOptions: options,
                     showCancelButton: true,
-                    reverseButtons: true
+                    reverseButtons: true,
                   });
                   if (to_state) {
                     await moveRun(run_number, from_state, to_state);
@@ -156,7 +157,7 @@ const column_generator = ({
                   color: 'white',
                   fontSize: '0.8em',
                   color: 'grey',
-                  borderRadius: '1px'
+                  borderRadius: '1px',
                 }}
               >
                 <span style={{ padding: '2px' }}>Non Significant(Open)</span>
@@ -164,19 +165,19 @@ const column_generator = ({
             </div>
           );
         }
-      }
+      },
     },
     {
       Header: 'Started',
       id: 'start_time',
       accessor: 'start_time',
-      prefix_for_filtering: 'oms_attributes'
+      prefix_for_filtering: 'oms_attributes',
     },
     {
       Header: 'Hlt Key Description',
       id: 'hlt_key',
       accessor: 'hlt_key',
-      prefix_for_filtering: 'oms_attributes'
+      prefix_for_filtering: 'oms_attributes',
     },
     {
       Header: 'LS Duration',
@@ -184,7 +185,7 @@ const column_generator = ({
       maxWidth: 70,
       accessor: 'ls_duration',
       prefix_for_filtering: 'oms_attributes',
-      Cell: ({ value }) => <div style={{ textAlign: 'center' }}>{value}</div>
+      Cell: ({ value }) => <div style={{ textAlign: 'center' }}>{value}</div>,
     },
     {
       Header: 'GUI',
@@ -198,8 +199,19 @@ const column_generator = ({
             GUI
           </a>
         </div>
-      )
-    }
+      ),
+    },
+    {
+      Header: 'OMS',
+      maxWidth: 40,
+      Cell: ({ original }) => (
+        <div style={{ textAlign: 'center' }}>
+          <a target="_blank" href={oms_link(original.run_number)}>
+            OMS
+          </a>
+        </div>
+      ),
+    },
   ];
 
   const other_columns = [
@@ -207,19 +219,19 @@ const column_generator = ({
       Header: 'B Field',
       id: 'b_field',
       accessor: 'b_field',
-      prefix_for_filtering: 'oms_attributes'
+      prefix_for_filtering: 'oms_attributes',
     },
     {
       Header: 'Clock Type',
       id: 'clock_type',
       accessor: 'clock_type',
-      prefix_for_filtering: 'oms_attributes'
-    }
+      prefix_for_filtering: 'oms_attributes',
+    },
   ];
   // Now add the ones in global:
   const global_columns = [];
   for (const [key, val] of Object.entries(certifiable_online_components)) {
-    val.forEach(sub_name => {
+    val.forEach((sub_name) => {
       global_columns.push(`${key}-${sub_name}`);
     });
   }
@@ -227,7 +239,7 @@ const column_generator = ({
   let all_columns_formatted = [];
 
   workspaces.forEach(({ workspace, columns }) => {
-    columns.forEach(column => {
+    columns.forEach((column) => {
       const column_name = `${workspace}-${column}`;
       if (!global_columns.includes(column_name)) {
         all_columns_formatted.push(column_name);
@@ -239,30 +251,30 @@ const column_generator = ({
   // Put components in format Header: component
   let online_columns_composed = [];
   if (workspace === 'global') {
-    online_columns_composed = global_columns.map(column => ({
+    online_columns_composed = global_columns.map((column) => ({
       accessor: column,
-      Header: column.split('-')[1]
+      Header: column.split('-')[1],
     }));
   } else {
     online_columns_composed = all_columns_formatted
-      .filter(column => {
+      .filter((column) => {
         return (
           column.startsWith(workspace.toLowerCase()) && column.includes('-')
         );
       })
-      .map(column => ({
+      .map((column) => ({
         accessor: column,
-        Header: column.split('-')[1]
+        Header: column.split('-')[1],
       }));
   }
 
-  online_columns_composed = online_columns_composed.map(column => {
+  online_columns_composed = online_columns_composed.map((column) => {
     return {
       ...column,
       maxWidth: 66,
       id: column.accessor,
       prefix_for_filtering: 'triplet_summary',
-      accessor: data => {
+      accessor: (data) => {
         const triplet = data.triplet_summary[column['accessor']];
         return triplet;
       },
@@ -275,7 +287,7 @@ const column_generator = ({
           dataset_name="online"
           component={column['accessor']}
         />
-      )
+      ),
     };
   });
   columns = [...columns, ...online_columns_composed, ...other_columns];
