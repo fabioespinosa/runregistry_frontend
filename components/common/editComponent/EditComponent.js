@@ -5,7 +5,6 @@ import { Input, Button, InputNumber } from 'antd';
 import Swal from 'sweetalert2';
 import { reFetchDataset } from '../../../ducks/offline/datasets';
 import { reFetchRun } from '../../../ducks/online/runs';
-import { addLumisectionRange } from '../../../ducks/online/lumisections';
 import BarPlot from './BarPlot';
 import History from './History';
 import DisplayComments from './DisplayComments';
@@ -17,8 +16,8 @@ class EditComponent extends Component {
     let { lumisection_ranges } = this.props;
     lumisection_ranges = lumisection_ranges || [];
     const ls_ranges_lengths = { title: 'LS' };
-    lumisection_ranges.forEach(range => {
-      const { start, end, status } = range;
+    lumisection_ranges.forEach((range) => {
+      const { start, end } = range;
       ls_ranges_lengths[`${start} - ${end}`] = end - start + 1;
     });
 
@@ -26,7 +25,7 @@ class EditComponent extends Component {
       modifying: false,
       show_history: false,
       ls_ranges_lengths: [ls_ranges_lengths],
-      lumisection_ranges
+      lumisection_ranges,
     };
   }
   render() {
@@ -35,13 +34,16 @@ class EditComponent extends Component {
       dataset_name,
       component,
       state,
-      component_name
+      component_name,
+      hide_cause,
+      boolean_statuses,
+      show_oms_history,
     } = this.props;
     const {
       modifying,
       show_history,
       lumisection_ranges,
-      ls_ranges_lengths
+      ls_ranges_lengths,
     } = this.state;
     const number_of_lumisections = lumisection_ranges[
       lumisection_ranges.length - 1
@@ -50,7 +52,7 @@ class EditComponent extends Component {
       : 0;
     const initialValues = {
       start: number_of_lumisections === 0 ? 0 : 1,
-      end: number_of_lumisections
+      end: number_of_lumisections,
     };
     const lumisections_with_comments = lumisection_ranges.filter(
       ({ comment }) => typeof comment !== 'undefined' && comment.length > 0
@@ -65,6 +67,7 @@ class EditComponent extends Component {
               dataset_name={dataset_name}
               component={component}
               number_of_lumisections={number_of_lumisections}
+              show_oms_history={show_oms_history}
             />
           ) : (
             <div>
@@ -87,7 +90,7 @@ class EditComponent extends Component {
             <Formik
               initialValues={initialValues}
               enableReinitialize={true}
-              onSubmit={async form_values => {
+              onSubmit={async (form_values) => {
                 const { run_number, dataset_name } = this.props;
                 let component_triplet_name = component;
                 console.log(form_values);
@@ -113,9 +116,20 @@ class EditComponent extends Component {
                 handleChange,
                 handleBlur,
                 handleSubmit,
-                isSubmitting
+                isSubmitting,
               }) => {
                 const { status, start, end } = values;
+                const status_values = [
+                  <option value="GOOD">GOOD</option>,
+                  <option value="BAD">BAD</option>,
+                  <option value="STANDBY">STANDBY</option>,
+                  <option value="EXCLUDED">EXCLUDED</option>,
+                  <option value="NOTSET">NOTSET</option>,
+                ];
+                const boolean_values = [
+                  <option value="true">true</option>,
+                  <option value="false">false</option>,
+                ];
                 return (
                   <form>
                     <hr />
@@ -126,22 +140,22 @@ class EditComponent extends Component {
                       <i>Change status to: </i>
                       <Field component="select" name="status">
                         <option value="">-----</option>
-                        <option value="GOOD">GOOD</option>
-                        <option value="BAD">BAD</option>
-                        <option value="STANDBY">STANDBY</option>
-                        <option value="EXCLUDED">EXCLUDED</option>
-                        <option value="NOTSET">NOTSET</option>
+                        {boolean_statuses ? boolean_values : status_values}
                       </Field>
                       <br />
-                      <br />
-                      <i>Cause: </i>
-                      <Field
-                        key={component}
-                        component="select"
-                        name="cause"
-                        disabled
-                      />
-                      <br />
+                      {!hide_cause && (
+                        <div>
+                          <br />
+                          <i>Cause: </i>
+                          <Field
+                            key={component}
+                            component="select"
+                            name="cause"
+                            disabled
+                          />
+                          <br />
+                        </div>
+                      )}
                       <br />
                       <i>From Lumisection: </i>
                       <InputNumber
@@ -150,7 +164,7 @@ class EditComponent extends Component {
                         min={1}
                         max={number_of_lumisections}
                         defaultValue={1}
-                        onChange={value => setFieldValue('start', value)}
+                        onChange={(value) => setFieldValue('start', value)}
                       />{' '}
                       &nbsp; <i>To Lumisection: </i>
                       <InputNumber
@@ -159,7 +173,7 @@ class EditComponent extends Component {
                         min={1}
                         max={number_of_lumisections}
                         defaultValue={number_of_lumisections}
-                        onChange={value => setFieldValue('end', value)}
+                        onChange={(value) => setFieldValue('end', value)}
                       />
                       <br />
                       <br />
@@ -167,7 +181,7 @@ class EditComponent extends Component {
                       <div className="text_area">
                         <TextArea
                           name="comment"
-                          onChange={value =>
+                          onChange={(value) =>
                             setFieldValue('comment', value.target.value)
                           }
                         />
@@ -199,7 +213,7 @@ class EditComponent extends Component {
               <Button
                 onClick={() =>
                   this.setState({
-                    modifying: false
+                    modifying: false,
                   })
                 }
               >
@@ -210,7 +224,7 @@ class EditComponent extends Component {
             <Button
               onClick={() =>
                 this.setState({
-                  modifying: true
+                  modifying: true,
                 })
               }
               disabled={state !== 'OPEN'}
@@ -288,7 +302,6 @@ class EditComponent extends Component {
 }
 
 export default connect(null, {
-  addLumisectionRange,
   reFetchDataset,
-  reFetchRun
+  reFetchRun,
 })(EditComponent);

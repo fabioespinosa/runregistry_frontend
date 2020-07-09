@@ -15,7 +15,7 @@ const linkifyTarget = (href, text, key) => (
 class History extends Component {
   state = {
     history: [],
-    loading: true
+    loading: true,
   };
 
   async componentDidMount() {
@@ -31,21 +31,23 @@ class History extends Component {
       run_number,
       dataset_name,
       component,
-      number_of_lumisections
+      number_of_lumisections,
+      show_oms_history,
     } = this.props;
-    const { data } = await axios.post(
-      `${api_url}/lumisections/get_rr_lumisection_history`,
-      {
-        run_number,
-        dataset_name
-      }
-    );
+    let url = `${api_url}/lumisections/get_rr_lumisection_history`;
+    if (show_oms_history) {
+      url = `${api_url}/lumisections/get_oms_lumisection_history`;
+    }
+    const { data } = await axios.post(url, {
+      run_number,
+      dataset_name,
+    });
     const component_history = data
       .filter(({ jsonb }) => jsonb.hasOwnProperty(component))
-      .map(event => {
+      .map((event) => {
         const formatted_event = {
           ...event,
-          change: event.jsonb[component]
+          change: event.jsonb[component],
         };
         return formatted_event;
       });
@@ -60,13 +62,16 @@ class History extends Component {
   adapt_history = (component_history, number_of_lumisections) => {
     return component_history.map(
       ({ version, change, start, end, by, comment, createdAt }) => {
+        if (typeof change !== 'object') {
+          change = { status: change };
+        }
         const lumisection_ranges = [];
         const ls_ranges_lengths = { title: 'LS' };
         if (start > 1) {
           lumisection_ranges.push({
             status: 'ARTIFICIALLY_EMPTY',
             start: 1,
-            end: start - 1
+            end: start - 1,
           });
           ls_ranges_lengths[`${1} - ${start - 1}`] = start - 1;
         }
@@ -76,7 +81,7 @@ class History extends Component {
           lumisection_ranges.push({
             status: 'ARTIFICIALLY_EMPTY',
             start: end + 1,
-            end: number_of_lumisections
+            end: number_of_lumisections,
           });
           ls_ranges_lengths[`${end + 1} - ${number_of_lumisections}`] =
             number_of_lumisections - end;
@@ -88,7 +93,7 @@ class History extends Component {
           by,
           comment,
           createdAt,
-          change
+          change,
         };
       }
     );
@@ -119,7 +124,7 @@ class History extends Component {
                 by,
                 comment,
                 createdAt,
-                change
+                change,
               }) => {
                 const parsed_date = new Date(createdAt)
                   .toISOString()
@@ -137,7 +142,7 @@ class History extends Component {
                           top: 0,
                           right: 0,
                           left: 0,
-                          bottom: 0
+                          bottom: 0,
                         }}
                       />
                     </td>

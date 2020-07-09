@@ -7,7 +7,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend
+  Legend,
 } from 'recharts';
 
 const color_coding = {
@@ -17,24 +17,11 @@ const color_coding = {
   EXCLUDED: 'grey',
   NOTSET: 'white',
   EMPTY: 'black',
-  ARTIFICIALLY_EMPTY: 'transparent'
+  ARTIFICIALLY_EMPTY: 'transparent',
+  true: 'green',
+  false: 'red',
+  null: 'black',
 };
-
-// const CustomTooltip = props => {
-//     const { active } = props;
-
-//     if (active) {
-//         const { payload, label } = props;
-//         return (
-//             <div className="custom-tooltip">
-//                 <p className="label">{`${label} : ${payload[0].value}`}</p>
-//                 <p className="desc">Anything you want can be displayed here.</p>
-//             </div>
-//         );
-//     }
-
-//     return null;
-// };
 
 class BarPlot extends Component {
   render() {
@@ -42,7 +29,7 @@ class BarPlot extends Component {
       ls_ranges_lengths,
       lumisection_ranges,
       height,
-      margin
+      margin,
     } = this.props;
 
     return (
@@ -57,7 +44,7 @@ class BarPlot extends Component {
               top: 10,
               right: 30,
               left: 20,
-              bottom: 10
+              bottom: 10,
             }
           }
         >
@@ -72,11 +59,11 @@ class BarPlot extends Component {
             formatter={(value, name, props) => {
               // Get the respective status of this range:
               let selected_status;
-              lumisection_ranges.forEach(range => {
+              lumisection_ranges.forEach((range) => {
                 const { start, end, status } = range;
                 const formatted_range = `${start} - ${end}`;
                 if (name === formatted_range) {
-                  selected_status = status;
+                  selected_status = `${status}`;
                 }
               });
               return selected_status;
@@ -89,7 +76,7 @@ class BarPlot extends Component {
                 key={key}
                 dataKey={key}
                 stackId="a"
-                fill={color_coding[status]}
+                fill={color_coding[`${status}`]}
               />
             );
           })}

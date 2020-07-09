@@ -8,13 +8,14 @@ import EditComponent from '../../../../../components/common/editComponent/EditCo
 import { api_url } from '../../../../../config/config';
 import { refreshRun } from '../../../../../ducks/online/runs';
 import { showManageRunModal } from '../../../../../ducks/online/ui';
+import { addLumisectionRange } from '../../../../../ducks/online/lumisections';
 import { certifiable_online_components } from '../../../../../config/config';
 import { error_handler } from '../../../../../utils/error_handlers';
 
 class EditRunLumisections extends Component {
   state = {
     lumisections: {},
-    loading: true
+    loading: true,
   };
   componentDidMount() {
     this.fetchLumisections();
@@ -26,25 +27,25 @@ class EditRunLumisections extends Component {
       `${api_url}/lumisections/rr_lumisection_ranges_by_component`,
       {
         dataset_name: 'online',
-        run_number: this.props.run.run_number
+        run_number: this.props.run.run_number,
       }
     );
     this.setState({ lumisections, loading: false });
   });
   render() {
-    const { run, workspaces } = this.props;
+    const { run, workspaces, addLumisectionRange } = this.props;
     const current_workspace = this.props.workspace.toLowerCase();
     let components = [];
     if (current_workspace === 'global') {
       for (const [key, val] of Object.entries(certifiable_online_components)) {
-        val.forEach(sub_name => {
+        val.forEach((sub_name) => {
           components.push(`${key}-${sub_name}`);
         });
       }
     } else {
       workspaces.forEach(({ workspace, columns }) => {
         if (workspace === current_workspace) {
-          columns.forEach(column => {
+          columns.forEach((column) => {
             components.push(`${workspace}-${column}`);
           });
         }
@@ -57,18 +58,18 @@ class EditRunLumisections extends Component {
             <br />
             <div
               style={{
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
               <Button
-                onClick={async evt => {
+                onClick={async (evt) => {
                   const { value } = await Swal({
                     type: 'warning',
                     title: `If a status was previously edited by a shifter, it will not be updated, it will only change those untouched.`,
                     text: '',
                     showCancelButton: true,
                     confirmButtonText: 'Yes',
-                    reverseButtons: true
+                    reverseButtons: true,
                   });
                   if (value) {
                     const updated_run = await this.props.refreshRun(
@@ -95,7 +96,7 @@ class EditRunLumisections extends Component {
                 </tr>
               </thead>
               <tbody>
-                {components.map(component => {
+                {components.map((component) => {
                   const component_name = component.split('-')[1];
                   if (this.state.loading) {
                     return (
@@ -119,6 +120,7 @@ class EditRunLumisections extends Component {
                         refreshLumisections={this.fetchLumisections}
                         component={component}
                         lumisection_ranges={this.state.lumisections[component]}
+                        addLumisectionRange={addLumisectionRange}
                       />
                     );
                   } else {
@@ -200,13 +202,15 @@ class EditRunLumisections extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     workspace: state.online.workspace.workspace,
-    workspaces: state.online.workspace.workspaces
+    workspaces: state.online.workspace.workspaces,
   };
 };
 
-export default connect(mapStateToProps, { refreshRun, showManageRunModal })(
-  EditRunLumisections
-);
+export default connect(mapStateToProps, {
+  refreshRun,
+  showManageRunModal,
+  addLumisectionRange,
+})(EditRunLumisections);

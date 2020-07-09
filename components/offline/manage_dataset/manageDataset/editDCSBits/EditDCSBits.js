@@ -8,11 +8,12 @@ import EditComponent from '../../../../common/editComponent/EditComponent';
 import {
   api_url,
   certifiable_offline_components,
+  lumisection_attributes,
 } from '../../../../../config/config';
-import { addLumisectionRange } from '../../../../../ducks/online/lumisections';
+import { addOMSLumisectionRange } from '../../../../../ducks/online/lumisections';
 import { error_handler } from '../../../../../utils/error_handlers';
 
-class EditRunLumisections extends Component {
+class EditDCSBits extends Component {
   state = {
     lumisections: {},
     loading: true,
@@ -25,7 +26,7 @@ class EditRunLumisections extends Component {
     this.setState({ lumisections: {}, loading: true });
     const { name, run_number } = this.props.dataset;
     const { data: lumisections } = await axios.post(
-      `${api_url}/lumisections/rr_lumisection_ranges_by_component`,
+      `${api_url}/lumisections/oms_lumisection_ranges_by_dcs_bit`,
       {
         dataset_name: name,
         run_number: run_number,
@@ -34,46 +35,39 @@ class EditRunLumisections extends Component {
     this.setState({ lumisections, loading: false });
   });
   render() {
-    const { dataset, workspaces, addLumisectionRange } = this.props;
+    const { dataset, workspaces, addOMSLumisectionRange } = this.props;
     const current_workspace = this.props.workspace.toLowerCase();
-    let components = [];
-    if (current_workspace === 'global') {
-      for (const [key, val] of Object.entries(certifiable_offline_components)) {
-        val.forEach((sub_name) => {
-          components.push(`${key}-${sub_name}`);
-        });
-      }
-    } else {
-      workspaces.forEach(({ workspace, columns }) => {
-        if (workspace === current_workspace) {
-          columns.forEach((column) => {
-            components.push(`${workspace}-${column}`);
-          });
-        }
-      });
-    }
     return (
       <div>
         {dataset[`${current_workspace}_state`] !== 'waiting dqm gui' ? (
           <div style={{ overflowX: 'scroll' }}>
             <br />
+            <center>
+              <h1>Editing DCS bits is reserved for the DC team only</h1>
+              <h2>
+                This feature should only be used to RECOVER ls bits, bits we
+                thought were BAD and are actually good
+              </h2>
+              <h3>
+                In order for a lumisection to be considered GOOD it must be good
+                for the corresponding DCS bit AND the corresponding RR bit
+              </h3>
+            </center>
             <table className="edit_run_form">
               <thead>
                 <tr className="table_header">
-                  <td>Component</td>
+                  <td>DCS bit</td>
                   <td>Comment</td>
                   <td>Modify</td>
                   <td>History</td>
                 </tr>
               </thead>
               <tbody>
-                {components.map((component) => {
-                  const component_name = component.split('-')[1];
-
+                {lumisection_attributes.map((dcs_bit) => {
                   if (this.state.loading) {
                     return (
-                      <tr key={component}>
-                        <td>{component_name}</td>
+                      <tr key={dcs_bit}>
+                        <td>{dcs_bit}</td>
                         <td className="comment">
                           <Spin size="large" />
                         </td>
@@ -84,21 +78,24 @@ class EditRunLumisections extends Component {
                   } else if (Object.keys(this.state.lumisections).length > 0) {
                     return (
                       <EditComponent
-                        component_name={component_name}
-                        key={component}
+                        hide_cause={true}
+                        boolean_statuses={true}
+                        show_oms_history={true}
+                        component_name={dcs_bit}
+                        key={dcs_bit}
                         state={dataset[`${current_workspace}_state`]}
                         run_number={dataset.run_number}
                         dataset_name={dataset.name}
                         refreshLumisections={this.fetchLumisections}
-                        component={component}
-                        lumisection_ranges={this.state.lumisections[component]}
-                        addLumisectionRange={addLumisectionRange}
+                        component={dcs_bit}
+                        lumisection_ranges={this.state.lumisections[dcs_bit]}
+                        addLumisectionRange={addOMSLumisectionRange}
                       />
                     );
                   } else {
                     return (
-                      <tr key={component}>
-                        <td>{component_name}</td>
+                      <tr key={dcs_bit}>
+                        <td>{dcs_bit}</td>
                         <td className="comment">No lumisection data</td>
                         <td className="modify_toggle" />
                       </tr>
@@ -178,6 +175,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addLumisectionRange })(
-  EditRunLumisections
+export default connect(mapStateToProps, { addOMSLumisectionRange })(
+  EditDCSBits
 );

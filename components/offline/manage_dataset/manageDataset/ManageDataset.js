@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Collapse } from 'antd';
+import EditDCSBits from './editDCSBits/EditDCSBits';
 import EditDataset from './editDataset/EditDataset';
 
 const Panel = Collapse.Panel;
@@ -9,7 +10,7 @@ class ManageDataset extends Component {
   render() {
     const { dataset } = this.props;
     return (
-      <Collapse defaultActiveKey={['3']}>
+      <Collapse defaultActiveKey={['4']}>
         {/* <Panel key="1" header="Run info">
                     <p>Run info</p>
                 </Panel> */}
@@ -19,7 +20,10 @@ class ManageDataset extends Component {
             interface to show it is currently being built
           </div>
         </Panel>
-        <Panel key="3" header="Edit dataset">
+        <Panel key="3" header="Edit DCS bits">
+          <EditDCSBits dataset={dataset} />
+        </Panel>
+        <Panel key="4" header="Edit dataset">
           <EditDataset dataset={dataset} />
         </Panel>
       </Collapse>
@@ -27,9 +31,9 @@ class ManageDataset extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    dataset: state.offline.ui.manage_dataset_modal_dataset
+    dataset: state.offline.ui.manage_dataset_modal_dataset,
   };
 };
 
