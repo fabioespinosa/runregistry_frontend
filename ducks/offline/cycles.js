@@ -59,6 +59,17 @@ export const moveCycleBackToPending = (id_cycle, workspace) =>
     dispatch(getCycles(current_workspace));
   });
 
+export const moveAllDatasetsInCycleTo = (id_cycle, workspace, to_state) =>
+  error_handler(async (dispatch, getState) => {
+    const { data: cycle } = await axios.post(
+      `${api_url}/cycles/move_all_datasets_to/${workspace.toLowerCase()}`,
+      { id_cycle, to_state },
+      auth(getState)
+    );
+    const current_workspace = getState().offline.workspace.workspace;
+    dispatch(getCycles(current_workspace));
+  });
+
 export const editCycle = ({
   id_cycle,
   deadline,

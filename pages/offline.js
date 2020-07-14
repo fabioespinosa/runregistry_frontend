@@ -23,6 +23,7 @@ class Offline extends Component {
   constructor(props) {
     super(props);
     this.editable_datasets_ref = React.createRef();
+    this.cycles_ref = React.createRef();
   }
   static async getInitialProps({ store, query, isServer }) {
     if (isServer) {
@@ -74,13 +75,17 @@ class Offline extends Component {
         >
           <div style={{ display: 'flex' }}>
             {section === 'cycles' && (
-              <Cycles editable_datasets_ref={this.editable_datasets_ref} />
+              <Cycles
+                ref={this.cycles_ref}
+                editable_datasets_ref={this.editable_datasets_ref}
+              />
             )}
             <div style={{ overflowX: 'scroll' }}>
               {selected_cycle && section === 'cycles' && (
                 <CycleInfo
                   selected_cycle={selected_cycle}
                   workspace={workspace}
+                  cycles_ref={this.cycles_ref}
                 />
               )}
               <ManageDatasetModal />

@@ -17,7 +17,7 @@ class Cycles extends Component {
       this.props.clearDatasets();
     }
   }
-  displayCycle = (selected_cycle) => {
+  displayCycle = async (selected_cycle) => {
     if (selected_cycle !== null) {
       this.props.selectCycle(selected_cycle);
       // We filter now only the datasets in the cycle:
@@ -41,7 +41,7 @@ class Cycles extends Component {
         or: datasets_filter,
       };
       if (this.props.editable_datasets_ref.current) {
-        this.props.editable_datasets_ref.current.filterTable(filter, 0);
+        await this.props.editable_datasets_ref.current.filterTable(filter, 0);
       }
     }
   };
@@ -155,8 +155,13 @@ const mapStateToProps = (state) => {
     workspace: state.offline.workspace.workspace,
   };
 };
-export default connect(mapStateToProps, {
-  getCycles,
-  selectCycle,
-  clearDatasets,
-})(Cycles);
+export default connect(
+  mapStateToProps,
+  {
+    getCycles,
+    selectCycle,
+    clearDatasets,
+  },
+  null,
+  { forwardRef: true }
+)(Cycles);
