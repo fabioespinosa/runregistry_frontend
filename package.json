@@ -27,7 +27,7 @@
     "formik": "^1.0.2",
     "golden-json-helpers": "^1.2.3",
     "json-stringify-pretty-compact": "^1.2.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.19",
     "material-ui": "^1.0.0-beta.47",
     "micro": "^9.3.2",
     "moment": "^2.24.0",
