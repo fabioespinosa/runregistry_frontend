@@ -15,7 +15,7 @@ const http_port = process.env.PORT || 7001;
 app.prepare().then(() => {
   const server = express();
   // We set depth of query parser to allow complicated url filters on the table (for bookmarkability)
-  server.set('query parser', function(str) {
+  server.set('query parser', function (str) {
     return qs.parse(str, { depth: 50 });
   });
   // const router = express.Router();
@@ -28,7 +28,7 @@ app.prepare().then(() => {
     res.redirect('/online/global');
   });
   server.get('/offline', (req, res) => {
-    res.redirect('/offline/workspaces/global');
+    res.redirect('/offline/datasets/global');
   });
 
   //online:
@@ -69,7 +69,7 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  server.listen(http_port, err => {
+  server.listen(http_port, (err) => {
     if (err) throw err;
     console.log(`> HTTP listening in port ${http_port}`);
   });

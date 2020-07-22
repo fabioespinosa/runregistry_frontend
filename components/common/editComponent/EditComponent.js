@@ -62,13 +62,22 @@ class EditComponent extends Component {
         <td>{component_name ? component_name : component}</td>
         <td className="comment">
           {show_history ? (
-            <History
-              run_number={run_number}
-              dataset_name={dataset_name}
-              component={component}
-              number_of_lumisections={number_of_lumisections}
-              show_oms_history={show_oms_history}
-            />
+            <div>
+              <History
+                run_number={run_number}
+                dataset_name={dataset_name}
+                component={component}
+                number_of_lumisections={number_of_lumisections}
+                show_oms_history={show_oms_history}
+              />
+              <br />
+              <center>
+                Changes done manually to the Lumisections have priority over
+                automatic (auto@auto) changes, therefore they will always be
+                applied after all the automatic changes have been applied (even
+                if the automatic changes happen after the manual ones)
+              </center>
+            </div>
           ) : (
             <div>
               <BarPlot

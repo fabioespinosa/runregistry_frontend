@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { Formik, Field } from 'formik';
 import { Button, Select, Input, Checkbox } from 'antd';
@@ -18,13 +19,32 @@ class DatasetUpdate extends Component {
       `${api_url}/dc_tools/unique_dataset_names`,
       {
         workspace: workspace.toLowerCase(),
-        filter
+        filter,
       }
     );
     this.setState({ unique_dataset_names });
   });
   render() {
-    const { datasets, count, filter } = this.props;
+    const {
+      datasets,
+      count,
+      filter,
+      router: {
+        query: { section },
+      },
+    } = this.props;
+    if (section === 'cycles') {
+      return (
+        <div>
+          <h3>
+            For moving dataset state in batch use the normal view (by clicking
+            "Show All Datasets"), in the cycles view you can only move all at
+            once using the button "Move all datasets in this cycle to COMPLETED"
+          </h3>
+        </div>
+      );
+    }
+
     const { unique_dataset_names } = this.state;
     const initialValues = {};
     return (
@@ -44,7 +64,7 @@ class DatasetUpdate extends Component {
         <br />
         <Formik
           initialValues={initialValues}
-          onSubmit={async values => {
+          onSubmit={async (values) => {
             await this.props.datasetUpdate(values);
             await Swal(`Datasets state changed`, '', 'success');
           }}
@@ -57,11 +77,11 @@ class DatasetUpdate extends Component {
                   <Select
                     placeholder="Source dataset name"
                     value={values['source_dataset_name']}
-                    onChange={value =>
+                    onChange={(value) =>
                       setFieldValue('source_dataset_name', value)
                     }
                   >
-                    {unique_dataset_names.map(dataset_name => (
+                    {unique_dataset_names.map((dataset_name) => (
                       <Option value={dataset_name}>{dataset_name}</Option>
                     ))}
                   </Select>
@@ -71,7 +91,7 @@ class DatasetUpdate extends Component {
                   <Select
                     placeholder="Change state to"
                     value={values['to_state']}
-                    onChange={value => setFieldValue('to_state', value)}
+                    onChange={(value) => setFieldValue('to_state', value)}
                   >
                     <Option value="COMPLETED">COMPLETED</Option>
                     <Option value="OPEN">OPEN</Option>
@@ -118,14 +138,16 @@ class DatasetUpdate extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { datasets, count, filter } = state.offline.editable_datasets;
   return {
     datasets,
     count,
     filter,
-    workspace: state.offline.workspace.workspace
+    workspace: state.offline.workspace.workspace,
   };
 };
 
-export default connect(mapStateToProps, { datasetUpdate })(DatasetUpdate);
+export default withRouter(
+  connect(mapStateToProps, { datasetUpdate })(DatasetUpdate)
+);
