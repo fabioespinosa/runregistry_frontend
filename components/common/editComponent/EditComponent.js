@@ -24,6 +24,7 @@ class EditComponent extends Component {
     this.state = {
       modifying: false,
       show_history: false,
+      loading_submit: false,
       ls_ranges_lengths: [ls_ranges_lengths],
       lumisection_ranges,
     };
@@ -44,6 +45,7 @@ class EditComponent extends Component {
       show_history,
       lumisection_ranges,
       ls_ranges_lengths,
+      loading_submit,
     } = this.state;
     const number_of_lumisections = lumisection_ranges[
       lumisection_ranges.length - 1
@@ -71,12 +73,15 @@ class EditComponent extends Component {
                 show_oms_history={show_oms_history}
               />
               <br />
-              <center>
-                Changes done manually to the Lumisections have priority over
-                automatic (auto@auto) changes, therefore they will always be
-                applied after all the automatic changes have been applied (even
-                if the automatic changes happen after the manual ones)
-              </center>
+              {dataset_name === 'online' && (
+                <center>
+                  Changes done manually to the Lumisections have priority over
+                  automatic (auto@auto) changes, therefore they (the manual
+                  ones) will always be applied after all the automatic changes
+                  have been applied (even if the automatic changes happen after
+                  the manual ones).
+                </center>
+              )}
             </div>
           ) : (
             <div>
@@ -100,21 +105,28 @@ class EditComponent extends Component {
               initialValues={initialValues}
               enableReinitialize={true}
               onSubmit={async (form_values) => {
-                const { run_number, dataset_name } = this.props;
-                let component_triplet_name = component;
-                console.log(form_values);
-                await this.props.addLumisectionRange(
-                  form_values,
-                  run_number,
-                  dataset_name,
-                  component_triplet_name
-                );
-                await this.props.refreshLumisections();
-                await Swal(`Component's edited successfully`, '', 'success');
-                if (dataset_name === 'online') {
-                  await this.props.reFetchRun(run_number);
-                } else {
-                  await this.props.reFetchDataset(run_number, dataset_name);
+                try {
+                  this.setState({ loading_submit: true });
+                  const { run_number, dataset_name } = this.props;
+                  let component_triplet_name = component;
+                  console.log(form_values);
+                  await this.props.addLumisectionRange(
+                    form_values,
+                    run_number,
+                    dataset_name,
+                    component_triplet_name
+                  );
+                  await this.props.refreshLumisections();
+                  if (dataset_name === 'online') {
+                    await this.props.reFetchRun(run_number);
+                  } else {
+                    await this.props.reFetchDataset(run_number, dataset_name);
+                  }
+                  this.setState({ loading_submit: false });
+                  await Swal(`Component's edited successfully`, '', 'success');
+                } catch (err) {
+                  this.setState({ loading_submit: false });
+                  throw err;
                 }
               }}
               render={({
@@ -199,12 +211,8 @@ class EditComponent extends Component {
                       <div className="submit">
                         <Button
                           type="primary"
-                          onClick={() => {
-                            handleSubmit();
-                            // this.setState({
-                            //     modifying: false
-                            // });
-                          }}
+                          onClick={handleSubmit}
+                          loading={loading_submit}
                         >
                           Modify
                         </Button>

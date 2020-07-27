@@ -12,7 +12,11 @@ const { Option } = Select;
 import { datasetUpdate } from '../../../../ducks/offline/dc_tools';
 
 class DatasetUpdate extends Component {
-  state = { unique_dataset_names: [] };
+  state = {
+    unique_dataset_names: [],
+    loading_datasets: true,
+    loading_submit: false,
+  };
   componentDidMount = error_handler(async () => {
     const { filter, workspace } = this.props;
     const { data: unique_dataset_names } = await axios.post(
@@ -22,13 +26,14 @@ class DatasetUpdate extends Component {
         filter,
       }
     );
-    this.setState({ unique_dataset_names });
+    this.setState({ unique_dataset_names, loading_datasets: false });
   });
   render() {
     const {
       datasets,
       count,
       filter,
+      workspace,
       router: {
         query: { section },
       },
@@ -45,49 +50,93 @@ class DatasetUpdate extends Component {
       );
     }
 
-    const { unique_dataset_names } = this.state;
+    const {
+      unique_dataset_names,
+      loading_datasets,
+      loading_submit,
+    } = this.state;
     const initialValues = {};
     return (
       <div>
         <h3>
-          This tool will allow the DC Expert to change dataset state for several
-          datasets
+          This tool will allow the DC Expert (or certificator admin) to change
+          the dataset state for several datasets
         </h3>
         <h5 style={{ textAlign: 'center', color: 'red' }}>
           {count} Datasets Selected
         </h5>
-        <h5>
-          {Object.keys(filter).length === 0
-            ? `WARNING: NO FILTER, APPLYING TO ALL DATASETS (${count}). To make a filter, do it in the lower table (Editable datasets)`
-            : `With filter: ${JSON.stringify(filter)}`}
-        </h5>
+        {section !== 'cycles' && (
+          <h5>
+            {Object.keys(filter).length === 0
+              ? `WARNING: NO FILTER, APPLYING TO ALL DATASETS (${count}). To make a filter, do it in the lower table (Editable datasets)`
+              : `With filter: ${JSON.stringify(filter)}`}
+          </h5>
+        )}
         <br />
+        <br />
+
         <Formik
           initialValues={initialValues}
           onSubmit={async (values) => {
-            await this.props.datasetUpdate(values);
-            await Swal(`Datasets state changed`, '', 'success');
+            try {
+              this.setState({ loading_submit: true });
+              await this.props.datasetUpdate(values);
+              this.setState({ loading_submit: false });
+              await Swal(`Datasets state changed`, '', 'success');
+            } catch (err) {
+              this.setState({ loading_submit: false });
+              throw err;
+            }
           }}
           render={({ values, setFieldValue, handleSubmit }) => {
             console.log(values);
             return (
               <form onSubmit={handleSubmit} className="dataset_update_form">
                 <div className="form_container">
-                  Source dataset name:
+                  <hr />
+                  <br />
+                  <p>How to use this tool?</p>
+                  <p>
+                    First make a filter of the datasets you want to change
+                    states in batch in the lower table in Offline Run Registry.
+                    Once that is done, go to this menu and you will have to
+                    select a dataset name from that selection below and the
+                    transition of states you want to make.
+                  </p>
+                  <hr />
+                  <br />
+                  Source dataset name: {'  '}
+                  {loading_datasets ? (
+                    'Loading datasets...'
+                  ) : (
+                    <Select
+                      placeholder="Source dataset name"
+                      value={values['source_dataset_name']}
+                      onChange={(value) =>
+                        setFieldValue('source_dataset_name', value)
+                      }
+                      className="big_select"
+                    >
+                      {unique_dataset_names.map((dataset_name) => (
+                        <Option value={dataset_name}>{dataset_name}</Option>
+                      ))}
+                    </Select>
+                  )}
+                  <br />
+                  <br />
+                  Out of the datasets selected and those which matched the
+                  source dataset name selected above, you want to change those
+                  that are in state:{'  '}
                   <Select
-                    placeholder="Source dataset name"
-                    value={values['source_dataset_name']}
-                    onChange={(value) =>
-                      setFieldValue('source_dataset_name', value)
-                    }
+                    placeholder="State from"
+                    value={values['from_state']}
+                    onChange={(value) => setFieldValue('from_state', value)}
                   >
-                    {unique_dataset_names.map((dataset_name) => (
-                      <Option value={dataset_name}>{dataset_name}</Option>
-                    ))}
-                  </Select>
-                  <br />
-                  <br />
-                  Change state to:
+                    <Option value="OPEN">OPEN</Option>
+                    <Option value="COMPLETED">COMPLETED</Option>
+                    <Option value="SIGNOFF">SIGNOFF</Option>
+                  </Select>{' '}
+                  to state: {'  '}
                   <Select
                     placeholder="Change state to"
                     value={values['to_state']}
@@ -97,6 +146,16 @@ class DatasetUpdate extends Component {
                     <Option value="OPEN">OPEN</Option>
                     <Option value="SIGNOFF">SIGNOFF</Option>
                   </Select>
+                  <br />
+                  <br />
+                  This change will take effect in the{' '}
+                  <strong>{workspace}</strong> Workspace.{' '}
+                  <i>
+                    (If you want to change states in batch in a different
+                    workspace, please open this tool in the respective
+                    workspace)
+                  </i>
+                  <br />
                   <br />
                   <Checkbox
                     checked={values['change_in_all_workspaces']}
@@ -108,7 +167,11 @@ class DatasetUpdate extends Component {
                   </Checkbox>
                   <br />
                   <div className="buttons">
-                    <Button type="primary" htmlType="submit">
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      loading={loading_submit}
+                    >
                       Save
                     </Button>
                   </div>
@@ -117,10 +180,15 @@ class DatasetUpdate extends Component {
             );
           }}
         />
+        <style jsx global>{`
+          .big_select {
+            width: 400px;
+          }
+        `}</style>
         <style jsx>{`
           .form_container {
             margin: 0 auto;
-            width: 400px;
+            width: 900px;
           }
 
           ul {

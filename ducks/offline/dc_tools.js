@@ -71,12 +71,19 @@ export const copyDatasetColumn = ({
 
 export const datasetUpdate = ({
   source_dataset_name,
+  from_state,
   to_state,
   change_in_all_workspaces,
 }) =>
   error_handler(async (dispatch, getState) => {
     if (!source_dataset_name) {
       throw { message: 'You need to select a dataset name' };
+    }
+    if (!from_state || !to_state) {
+      throw {
+        message:
+          'You need to select a from state and a state you wish to change the datasets',
+      };
     }
     const current_filter = getState().offline.editable_datasets.filter;
     const workspace = getState().offline.workspace.workspace.toLowerCase();
@@ -95,17 +102,28 @@ export const datasetUpdate = ({
       );
       datasets = data;
     } else {
-      // To get the from_state, we get the state of the first dataset in the editable dataset table. To batch edit it is only possible to go from one state to another, therefore if there are other datasets not in the same state, it will error out
-      const first_dataset = getState().offline.editable_datasets.datasets[0];
-      const from_state = first_dataset[`${workspace}_state`];
-      const { data } = await axios.post(
-        `${api_url}/dc_tools/change_multiple_dataset_states/${workspace}/${from_state}/${to_state}`,
-        {
-          filter: filter_with_source_dataset_name,
-        },
-        auth(getState, 'Change dataset state in batch')
-      );
-      datasets = data;
+      try {
+        const { data } = await axios.post(
+          `${api_url}/dc_tools/change_multiple_dataset_states/${workspace}/${from_state}/${to_state}`,
+          {
+            filter: filter_with_source_dataset_name,
+          },
+          auth(getState, 'Change dataset state in batch')
+        );
+        datasets = data;
+      } catch (err) {
+        if (err.response.status === 401 && to_state === 'OPEN') {
+          // Show message to turn to cycles view
+          err.response.data.message = `
+        <h3>You should be able to perform the change of state back to OPEN in the cycle's view (if there is an ongoing certification cycle, in the cycle view, click on your workspace and select the current cycle)</h3>
+        <p><a href="/offline/cycles/global">Go to cycle's view.</a></p>
+        <p>The reason we don't allow changing state back to OPEN in this view is because we want to prevent someone from editing a dataset way in the past. (And in this view you can select any dataset, whereas in the cycle view you can only select those that belong to the cycle we are currently certifying).</p>
+        <p>By keeping the datasets we don't want anyone changing in a state different than OPEN state, we are safe no one will edit them</p>
+        <p>If you want to be able to move a dataset in the past back to OPEN, contact the DC team or make yourself part of the e-groups below</p>
+        ${err.response.data.message}`;
+        }
+        throw err;
+      }
     }
     datasets = formatDatasets(datasets);
     dispatch({
