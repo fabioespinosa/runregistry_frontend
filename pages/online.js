@@ -14,15 +14,19 @@ import ClassifierVisualizationModal from '../components/online/classifier_visual
 
 import { filterRuns } from '../ducks/online/runs';
 import { filterRuns as filterSignificantRuns } from '../ducks/online/significant_runs';
+import axios from 'axios';
 const { Content } = Layout;
 
 class Online extends Component {
-  static getInitialProps({ store, query, isServer }) {
+  static async getInitialProps({ store, query, isServer }) {
     if (isServer) {
       initializeUser(store, query);
       initializeEnvironment(store);
     }
     if (!isServer) {
+      // Get token info and save it in headers:
+      // const { data } = await axios.get('https://cmsweb-auth.cern.ch/renew');
+      // console.log(data);
       store.dispatch({
         type: CHANGE_WORKSPACE,
         payload: query.workspace,

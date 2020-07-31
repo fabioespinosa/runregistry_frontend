@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 import { Layout, Menu, Breadcrumb } from 'antd';
-import config from '../../../../config/config';
+import config, { root_url_prefix } from '../../../../config/config';
 const { Header, Content, Footer, Sider } = Layout;
 
 class TopNav extends Component {
@@ -34,7 +34,7 @@ class TopNav extends Component {
           <Menu.Item key="logo">
             <Link
               as={`/online`}
-              href="/online/global?type=online&workspace=global"
+              href={`${root_url_prefix}/online/global?type=online&workspace=global`}
             >
               <div>
                 <img className="logo" src={`/static/images/cms_logo.png`} />
@@ -54,7 +54,7 @@ class TopNav extends Component {
           <Menu.Item key="online">
             <Link
               as={`/online`}
-              href="/online/global?type=online&workspace=global"
+              href={`${root_url_prefix}/online/global?type=online&workspace=global`}
             >
               <a>ONLINE</a>
             </Link>
@@ -62,23 +62,23 @@ class TopNav extends Component {
           <Menu.Item key="offline">
             <Link
               as={`/offline/datasets/global`}
-              href="/offline?type=offline&section=datasets&workspace=global"
+              href={`${root_url_prefix}/offline?type=offline&section=datasets&workspace=global`}
             >
               <a>OFFLINE</a>
             </Link>
           </Menu.Item>
           <Menu.Item key="json">
-            <Link as={`/json`} href="/json">
+            <Link as={`/json`} href={`${root_url_prefix}/json`}>
               <a>JSON CREATION</a>
             </Link>
           </Menu.Item>
           <Menu.Item key="json_portal">
-            <Link as={`/json_portal`} href="/json_portal">
+            <Link as={`/json_portal`} href={`${root_url_prefix}/json_portal`}>
               <a>JSON PORTAL</a>
             </Link>
           </Menu.Item>
           <Menu.Item key="log">
-            <Link as={`/log`} href="/log">
+            <Link as={`/log`} href={`${root_url_prefix}/log`}>
               <a>LOG</a>
             </Link>
           </Menu.Item>

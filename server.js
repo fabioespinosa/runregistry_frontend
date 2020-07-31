@@ -1,16 +1,14 @@
-const fs = require('fs');
 const express = require('express');
 const next = require('next');
 
 const qs = require('qs');
-const http = require('http');
-const https = require('https');
-
-const dev = process.env.NODE_ENV !== 'production';
+const { NODE_ENV, ENV } = process.env;
+const dev = typeof NODE_ENV === 'undefined' || NODE_ENV === 'development';
 const app = next({ dev });
 
 const handle = app.getRequestHandler();
 const http_port = process.env.PORT || 7001;
+const root_url_prefix = ENV === 'kubernetes' ? '/runregistry' : '';
 
 app.prepare().then(() => {
   const server = express();
@@ -22,13 +20,13 @@ app.prepare().then(() => {
 
   // Redirects primary url to runs/all
   server.get('/', (req, res) => {
-    res.redirect('/online/global');
+    res.redirect(`${root_url_prefix}/online/global`);
   });
   server.get('/online', (req, res) => {
-    res.redirect('/online/global');
+    res.redirect(`${root_url_prefix}/online/global`);
   });
   server.get('/offline', (req, res) => {
-    res.redirect('/offline/datasets/global');
+    res.redirect(`${root_url_prefix}/offline/datasets/global`);
   });
 
   //online:

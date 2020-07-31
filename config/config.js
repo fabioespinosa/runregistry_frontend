@@ -11,21 +11,26 @@ console.log('Setup: ', NODE_ENV);
 console.log('Environment: ', ENV);
 const config = {
   development: {
-    root_url: '',
+    root_url_prefix: '',
     api_url: 'http://localhost:9500',
   },
   staging: {
-    root_url: '',
+    root_url_prefix: '',
     api_url: 'https://dev-cmsrunregistry.web.cern.ch/api',
   },
   production: {
-    root_url: '',
+    root_url_prefix: '',
+    api_url: 'https://cmsrunregistry.web.cern.ch/api',
+  },
+  kubernetes: {
+    root_url_prefix: '/runregistry',
     api_url: 'https://cmsrunregistry.web.cern.ch/api',
   },
 };
 exports.config = config;
 
 exports.api_url = config[ENV || 'development']['api_url'];
+exports.root_url_prefix = config[ENV || 'development']['root_url_prefix'];
 exports.WAITING_DQM_GUI_CONSTANT = 'waiting dqm gui';
 
 exports.hdqm_link = 'https://cms-hdqm.web.cern.ch/?filter=rr&filterValue=';

@@ -1,6 +1,7 @@
 /* eslint-disable */
 const withCss = require('@zeit/next-css');
 const withSass = require('@zeit/next-sass');
+const { root_url_prefix } = require('./config/config');
 
 if (typeof require !== 'undefined') {
   require.extensions['.css'] = (file) => {};

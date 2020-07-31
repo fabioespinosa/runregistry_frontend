@@ -16,6 +16,7 @@ import { CopyOutlined, RetweetOutlined, DownOutlined } from '@ant-design/icons';
 import { showConfigurationModal as showOnlineConfigurationModal } from '../../../ducks/online/ui';
 
 import { showConfigurationModal as showOfflineConfigurationModal } from '../../../ducks/offline/ui';
+import { root_url_prefix } from '../../../config/config';
 
 const SubMenu = Menu.SubMenu;
 const RadioGroup = Radio.Group;
@@ -72,7 +73,7 @@ class BreadcrumbCmp extends Component {
             //     href={`/offline?type=offline&section=datasets&workspace=${workspace}`}
             //     as={`/offline/datasets/${workspace}`}
             // >
-            <a href={`/offline/datasets/${workspace}`}>
+            <a href={`${root_url_prefix}/offline/datasets/${workspace}`}>
               <Button type="primary" size="large" icon={<CopyOutlined />}>
                 Show All Datasets
               </Button>
@@ -81,7 +82,7 @@ class BreadcrumbCmp extends Component {
           )}
           {section === 'datasets' && (
             <Link
-              href={`/offline?type=offline&section=cycles&workspace=${workspace}`}
+              href={`${root_url_prefix}/offline?type=offline&section=cycles&workspace=${workspace}`}
               as={`/offline/cycles/${workspace}`}
             >
               <a>

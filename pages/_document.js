@@ -1,4 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document';
+import { root_url_prefix } from '../config/config';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -7,21 +8,25 @@ export default class MyDocument extends Document {
   }
 
   render() {
-    const assetPrefix = this.props.__NEXT_DATA__.assetPrefix;
+    // const assetPrefix = this.props.__NEXT_DATA__.assetPrefix || '';
 
     return (
       <html>
         <Head>
-          <link rel="stylesheet" type="text/css" href="/static/nprogress.css" />
           <link
             rel="stylesheet"
             type="text/css"
-            href="/static/ant-modified.min.css"
+            href={`${root_url_prefix}/static/nprogress.css`}
           />
           <link
             rel="stylesheet"
             type="text/css"
-            href="/static/react-table.css"
+            href={`${root_url_prefix}/static/ant-modified.min.css`}
+          />
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href={`${root_url_prefix}/static/react-table.css`}
           />
           <meta charSet="utf-8" />
           <meta

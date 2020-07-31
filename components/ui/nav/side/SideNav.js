@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Router from 'next/router';
 import { Layout, Menu, Badge } from 'antd';
 import { CloseCircleOutlined, LaptopOutlined } from '@ant-design/icons';
+import { root_url_prefix } from '../../../../config/config';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -21,12 +22,12 @@ class SideNav extends Component {
     } = this.props;
     if (type === 'online') {
       Router.push(
-        `/online?type=${type}&workspace=${key}&filters=${url_query}`,
+        `${root_url_prefix}/online?type=${type}&workspace=${key}&filters=${url_query}`,
         `/${type}/${key}?${url_query}`
       );
     } else {
       Router.push(
-        `/offline?type=${type}&section=${section}&workspace=${key}&filters=${url_query}`,
+        `${root_url_prefix}/offline?type=${type}&section=${section}&workspace=${key}&filters=${url_query}`,
         `/offline/${section}/${key}?${url_query}`
       );
     }
