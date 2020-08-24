@@ -15,6 +15,7 @@ import ClassifierVisualizationModal from '../components/online/classifier_visual
 import { filterRuns } from '../ducks/online/runs';
 import { filterRuns as filterSignificantRuns } from '../ducks/online/significant_runs';
 import axios from 'axios';
+import QueryString from 'qs';
 const { Content } = Layout;
 
 class Online extends Component {
@@ -24,9 +25,14 @@ class Online extends Component {
       initializeEnvironment(store);
     }
     if (!isServer) {
-      // Get token info and save it in headers:
-      // const { data } = await axios.get('https://cmsweb-auth.cern.ch/renew');
-      // console.log(data);
+      // // Get token info and save it in redux store:
+      // const { data } = await axios.get('https://cmsweb-auth.cern.ch/renew', {
+      //   headers: {
+      //     accept: 'json',
+      //   },
+      // });
+      // const { access_token, expires_in, refresh_token, refresh_expires_in, id_token } = data;
+
       store.dispatch({
         type: CHANGE_WORKSPACE,
         payload: query.workspace,

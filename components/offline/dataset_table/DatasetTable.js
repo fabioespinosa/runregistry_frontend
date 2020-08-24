@@ -310,6 +310,16 @@ class DatasetTable extends Component {
                 Open in HDQM
               </a>
             </Button>
+            <Button>
+              <a
+                href={`${`https://dqm-gui.web.cern.ch/?filter=`}${qs.stringify(
+                  filter
+                )}`}
+                target="_blank"
+              >
+                Open in GUI
+              </a>
+            </Button>
           </div>
         </div>
 
