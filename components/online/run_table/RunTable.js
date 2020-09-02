@@ -15,6 +15,7 @@ import { showLumisectionModal } from '../../../ducks/global_ui';
 
 import ReactTable from 'react-table';
 import column_generator from './columns/columns';
+import { Switch } from 'antd';
 const Filter = dynamic(
   import('../../common/CommonTableComponents/filter/Filter'),
   {
@@ -72,7 +73,7 @@ class RunTable extends Component {
     super(props);
     this.defaultPageSize = props.defaultPageSize;
     let sortings = [];
-    const { filters } = this.props.router.query;
+    const { filters } = this.props;
     if (filters) {
       const { sorting_prefix_from_url } = this.props;
       const query_sortings = filters[sorting_prefix_from_url];
@@ -80,8 +81,19 @@ class RunTable extends Component {
         sortings = query_sortings;
       }
     }
-    this.state = { filters: {}, sortings, loading: true, error: '' };
+    this.state = {
+      filters: {},
+      sortings,
+      loading: true,
+      error: '',
+      live_mode: false,
+    };
   }
+
+  // Used for live mode:
+  refresh = async () => {
+    this.filterTable(this.state.filters, 0);
+  };
 
   filterTable = async (filters, page, pageSize) => {
     this.setState({ filters, loading: true, error: '' });
@@ -113,7 +125,7 @@ class RunTable extends Component {
     if (filters_from_url) {
       filters = qs.parse(filters_from_url, { depth: Infinity });
     }
-    let { asPath } = this.props.router;
+    let { asPath } = this.props;
 
     if (asPath.includes('?')) {
       asPath = asPath.split('?')[0];
@@ -258,12 +270,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(
-  connect(mapStateToProps, {
+export default connect(
+  mapStateToProps,
+  {
     showManageRunModal,
     showLumisectionModal,
     showClassifierVisualizationModal,
     moveRun,
     markSignificant,
-  })(RunTable)
-);
+  },
+  null,
+  { forwardRef: true }
+)(RunTable);

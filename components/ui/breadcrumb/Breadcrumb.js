@@ -10,6 +10,7 @@ import {
   Radio,
   message,
   Progress,
+  Switch,
 } from 'antd';
 import { CopyOutlined, RetweetOutlined, DownOutlined } from '@ant-design/icons';
 
@@ -57,17 +58,28 @@ class BreadcrumbCmp extends Component {
   render() {
     const {
       children,
+      switchLiveMode,
       router: {
         query: { type, section, workspace },
       },
       online,
     } = this.props;
+
     return (
       <div className="breadcrumb_container">
         <Breadcrumb className="breadcrumb properly_capitalized">
           {children}
         </Breadcrumb>
         <div className="show_all">
+          {online && (
+            <Switch
+              checkedChildren="live mode on"
+              unCheckedChildren="live mode off"
+              onChange={(checked) => {
+                switchLiveMode(checked);
+              }}
+            />
+          )}
           {section === 'cycles' && (
             // <Link
             //     href={`/offline?type=offline&section=datasets&workspace=${workspace}`}

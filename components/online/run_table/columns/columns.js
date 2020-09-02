@@ -1,6 +1,6 @@
 import { certifiable_online_components } from '../../../../config/config';
 import { Tooltip } from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
+import { SyncOutlined, CheckOutlined } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 import { oms_link } from '../../../../config/config';
 import Status from '../../../common/CommonTableComponents/Status';
@@ -16,6 +16,32 @@ const column_generator = ({
   workspaces,
 }) => {
   let columns = [
+    {
+      Header: 'Finished',
+      accessor: 'end_time',
+      // prefix_for_filtering: 'oms_attributes',
+      maxWidth: 50,
+      resizable: false,
+      Cell: ({ original, value }) => (
+        <div style={{ textAlign: 'center' }}>
+          {value === null ? (
+            <Tooltip
+              placement="top"
+              title="Run's end_time from OMS is null, therefore run is ongoing"
+            >
+              <SyncOutlined spin style={{ color: 'blue' }} />
+            </Tooltip>
+          ) : (
+            <Tooltip
+              placement="top"
+              title={`Run's end_time from OMS is ${value}, therefore run is finished`}
+            >
+              <CheckOutlined style={{ color: 'green' }} />
+            </Tooltip>
+          )}
+        </div>
+      ),
+    },
     {
       Header: 'Run Number',
       id: 'run_number',
@@ -46,7 +72,7 @@ const column_generator = ({
       Header: 'Manage / LS',
       id: 'manage',
       sortable: false,
-      maxWidth: 75,
+      maxWidth: 70,
       Cell: ({ original }) => (
         <div style={{ textAlign: 'center' }}>
           <span>
