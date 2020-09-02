@@ -29,7 +29,7 @@ const column_generator = ({
               placement="top"
               title="Run's end_time from OMS is null, therefore run is ongoing"
             >
-              <SyncOutlined spin style={{ color: 'blue' }} />
+              <SyncOutlined style={{ color: 'blue' }} />
             </Tooltip>
           ) : (
             <Tooltip
@@ -210,6 +210,14 @@ const column_generator = ({
       id: 'ls_duration',
       maxWidth: 70,
       accessor: 'ls_duration',
+      prefix_for_filtering: 'oms_attributes',
+      Cell: ({ value }) => <div style={{ textAlign: 'center' }}>{value}</div>,
+    },
+    {
+      Header: 'HLT Event Counter',
+      id: 'hlt_physics_counter',
+      maxWidth: 95,
+      accessor: 'hlt_physics_counter',
       prefix_for_filtering: 'oms_attributes',
       Cell: ({ value }) => <div style={{ textAlign: 'center' }}>{value}</div>,
     },
