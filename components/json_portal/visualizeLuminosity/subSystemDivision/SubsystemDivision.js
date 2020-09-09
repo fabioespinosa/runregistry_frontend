@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useRef, useCallback } from 'react';
 import { animateScroll } from 'react-scroll';
 import { Radio } from 'antd';
 import {
@@ -23,28 +23,32 @@ import {
   tracker_mapping,
 } from '../../../../config/json_visualization_dcs_bit_mapping';
 import { add_jsons_fast } from 'golden-json-helpers';
+import FileSaver from 'file-saver';
+import { getPngData } from '../../../../utils/get_png_data';
 
 const COLORS = [
-  '#3182bd',
-  '#6baed6',
-  '#9ecae1',
-  '#c6dbef',
-  '#e6550d',
-  '#fd8d3c',
-  '#fdae6b',
-  '#fdd0a2',
-  '#31a354',
-  '#74c476',
-  '#a1d99b',
-  '#c7e9c0',
-  '#756bb1',
-  '#9e9ac8',
-  '#bcbddc',
-  '#dadaeb',
-  '#636363',
-  '#969696',
-  '#bdbdbd',
-  '#d9d9d9',
+  '#e6194b',
+  '#3cb44b',
+  '#4363d8',
+  '#f58231',
+  '#911eb4',
+  '#46f0f0',
+  '#f032e6',
+  '#bcf60c',
+  '#fabebe',
+  '#008080',
+  '#e6beff',
+  '#9a6324',
+  '#fffac8',
+  '#800000',
+  '#aaffc3',
+  '#808000',
+  '#ffd8b1',
+  '#000075',
+  '#808080',
+  '#ffffff',
+  '#000000',
+  '#ffe119',
 ];
 
 const formatName = (name) => {
@@ -121,9 +125,53 @@ function isSubsetOf(set, subset) {
   return true;
 }
 
-const PieChartAndBarChart = ({ title, data, runs }) => {
+const RADIAN = Math.PI / 180;
+const renderLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  name,
+  value,
+  percent,
+  index,
+  total_items,
+  number_of_items_above_5_percent,
+}) => {
+  let radius = innerRadius + (outerRadius - innerRadius) * 1.1;
+  if (percent < 0.05) {
+    // console.log(total_items, )
+    const index_of_item_above_5_percent =
+      number_of_items_above_5_percent - (total_items - index);
+    const overflow =
+      index_of_item_above_5_percent / number_of_items_above_5_percent / 1.5;
+    console.log(radius, 1 + overflow);
+    radius = radius * (1 + overflow);
+  }
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  // const item = chartData[index];
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="black"
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      key={`label-${name}-${value}`}
+    >
+      {name} - {value.toFixed(2)} ({(percent * 100).toFixed(0)}%)
+    </text>
+  );
+};
+
+function PieChartAndBarChart({ title, data, runs }) {
   const [barChart, setChart] = useState('bar');
   const [showModal, setShowModal] = useState(false);
+  const [chart, setChartRef] = useState();
   const [selectedLabel, setSelectedLabel] = useState('');
   const onClick = (props) => {
     console.log(props);
@@ -134,6 +182,19 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
       }
     }
   };
+
+  const handleDownload = useCallback(async () => {
+    // Send the chart to getPngData
+    const pngData = await getPngData(chart, '#000000');
+    // Can also pass an optional fill parameter for the background color
+    // const pngData = await getPngData(chart, '#000000');
+    // Use FileSaver to download the PNG
+    FileSaver.saveAs(pngData, 'chart.png');
+  }, [chart]);
+  const total = data?.reduce((sum, { value }) => (sum += value), 0);
+  const number_of_items_above_5_percent = data?.filter(
+    ({ value }) => value / total <= 0.05
+  ).length;
   return (
     <div>
       {showModal && (
@@ -154,10 +215,13 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
       >
         <Radio.Button value="bar">Bar</Radio.Button>
         <Radio.Button value="pie">Pie</Radio.Button>
-      </Radio.Group>
+      </Radio.Group>{' '}
+      &nbsp;
+      <a onClick={handleDownload}>Download as PNG</a>
       {barChart === 'bar' ? (
         <ResponsiveContainer width="80%" height={600}>
           <BarChart
+            ref={(ref) => setChartRef(ref)}
             layout="vertical"
             height={300}
             data={data}
@@ -174,23 +238,27 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <ResponsiveContainer width="80%" height={450}>
-          <PieChart onClick={onClick} cursor="pointer">
+        <ResponsiveContainer width="80%" height={900}>
+          <PieChart
+            onClick={onClick}
+            cursor="pointer"
+            ref={(ref) => setChartRef(ref)}
+          >
             <Pie
               data={data}
+              isAnimationActive={false}
               cx="50%"
               cy="50%"
               startAngle={90}
               endAngle={-270}
               labelLine
-              label={({ name, value, percent }) => {
-                if (percent > 0.05) {
-                  // name = formatName(name);
-                  return `${name} - ${value.toFixed(2)} - ${(
-                    percent * 100
-                  ).toFixed(0)}%`;
-                }
-                // return false;
+              label={(args) => {
+                args = {
+                  ...args,
+                  number_of_items_above_5_percent,
+                  total_items: data.length,
+                };
+                return renderLabel(args);
               }}
               outerRadius={200}
               fill="#8884d8"
@@ -204,7 +272,7 @@ const PieChartAndBarChart = ({ title, data, runs }) => {
       )}
     </div>
   );
-};
+}
 
 const Delta = ({ value, reason }) => {
   return (
