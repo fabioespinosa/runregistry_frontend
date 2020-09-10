@@ -145,7 +145,7 @@ const renderLabel = ({
     const index_of_item_above_5_percent =
       number_of_items_above_5_percent - (total_items - index);
     const overflow =
-      index_of_item_above_5_percent / number_of_items_above_5_percent / 1.5;
+      index_of_item_above_5_percent / number_of_items_above_5_percent / 1.1;
     console.log(radius, 1 + overflow);
     radius = radius * (1 + overflow);
   }
@@ -361,8 +361,8 @@ class VisualizeLuminosity extends Component {
       // Now we build a combination without the short runs keys:
       if (!category_added) {
         rules_flagged_false_combination_without_short_runs[key] = val;
-      }
     }
+    } 
 
     // Exlusive only short runs;
     let short_runs_exclusive_losses = {};
@@ -1101,7 +1101,7 @@ class VisualizeLuminosity extends Component {
             </div>
           </div>
           <hr />
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
             <div>
               <h4>CMS recorded: {total_recorded_luminosity}/pb</h4>
               <Delta
@@ -1134,7 +1134,7 @@ class VisualizeLuminosity extends Component {
             </div>
           </div>
           <hr />
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div>
               <h4>
                 CMS Recorded and processed by DC team:{' '}

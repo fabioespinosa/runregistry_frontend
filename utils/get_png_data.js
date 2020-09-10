@@ -11,7 +11,7 @@ function svgToPng(svg, fill) {
     const ctx = canvas.getContext('2d');
 
     if (ctx) {
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle =  "rgba(255, 255, 255, 0.5)";
       ctx.fillRect(0, 0, width, height);
 
       const xml = new XMLSerializer().serializeToString(svg);
