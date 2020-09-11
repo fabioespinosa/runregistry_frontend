@@ -693,10 +693,10 @@ class VisualizeLuminosity extends Component {
       if (!loss_added && dcs_only.length + rr_only.length === vars.length) {
         for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
           // We don't check for >0 in dcs_only or rr_only since we are checking before for dcs_only + rr_only is all there is
-          const only_dcs_bits_from_this_subystem = dcs_only.every((dcs_bit) =>
+          const only_dcs_bits_from_this_subystem =dcs_only.length>0 &&  dcs_only.every((dcs_bit) =>
             dcs_bits.includes(dcs_bit)
           );
-          const only_rr_from_this_subystem = rr_only.every((rr_rule) => {
+          const only_rr_from_this_subystem = rr_only.length>0 &&  rr_only.every((rr_rule) => {
             let [rr_subsystem, rr_column] = rr_rule.split('-');
             if (rr_subsystem === 'ecal' && rr_column === 'es') {
               rr_subsystem = 'es';
