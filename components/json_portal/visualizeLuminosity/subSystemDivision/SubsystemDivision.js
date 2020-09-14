@@ -361,8 +361,8 @@ class VisualizeLuminosity extends Component {
       // Now we build a combination without the short runs keys:
       if (!category_added) {
         rules_flagged_false_combination_without_short_runs[key] = val;
+      }
     }
-    } 
 
     // Exlusive only short runs;
     let short_runs_exclusive_losses = {};
@@ -693,26 +693,28 @@ class VisualizeLuminosity extends Component {
       if (!loss_added && dcs_only.length + rr_only.length === vars.length) {
         for (const [subsystem, dcs_bits] of Object.entries(dcs_mapping)) {
           // We don't check for >0 in dcs_only or rr_only since we are checking before for dcs_only + rr_only is all there is
-          const only_dcs_bits_from_this_subystem =dcs_only.length>0 &&  dcs_only.every((dcs_bit) =>
-            dcs_bits.includes(dcs_bit)
-          );
-          const only_rr_from_this_subystem = rr_only.length>0 &&  rr_only.every((rr_rule) => {
-            let [rr_subsystem, rr_column] = rr_rule.split('-');
-            if (rr_subsystem === 'ecal' && rr_column === 'es') {
-              rr_subsystem = 'es';
-            }
-            if (rr_subsystem === 'tracker' && rr_column === 'strip') {
-              rr_subsystem = 'strip';
-            }
-            if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
-              rr_subsystem = 'pixel';
-            }
-            if (rr_subsystem === 'tracker' && rr_column === 'track') {
-              rr_subsystem = 'track';
-            }
-            return rr_subsystem === subsystem;
-          });
-          if (only_dcs_bits_from_this_subystem && only_rr_from_this_subystem) {
+          const only_dcs_bits_from_this_subystem =
+            dcs_only.length > 0 &&
+            dcs_only.every((dcs_bit) => dcs_bits.includes(dcs_bit));
+          const only_rr_from_this_subystem =
+            rr_only.length > 0 &&
+            rr_only.every((rr_rule) => {
+              let [rr_subsystem, rr_column] = rr_rule.split('-');
+              if (rr_subsystem === 'ecal' && rr_column === 'es') {
+                rr_subsystem = 'es';
+              }
+              if (rr_subsystem === 'tracker' && rr_column === 'strip') {
+                rr_subsystem = 'strip';
+              }
+              if (rr_subsystem === 'tracker' && rr_column === 'pixel') {
+                rr_subsystem = 'pixel';
+              }
+              if (rr_subsystem === 'tracker' && rr_column === 'track') {
+                rr_subsystem = 'track';
+              }
+              return rr_subsystem === subsystem;
+            });
+          if (only_dcs_bits_from_this_subystem || only_rr_from_this_subystem) {
             exclusive_loss += val;
             loss_added = true;
             if (typeof exclusive_losses[subsystem] === 'undefined') {
@@ -1101,7 +1103,13 @@ class VisualizeLuminosity extends Component {
             </div>
           </div>
           <hr />
-          <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
             <div>
               <h4>CMS recorded: {total_recorded_luminosity}/pb</h4>
               <Delta
