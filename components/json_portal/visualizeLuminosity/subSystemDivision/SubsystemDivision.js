@@ -163,7 +163,7 @@ const renderLabel = ({
       dominantBaseline="central"
       key={`label-${name}-${value}`}
     >
-      {name} - {value.toFixed(2)} ({(percent * 100).toFixed(0)}%)
+      {name} - {value.toFixed(2)} pb-1 ({(percent * 100).toFixed(0)}%)
     </text>
   );
 };
