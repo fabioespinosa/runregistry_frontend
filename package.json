@@ -31,7 +31,7 @@
     "lodash": "^4.17.10",
     "material-ui": "^1.0.0-beta.47",
     "micro": "^9.3.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "namor": "^1.0.1",
     "next": "^9.4.4",
     "next-redux-wrapper": "^5.0.0",
